@@ -84,6 +84,9 @@ export default function ComponentCatalog() {
               onClick={() => alert('Ver Consulta')}
             />
         </div>
+        <div className='flex flex-wrap justify-center'>
+            <CapsuleIcon />
+        </div>
 
 
       <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Checkbox</h2>
