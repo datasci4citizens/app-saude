@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import BottomNavigationBar from "@/components/ui/task-bar";
 
 export default function ComponentCatalog() {
   return (
@@ -14,9 +15,11 @@ export default function ComponentCatalog() {
           <Button variant="orange" size='responsive' position='bottom'>orange</Button>
           <Button variant="white" size='responsive' position='bottom'>white</Button>
         </div>
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Task Bar</h2>
+        
+        <h3 className="text-lg font-medium mt-4 mb-2">Variantes</h3>
         <div className='flex flex-wrap justify-center'>
-          <span className="mgc_search_line"></span>
-          <span className="mgc_search_fill"></span>
+            <BottomNavigationBar />
         </div>
       </section>
     
