@@ -23,6 +23,9 @@ export default function ComponentCatalog() {
         <div className='flex flex-wrap justify-center'>
             <BottomNavigationBar />
         </div>
+        <div className='flex flex-wrap justify-center'>
+            <CapsuleIcon />
+        </div>
 
       </section>
     
