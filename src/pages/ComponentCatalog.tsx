@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import BottomNavigationBar from "@/components/ui/task-bar";
-import CapsuleIcon from "@/components/ui/capsule";
+import AuxIcons from "@/components/ui/aux_icons";
 
 export default function ComponentCatalog() {
   return (
@@ -24,8 +24,9 @@ export default function ComponentCatalog() {
             <BottomNavigationBar />
         </div>
         <div className='flex flex-wrap justify-center'>
-            <CapsuleIcon />
+            <AuxIcons />
         </div>
+
 
       </section>
     

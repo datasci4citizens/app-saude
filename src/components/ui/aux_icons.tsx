@@ -1,34 +1,39 @@
 import React from 'react';
 
-interface NavItem {
+interface Icon {
   label: string;
   icon: React.ReactNode;
-  active?: boolean;
+  //shouldFlip?: boolean;
 }
 
-const navItems: NavItem[] = [
+const icon: Icon[] = [
   {
     label: 'Remedio',
     icon: <span role="img" aria-label="capsule" className="mgc_capsule_line"></span>, // Replace with your icon component
-    active: true,
-  },
+    //shouldFlip: true,
+},
+  {
+    label: 'Lapis',
+    icon: <span role="img" aria-label="pencil" className="mgc_pencil_line"></span>,
+    //shouldFlip: false,
+},
 ];
 
-const CapsuleIcon: React.FC = () => {
+const AuxIcons: React.FC = () => {
   return (
     <div style={styles.container}>
-      {navItems.map((item, index) => (
+      {icon.map((item, index) => (
         <div
           key={index}
           style={{
             ...styles.item,
-            ...(item.active ? styles.activeItem : {}),
           }}
         >
             <div style={{
               ...styles.icon,
               backgroundColor:'transparent', // Change #FFFFFF to transparent or your button's white color
               borderRadius: '10px',
+              // transform: item.shouldFlip ? 'scaleX(-1)' : 'none', // Flip the icon horizontally, if its the case
               }}>{item.icon}</div>
           <div style={styles.label}>{item.label}</div>
         </div>
@@ -56,12 +61,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontFamily: 'Inter, sans-serif',
     cursor: 'pointer',
   },
-  activeItem: {
-    color: '#A0A3B1',
-    fontWeight: 500,
-    fontSize: '13px',
-    fontFamily: 'Inter, sans-serif',
-  },
   icon: {
     fontSize: '24px',
     marginBottom: '2px',
@@ -72,4 +71,4 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 };
 
-export default CapsuleIcon;
+export default AuxIcons;
