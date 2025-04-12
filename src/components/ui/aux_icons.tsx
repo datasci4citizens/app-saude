@@ -3,19 +3,19 @@ import React from 'react';
 interface Icon {
   label: string;
   icon: React.ReactNode;
-  //shouldFlip?: boolean;
+  shouldFlip?: boolean;
 }
 
 const icon: Icon[] = [
   {
     label: 'Remedio',
     icon: <span role="img" aria-label="capsule" className="mgc_capsule_line"></span>, // Replace with your icon component
-    //shouldFlip: true,
+    shouldFlip: true,
 },
   {
     label: 'Lapis',
     icon: <span role="img" aria-label="pencil" className="mgc_pencil_line"></span>,
-    //shouldFlip: false,
+    shouldFlip: false,
 },
 ];
 
@@ -33,7 +33,7 @@ const AuxIcons: React.FC = () => {
               ...styles.icon,
               backgroundColor:'transparent', // Change #FFFFFF to transparent or your button's white color
               borderRadius: '10px',
-              // transform: item.shouldFlip ? 'scaleX(-1)' : 'none', // Flip the icon horizontally, if its the case
+              transform: item.shouldFlip ? 'scaleX(-1)' : 'none', // Flip the icon horizontally, if its the case
               }}>{item.icon}</div>
           <div style={styles.label}>{item.label}</div>
         </div>
