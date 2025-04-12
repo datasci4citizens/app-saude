@@ -14,6 +14,10 @@ export default function ComponentCatalog() {
           <Button variant="orange" size='responsive' position='bottom'>orange</Button>
           <Button variant="white" size='responsive' position='bottom'>white</Button>
         </div>
+        <div className='flex flex-wrap justify-center'>
+          <span className="mgc_search_line"></span>
+          <span className="mgc_search_fill"></span>
+        </div>
       </section>
     
       

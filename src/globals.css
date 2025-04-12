@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @layer base {
   * {
     @apply border-border;
@@ -10,5 +11,10 @@
   body {
     @apply font-sans overflow-hidden bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  s
+  [class^='mgc_']::before,
+  [class*=' mgc_']::before {
+    color: inherit !important;
   }
 }

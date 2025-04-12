@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import './globals.css';
 import '@fontsource-variable/inter';
 import { App } from './App';
+import 'mingcute_icon/font/Mingcute.css'
 
 const root = document.getElementById('root');
 
