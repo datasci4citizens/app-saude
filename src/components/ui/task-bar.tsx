@@ -1,4 +1,5 @@
-import React from "react";
+import React from 'react';
+
 
 interface NavItem {
   label: string;
@@ -8,64 +9,83 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   {
-    label: "Casa",
-    icon: (
-      <span role="img" aria-label="home" className="mgc_home_4_line"></span>
-    ),
+    label: 'Casa',
+    icon: <span role="img" aria-label="home" className="mgc_home_4_line"></span>, // Replace with your icon component
     active: true,
   },
   {
-    label: "Remédios e consultas",
-    icon: (
-      <span
-        role="img"
-        aria-label="calendar"
-        className="mgc_calendar_line"
-      ></span>
-    ),
+    label: 'Remédios e consultas',
+    icon: <span role="img" aria-label="calendar" className="mgc_calendar_line"></span>, // Replace with your icon component
   },
   {
-    label: "Diário",
-    icon: (
-      <span role="img" aria-label="book" className="mgc_book_6_line"></span>
-    ),
+    label: 'Diário',
+    icon: <span role="img" aria-label="book" className='mgc_book_6_line'></span>, // Replace with your icon component
   },
   {
-    label: "Pedidos de Ajuda",
-    icon: (
-      <span
-        role="img"
-        aria-label="warning"
-        className="mgc_emergency_flashers_line"
-      ></span>
-    ),
+    label: 'Emergências',
+    icon: <span role="img" aria-label="warning" className='mgc_emergency_flashers_line'></span>, // Replace with your icon component
   },
   {
-    label: "Eu",
-    icon: (
-      <span role="img" aria-label="user" className="mgc_user_2_line"></span>
-    ),
+    label: 'Eu',
+    icon: <span role="img" aria-label="user" className='mgc_user_2_line'></span>, // Replace with your icon component
   },
 ];
 
 const BottomNavigationBar: React.FC = () => {
   return (
-    <div className="flex justify-around items-center bg-background py-2 shadow-sm border-t border-input">
+    <div style={styles.container}>
       {navItems.map((item, index) => (
         <div
           key={index}
-          className={`flex flex-col items-center text-gray2 font-medium text-xs font-inter cursor-pointer ${
-            item.active ? "text-primary" : ""
-          }`}
+          style={{
+            ...styles.item,
+            ...(item.active ? styles.activeItem : {}),
+          }}
         >
-          <div className="text-2xl mb-0.5 p-0.5 bg-transparent rounded-lg">
-            {item.icon}
-          </div>
-          <div className="text-[10px]">{item.label}</div>
+            <div style={{
+            ...styles.icon,
+            backgroundColor: item.active ? '#FA6E5A' : '#FFFFFF',
+            borderRadius: '10px',
+            }}>{item.icon}</div>
+          <div style={styles.label}>{item.label}</div>
         </div>
       ))}
     </div>
   );
+};
+
+const styles: { [key: string]: React.CSSProperties } = {
+  container: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: '8px 0',
+    boxShadow: '0 -1px 5px rgba(0, 0, 0, 0.1)',
+  },
+  item: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    color: '#A0A3B1',
+    fontWeight: 500,
+    fontSize: '13px',
+    fontFamily: 'Inter, sans-serif',
+    cursor: 'pointer',
+  },
+  activeItem: {
+    color: '#A0A3B1',
+    fontWeight: 500,
+    fontSize: '13px',
+    fontFamily: 'Inter, sans-serif',
+  },
+  icon: {
+    fontSize: '24px',
+    marginBottom: '4px',
+  },
+  label: {
+    fontSize: '10px',
+  },
 };
 
 export default BottomNavigationBar;

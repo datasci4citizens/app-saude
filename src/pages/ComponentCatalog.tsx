@@ -1,8 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { RadioCheckbox } from "@/components/ui/radio-checkbox";
-import { Switch } from "@/components/ui/switch";
-import { LabeledSwitch } from "@/components/ui/labeled-switch";
-import { useState } from "react";
+import BottomNavigationBar from "@/components/ui/task-bar";
 
 export default function ComponentCatalog() {
   // variables of the checkboxes
@@ -41,29 +38,11 @@ export default function ComponentCatalog() {
             white
           </Button>
         </div>
-
-        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Checkbox</h2>
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Task Bar</h2>
         
         <h3 className="text-lg font-medium mt-4 mb-2">Variantes</h3>
-        <div className='flex flex-wrap justify-center gap-4'>
-          <RadioCheckbox
-           id="demo1"
-            label="Label"
-            checked={checkboxStates.demo1}
-            onCheckedChange={(checked) => handleCheckboxChange('demo1', checked)}
-            />
-          <RadioCheckbox
-           id="demo2"
-           label="Checked"
-           checked={checkboxStates.demo2}
-           onCheckedChange={(checked) => handleCheckboxChange('demo2', checked)}
-           />
-          <RadioCheckbox
-           id="demo-checkbox-checked"
-           label="Try clicking!"
-           checked={checkboxStates.demo3}
-           onCheckedChange={(checked) => handleCheckboxChange('demo3', checked)}
-           />
+        <div className='flex flex-wrap justify-center'>
+            <BottomNavigationBar />
         </div>
       </section>
 
