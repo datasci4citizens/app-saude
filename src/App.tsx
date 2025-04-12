@@ -3,6 +3,7 @@ import ComponentCatalog from './pages/ComponentCatalog';
 import UserOnboarding from './pages/UserOnBoarding';
 import DiaryPage from './pages/Diary';
 
+
 const router = createBrowserRouter([
   {
     path: '/',
