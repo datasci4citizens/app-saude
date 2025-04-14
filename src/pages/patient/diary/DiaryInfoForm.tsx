@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { RadioCheckbox } from "@/components/forms/radio-checkbox";
 import HabitCard from "@/components/ui/habit-card";
 import { Switch } from "@/components/ui/switch";
 import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
 import type { DiaryCreate } from "@/api/models/DiaryCreate";
-import { DiariesService } from "@/api/services/DiariesService"; // diariesCreate method will be used to submit the diary
+import { DiaryService } from "@/api/services/DiaryService"; // diariesCreate method will be used to submit the diary
 import { DateRangeTypeEnum } from "@/api";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
 
+// Properly define interface for triggers
 interface Trigger {
   trigger_name: string;
   custom_trigger_name: string | null;
@@ -21,6 +22,7 @@ interface Trigger {
   shared?: boolean;
 }
 
+// Properly define interface for user interests
 interface UserInterest extends InterestArea {
   interest_area_id: number;
   interest_name?: string;
@@ -29,16 +31,8 @@ interface UserInterest extends InterestArea {
   triggers?: Trigger[];
 }
 
-interface TrackableItem {
-  id: string;
-  name: string;
-  measurementType: string;
-  value?: string | null | undefined;
-}
-
 export default function DiaryInfoForm() {
   const navigate = useNavigate();
-  const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingInterests, setIsLoadingInterests] = useState(true);
   const [timeRange, setTimeRange] = useState<"today" | "sinceLast">(
@@ -49,12 +43,8 @@ export default function DiaryInfoForm() {
   // User interests state
   const [userInterests, setUserInterests] = useState<UserInterest[]>([]);
 
-  // Share switches for different sections
-  const [shareHabits, setShareHabits] = useState(false);
-  const [shareInterests, setShareInterests] = useState(false);
+  // Share switch for text
   const [shareText, setShareText] = useState(false);
-
-  const [habits, setHabits] = useState<TrackableItem[]>([]);
 
   // Load user interests
   useEffect(() => {
@@ -116,12 +106,6 @@ export default function DiaryInfoForm() {
     fetchUserInterests();
   }, []);
 
-  useEffect(() => {
-    if (location.state?.newHabit) {
-      setHabits((prev) => [...prev, location.state.newHabit]);
-    }
-  }, [location.state]);
-
   const handleTriggerResponseChange = (
     interestId: number,
     triggerId: number,
@@ -132,26 +116,15 @@ export default function DiaryInfoForm() {
         interest.interest_area_id === interestId
           ? {
               ...interest,
-              triggers: interest.triggers.map((trigger) =>
-                trigger.trigger_id === triggerId
-                  ? { ...trigger, response }
-                  : trigger,
-              ),
+              triggers:
+                interest.triggers?.map((trigger) =>
+                  trigger.trigger_id === triggerId
+                    ? { ...trigger, response }
+                    : trigger,
+                ) || [],
             }
           : interest,
       ),
-    );
-  };
-
-  const handleItemChange = (
-    items: TrackableItem[],
-    setItems: React.Dispatch<React.SetStateAction<TrackableItem[]>>,
-    itemId: string,
-    value: string,
-  ) => {
-    // console.log("Changing item:", itemId, "to value:", value);
-    setItems(
-      items.map((item) => (item.id === itemId ? { ...item, value } : item)),
     );
   };
 
@@ -160,7 +133,6 @@ export default function DiaryInfoForm() {
     interestId: number,
     response: string,
   ) => {
-    // console.log("Changing interest response:", interestId, "to:", response);
     setUserInterests((prev) =>
       prev.map((interest) =>
         interest.interest_area_id === interestId
@@ -172,7 +144,6 @@ export default function DiaryInfoForm() {
 
   // Handle individual interest sharing toggle
   const handleInterestSharingToggle = (interestId: number, shared: boolean) => {
-    console.log("Toggling interest sharing:", interestId, "to:", shared);
     setUserInterests((prev) =>
       prev.map((interest) =>
         interest.interest_area_id === interestId
@@ -189,8 +160,13 @@ export default function DiaryInfoForm() {
     try {
       // Format interest areas according to the expected API structure
       const formattedInterestAreas = userInterests
+        .filter(
+          (interest) =>
+            interest.response?.trim() !== "" ||
+            interest.triggers?.some((t) => t.response?.trim() !== ""),
+        )
         .map((interest) => {
-          // Only include interests that have triggers with responses
+          // Get triggers with responses
           const triggersWithResponses =
             interest.triggers?.filter(
               (trigger) => trigger.response && trigger.response.trim() !== "",
@@ -198,7 +174,7 @@ export default function DiaryInfoForm() {
 
           return {
             interest_area_id: interest.interest_area_id,
-            value_as_string: null, // No text directly associated with interest area
+            value_as_string: interest.response || null,
             shared_with_provider: interest.shared || false,
             triggers: triggersWithResponses.map((trigger) => ({
               trigger_id: trigger.trigger_id,
@@ -209,11 +185,7 @@ export default function DiaryInfoForm() {
         .filter((interest) => interest.triggers.length > 0); // Only include interests with answered triggers
 
       let diary_shared = false;
-      if (
-        shareText ||
-        shareHabits ||
-        userInterests.some((interest) => interest.shared)
-      ) {
+      if (shareText || userInterests.some((interest) => interest.shared)) {
         diary_shared = true;
       }
 
@@ -225,27 +197,14 @@ export default function DiaryInfoForm() {
         text: freeText,
         text_shared: shareText,
         interest_areas: formattedInterestAreas,
-        // Include habits if needed
-        habits: habits
-          .filter(
-            (habit) =>
-              habit.value !== undefined &&
-              habit.value !== null &&
-              habit.value !== "",
-          )
-          .map((habit) => ({
-            concept_id: habit.id,
-            value: habit.value,
-            shared: shareHabits,
-          })),
         diary_shared: diary_shared,
       };
 
       console.log("Submitting diary:", diary);
 
-      await DiariesService.diariesCreate(diary);
+      await DiaryService.diariesCreate(diary);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      navigate(-1);
+      navigate("/diary");
     } catch (error) {
       console.error("Failed to submit diary", error);
       alert("Ocorreu um erro ao salvar o diário. Por favor, tente novamente.");
@@ -300,22 +259,26 @@ export default function DiaryInfoForm() {
         ) : (
           <div className="space-y-4">
             {userInterests.map((interest) => {
-              const interestName = interest.interest_name;
+              const interestName =
+                interest.interest_name ||
+                interest.custom_interest_name ||
+                interest.value_as_string ||
+                "Interesse";
 
               return (
                 <div key={interest.interest_area_id} className="space-y-3">
                   {/* Interest card and switch row */}
                   <div className="flex items-center justify-between">
-                    <div className="flex">
+                    <div className="relative ">
                       <HabitCard
-                        title={interestName}
-                        className="inline-block w-auto min-w-fit max-w-full"
+                        title={interestName ?? ""}
+                        isAttentionPoint={interest.is_attention_point}
+                        providerName={interest.provider_name}
                       />
                     </div>
-
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-typography">
-                        Compartilhar com profissionais
+                        Compartilhar
                       </span>
                       <Switch
                         checked={interest.shared || false}
@@ -362,7 +325,7 @@ export default function DiaryInfoForm() {
                               )
                             }
                             placeholder=""
-                            className="border-grey2 border-2 focus:border-selection"
+                            className="border-gray2 border-2 focus:border-selection"
                             multiline={true}
                             rows={2}
                           />
@@ -384,9 +347,7 @@ export default function DiaryInfoForm() {
             Observações Gerais
           </h3>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-typography">
-              Compartilhar com profissionais
-            </span>
+            <span className="text-sm text-typography">Compartilhar</span>
             <Switch checked={shareText} onCheckedChange={setShareText} />
           </div>
         </div>
@@ -396,7 +357,7 @@ export default function DiaryInfoForm() {
           value={freeText}
           onChange={(e) => setFreeText(e.target.value)}
           placeholder="Descreva como você se sente ou qualquer observação importante..."
-          className="border-grey2 border-2"
+          className="border-gray2 border-2 focus:border-selection"
           multiline={true}
           rows={4}
         />

@@ -279,7 +279,7 @@ export function UserInfoForm3({
       <Button
         type="submit"
         variant="white"
-        className="w-full mt-4 font-['Inter'] font-bold"
+        className="w-full mt-4 font-['Inter'] font-bold mb-4"
         disabled={isLoading}
       >
         CONTINUAR

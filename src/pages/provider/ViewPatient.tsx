@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
 import { PersonService } from "@/api/services/PersonService";
-import { ProviderService } from "@/api/services/ProviderService"; // Import ProviderService
 import { HelpService } from "@/api/services/HelpService"; // Import HelpService
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
 import ViewButton from "@/components/ui/ViewButton"; // Import ViewButton
+import { ProviderService } from "@/api";
 
 // Define a basic interface for Diary Entries based on actual API response
 interface DiaryEntry {
@@ -45,98 +45,107 @@ export default function ViewPatient() {
   const [activeTab, setActiveTab] = useState("diarios");
 
   useEffect(() => {
-    if (id) {
-      const fetchPatientData = async () => {
-        try {
-          setLoading(true);
-          const patientData = await PersonService.apiPersonRetrieve(Number(id));
-          setPatient(patientData);
-          setError(null);
-        } catch (err) {
-          console.error("Error fetching patient data:", err);
-          setError("Não foi possível carregar os dados do paciente.");
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchPatientData();
+    if (!id) return;
 
-      const fetchDiaries = async () => {
-        try {
-          setDiariesLoading(true);
-          const diariesData =
-            await ProviderService.providerPatientsDiariesRetrieve(Number(id));
+    const fetchPatientData = async () => {
+      try {
+        setLoading(true);
+        const patientData = await PersonService.apiPersonRetrieve(Number(id));
+        setPatient(patientData);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching patient data:", err);
+        setError("Não foi possível carregar os dados do paciente.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-          // Ordenar do mais recente para o mais antigo
-          const sortedDiaries = (diariesData as DiaryEntry[]).sort((a, b) => {
-            const dateA = new Date(a.date).getTime();
-            const dateB = new Date(b.date).getTime();
-            return dateB - dateA;
-          });
+    fetchPatientData();
+  }, [id]);
 
-          setDiaries(sortedDiaries);
-          setDiariesError(null);
-        } catch (err) {
-          console.error("Error fetching diaries:", err);
-          setDiariesError("Não foi possível carregar os diários do paciente.");
-        } finally {
-          setDiariesLoading(false);
-        }
-      };
-      fetchDiaries();
+  useEffect(() => {
+    if (!patient) return;
 
-      const fetchHelpRequests = async () => {
-        try {
-          setHelpRequestsLoading(true);
-          // Buscar todos os pedidos de ajuda do provider
-          const allHelpRequests = await HelpService.providerHelpList();
+    const fetchDiaries = async () => {
+      try {
+        setDiariesLoading(true);
+        const diariesData = await ProviderService.providerPatientsDiariesList(
+          patient.person_id,
+        );
 
-          // Filtrar apenas os pedidos de ajuda do paciente específico
-          const patientHelpRequests = allHelpRequests.filter(
-            (help: ObservationRetrieve) => help.person === Number(id),
-          );
+        const sortedDiaries = (diariesData as DiaryEntry[]).sort((a, b) => {
+          const dateA = new Date(a.date).getTime();
+          const dateB = new Date(b.date).getTime();
+          return dateB - dateA;
+        });
 
-          // Mapear para o formato da interface HelpRequest
-          const formattedHelpRequests: HelpRequest[] = patientHelpRequests.map(
-            (help: ObservationRetrieve) => ({
-              id: help.observation_id,
-              created_at: help.created_at,
-              observation_date: help.observation_date,
-              value_as_string: help.value_as_string,
-              person: help.person,
-            }),
-          );
+        setDiaries(sortedDiaries);
+        setDiariesError(null);
+      } catch (err) {
+        console.error("Error fetching diaries:", err);
+        setDiariesError("Não foi possível carregar os diários do paciente.");
+      } finally {
+        setDiariesLoading(false);
+      }
+    };
 
-          // Ordenar do mais recente para o mais antigo
-          formattedHelpRequests.sort((a, b) => {
-            const dateA = new Date(
-              a.observation_date || a.created_at,
-            ).getTime();
-            const dateB = new Date(
-              b.observation_date || b.created_at,
-            ).getTime();
-            return dateB - dateA;
-          });
+    fetchDiaries();
+  }, [patient]);
 
-          setHelpRequests(formattedHelpRequests);
-          setHelpRequestsError(null);
-        } catch (err) {
-          console.error("Error fetching help requests:", err);
-          setHelpRequestsError(
-            "Não foi possível carregar os pedidos de ajuda do paciente.",
-          );
-        } finally {
-          setHelpRequestsLoading(false);
-        }
-      };
-      fetchHelpRequests();
-    }
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchHelpRequests = async () => {
+      try {
+        setHelpRequestsLoading(true);
+        // Buscar todos os pedidos de ajuda do provider
+        const allHelpRequests = await HelpService.providerHelpList();
+
+        // Filtrar apenas os pedidos de ajuda do paciente específico
+        const patientHelpRequests = allHelpRequests.filter(
+          (help: ObservationRetrieve) => help.person === Number(id),
+        );
+
+        // Mapear para o formato da interface HelpRequest
+        const formattedHelpRequests: HelpRequest[] = patientHelpRequests.map(
+          (help: ObservationRetrieve) => ({
+            id: help.observation_id,
+            created_at: help.created_at,
+            observation_date: help.observation_date,
+            value_as_string: help.value_as_string,
+            person: help.person,
+          }),
+        );
+
+        // Ordenar do mais recente para o mais antigo
+        formattedHelpRequests.sort((a, b) => {
+          const dateA = new Date(a.observation_date || a.created_at).getTime();
+          const dateB = new Date(b.observation_date || b.created_at).getTime();
+          return dateB - dateA;
+        });
+
+        setHelpRequests(formattedHelpRequests);
+        setHelpRequestsError(null);
+      } catch (err) {
+        console.error("Error fetching help requests:", err);
+        setHelpRequestsError(
+          "Não foi possível carregar os pedidos de ajuda do paciente.",
+        );
+      } finally {
+        setHelpRequestsLoading(false);
+      }
+    };
+    fetchHelpRequests();
   }, [id]);
 
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return `Dia ${date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}`;
+      return `Dia ${date.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+      })}`;
     } catch (e) {
       return "Data inválida";
     }
@@ -180,13 +189,21 @@ export default function ViewPatient() {
         {/* Tabs */}
         <div className="flex border-b mb-4">
           <button
-            className={`py-2 px-4 ${activeTab === "diarios" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
+            className={`py-2 px-4 ${
+              activeTab === "diarios"
+                ? "border-b-2 border-selection text-selection font-medium"
+                : ""
+            }`}
             onClick={() => setActiveTab("diarios")}
           >
             Diários
           </button>
           <button
-            className={`py-2 px-4 ${activeTab === "ajuda" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
+            className={`py-2 px-4 ${
+              activeTab === "ajuda"
+                ? "border-b-2 border-selection text-selection font-medium"
+                : ""
+            }`}
             onClick={() => setActiveTab("ajuda")}
           >
             Pedidos de Ajuda
@@ -217,7 +234,9 @@ export default function ViewPatient() {
                   const entriesCount = diary.entries?.length || 0;
                   const entriesText =
                     entriesCount > 0
-                      ? `${entriesCount} entrada${entriesCount > 1 ? "s" : ""} registrada${entriesCount > 1 ? "s" : ""}`
+                      ? `${entriesCount} entrada${
+                          entriesCount > 1 ? "s" : ""
+                        } registrada${entriesCount > 1 ? "s" : ""}`
                       : "Nenhuma entrada registrada";
 
                   return (
