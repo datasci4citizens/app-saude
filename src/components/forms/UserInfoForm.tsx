@@ -43,23 +43,29 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
   const [errors, setErrors] = useState<FormErrors>({});
 
   // Handle input change
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
+    const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
     setFormData({ ...formData, [name]: value });
     
     // Clear error when user starts typing
     if (errors[name]) {
-      setErrors({ ...errors, [name]: null });
+      setErrors({ ...errors, [name]: undefined });
     }
   };
   
   // Handle date change
-  const handleDateChange = (value) => {
+  interface DateChangeEvent {
+    target: {
+      value: string;
+    };
+  }
+
+  const handleDateChange = (value: string) => {
     setFormData({ ...formData, birthDate: value });
     
     // Clear error when user starts typing
     if (errors.birthDate) {
-      setErrors({ ...errors, birthDate: null });
+      setErrors({ ...errors, birthDate: undefined });
     }
   };
 
@@ -73,6 +79,7 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
     if (!formData.race) newErrors.race = "Cor/Raça é obrigatório";
     
     // Validate date format (dd/mm/yyyy)
+    // checks if date is empty
     if (!formData.birthDate) {
       newErrors.birthDate = "Data de nascimento é obrigatória";
     } else {
@@ -82,12 +89,22 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
       } else {
         // Check if date is valid
         const [day, month, year] = formData.birthDate.split('/').map(Number);
-        const date = new Date(year, month - 1, day);
-        if (
-          date.getFullYear() !== year || 
-          date.getMonth() + 1 !== month || 
-          date.getDate() !== day
-        ) {
+        if (day && month && year) {
+          const date = new Date(year, month - 1, day);
+          if (
+            date.getFullYear() === year && 
+            date.getMonth() + 1 === month && 
+            date.getDate() === day
+          ) {
+            // Check if date is in the future
+            const today = new Date();
+            if (date > today) {
+              newErrors.birthDate = "Data não pode ser no futuro";
+            }
+          } else {
+            newErrors.birthDate = "Data inválida";
+          }
+        } else {
           newErrors.birthDate = "Data inválida";
         }
       }
@@ -210,7 +227,7 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
           id="height"
           name="height"
           type="number"
-          step="0.01"
+          // step="0.01" // Removed as 'step' is not supported by TextFieldProps
           label="Altura (m)"
           value={formData.height}
           onChange={handleChange}
