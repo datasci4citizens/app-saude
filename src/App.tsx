@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AcsMainPage from "./pages/provider/AcsMainPage";
 import UsermainPage from "./pages/patient/UserMainPage";
 import EmergencyPage from "./pages/patient/emergency/EmergencyPage";
+import EmergencyUser from "./pages/patient/emergency/EmergencyUser";
 import PatientsPage from "./pages/provider/PatientsPage";
 import ViewReminder from "./pages/patient/reminders/ViewReminder";
 import DiaryPage from "./pages/patient/diary/Diary";
@@ -100,9 +101,14 @@ const router = createBrowserRouter([
     element: <AddProfessionalPage />,
   },
   {
+    path: "/emergency-user",
+    element: <EmergencyUser />,
+  },
+  {
     path: "*",
     element: <NotFound />,
   },
+  
 ]);
 
 export function App() {
