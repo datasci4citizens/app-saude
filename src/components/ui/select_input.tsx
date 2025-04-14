@@ -1,4 +1,11 @@
 import React from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 
 interface Option {
   value: string;
@@ -26,13 +33,22 @@ export function SelectField({
   error,
   placeholder = "Selecione"
 }: SelectFieldProps) {
-  const baseStyle = "w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-[#FA6E5A] focus:border-[#FA6E5A] font-['Inter'] font-normal";
-  const selectStyle = error 
-    ? `${baseStyle} border-red-500 text-[#141B36]` 
-    : `${baseStyle} border-gray-300 text-[#141B36]`;
-  
+  // Label and error styling remain the same
   const labelStyle = "block text-sm font-['Inter'] font-light text-[#A0A3B1] mb-1";
   const errorTextStyle = "text-red-500 text-xs font-['Inter'] font-light mt-1";
+
+  // Handle value change and convert to expected event format
+  const handleValueChange = (newValue: string) => {
+    // Create synthetic event to match the onChange API expected by parent components
+    const syntheticEvent = {
+      target: {
+        name,
+        value: newValue
+      }
+    } as React.ChangeEvent<HTMLSelectElement>;
+    
+    onChange(syntheticEvent);
+  };
 
   return (
     <div className="mb-4">
@@ -41,20 +57,31 @@ export function SelectField({
           {label}
         </label>
       )}
-      <select
-        id={id}
-        name={name}
-        value={value}
-        onChange={onChange}
-        className={selectStyle}
-      >
-        <option value="" disabled>{placeholder}</option>
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
+      
+      <Select value={value} onValueChange={handleValueChange}>
+        <SelectTrigger 
+          id={id}
+          className={`text-[#141B36] font-['Inter'] font-normal ring-offset-0 ${
+            error ? "border-red-500" : "border-gray-300"
+          }`}
+          style={{
+            // avoiding double ringing
+            '--tw-ring-offset-width': '0px',
+            '--tw-ring-color': '#FA6E5A',
+            '--tw-ring-opacity': '1',
+          }}
+        >
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      
       {error && <p className={errorTextStyle}>{error}</p>}
     </div>
   );

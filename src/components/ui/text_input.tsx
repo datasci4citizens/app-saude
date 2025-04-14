@@ -1,4 +1,5 @@
 import React from 'react';
+import { Input } from '@/components/ui/input'; // Assuming you have this component
 
 interface TextFieldProps {
   id: string;
@@ -7,11 +8,9 @@ interface TextFieldProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
-  error?: string;
   helperText?: string;
+  error?: string;
   type?: string;
-  maxLength?: number;
-  step?: string;
 }
 
 export function TextField({
@@ -21,17 +20,11 @@ export function TextField({
   value,
   onChange,
   placeholder,
-  error,
   helperText,
-  type = 'text',
-  maxLength,
-  step
+  error,
+  type = 'text'
 }: TextFieldProps) {
-  const baseStyle = "w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-[#FA6E5A] focus:border-[#FA6E5A] font-['Inter'] font-normal";
-  const inputStyle = error 
-    ? `${baseStyle} border-red-500 text-[#141B36]` 
-    : `${baseStyle} border-gray-300 text-[#141B36]`;
-  
+  // styling for label, helper text, and error message
   const labelStyle = "block text-sm font-['Inter'] font-light text-[#A0A3B1] mb-1";
   const helperTextStyle = "text-xs font-['Inter'] font-light text-[#A0A3B1]";
   const errorTextStyle = "text-red-500 text-xs font-['Inter'] font-light mt-1";
@@ -43,17 +36,26 @@ export function TextField({
           {label}
         </label>
       )}
-      <input
-        type={type}
+      
+      <Input
         id={id}
         name={name}
+        type={type}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        maxLength={maxLength}
-        step={step}
-        className={inputStyle}
+        className={`text-[#141B36] font-['Inter'] font-normal ring-offset-0 ${
+          error ? 'border-red-500' : 'border-gray-300'
+        }`}
+        style={{
+          // Use style to override focus ring if needed
+          // This ensures React's style prop takes precedence
+          '--tw-ring-offset-width': '0px',
+          '--tw-ring-color': '#FA6E5A',
+          '--tw-ring-opacity': '1',
+        }}
       />
+      
       {helperText && <span className={helperTextStyle}>{helperText}</span>}
       {error && <p className={errorTextStyle}>{error}</p>}
     </div>
