@@ -171,7 +171,8 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
         error={errors.socialName}
       />
       
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 max-sm:grid-cols-1 gap-4">
+      <div className="flex flex-col">
         <SelectField
           id="birthSex"
           name="birthSex"
@@ -181,7 +182,9 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
           options={birthSexOptions}
           error={errors.birthSex}
         />
-        
+      </div>
+  
+      <div className="flex flex-col">
         <SelectField
           id="gender"
           name="gender"
@@ -192,8 +195,9 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
           error={errors.gender}
         />
       </div>
+      </div>
       
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 max-sm:grid-cols-1 gap-4">
         <TextField 
           id="weight"
           name="weight"
