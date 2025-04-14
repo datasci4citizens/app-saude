@@ -35,12 +35,12 @@ export default function UserOnboarding() {
         
         {/* Form title - updated font and color */}
         <div className="pl-9 mt-[46px] mb-6">
-            <h1 className="text-xl font-bold" style={{ fontFamily: 'Work Sans, sans-serif', color: '#141B36' }}> 
+            <h1 className="text-4xl font-bold" style={{ fontFamily: 'Work Sans, sans-serif', color: '#141B36' }}> 
               Preencha informações sobre você
             </h1>
         </div>
         
-        <div className="px-4">
+        <div className="pl-9 pr-4">
           <UserInfoForm onSubmit={handleFormSubmit} />
         </div>
       </div>
