@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import axios from 'axios';
 
 export default function Login() {
   const handleGoogleLogin = async () => {
@@ -7,19 +8,16 @@ export default function Login() {
       // This would be replaced with your actual API call
       console.log('Initiating Google login...');
       
-      // Example API call (replace with your actual endpoint)
-      const response = await fetch('/api/auth/google', {
-        method: 'GET',
-        credentials: 'include',
+      // Redirect to your backend authentication endpoint
+      await axios.post("http://localhost:8000/auth/login/google/")
+
+      // test endpoint to check if the user is logged in
+      const res = await fetch('http://localhost:8000/auth/me/', {
+        credentials: 'include'
       });
       
-      console.log('Login response:', response);
-      
-      // Handle successful login
-      if (response.ok) {
-        console.log('Login successful!');
-        // Redirect to home or dashboard page
-      }
+      const data = await res.json();
+      console.log('User data:', data);
     } catch (error) {
       console.error('Login failed:', error);
     }
