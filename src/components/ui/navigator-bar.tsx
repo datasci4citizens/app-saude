@@ -1,50 +1,100 @@
 import React, { useState } from 'react';
 
+// Interface para os itens de navegação
 interface NavItem {
-  id: string; // Adicionando id para identificar cada item
+  id: string;
   label: string;
   icon: React.ReactNode;
-  active?: boolean;
 }
 
-const BottomNavigationBar: React.FC = () => {
-  // Estado para controlar qual item está ativo
-  const [activeItemId, setActiveItemId] = useState<string>('home');
+// Props do componente
+interface BottomNavigationBarProps {
+  variant?: 'user' | 'acs';
+  initialActiveId?: string;
+  onItemClick?: (itemId: string) => void;
+  customItems?: NavItem[]; // Para permitir itens totalmente personalizados
+}
 
-  // Dados dos itens de navegação
-  const navItems: NavItem[] = [
-    {
-      id: 'home',
-      label: 'Casa',
-      icon: <span role="img" aria-label="home" className="mgc_home_4_line"></span>,
-    },
-    {
-      id: 'meds',
-      label: 'Remédios e consultas',
-      icon: <span role="img" aria-label="calendar" className="mgc_calendar_line"></span>,
-    },
-    {
-      id: 'diary',
-      label: 'Diário',
-      icon: <span role="img" aria-label="book" className='mgc_book_6_line'></span>,
-    },
-    {
-      id: 'emergency',
-      label: 'Emergências',
-      icon: <span role="img" aria-label="warning" className='mgc_emergency_flashers_line'></span>,
-    },
-    {
-      id: 'profile',
-      label: 'Eu',
-      icon: <span role="img" aria-label="user" className='mgc_user_2_line'></span>,
-    },
-  ];
+const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
+  variant = 'user',
+  initialActiveId,
+  onItemClick,
+  customItems,
+}) => {
+  // Itens de navegação predefinidos por variante
+  const navItemVariants = {
+    user: [
+      {
+        id: 'home',
+        label: 'Casa',
+        icon: <span role="img" aria-label="home" className="mgc_home_4_line"></span>,
+      },
+      {
+        id: 'meds',
+        label: 'Remédios',
+        icon: <span role="img" aria-label="calendar" className="mgc_calendar_line"></span>,
+      },
+      {
+        id: 'diary',
+        label: 'Diário',
+        icon: <span role="img" aria-label="book" className='mgc_book_6_line'></span>,
+      },
+      {
+        id: 'emergency',
+        label: 'Emergências',
+        icon: <span role="img" aria-label="warning" className='mgc_alert_line'></span>,
+      },
+      {
+        id: 'profile',
+        label: 'Eu',
+        icon: <span role="img" aria-label="user" className='mgc_user_3_line'></span>,
+      },
+    ],
+    acs: [
+      {
+        id: 'home',
+        label: 'Casa',
+        icon: <span role="img" aria-label="home" className="mgc_home_4_line"></span>,
+      },
+      {
+        id: 'consults',
+        label: 'Próximas consultas',
+        icon: <span role="img" aria-label="consults" className="mgc_alarm_2_line"></span>,
+      },
+      {
+        id: 'patients',
+        label: 'Pacientes',
+        icon: <span role="img" aria-label="patients" className='mgc_group_3_line'></span>,
+      },
+      {
+        id: 'emergency',
+        label: 'Checar emergências',
+        icon: <span role="img" aria-label="warning" className='mgc_report_line'></span>,
+      },
+      {
+        id: 'profile',
+        label: 'Eu',
+        icon: <span role="img" aria-label="user" className='mgc_user_3_line'></span>,
+      },
+    ],
+  };
+
+  // Escolhe os itens de navegação com base na variante ou usa itens personalizados
+  const navItems = customItems || navItemVariants[variant];
+  
+  // Define o ID ativo inicial com base nos itens disponíveis
+  const defaultActiveId = initialActiveId || navItems[0]?.id || '';
+  
+  // Estado para controlar qual item está ativo
+  const [activeItemId, setActiveItemId] = useState<string>(defaultActiveId);
 
   // Função para lidar com o clique nos itens
   const handleItemClick = (itemId: string) => {
     setActiveItemId(itemId);
-    // Aqui você pode adicionar navegação se necessário
-    // navigate(`/${itemId}`);
+    // Chamar callback externo se fornecido
+    if (onItemClick) {
+      onItemClick(itemId);
+    }
   };
 
   return (
@@ -58,7 +108,7 @@ const BottomNavigationBar: React.FC = () => {
             style={{
               ...styles.item,
               ...(isActive ? styles.activeItem : {}),
-              width: '20%',
+              width: `${100 / navItems.length}%`, // Largura dinâmica baseada no número de itens
             }}
             onClick={() => handleItemClick(item.id)}
           >
@@ -67,6 +117,7 @@ const BottomNavigationBar: React.FC = () => {
                 ...styles.icon,
                 backgroundColor: isActive ? '#FA6E5A' : '#FFFFFF',
                 borderRadius: '10px',
+                color: isActive ? '#F9F9FF' : '#A0A3B1',
               }}
             >
               {item.icon}
@@ -86,6 +137,7 @@ const BottomNavigationBar: React.FC = () => {
   );
 };
 
+// Estilos (mantenha seus estilos existentes)
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
     display: 'flex',
