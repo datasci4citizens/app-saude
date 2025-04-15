@@ -10,4 +10,11 @@ export default defineConfig({
 			'@': path.resolve(__dirname, './src'),
 		},
 	},
+	server: {
+		proxy: {
+		  '/auth': 'http://localhost:8000',
+		  '/admin': 'http://localhost:8000',
+		  '/accounts': 'http://localhost:8000',
+		}
+	  }
 });
