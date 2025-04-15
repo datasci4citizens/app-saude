@@ -1,94 +1,122 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 interface PatientButtonProps {
-  variant?: "patient" | "emergency";
-  name: string;
-  age?: number;
-  lastEmergency?: string;
-  lastVisit?: string;
-  active?: boolean;
-  onClick?: () => void;
-  onClickEmergency?: () => void;
+    variant?: 'patient' | 'emergency';
+    name: string; 
+    age?: number;
+    lastConsult: string;
+    lastRegistry: string;
+    lastEmergency: string;
+    active?: boolean;
+    onClick?: () => void;
+    onClickEmergency?: () => void;
 }
 
 const PatientButton: React.FC<PatientButtonProps> = ({
-  variant = "patient",
-  name,
-  age,
-  lastEmergency,
-  lastVisit,
-  active = false,
-  onClick,
-  onClickEmergency,
+    variant = 'patient',
+    name,
+    age,
+    lastConsult,
+    lastRegistry,
+    lastEmergency,
+    active = false,
+    onClick,
+    onClickEmergency
 }) => {
-  const isEmergency = variant === "emergency";
-
-  return (
-    <div
-      className={`
-                rounded-xl
-                p-4
-                mb-4
-                w-full
-                max-w-[600px]
-                transition-all
-                duration-200
-                ease-in-out
-                cursor-pointer
-                hover:-translate-y-0.5
-                ${isEmergency ? "bg-selection" : "bg-offwhite"}
-                ${isEmergency ? "hover:shadow-[0_6px_12px_rgba(250,110,90,0.25)]" : "hover:shadow-[0_6px_12px_rgba(0,0,0,0.15)]"}
-                shadow-sm
-            `}
-      onClick={onClick}
-    >
-      <div className="flex flex-col gap-1">
-        <div
-          className={`
-                    text-titulowindow // Changed from text-lg font-bold
-                    mb-1.5
-                    font-inter
-                    ${isEmergency ? "text-primary-foreground" : "text-typography"}
-                `}
-        >
-          {name}
-          {age ? ` - ${age} anos` : ""}
-        </div>
-        <div
-          className={`
-                    text-desc-titulo // Changed from text-xs font-normal
-                    mb-0.5
-                    font-inter
-                    ${isEmergency ? "text-primary-foreground" : "text-typography"}
-                `}
-        >
-          Última consulta: {lastVisit || "Nenhuma"}
-        </div>
-        {isEmergency ? (
-          <div
-            className={`text-topicos text-primary-foreground mt-1.5 font-inter`} // Changed from font-bold text-xs
-            onClick={(e) => {
-              e.stopPropagation();
-              if (onClickEmergency) onClickEmergency();
+    const [isHovered, setIsHovered] = useState(false);
+    const isEmergency = variant === 'emergency';
+    
+    return (
+        <div 
+            style={{
+                ...styles.container,
+                backgroundColor: isEmergency ? '#FA6E5A' : '#FFFFFF',
+                transform: isHovered ? 'translateY(-2px)' : 'none',
+                boxShadow: isHovered 
+                    ? '0 6px 12px rgba(0, 0, 0, 0.15)' 
+                    : '0 2px 4px rgba(0, 0, 0, 0.1)'
             }}
-          >
-            PEDIDO DE AJUDA ATIVO DESDE {lastEmergency}
-          </div>
-        ) : (
-          <div
-            className={`
-                        text-desc-titulo // Changed from text-xs font-normal
-                        mb-0.5
-                        font-inter
-                        ${isEmergency ? "text-primary-foreground" : "text-typography"}
-                    `}
-          >
-            Último pedido de ajuda: {lastEmergency || "Nenhum"}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+            onClick={onClick}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            <div style={styles.content}>
+                <div style={{
+                    ...styles.name,
+                    color: isEmergency ? '#FFFFFF' : '#000000'
+                }}>
+                    {name}{age ? `- ${age} anos` : ''}
+                </div>
+                <div style={{
+                    ...styles.infoText,
+                    color: isEmergency ? '#FFFFFF' : '#000000'
+                }}>
+                    Última consulta: {lastConsult}
+                </div>
+                <div style={{
+                    ...styles.infoText,
+                    color: isEmergency ? '#FFFFFF' : '#000000'
+                }}>
+                    Último registro compartilhado: {lastRegistry}
+                </div>
+                {isEmergency ? (
+                    <div 
+                        style={styles.emergencyAlert}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            if (onClickEmergency) onClickEmergency();
+                        }}
+                    >
+                        EMERGÊNCIA ATIVA DESDE {lastEmergency}
+                    </div>
+                ) : (
+                    <div style={{
+                        ...styles.infoText,
+                        color: isEmergency ? '#FFFFFF' : '#000000'
+                    }}>
+                        Última emergência: {lastEmergency}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+const styles: { [key: string]: React.CSSProperties } = {
+    container: {
+        borderRadius: 16,
+        padding: 16,
+        marginBottom: 16,
+        // falta normalzar a margem de todos os itens
+        width: '100%',
+        maxWidth: '600px',
+        transition: 'all 0.2s ease',
+        cursor: 'pointer',
+    },
+    content: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 4,
+    },
+    name: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 6,
+        fontFamily: "'Work Sans', sans-serif",
+    },
+    infoText: {
+        fontSize: 13,
+        marginBottom: 2,
+        fontFamily: "'Inter', sans-serif",
+        fontWeight: 400,
+    },
+    emergencyAlert: {
+        fontWeight: 'bold',
+        color: '#FFFFFF',
+        marginTop: 6,
+        fontSize: 13,
+        fontFamily: "'Inter', sans-serif",
+    }
 };
 
 export default PatientButton;

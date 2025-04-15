@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
+import PatientsPage from "@/components/ui/patient-button";
 
 export default function ComponentCatalog() {
   // variables of the checkboxes
@@ -38,11 +39,31 @@ export default function ComponentCatalog() {
             white
           </Button>
         </div>
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">cards de pacientes</h2>
+        <div className='flex flex-wrap justify-center'>
+            <PatientsPage 
+              variant="patient" 
+              name="Nome do Paciente"
+              age={25}
+              lastConsult="01/05/2023"
+              lastRegistry="10/05/2023"
+              lastEmergency="Não há"
+            />
+            <PatientsPage 
+              variant="emergency" 
+              name="Paciente de Emergência"
+              age= {30}
+              lastConsult="15/05/2023"
+              lastRegistry="15/05/2023"
+              lastEmergency="15/05/2023"
+            />
+        </div>
         <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Task Bar</h2>
         <div className='flex flex-wrap justify-center'>
             <BottomNavigationBar variant="user"/>
             {/* não é possível colocar as duas devido a ficarem fixas na parte de baixo da página */}
         </div>
+
       </section>
 
       {/* Seção de Switch */}

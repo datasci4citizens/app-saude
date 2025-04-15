@@ -37,37 +37,11 @@
     --destructive: #ff4d4f;
   }
 
-  .theme-dark {
-    /* Tema escuro */
-    --selection: #fa6e5a;
-    --selection-background: #fa6e5a;
-    --homebg: #25406d;
-    --homebg-background: #25406d;
-    --selected: #97ce00;
-    --selected-background: #97ce00;
-    --typography: #f9f9ff;
-    --typography-foreground: #f9f9ff;
-    --offwhite: #737373;
-    --offwhite-foreground: #737373;
-    --gray1: #a0a3b1;
-    --gray1-foreground: #a0a3b1;
-    --gray2: #e6e6e6;
-    --gray2-foreground: #e6e6e6;
-    --gray2-border: #e6e6e6;
-    --gray2-input: #e6e6e6;
-    --accent1: #082e91;
-    --accent1-background: #082e91;
-    --accent2: #e6e6e6;
-    --accent2-foreground: #e6e6e6;
-    --card: #1a1f2d;
-    --card-foreground: #f9f9ff;
-    --primary: #212637;
-    --primary-foreground: #ffffff;
-    --homeblob1: #1b4182ff;
-    --homeblob1-background: #1b4182ff;
-    --homeblob2: #1f478cff;
-    --homeblob2-background: #1f478cff;
-    --destructive: #ff4d4f;
+  body {
+    @apply font-sans overflow-hidden bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    height: 100%;
+    overflow: auto;
   }
 
   [class^="mgc_"]::before,
