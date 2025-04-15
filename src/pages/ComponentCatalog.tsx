@@ -39,10 +39,9 @@ export default function ComponentCatalog() {
           </Button>
         </div>
         <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Task Bar</h2>
-        
-        <h3 className="text-lg font-medium mt-4 mb-2">Variantes</h3>
         <div className='flex flex-wrap justify-center'>
-            <BottomNavigationBar />
+            <BottomNavigationBar variant="user"/>
+            {/* não é possível colocar as duas devido a ficarem fixas na parte de baixo da página */}
         </div>
       </section>
 
