@@ -1,10 +1,8 @@
-import React from "react";
-import { createRoot } from "react-dom/client";
-import "./globals.css";
-import "@fontsource-variable/inter";
-import "mingcute_icon/font/Mingcute.css";
-import { App } from "./App";
-import { GoogleOAuthProvider } from "@react-oauth/google";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './globals.css';
+import '@fontsource-variable/inter';
+import { App } from './App';
 
 import { Capacitor } from "@capacitor/core";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
