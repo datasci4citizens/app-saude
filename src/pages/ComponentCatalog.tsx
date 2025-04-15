@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import PatientsPage from "@/components/ui/patient-button";
+import HomeBanner from "@/components/home-banner";
 
 export default function ComponentCatalog() {
   return (
@@ -33,6 +34,13 @@ export default function ComponentCatalog() {
               lastConsult="15/05/2023"
               lastRegistry="15/05/2023"
               lastEmergency="15/05/2023"
+            />
+        </div>
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">home banners</h2>
+        <div className='flex flex-wrap justify-center'>
+            <HomeBanner />
+            <HomeBanner 
+              subtitle="Cheque registro dos seus pacientes"
             />
         </div>
         <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Task Bar</h2>
