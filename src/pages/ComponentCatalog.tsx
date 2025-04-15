@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import BottomNavigationBar from "@/components/ui/task-bar";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 export default function ComponentCatalog() {
   // variables of the checkboxes
