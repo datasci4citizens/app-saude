@@ -67,7 +67,6 @@ const BottomNavigationBar: React.FC = () => {
                 ...styles.icon,
                 backgroundColor: isActive ? '#FA6E5A' : '#FFFFFF',
                 borderRadius: '10px',
-                color: isActive ? '#F9F9FF' : '#A0A3B1',
               }}
             >
               {item.icon}
@@ -88,7 +87,6 @@ const BottomNavigationBar: React.FC = () => {
 };
 
 const styles: { [key: string]: React.CSSProperties } = {
-  // ...seus estilos existentes...
   container: {
     display: 'flex',
     justifyContent: 'space-around',
@@ -130,6 +128,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     textAlign: 'center',
     transition: 'color 0.2s ease-in-out',
     lineHeight: '12px',
+    fontFamily: 'Inter, sans-serif',
+    fontWeight: 500,
   },
 };
 
