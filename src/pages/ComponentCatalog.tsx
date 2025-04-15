@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import PatientsPage from "@/components/ui/patient-button";
 import HomeBanner from "@/components/home-banner";
+import InfoCard from "@/components/ui/info-card";
+import HabitCard from "@/components/ui/habit-card";
 
 export default function ComponentCatalog() {
   // variables of the checkboxes
@@ -65,6 +67,26 @@ export default function ComponentCatalog() {
             <HomeBanner 
               subtitle="Cheque registro dos seus pacientes"
             />
+        </div>
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">alertas</h2>
+        <div className='flex flex-wrap justify-center'>
+            <InfoCard
+              variant="emergency"
+              count={5}
+              onClick={() => alert('Ver Emergências')}
+            />
+            <InfoCard
+              variant="appointment"
+              name="Amanda de Souza"
+              date="15/05/2023"
+              time="14:30"
+              onClick={() => alert('Ver Consulta')}
+            />
+        </div>
+        <div>
+          <HabitCard number={1} />
+          <HabitCard number={2} />
+          <HabitCard number={3} title="Atividade"/> 
         </div>
         <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Task Bar</h2>
         <div className='flex flex-wrap justify-center'>
