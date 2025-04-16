@@ -1,27 +1,33 @@
-import React from 'react';
+import { useGoogleLogin } from '@react-oauth/google';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
 
 export default function Login() {
-  const handleGoogleLogin = async () => {
-    try {
-      // This would be replaced with your actual API call
-      console.log('Initiating Google login...');
-      
-      // Redirect to your backend authentication endpoint
-      await axios.post("http://localhost:8000/auth/login/google/")
+  const login = useGoogleLogin({
+    onSuccess: async ({ code }) => {
+      try {
+        const tokens = await axios.post('http://localhost:8000/auth/login/google/',
+          { code },
+          { withCredentials: true }
+        );
 
-      // test endpoint to check if the user is logged in
-      const res = await fetch('http://localhost:8000/auth/me/', {
-        credentials: 'include'
-      });
-      
-      const data = await res.json();
-      console.log('User data:', data);
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
-  };
+        console.log('Tokens:', tokens.data);
+
+        // Agora testa se o usuário está logado
+        const res = await fetch('http://localhost:8000/auth/me/', {
+          headers: {
+            Authorization: `Bearer ${tokens.data.access}`,
+          },
+        });
+        const userData = await res.json();
+        console.log('User data:', userData);
+      } catch (err) {
+        console.error('Erro ao logar:', err);
+      }
+    },
+    flow: 'auth-code',
+    //ux_mode: 'redirect',
+  });
 
   return (
     <div 
@@ -32,7 +38,7 @@ export default function Login() {
         <h1 className="text-2xl font-bold mb-8 text-gray-800">App Saúde</h1>
         
         <Button 
-          onClick={handleGoogleLogin}
+          onClick={login}  // <- aqui chamamos a função que o hook retorna
           className="flex items-center gap-2 bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 px-6 py-3 rounded-lg font-medium"
         >
           {/* Google Logo */}
