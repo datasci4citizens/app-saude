@@ -109,7 +109,7 @@ export default function ComponentCatalog() {
   </div>
   
   <h3 className="text-lg font-medium mt-4 mb-2">Labeled Switch</h3>
-  <div className='flex justify-center mb-4'>
+  <div className='flex justify-center mb-24'>
     <div className='w-full max-w-md'>
       <LabeledSwitch 
         label="Compartilhar esses dados com profissionais de saúde"
