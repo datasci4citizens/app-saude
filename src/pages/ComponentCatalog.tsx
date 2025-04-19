@@ -1,4 +1,9 @@
 import { Button } from "@/components/ui/button";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
+import PatientsPage from "@/components/ui/patient-button";
+import HomeBanner from "@/components/home-banner";
+import InfoCard from "@/components/ui/info-card";
+import HabitCard from "@/components/ui/habit-card";
 import { RadioCheckbox } from "@/components/ui/radio-checkbox";
 import { Switch } from "@/components/ui/switch";
 import { LabeledSwitch } from "@/components/ui/labeled-switch";
@@ -37,8 +42,60 @@ export default function ComponentCatalog() {
           <Button variant="orange" size='responsive' position='bottom'>orange</Button>
           <Button variant="white" size='responsive' position='bottom'>white</Button>
         </div>
+        
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">cards de pacientes</h2>
+        <div className='flex flex-wrap justify-center'>
+            <PatientsPage 
+              variant="patient" 
+              name="Nome do Paciente"
+              age={25}
+              lastConsult="01/05/2023"
+              lastRegistry="10/05/2023"
+              lastEmergency="Não há"
+            />
+            <PatientsPage 
+              variant="emergency" 
+              name="Paciente de Emergência"
+              age= {30}
+              lastConsult="15/05/2023"
+              lastRegistry="15/05/2023"
+              lastEmergency="15/05/2023"
+            />
+        </div>
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">home banners</h2>
+        <div className='flex flex-wrap justify-center'>
+            <HomeBanner />
+            <HomeBanner 
+              subtitle="Cheque registro dos seus pacientes"
+            />
+        </div>
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">alertas</h2>
+        <div className='flex flex-wrap justify-center'>
+            <InfoCard
+              variant="emergency"
+              count={5}
+              onClick={() => alert('Ver Emergências')}
+            />
+            <InfoCard
+              variant="appointment"
+              name="Amanda de Souza"
+              date="15/05/2023"
+              time="14:30"
+              onClick={() => alert('Ver Consulta')}
+            />
+        </div>
+        <div>
+          <HabitCard number={1} />
+          <HabitCard number={2} />
+          <HabitCard number={3} title="Atividade"/> 
+        </div>
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Task Bar</h2>
+        <div className='flex flex-wrap justify-center'>
+            <BottomNavigationBar variant="user"/>
+            {/* não é possível colocar as duas devido a ficarem fixas na parte de baixo da página */}
+        </div>
 
-        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Checkbox</h2>
+      <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Checkbox</h2>
         
         <h3 className="text-lg font-medium mt-4 mb-2">Variantes</h3>
         <div className='flex flex-wrap justify-center gap-4'>
