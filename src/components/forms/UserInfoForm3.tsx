@@ -98,27 +98,30 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: FormData) => void })
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="flex flex-row gap-4 max-[311px]:flex-wrap">
-        <SelectField
-          id="sleepHealth"
-          name="sleepHealth"
-          label="Saúde de sono"
-          value={formData.sleepHealth}
-          onChange={handleChange}
-          options={sleepHealthOptions}
-          error={errors.sleepHealth}
-        />
-        
-        <SelectField
-          id="physicalExercise"
-          name="physicalExercise"
-          label="Exercícios físicos"
-          value={formData.physicalExercise}
-          onChange={handleChange}
-          options={exerciseOptions}
-          error={errors.physicalExercise}
-        />
-      </div>
+    <div className="flex flex-row gap-4 max-[311px]:flex-wrap w-full">
+      <div className="flex-1">
+          <SelectField
+            id="sleepHealth"
+            name="sleepHealth"
+            label="Saúde de sono"
+            value={formData.sleepHealth}
+            onChange={handleChange}
+            options={sleepHealthOptions}
+            error={errors.sleepHealth}
+          />
+        </div>
+        <div className="flex-1">
+          <SelectField
+            id="physicalExercise"
+            name="physicalExercise"
+            label="Exercícios físicos"
+            value={formData.physicalExercise}
+            onChange={handleChange}
+            options={exerciseOptions}
+            error={errors.physicalExercise}
+          />
+        </div>
+    </div>
       
       <SelectField
         id="eatingHabits"

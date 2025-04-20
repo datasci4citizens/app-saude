@@ -82,16 +82,18 @@ export default function UserOnboarding() {
         </button>
         
         {/* Progress indicator - updated color */}
-        <div className="mt-[30px] mb-6 mx-8"> {/* Container with margins */}
-            <div className="bg-gray-200 h-2 rounded-full w-full"> {/* Gray background bar */}
-              <div
-                className="h-2 rounded-full" 
-                style={{
-                  width: `${(step / 3) * 100}%`, // Adjust width based on step
-                  backgroundColor: '#CEFA5A',
-                }}
-              ></div>
-            </div>
+        <div className="mt-[30px] mb-6 mx-8">
+          <div className="flex h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+            <div 
+              className={`h-full w-1/3 ${step === 1 ? "bg-[#CEFA5A]" : "bg-transparent"}`}
+            ></div>
+            <div 
+              className={`h-full w-1/3 ${step === 2 ? "bg-[#CEFA5A]" : "bg-transparent"}`}
+            ></div>
+            <div 
+              className={`h-full w-1/3 ${step === 3 ? "bg-[#CEFA5A]" : "bg-transparent"}`}
+            ></div>
+          </div>
         </div>
         
         {/* Form title - updated font and color */}

@@ -189,7 +189,7 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
       />
       
       <div className="flex flex-row gap-4 max-[311px]:flex-wrap">
-        
+        <div className="flex-1">
           <SelectField
             id="birthSex"
             name="birthSex"
@@ -199,7 +199,8 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
             options={birthSexOptions}
             error={errors.birthSex}
           />
-        
+        </div>
+        <div className="flex-1">    
           <SelectField
             id="gender"
             name="gender"
@@ -209,7 +210,7 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
             options={genderOptions}
             error={errors.gender}
           />
-        
+        </div>
       </div>
       
       <div className="flex flex-row gap-4 max-[294px]:flex-wrap">
