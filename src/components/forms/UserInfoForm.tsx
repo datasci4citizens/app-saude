@@ -193,7 +193,7 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
           <SelectField
             id="birthSex"
             name="birthSex"
-            label="Sexo de nascença"
+            label={<div className="min-h-[40px]">Sexo de nascença</div>}
             value={formData.birthSex}
             onChange={handleChange}
             options={birthSexOptions}
@@ -204,7 +204,7 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
           <SelectField
             id="gender"
             name="gender"
-            label="Gênero"
+            label={<div className="min-h-[40px]">Gênero</div>}
             value={formData.gender}
             onChange={handleChange}
             options={genderOptions}

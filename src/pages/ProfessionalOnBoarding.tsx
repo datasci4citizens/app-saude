@@ -1,0 +1,47 @@
+import React, { useState } from 'react';
+import ProfessionalInfoForm from '@/components/forms/ProfessionalInfoForm';
+
+// Define the data type we expect from the form
+interface ProfessionalData {
+  civilName: string;
+  socialName: string;
+  professionalEmail: string;
+  registrationNumber: string;
+  document: File | null;
+  [key: string]: any;
+}
+
+export default function ProfessionalOnboarding() {
+  // Handle form submission
+  const handleFormSubmit = (data: ProfessionalData) => {
+    console.log('Professional data submitted:', data);
+    alert('Cadastro realizado com sucesso!');
+    // Here you would send the data to your backend
+    // For example: router.push('/dashboard');
+  };
+
+  return (
+    <div className="h-full bg-white overflow-y-auto" style={{height: '100vh'}}>
+      <div className="max-w-md mx-auto">
+        {/* Back button */}
+        <button className="pt-9 pl-8" onClick={() => window.history.back()}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 18L9 12L15 6" stroke="#141B36" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+        
+        {/* Form title */}
+        <div className="pl-9 mt-[46px] mb-6">
+            <h1 className="text-4xl font-bold" style={{ fontFamily: 'Work Sans, sans-serif', color: '#141B36' }}> 
+              Preencha informações sobre você
+            </h1>
+        </div>
+        
+        <div className="pl-9 pr-9">
+          {/* Use the form component here */}
+          <ProfessionalInfoForm onSubmit={handleFormSubmit} />
+        </div>
+      </div>
+    </div>
+  );
+}

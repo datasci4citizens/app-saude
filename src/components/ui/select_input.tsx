@@ -15,7 +15,7 @@ interface Option {
 interface SelectFieldProps {
   id: string;
   name: string;
-  label: string;
+  label: string | React.ReactNode;
   value: string;
   options: Option[];
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;

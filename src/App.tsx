@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ComponentCatalog from './pages/ComponentCatalog';
 import UserOnboarding from './pages/UserOnBoarding';
+import ProfessionalOnboarding from './pages/ProfessionalOnBoarding';
 
 const router = createBrowserRouter([
   {
@@ -12,8 +13,12 @@ const router = createBrowserRouter([
     element: <ComponentCatalog />,
   },
   {
-    path: '/forms-user-1',
+    path: '/forms-user',
     element: <UserOnboarding />,
+  },
+  {
+    path: '/forms-prof',
+    element: <ProfessionalOnboarding />,
   }
 ]);
 
