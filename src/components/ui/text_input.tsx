@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 
 interface TextFieldProps {
-  id: string;
-  name: string;
   label: string;
   defaultValue?: string;
   placeholder?: string;
@@ -16,8 +14,6 @@ interface TextFieldProps {
 }
 
 export function TextField({
-  id,
-  name,
   label,
   defaultValue = '',
   placeholder,
@@ -73,12 +69,10 @@ export function TextField({
 
   return (
     <div className="mb-4">
-      {label && <label htmlFor={id} className={labelStyle}>{label}</label>}
+      {label && <label htmlFor='' className={labelStyle}>{label}</label>}
       
       {multiline ? (
         <textarea
-          id={id}
-          name={name}
           value={value}
           onChange={handleChange}
           placeholder={placeholder}
@@ -94,8 +88,6 @@ export function TextField({
         />
       ) : (
         <Input
-          id={id}
-          name={name}
           type={type}
           value={value}
           onChange={handleChange}

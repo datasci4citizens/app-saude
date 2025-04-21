@@ -9,6 +9,14 @@ import { Switch } from "@/components/ui/switch";
 import { LabeledSwitch } from "@/components/ui/labeled-switch";
 import { TextField } from '@/components/ui/text_input'; 
 import { useState } from "react";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem
+} from '@/components/ui/select';
+
 
 export default function ComponentCatalog() {
   // variables of the checkboxes
@@ -35,6 +43,8 @@ export default function ComponentCatalog() {
     compact: '',
     large: ''
   });
+
+  const [selectValue, setSelectValue] = useState('');
 
 
   return (
@@ -161,8 +171,6 @@ export default function ComponentCatalog() {
             <h3 className="text-lg font-medium mb-4">Orange- standard size</h3>
             <TextField
               size="medium"
-              id="static-orange-field"
-              name="static-orange-field"
               label="Put input here"
               placeholder=""
               helperText=""
@@ -175,8 +183,6 @@ export default function ComponentCatalog() {
             <h3 className="text-lg font-medium mb-4">Changes to orange upon input</h3>
             <TextField
               size="medium"
-              id="dynamic-field"
-              name="dynamic-field"
               label="Put input here"
               placeholder=""
               helperText=""
@@ -205,6 +211,48 @@ export default function ComponentCatalog() {
                 placeholder=""
               />
             </div>
+          </div>
+        </div>
+      </section>
+      <section className="mb-12">
+        <h2 className="text-2xl font-semibold mb-6 border-b pb-2">Select Components</h2>
+        
+        <div className="space-y-8">
+          {/* Basic Select */}
+          <div className="p-4 border rounded-lg">
+            <h3 className="text-lg font-medium mb-4">Bigger Select</h3>
+            <Select value={selectValue} onValueChange={setSelectValue}>
+              <SelectTrigger className="w-[145px]">
+                <SelectValue placeholder="Select an option" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="option1">Option 1</SelectItem>
+                <SelectItem value="option2">Option 2</SelectItem>
+                <SelectItem value="option3">Option 3</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Scrollable Select */}
+          <div className="p-4 border rounded-lg">
+            <h3 className="text-lg font-medium mb-4">Smaller Select with scroll</h3>
+            <Select>
+              <SelectTrigger className="w-[92px]">
+                <SelectValue placeholder="1/10" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="option1">1/10</SelectItem>
+                <SelectItem value="option2">2/10</SelectItem>
+                <SelectItem value="option3">3/10</SelectItem>
+                <SelectItem value="option1">4/10</SelectItem>
+                <SelectItem value="option2">5/10</SelectItem>
+                <SelectItem value="option1">6/10</SelectItem>
+                <SelectItem value="option2">7/10</SelectItem>
+                <SelectItem value="option3">8/10</SelectItem>
+                <SelectItem value="option1">9/10</SelectItem>
+                <SelectItem value="option2">10/10</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </section>
