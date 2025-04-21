@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/select';
 import PatientCard from '@/components/ui/patient_cards_home';
 import BackArrow from "@/components/ui/back_arrow";
+import ProgressBar from "@/components/ui/progress-bar";
 
 
 export default function ComponentCatalog() {
@@ -120,23 +121,23 @@ export default function ComponentCatalog() {
         <h3 className="text-lg font-medium mt-4 mb-2">Variantes</h3>
         <div className='flex flex-wrap justify-center gap-4'>
           <RadioCheckbox
-           id="demo1"
+            id="demo1"
             label="Label"
             checked={checkboxStates.demo1}
             onCheckedChange={(checked) => handleCheckboxChange('demo1', checked)}
             />
           <RadioCheckbox
-           id="demo2"
-           label="Checked"
-           checked={checkboxStates.demo2}
-           onCheckedChange={(checked) => handleCheckboxChange('demo2', checked)}
-           />
+            id="demo2"
+            label="Checked"
+            checked={checkboxStates.demo2}
+            onCheckedChange={(checked) => handleCheckboxChange('demo2', checked)}
+            />
           <RadioCheckbox
-           id="demo-checkbox-checked"
-           label="Try clicking!"
-           checked={checkboxStates.demo3}
-           onCheckedChange={(checked) => handleCheckboxChange('demo3', checked)}
-           />
+            id="demo-checkbox-checked"
+            label="Try clicking!"
+            checked={checkboxStates.demo3}
+            onCheckedChange={(checked) => handleCheckboxChange('demo3', checked)}
+            />
         </div>
       </section>
 
@@ -295,14 +296,28 @@ export default function ComponentCatalog() {
           <BackArrow onClick={() => alert('Back button clicked!')} />
         </div>
       </section>
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Navigation</h2>
-        
-        <h3 className="text-lg font-medium mt-4 mb-2">Back Arrow</h3>
-        <div className="flex justify-center">
-          <BackArrow onClick={() => alert('Back button clicked!')} />
+      
+      {/* Progress bar*/}
+      <section className="mb-12 w-full">
+      <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Progress Bar</h2>
+      
+      <div className="space-y-8">
+        <div>
+          <h3 className="text-lg font-medium mb-2">First Third</h3>
+          <ProgressBar variant="first" />
         </div>
-      </section>
+        
+        <div>
+          <h3 className="text-lg font-medium mb-2">Second Third</h3>
+          <ProgressBar variant="second" />
+        </div>
+        
+        <div>
+          <h3 className="text-lg font-medium mb-2">Complete</h3>
+          <ProgressBar variant="third" />
+        </div>
+      </div>
+    </section>
     </div>
   );
 }

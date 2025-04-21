@@ -11,12 +11,22 @@ const BackArrow: React.FC<BackArrowProps> = ({ onClick, className }) => {
     <Button
       variant="ghost"
       onClick={onClick}
-      className={`text-2xl p-2 h-auto hover:bg-gray-100 ${className}`}
+      className={`group flex items-center p-2 h-auto space-x-2 hover:bg-gray-100 ${className}`}
       aria-label="Go back"
     >
-      <span role="img" aria-label="arrow" className="mgc_arrow_left_line"></span>
+      {/* MingCute arrow icon with line */}
+      <div className="flex items-center">
+        <span 
+          role="img" 
+          aria-label="arrow" 
+          className="mgc_arrow_left_line text-3xl"
+        ></span>
+      </div>
     </Button>
   );
 };
 
 export default BackArrow;
+
+
+
