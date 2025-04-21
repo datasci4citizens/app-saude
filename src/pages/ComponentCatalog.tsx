@@ -19,6 +19,7 @@ import {
 import PatientCard from '@/components/ui/patient_cards_home';
 import BackArrow from "@/components/ui/back_arrow";
 import ProgressBar from "@/components/ui/progress-bar";
+import Register from "@/components/ui/register";
 
 
 export default function ComponentCatalog() {
@@ -318,6 +319,19 @@ export default function ComponentCatalog() {
         </div>
       </div>
     </section>
+
+
+    {/* Google register*/}
+    <section className="mb-12">
+    <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Authentication</h2>
+    
+    <h3 className="text-lg font-medium mt-4 mb-2">Google Register Button</h3>
+    <div className="flex justify-center">
+      <Register />
+    </div>
+  </section>
+
+
     </div>
   );
 }
