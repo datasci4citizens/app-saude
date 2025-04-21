@@ -14,7 +14,7 @@ import PatientCard from '@/components/ui/patient_cards_home';
 import BackArrow from "@/components/ui/back_arrow";
 import ProgressBar from "@/components/ui/progress-bar";
 import Register from "@/components/ui/register";
-
+import SegmentedToggle from "@/components/ui/toggle_selector";
 
 export default function ComponentCatalog() {
   // variables of the checkboxes
@@ -252,7 +252,6 @@ export default function ComponentCatalog() {
             <h3 className="text-lg font-medium mb-4">Smaller Select with scroll</h3>
             <Select value={selectValue} onValueChange={setSelectValue}>
               <SelectTrigger 
-                className="w-[92px]" 
                 size="sm" 
                 hasSelection={!!selectValue} // Add this prop
               >
@@ -344,10 +343,20 @@ export default function ComponentCatalog() {
       <Register />
     </div>
   </section>
+
+    {/* Toggle todos/urgentes*/}
+  <div className="p-6 max-w-4xl mx-auto overflow-y-auto" style={{ height: '100vh' }}>
+      <h1 className="text-3xl font-bold mb-8">Toggle</h1>
+      
+      {/* Segmented Toggle Section */}
+      <section className="mb-12">
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2"></h2>
+        <div className="flex justify-center">
+          <SegmentedToggle />
+        </div>
+      </section>
+    </div>
   
-
-
-
 
 
     {/* filling to help visualization*/}
