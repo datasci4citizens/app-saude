@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Header from '../components/header';
-import Card from '../components/reminder-card';
+import Header from '../../components/header';
+import Card from '../../components/reminder-card';
 
 const Reminders: React.FC = () => {
   const today = new Date();
@@ -20,7 +20,6 @@ const Reminders: React.FC = () => {
       {/* Header */}
       <Header
         title="Hoje, dia 19/04"
-        onBackClick={() => console.log('Navigate back')}
         rightIcon={<span style={styles.editIcon} className="mgc-pencil-line" />}
       />
 

@@ -3,7 +3,7 @@ import React from "react";
 interface HeaderProps {
   title: string;
   subtitle?: string;
-  onBackClick: () => void;
+  onBackClick?: () => void;
   rightIcon?: React.ReactNode;
 }
 
@@ -13,10 +13,18 @@ const Header: React.FC<HeaderProps> = ({
   onBackClick,
   rightIcon,
 }) => {
+  const handleBackClick = () => {
+    if (onBackClick) {
+      onBackClick();
+    } else {
+      window.history.back();
+    }
+  };
+
   return (
     <div>
       {/* Back Button */}
-      <button style={styles.backButton} onClick={onBackClick}>
+      <button style={styles.backButton} onClick={handleBackClick}>
         <span style={styles.backIcon}>&larr;</span>
       </button>
       <div style={styles.iconTextContainer}>

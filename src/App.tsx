@@ -1,7 +1,9 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ComponentCatalog from './pages/ComponentCatalog';
 import UserOnboarding from './pages/UserOnBoarding';
-import Reminders from './pages/Reminders';
+import Reminders from './pages/reminders/Reminders';
+import NewReminder from './pages/reminders/NewReminder';
+import ViewReminder from './pages/reminders/ViewReminder';
 
 const NotFound = () => (
   <div>
@@ -27,6 +29,18 @@ const router = createBrowserRouter([
   {
     path: '/reminders',
     element: <Reminders />,
+  },
+  {
+    path: '/new-reminder',
+    element: <NewReminder />,
+  },
+  {
+    path: '/reminder',
+    element: <ViewReminder reminder={{
+      title: "Risperidona",
+      observation: "Tomar após refeição.",
+      time: "Alo mona"
+    }} onDelete={() => {console.log("deletar")}}/>,
   },
   {
     path: '*',
