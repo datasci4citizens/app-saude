@@ -239,7 +239,7 @@ export default function ComponentCatalog() {
           {/* Scrollable Select */}
           <div className="p-4 border rounded-lg">
             <h3 className="text-lg font-medium mb-4">Smaller Select with scroll</h3>
-            <Select>
+            <Select value={selectValue} onValueChange={setSelectValue}>
               <SelectTrigger className="w-[92px]">
                 <SelectValue placeholder="1/10" />
               </SelectTrigger>
@@ -247,13 +247,13 @@ export default function ComponentCatalog() {
                 <SelectItem value="option1">1/10</SelectItem>
                 <SelectItem value="option2">2/10</SelectItem>
                 <SelectItem value="option3">3/10</SelectItem>
-                <SelectItem value="option1">4/10</SelectItem>
-                <SelectItem value="option2">5/10</SelectItem>
-                <SelectItem value="option1">6/10</SelectItem>
-                <SelectItem value="option2">7/10</SelectItem>
-                <SelectItem value="option3">8/10</SelectItem>
-                <SelectItem value="option1">9/10</SelectItem>
-                <SelectItem value="option2">10/10</SelectItem>
+                <SelectItem value="option4">4/10</SelectItem>
+                <SelectItem value="option5">5/10</SelectItem>
+                <SelectItem value="option6">6/10</SelectItem>
+                <SelectItem value="option7">7/10</SelectItem>
+                <SelectItem value="option8">8/10</SelectItem>
+                <SelectItem value="option9">9/10</SelectItem>
+                <SelectItem value="option10">10/10</SelectItem>
               </SelectContent>
             </Select>
           </div>
