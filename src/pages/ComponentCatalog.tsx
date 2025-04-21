@@ -17,6 +17,7 @@ import {
   SelectItem
 } from '@/components/ui/select';
 import PatientCard from '@/components/ui/patient_cards_home';
+import BackArrow from "@/components/ui/back_arrow";
 
 
 export default function ComponentCatalog() {
@@ -139,35 +140,36 @@ export default function ComponentCatalog() {
         </div>
       </section>
 
-      {/* Seção de Switch */}
-      <section className="mb-12">
-  <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Toggle Switch</h2>
-  
-  <h3 className="text-lg font-medium mt-4 mb-2">Standalone Switch</h3>
-  <div className='flex justify-center mb-8'>
-    <Switch 
-      checked={toggleState} 
-      onCheckedChange={setToggleState} 
-    />
-  </div>
-  
-  <h3 className="text-lg font-medium mt-4 mb-2">Labeled Switch</h3>
-  <div className='flex justify-center mb-24'>
-    <div className='w-full max-w-md'>
-      <LabeledSwitch 
-        label="Compartilhar esses dados com profissionais de saúde"
-        checked={labeledToggleState}
-        onCheckedChange={setLabeledToggleState}
-      />
-    </div>
-  </div>
-</section>
+          {/* Seção de Switch */}
+          <section className="mb-12">
+      <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Toggle Switch</h2>
       
-<section className="mb-12">
+      <h3 className="text-lg font-medium mt-4 mb-2">Standalone Switch</h3>
+      <div className='flex justify-center mb-8'>
+        <Switch 
+          checked={toggleState} 
+          onCheckedChange={setToggleState} 
+        />
+      </div>
+      
+      <h3 className="text-lg font-medium mt-4 mb-2">Labeled Switch</h3>
+      <div className='flex justify-center mb-24'>
+        <div className='w-full max-w-md'>
+          <LabeledSwitch 
+            label="Compartilhar esses dados com profissionais de saúde"
+            checked={labeledToggleState}
+            onCheckedChange={setLabeledToggleState}
+          />
+        </div>
+      </div>
+    </section>
+
+
+      {/* Text input section */}
+      <section className="mb-12">
         <h2 className="text-2xl font-semibold mb-6 border-b pb-2">Text Field Variants</h2>
         
         <div className="space-y-8">
-          {/* Static Orange (Always FA6E5A) */}
           <div className="p-4 border rounded-lg">
             <h3 className="text-lg font-medium mb-4">Orange- standard size</h3>
             <TextField
@@ -178,7 +180,6 @@ export default function ComponentCatalog() {
             />
           </div>
 
-          {/* Dynamic (A1A4B2 → FA6E5A) */}
           <div className="p-4 border rounded-lg">
             <h3 className="text-lg font-medium mb-4">Changes to orange upon input</h3>
             <TextField
@@ -189,7 +190,6 @@ export default function ComponentCatalog() {
             />
           </div>
 
-          {/* Size Examples (showing both variants) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
             <div className="p-4 border rounded-lg">
               <h3 className="text-lg font-medium mb-4">Compact</h3>
@@ -213,6 +213,9 @@ export default function ComponentCatalog() {
           </div>
         </div>
       </section>
+
+
+      {/* Select section */}
       <section className="mb-12">
         <h2 className="text-2xl font-semibold mb-6 border-b pb-2">Select Components</h2>
         
@@ -255,6 +258,9 @@ export default function ComponentCatalog() {
           </div>
         </div>
       </section>
+
+
+      {/* Patient Cards Section (medicine and appointments) */}
       <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Patient Cards</h2>
       <div className='flex flex-wrap justify-center gap-4'>
         <PatientCard
@@ -278,6 +284,25 @@ export default function ComponentCatalog() {
           onClick={() => alert('Ver Consultas')}
         />
       </div>
+
+
+      {/* Back Arrow Section */}
+      <section className="mb-12">
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Navigation</h2>
+        
+        <h3 className="text-lg font-medium mt-4 mb-2">Back Arrow</h3>
+        <div className="flex justify-center">
+          <BackArrow onClick={() => alert('Back button clicked!')} />
+        </div>
+      </section>
+      <section className="mb-12">
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Navigation</h2>
+        
+        <h3 className="text-lg font-medium mt-4 mb-2">Back Arrow</h3>
+        <div className="flex justify-center">
+          <BackArrow onClick={() => alert('Back button clicked!')} />
+        </div>
+      </section>
     </div>
   );
 }
