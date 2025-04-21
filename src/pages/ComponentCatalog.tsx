@@ -20,6 +20,7 @@ import PatientCard from '@/components/ui/patient_cards_home';
 import BackArrow from "@/components/ui/back_arrow";
 import ProgressBar from "@/components/ui/progress-bar";
 import Register from "@/components/ui/register";
+import { SelectableOption } from "@/components/ui/selectable_button";
 
 
 export default function ComponentCatalog() {
@@ -49,6 +50,18 @@ export default function ComponentCatalog() {
   });
 
   const [selectValue, setSelectValue] = useState('');
+
+
+    const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  
+    const options = [
+      { id: 'option1', label: 'Usuário/paciente' },
+      { id: 'option2', label: 'Profissional da saúde ou ACS' },
+    ];
+  
+    const handleOptionClick = (id: string) => {
+      setSelectedOption(prev => prev === id ? null : id);
+    };
 
 
   return (
@@ -330,7 +343,21 @@ export default function ComponentCatalog() {
       <Register />
     </div>
   </section>
+  
+  {/*Select user or professional*/}
+  <div className="flex flex-col items-center space-y-3">
+      {options.map(option => (
+        <SelectableOption
+          key={option.id}
+          label={option.label}
+          selected={selectedOption === option.id}
+          onClick={() => handleOptionClick(option.id)}
+        />
+      ))}
+    </div>
 
+    {/* filling to help visualization*/}
+    <div className="h-[100px] bg-white" />
 
     </div>
   );
