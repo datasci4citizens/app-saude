@@ -9,18 +9,11 @@ import { Switch } from "@/components/ui/switch";
 import { LabeledSwitch } from "@/components/ui/labeled-switch";
 import { TextField } from '@/components/ui/text_input'; 
 import { useState } from "react";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem
-} from '@/components/ui/select';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import PatientCard from '@/components/ui/patient_cards_home';
 import BackArrow from "@/components/ui/back_arrow";
 import ProgressBar from "@/components/ui/progress-bar";
 import Register from "@/components/ui/register";
-import { SelectableOption } from "@/components/ui/selectable_button";
 
 
 export default function ComponentCatalog() {
@@ -62,6 +55,10 @@ export default function ComponentCatalog() {
     const handleOptionClick = (id: string) => {
       setSelectedOption(prev => prev === id ? null : id);
     };
+
+    const [selectedToggleOption, setSelectedToggleOption] = useState<string>('Option 1');
+    const [value, setValue] = useState('');
+
 
 
   return (
@@ -238,8 +235,8 @@ export default function ComponentCatalog() {
           {/* Basic Select */}
           <div className="p-4 border rounded-lg">
             <h3 className="text-lg font-medium mb-4">Bigger Select</h3>
-            <Select value={selectValue} onValueChange={setSelectValue}>
-              <SelectTrigger className="w-[145px]">
+            <Select onValueChange={(val) => setValue(val)} value={value}>
+              <SelectTrigger hasSelection={!!value}>
                 <SelectValue placeholder="Select an option" />
               </SelectTrigger>
               <SelectContent>
@@ -254,7 +251,11 @@ export default function ComponentCatalog() {
           <div className="p-4 border rounded-lg">
             <h3 className="text-lg font-medium mb-4">Smaller Select with scroll</h3>
             <Select value={selectValue} onValueChange={setSelectValue}>
-              <SelectTrigger className="w-[92px]">
+              <SelectTrigger 
+                className="w-[92px]" 
+                size="sm" 
+                hasSelection={!!selectValue} // Add this prop
+              >
                 <SelectValue placeholder="1/10" />
               </SelectTrigger>
               <SelectContent>
@@ -344,17 +345,10 @@ export default function ComponentCatalog() {
     </div>
   </section>
   
-  {/*Select user or professional*/}
-  <div className="flex flex-col items-center space-y-3">
-      {options.map(option => (
-        <SelectableOption
-          key={option.id}
-          label={option.label}
-          selected={selectedOption === option.id}
-          onClick={() => handleOptionClick(option.id)}
-        />
-      ))}
-    </div>
+
+
+
+
 
     {/* filling to help visualization*/}
     <div className="h-[100px] bg-white" />

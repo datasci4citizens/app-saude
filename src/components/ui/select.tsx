@@ -131,12 +131,16 @@ const SelectTrigger = forwardRef<
   ElementRef<typeof SelectPrimitive.Trigger>,
   ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> & {
     size?: 'sm' | 'md';
+    hasSelection?: boolean; // New prop to track selection
   }
->(({ className, children, size = 'md', ...props }, ref) => (
+>(({ className, children, size = 'md', hasSelection = false, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex items-center justify-between rounded-lg border border-[#A1A4B2] bg-transparent text-[#A1A4B2] font-[\'Inter\'] text-[14px] ring-offset-background placeholder:text-[#A1A4B2] focus:outline-none focus:ring-2 focus:ring-[#FA6E5A] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
+      'flex items-center justify-between rounded-lg border bg-transparent font-inter text-[14px] ring-offset-background placeholder:text-[#A1A4B2] focus:outline-none focus:ring-2 focus:ring-[#FA6E5A] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 transition-colors',
+      hasSelection 
+        ? 'border-[#FA6E5A] text-[#141B36]' // Selected state
+        : 'border-[#A1A4B2] text-[#A1A4B2]', // Default state
       size === 'md' ? 'h-[48px] w-[36%] min-w-[120px] px-4' : 'h-[48px] w-[23%] min-w-[80px] px-3',
       className
     )}
@@ -144,12 +148,13 @@ const SelectTrigger = forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <ChevronDown className="h-4 w-4 text-[#8F9098]" />
+      <ChevronDown className={cn(
+        'h-4 w-4 transition-colors',
+        hasSelection ? 'text-[#FA6E5A]' : 'text-[#8F9098]'
+      )} />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
-SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
-
 export {
 	Select,
 	SelectGroup,

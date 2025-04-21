@@ -9,7 +9,7 @@ interface BackArrowProps {
 const BackArrow: React.FC<BackArrowProps> = ({ onClick, className }) => {
   return (
     <Button
-      variant="ghost"
+      variant="white"
       onClick={onClick}
       className={`group flex items-center p-2 h-auto space-x-2 hover:bg-gray-100 ${className}`}
       aria-label="Go back"
