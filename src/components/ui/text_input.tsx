@@ -5,12 +5,11 @@ interface TextFieldProps {
   label: string;
   defaultValue?: string;
   placeholder?: string;
-  helperText?: string;
   error?: string;
   type?: string;
   size?: 'medium' | 'compact' | 'large';
   multiline?: boolean;
-  variant?: 'static-orange' | 'dynamic-gray-to-orange'; // New variant prop
+  variant?: 'static-orange' | 'dynamic-gray-to-orange';
 }
 
 export function TextField({
@@ -21,36 +20,25 @@ export function TextField({
   type = 'text',
   size = 'medium',
   multiline = false,
-  variant = 'static-orange' // Default to always orange
+  variant = 'static-orange'
 }: TextFieldProps) {
   const [value, setValue] = useState(defaultValue);
   const [hasInput, setHasInput] = useState(false);
 
   const labelStyle = "block text-[14px] font-['Inter'] font-bold text-[#141B36] mb-2";
 
-  // Size configurations
+  // Responsive size configurations
   const sizeClasses = {
-    medium: 'w-[325px] h-[48px] py-2 px-4',
-    compact: 'w-[142px] h-[48px] py-2 px-3',
-    large: 'w-[325px] min-h-[152px] py-4 px-4'
+    medium: 'w-[85%] md:w-[85%] h-[48px] py-2 px-4', // Full width on mobile, constrained on desktop
+    compact: 'w-[36%] h-[48px] py-2 px-3', // Takes ~half width for side-by-side
+    large: 'w-[85%] min-h-[120px] md:min-h-[152px] py-4 px-4' // 6 lines of text (~24px per line * 6)
   };
 
-  // Dynamic border color logic
+  // Dynamic border color logic (unchanged)
   const getBorderColor = () => {
     if (error) return 'border-red-500';
     if (variant === 'static-orange') return 'border-[#FA6E5A]';
     return hasInput ? 'border-[#FA6E5A]' : 'border-[#A1A4B2]';
-  };
-
-  const getFocusColor = () => {
-    return variant === 'static-orange' 
-      ? 'focus-visible:ring-[#FA6E5A]' 
-      : 'focus-visible:ring-[#A1A4B2]';
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setValue(e.target.value);
-    setHasInput(e.target.value.length > 0);
   };
 
   const baseClasses = `
@@ -60,7 +48,6 @@ export function TextField({
     font-['Inter']
     font-normal
     rounded-lg
-    ${getFocusColor()}
     focus-visible:ring-1
     transition-colors
     ${sizeClasses[size]}
@@ -68,34 +55,33 @@ export function TextField({
   `;
 
   return (
-    <div className="mb-4">
-      {label && <label htmlFor='' className={labelStyle}>{label}</label>}
+    <div className={`mb-4 ${size === 'compact' ? 'inline-block w-[48%]' : 'block'}`}>
+      {label && <label className={labelStyle}>{label}</label>}
       
       {multiline ? (
         <textarea
           value={value}
-          onChange={handleChange}
-          placeholder={placeholder}
-          className={`
-            ${baseClasses}
-            resize-none
-          `}
-          style={{
-            lineHeight: '1.5',
-            minHeight: '152px' // Use minHeight instead of height
+          onChange={(e) => {
+            setValue(e.target.value);
+            setHasInput(e.target.value.length > 0);
           }}
-          wrap="soft" // Changed to soft for better wrapping
+          placeholder={placeholder}
+          className={`${baseClasses} resize-none`}
+          rows={6} // Ensures 6 lines visible by default
+          style={{ lineHeight: '1.5' }}
         />
       ) : (
         <Input
           type={type}
           value={value}
-          onChange={handleChange}
+          onChange={(e) => {
+            setValue(e.target.value);
+            setHasInput(e.target.value.length > 0);
+          }}
           placeholder={placeholder}
           className={baseClasses}
         />
       )}
-      
     </div>
   );
 }

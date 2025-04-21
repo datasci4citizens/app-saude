@@ -16,6 +16,7 @@ import {
   SelectContent,
   SelectItem
 } from '@/components/ui/select';
+import PatientCard from '@/components/ui/patient_cards_home';
 
 
 export default function ComponentCatalog() {
@@ -173,7 +174,6 @@ export default function ComponentCatalog() {
               size="medium"
               label="Put input here"
               placeholder=""
-              helperText=""
               variant="static-orange"
             />
           </div>
@@ -185,7 +185,6 @@ export default function ComponentCatalog() {
               size="medium"
               label="Put input here"
               placeholder=""
-              helperText=""
               variant="dynamic-gray-to-orange"
             />
           </div>
@@ -207,7 +206,7 @@ export default function ComponentCatalog() {
                 size="large"
                 multiline
                 variant="dynamic-gray-to-orange"
-                label="Compact Dynamic"
+                label="Multiline"
                 placeholder=""
               />
             </div>
@@ -256,6 +255,29 @@ export default function ComponentCatalog() {
           </div>
         </div>
       </section>
+      <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Patient Cards</h2>
+      <div className='flex flex-wrap justify-center gap-4'>
+        <PatientCard
+          variant="medicine"
+          title="Remédios"
+          items={[
+            { name: 'Paracetamol', date: '08:00' },
+            { name: 'Ibuprofeno', date: '12:00' },
+            { name: 'Omeprazol', date: '20:00' }
+          ]}
+          onClick={() => alert('Ver Medicação')}
+        />
+        <PatientCard
+          variant="appointment"
+          title="Consultas"
+          items={[
+            { name: 'Dr. Silva', date: '15/05 - 14:30' },
+            { name: 'Dra. Oliveira', date: '17/05 - 10:00' },
+            { name: 'Dr. Santos', date: '20/05 - 16:15' }
+          ]}
+          onClick={() => alert('Ver Consultas')}
+        />
+      </div>
     </div>
   );
 }

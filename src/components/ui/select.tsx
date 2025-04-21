@@ -137,7 +137,7 @@ const SelectTrigger = forwardRef<
     ref={ref}
     className={cn(
       'flex items-center justify-between rounded-lg border border-[#A1A4B2] bg-transparent text-[#A1A4B2] font-[\'Inter\'] text-[14px] ring-offset-background placeholder:text-[#A1A4B2] focus:outline-none focus:ring-2 focus:ring-[#FA6E5A] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
-      size === 'md' ? 'h-[48px] w-[142px] px-4' : 'h-[48px] w-[92px] px-3',
+      size === 'md' ? 'h-[48px] w-[36%] min-w-[120px] px-4' : 'h-[48px] w-[23%] min-w-[80px] px-3',
       className
     )}
     {...props}
