@@ -2,46 +2,105 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
 
+async function refreshToken() {
+  const refreshToken = localStorage.getItem('refreshToken');
+
+  if (!refreshToken) {
+    console.error('Refresh token não encontrado');
+    return null;
+  }
+
+  try {
+    const response = await axios.post('http://localhost:8000/auth/token/refresh/', { refresh: refreshToken });
+    const { access } = response.data;
+    localStorage.setItem('accessToken', access);
+    return access;
+  } catch (err) {
+    console.error('Erro ao tentar renovar o token:', err);
+    return null;
+  }
+}
+
+async function fetchWithAuth(url: string, options: { headers?: Record<string, string>; method?: string } = {}) {
+  let accessToken = localStorage.getItem('accessToken');
+  let storedRefreshToken = localStorage.getItem('refreshToken');
+
+  if (!accessToken) {
+    return Promise.reject('Access token não encontrado');
+  }
+
+  const authHeaders = {
+    ...options.headers,
+    Authorization: `Bearer ${accessToken}`,
+    'Content-Type': 'application/json',
+  };
+
+  let response = await fetch(url, {
+    ...options,
+    headers: authHeaders,
+  });
+
+  if (response.status === 401 && storedRefreshToken) {
+    const newAccessToken = await refreshToken();
+    if (newAccessToken) {
+      response = await fetch(url, {
+        ...options,
+        headers: {
+          ...authHeaders,
+          Authorization: `Bearer ${newAccessToken}`,
+        },
+      });
+    }
+  }
+
+  return response;
+}
+
 export default function Login() {
   const login = useGoogleLogin({
     onSuccess: async ({ code }) => {
       try {
-        const tokens = await axios.post('http://localhost:8000/auth/login/google/',
+        const tokens = await axios.post(
+          'http://localhost:8000/auth/login/google/',
           { code },
           { withCredentials: true }
         );
 
-        console.log('Tokens:', tokens.data);
+        const { access, refresh } = tokens.data;
 
-        // Agora testa se o usuário está logado
-        const res = await fetch('http://localhost:8000/auth/me/', {
-          headers: {
-            Authorization: `Bearer ${tokens.data.access}`,
-          },
+        localStorage.setItem('accessToken', access);
+        localStorage.setItem('refreshToken', refresh);
+
+        const roleRes = await fetchWithAuth('http://localhost:8000/auth/role/', {
+          method: 'GET',
         });
-        const userData = await res.json();
-        console.log('User data:', userData);
+
+        const { role } = await roleRes.json();
+
+        if (role === 'provider' || role === 'person') {
+          window.location.href = '/welcome';
+        } else {
+          window.location.href = '/complete-profile';
+        }
       } catch (err) {
         console.error('Erro ao logar:', err);
       }
     },
     flow: 'auth-code',
-    //ux_mode: 'redirect',
   });
 
   return (
-    <div 
-      className="min-h-screen flex flex-col items-center justify-center" 
+    <div
+      className="min-h-screen flex flex-col items-center justify-center"
       style={{ backgroundColor: '#5A96FA' }}
     >
       <div className="bg-white p-8 rounded-lg shadow-md flex flex-col items-center">
         <h1 className="text-2xl font-bold mb-8 text-gray-800">App Saúde</h1>
-        
-        <Button 
-          onClick={login}  // <- aqui chamamos a função que o hook retorna
+
+        <Button
+          onClick={login}
           className="flex items-center gap-2 bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 px-6 py-3 rounded-lg font-medium"
         >
-          {/* Google Logo */}
           <svg width="20" height="20" viewBox="0 0 24 24">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -62,9 +121,9 @@ export default function Login() {
           </svg>
           Entrar com Google
         </Button>
-        
+
         <p className="text-sm text-gray-500 mt-6 text-center">
-          Esta tela é para testes de autenticação.<br/>
+          Esta tela é para testes de autenticação.<br />
           Ambiente de desenvolvimento.
         </p>
       </div>
