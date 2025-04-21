@@ -15,6 +15,7 @@ import BackArrow from "@/components/ui/back_arrow";
 import ProgressBar from "@/components/ui/progress-bar";
 import Register from "@/components/ui/register";
 import SegmentedToggle from "@/components/ui/toggle_selector";
+import {FileUpload} from '@/components/ui/upload_field';
 
 export default function ComponentCatalog() {
   // variables of the checkboxes
@@ -36,28 +37,12 @@ export default function ComponentCatalog() {
     }));
   };
 
-  const [fieldValues, setFieldValues] = useState({
-    medium: '',
-    compact: '',
-    large: ''
-  });
 
   const [selectValue, setSelectValue] = useState('');
 
-
-    const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  
-    const options = [
-      { id: 'option1', label: 'Usuário/paciente' },
-      { id: 'option2', label: 'Profissional da saúde ou ACS' },
-    ];
-  
-    const handleOptionClick = (id: string) => {
-      setSelectedOption(prev => prev === id ? null : id);
-    };
-
-    const [selectedToggleOption, setSelectedToggleOption] = useState<string>('Option 1');
     const [value, setValue] = useState('');
+
+    const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
 
 
@@ -152,8 +137,8 @@ export default function ComponentCatalog() {
         </div>
       </section>
 
-          {/* Seção de Switch */}
-          <section className="mb-12">
+      {/* Seção de Switch */}
+      <section className="mb-12">
       <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Toggle Switch</h2>
       
       <h3 className="text-lg font-medium mt-4 mb-2">Standalone Switch</h3>
@@ -357,6 +342,18 @@ export default function ComponentCatalog() {
       </section>
     </div>
   
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">Component Catalog</h1>
+      
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-4">File Upload</h2>
+        <div className="flex justify-center">
+          <FileUpload />
+        </div>
+      </section>
+    </div>
+
+
 
 
     {/* filling to help visualization*/}
