@@ -1,63 +1,109 @@
-import React from 'react';
-import { Input } from '@/components/ui/input'; // Assuming you have this component
+import React, { useState } from 'react';
+import { Input } from '@/components/ui/input';
 
 interface TextFieldProps {
   id: string;
   name: string;
   label: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  defaultValue?: string;
   placeholder?: string;
   helperText?: string;
   error?: string;
   type?: string;
+  size?: 'medium' | 'compact' | 'large';
+  multiline?: boolean;
+  variant?: 'static-orange' | 'dynamic-gray-to-orange'; // New variant prop
 }
 
 export function TextField({
   id,
   name,
   label,
-  value,
-  onChange,
+  defaultValue = '',
   placeholder,
-  helperText,
   error,
-  type = 'text'
+  type = 'text',
+  size = 'medium',
+  multiline = false,
+  variant = 'static-orange' // Default to always orange
 }: TextFieldProps) {
-  // styling for label, helper text, and error message
-  const labelStyle = "block text-sm font-['Inter'] font-light text-[#A0A3B1] mb-1";
-  const helperTextStyle = "text-xs font-['Inter'] font-light text-[#A0A3B1]";
-  const errorTextStyle = "text-red-500 text-xs font-['Inter'] font-light mt-1";
+  const [value, setValue] = useState(defaultValue);
+  const [hasInput, setHasInput] = useState(false);
+
+  const labelStyle = "block text-[14px] font-['Inter'] font-bold text-[#141B36] mb-2";
+
+  // Size configurations
+  const sizeClasses = {
+    medium: 'w-[325px] h-[48px] py-2 px-4',
+    compact: 'w-[142px] h-[48px] py-2 px-3',
+    large: 'w-[325px] min-h-[152px] py-4 px-4'
+  };
+
+  // Dynamic border color logic
+  const getBorderColor = () => {
+    if (error) return 'border-red-500';
+    if (variant === 'static-orange') return 'border-[#FA6E5A]';
+    return hasInput ? 'border-[#FA6E5A]' : 'border-[#A1A4B2]';
+  };
+
+  const getFocusColor = () => {
+    return variant === 'static-orange' 
+      ? 'focus-visible:ring-[#FA6E5A]' 
+      : 'focus-visible:ring-[#A1A4B2]';
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setValue(e.target.value);
+    setHasInput(e.target.value.length > 0);
+  };
+
+  const baseClasses = `
+    bg-transparent
+    border ${getBorderColor()}
+    text-[#141B36]
+    font-['Inter']
+    font-normal
+    rounded-lg
+    ${getFocusColor()}
+    focus-visible:ring-1
+    transition-colors
+    ${sizeClasses[size]}
+    ${multiline ? 'whitespace-pre-wrap overflow-y-auto' : ''}
+  `;
 
   return (
     <div className="mb-4">
-      {label && (
-        <label htmlFor={id} className={labelStyle}>
-          {label}
-        </label>
+      {label && <label htmlFor={id} className={labelStyle}>{label}</label>}
+      
+      {multiline ? (
+        <textarea
+          id={id}
+          name={name}
+          value={value}
+          onChange={handleChange}
+          placeholder={placeholder}
+          className={`
+            ${baseClasses}
+            resize-none
+          `}
+          style={{
+            lineHeight: '1.5',
+            minHeight: '152px' // Use minHeight instead of height
+          }}
+          wrap="soft" // Changed to soft for better wrapping
+        />
+      ) : (
+        <Input
+          id={id}
+          name={name}
+          type={type}
+          value={value}
+          onChange={handleChange}
+          placeholder={placeholder}
+          className={baseClasses}
+        />
       )}
       
-      <Input
-        id={id}
-        name={name}
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className={`text-[#141B36] font-['Inter'] font-normal ring-offset-0 ${
-          error ? 'border-red-500' : 'border-gray-300'
-        }`}
-        style={{
-          // Use style to override focus ring if needed
-          // This ensures React's style prop takes precedence
-          '--tw-ring-offset-width': '0px',
-          '--tw-ring-color': '#FA6E5A',
-          '--tw-ring-opacity': '1',
-        }}
-      />
-      
-      {helperText && <span className={helperTextStyle}>{helperText}</span>}
-      {error && <p className={errorTextStyle}>{error}</p>}
     </div>
   );
 }
