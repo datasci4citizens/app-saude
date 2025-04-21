@@ -7,6 +7,7 @@ import HabitCard from "@/components/ui/habit-card";
 import { RadioCheckbox } from "@/components/ui/radio-checkbox";
 import { Switch } from "@/components/ui/switch";
 import { LabeledSwitch } from "@/components/ui/labeled-switch";
+import { TextField } from '@/components/ui/text_input'; 
 import { useState } from "react";
 
 export default function ComponentCatalog() {
@@ -28,6 +29,13 @@ export default function ComponentCatalog() {
       [id]: checked
     }));
   };
+
+  const [fieldValues, setFieldValues] = useState({
+    medium: '',
+    compact: '',
+    large: ''
+  });
+
 
   return (
     <div className="p-6 max-w-4xl mx-auto mx-auto overflow-y-auto" style={{height: '100vh'}}>
@@ -144,7 +152,62 @@ export default function ComponentCatalog() {
   </div>
 </section>
       
-      {/* Adicione mais seções para outros componentes aqui */}
+<section className="mb-12">
+        <h2 className="text-2xl font-semibold mb-6 border-b pb-2">Text Field Variants</h2>
+        
+        <div className="space-y-8">
+          {/* Static Orange (Always FA6E5A) */}
+          <div className="p-4 border rounded-lg">
+            <h3 className="text-lg font-medium mb-4">Orange- standard size</h3>
+            <TextField
+              size="medium"
+              id="static-orange-field"
+              name="static-orange-field"
+              label="Put input here"
+              placeholder=""
+              helperText=""
+              variant="static-orange"
+            />
+          </div>
+
+          {/* Dynamic (A1A4B2 → FA6E5A) */}
+          <div className="p-4 border rounded-lg">
+            <h3 className="text-lg font-medium mb-4">Changes to orange upon input</h3>
+            <TextField
+              size="medium"
+              id="dynamic-field"
+              name="dynamic-field"
+              label="Put input here"
+              placeholder=""
+              helperText=""
+              variant="dynamic-gray-to-orange"
+            />
+          </div>
+
+          {/* Size Examples (showing both variants) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            <div className="p-4 border rounded-lg">
+              <h3 className="text-lg font-medium mb-4">Compact</h3>
+              <TextField
+                size="compact"
+                variant="static-orange"
+                label="Compact Orange"
+                placeholder=""
+              />
+            </div>
+            <div className="p-4 border rounded-lg">
+              <h3 className="text-lg font-medium mb-4">Large</h3>
+              <TextField
+                size="large"
+                multiline
+                variant="dynamic-gray-to-orange"
+                label="Compact Dynamic"
+                placeholder=""
+              />
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
