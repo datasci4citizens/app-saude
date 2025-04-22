@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import HomeBanner from "@/components/home-banner";
+import HomeBanner from "@/components/ui/home-banner";
 import InfoCard from "@/components/ui/info-card";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 export default function AcsMainPage() {
     const navigate = useNavigate();
-    
+
     // Funções de navegação - atualizadas para usar navigate em vez de router.push
     const handleEmergencyClick = () => {
         navigate('/emergencies');
@@ -15,13 +15,13 @@ export default function AcsMainPage() {
         navigate('/appointments/amanda');
     };
 
-    const handleBannerClick = () => {
+    const handleBannerIconClick = () => {
         navigate('/patient-registry');
     };
 
     const handleNavigationClick = (itemId: string) => {
         // Implementar navegação baseada no item clicado
-        switch(itemId) {
+        switch (itemId) {
             case 'home':
                 // Já estamos na home
                 break;
@@ -41,26 +41,25 @@ export default function AcsMainPage() {
     };
 
     return (
-        <div className="bg-gray-50 h-full pb-24" style={{minHeight: '100vh'}}>
+        <div className="bg-gray-50 h-full pb-24" style={{ minHeight: '100vh' }}>
             {/* Banner superior */}
-            <HomeBanner 
+            <HomeBanner
                 title="Registro diário"
                 subtitle="Cheque registro dos seus pacientes"
-                onClick={handleBannerClick}
-                onIconClick={handleBannerClick}
+                onIconClick={handleBannerIconClick}
             />
-            
+
             {/* Container para os cards */}
             <div className="px-4 py-5 flex justify-between">
                 {/* Card de Emergência */}
-                <InfoCard 
+                <InfoCard
                     variant="emergency"
                     count={3}
                     onClick={handleEmergencyClick}
                 />
-                
+
                 {/* Card de Próxima Consulta */}
-                <InfoCard 
+                <InfoCard
                     variant="appointment"
                     name="Amanda de Souza"
                     date="26/04/2024"
@@ -68,10 +67,10 @@ export default function AcsMainPage() {
                     onClick={handleAppointmentClick}
                 />
             </div>
-            
+
             {/* Barra de navegação */}
-            <BottomNavigationBar 
-                variant="acs" 
+            <BottomNavigationBar
+                variant="acs"
                 initialActiveId="home"
                 onItemClick={handleNavigationClick}
             />
