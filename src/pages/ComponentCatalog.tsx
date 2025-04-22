@@ -84,16 +84,7 @@ export default function ComponentCatalog() {
               onClick={() => alert('Ver Consulta')}
             />
         </div>
-        <div>
-          <HabitCard number={1} />
-          <HabitCard number={2} />
-          <HabitCard number={3} title="Atividade"/> 
-        </div>
-        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Task Bar</h2>
-        <div className='flex flex-wrap justify-center'>
-            <BottomNavigationBar variant="user"/>
-            {/* não é possível colocar as duas devido a ficarem fixas na parte de baixo da página */}
-        </div>
+
 
       <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Checkbox</h2>
         

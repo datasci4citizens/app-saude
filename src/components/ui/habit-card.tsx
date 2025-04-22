@@ -1,27 +1,24 @@
 import React from 'react';
 
 interface HabitCardProps {
-  number: number;
-  title?: string;
+  title: string;  // Made required since we're not showing numbers
   className?: string;
 }
 
 /**
  * HabitCard - Componente para exibir um hábito como card
  * 
- * @param number - Número do hábito
- * @param title - Texto opcional para substituir "Hábito"
+ * @param title - Texto do hábito (obrigatório)
  * @param className - Classes adicionais para customização
  */
 const HabitCard: React.FC<HabitCardProps> = ({ 
-  number, 
-  title = "Hábito", 
+  title, 
   className = "" 
 }) => {
   return (
     <div 
       className={`
-        bg-orange
+        bg-[#FA6E5A]
         text-white 
         font-medium 
         py-3 
@@ -40,7 +37,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
         marginBottom: '4px'
       }}
     >
-      {title} {number}
+      {title}
     </div>
   );
 };

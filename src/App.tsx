@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ComponentCatalog from './pages/ComponentCatalog';
 import UserOnboarding from './pages/UserOnBoarding';
+import DiaryPage from './pages/Diary';
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
   {
     path: '/forms-user-1',
     element: <UserOnboarding />,
+  },
+  {
+    path: '/diary',
+    element: <DiaryPage />,
   }
 ]);
 
