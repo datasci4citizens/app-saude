@@ -19,7 +19,8 @@ const styles = {
   card: {
     base: {
       width: '38%', 
-      borderRadius: '12px'
+      borderRadius: '12px',
+      height: '250px' // Adicionando altura fixa
     },
     emergency: {
       background: '#FFC97E'
@@ -93,12 +94,12 @@ const InfoCard: React.FC<InfoCardProps> = ({
       className="overflow-hidden"
       style={cardStyle}
     >
-      <CardContent className="p-0">
+      <CardContent className="p-0 h-full"> {/* Adicionado h-full */}
         {isEmergency ? (
           /* Card de Emergência */
-          <div className="flex flex-col h-full ">
+          <div className="flex flex-col h-full">
             {/* Conteúdo principal centralizado */}
-            <div className="flex flex-col items-center pt-4">
+            <div className="flex flex-col items-center pt-4 flex-grow">
               {/* Ícone de alerta */}
                 <div className="mb-3 ">
                 <span 
@@ -129,9 +130,9 @@ const InfoCard: React.FC<InfoCardProps> = ({
           /* Card de Próxima Consulta */
           <div className="flex flex-col h-full">
             {/* Cabeçalho */}
-            <div className="p-4 pb-2">
+            <div className="flex flex-col items-center pt-4 flex-grow"> {/* Adicionado flex-grow */}
               <h3 style={styles.text.title}>Próxima consulta:</h3>
-                <p className="font-bold text-lg leading-tight" style={{ fontFamily: 'Inter, sans-serif', color: "#464646"}}>{name}</p>
+              <p className="font-bold text-lg leading-tight" style={{ fontFamily: 'Inter, sans-serif', color: "#464646"}}>{name}</p>
               <div style={styles.text.info}>
                 {date} - {time}
               </div>
@@ -140,10 +141,10 @@ const InfoCard: React.FC<InfoCardProps> = ({
             {/* Botão VER com fundo laranja */}
             <div className="mt-auto p-4 flex justify-end">
               <Button 
-              onClick={onClick}
-              className={buttonClassName}
+                onClick={onClick}
+                className={buttonClassName}
               >
-              VER
+                VER
               </Button>
             </div>
           </div>
