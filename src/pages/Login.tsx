@@ -2,60 +2,6 @@ import { useGoogleLogin } from '@react-oauth/google';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
 
-async function refreshToken() {
-  const refreshToken = localStorage.getItem('refreshToken');
-
-  if (!refreshToken) {
-    console.error('Refresh token não encontrado');
-    return null;
-  }
-
-  try {
-    const response = await axios.post('http://localhost:8000/auth/token/refresh/', { refresh: refreshToken });
-    const { access } = response.data;
-    localStorage.setItem('accessToken', access);
-    return access;
-  } catch (err) {
-    console.error('Erro ao tentar renovar o token:', err);
-    return null;
-  }
-}
-
-async function fetchWithAuth(url: string, options: { headers?: Record<string, string>; method?: string } = {}) {
-  let accessToken = localStorage.getItem('accessToken');
-  let storedRefreshToken = localStorage.getItem('refreshToken');
-
-  if (!accessToken) {
-    return Promise.reject('Access token não encontrado');
-  }
-
-  const authHeaders = {
-    ...options.headers,
-    Authorization: `Bearer ${accessToken}`,
-    'Content-Type': 'application/json',
-  };
-
-  let response = await fetch(url, {
-    ...options,
-    headers: authHeaders,
-  });
-
-  if (response.status === 401 && storedRefreshToken) {
-    const newAccessToken = await refreshToken();
-    if (newAccessToken) {
-      response = await fetch(url, {
-        ...options,
-        headers: {
-          ...authHeaders,
-          Authorization: `Bearer ${newAccessToken}`,
-        },
-      });
-    }
-  }
-
-  return response;
-}
-
 export default function Login() {
   const login = useGoogleLogin({
     onSuccess: async ({ code }) => {
@@ -66,22 +12,20 @@ export default function Login() {
           { withCredentials: true }
         );
 
-        const { access, refresh } = tokens.data;
+        const { access, refresh, role } = tokens.data;
 
         localStorage.setItem('accessToken', access);
         localStorage.setItem('refreshToken', refresh);
+        localStorage.setItem('role', role)
 
-        const roleRes = await fetchWithAuth('http://localhost:8000/auth/role/', {
-          method: 'GET',
-        });
-
-        const { role } = await roleRes.json();
-
-        if (role === 'provider' || role === 'person') {
-          window.location.href = '/welcome';
+        if (role === 'provider') {
+          window.location.href = '/AcsMainPage'
+        } else if (role == 'person') {
+          window.location.href = '/PacientMainPage';
         } else {
           window.location.href = '/complete-profile';
         }
+
       } catch (err) {
         console.error('Erro ao logar:', err);
       }

@@ -28,6 +28,10 @@ export default function CompleteProfile() {
     const endpoint = userType === 'person'
       ? 'http://localhost:8000/api/person/'
       : 'http://localhost:8000/api/provider/';
+    
+    if (userType) {
+      localStorage.setItem('role', userType);
+    }
 
     const res = await fetch(endpoint, {
       method: 'POST',
@@ -48,8 +52,14 @@ export default function CompleteProfile() {
   };
 
   if (done) {
-    window.location.href = '/welcome';
-    return null;
+    if (userType === 'provider') {
+      window.location.href = '/AcsMainPage'
+    } else if (userType== 'person') {
+      window.location.href = '/PacientMainPage';
+    } else {
+      window.location.href = '/complete-profile';
+    }
+    return null
   }
 
   const containerStyle = {
