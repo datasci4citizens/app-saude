@@ -1,4 +1,3 @@
-// TO DO
 import React from "react";
 import Header from "../../components/header";
 import { FaTrash } from "react-icons/fa"; // FontAwesome trash icon for delete
@@ -18,9 +17,7 @@ const ViewReminder: React.FC<ViewReminderProps> = ({ reminder, onDelete }) => {
   return (
     <div style={styles.page}>
       {/* Header */}
-      <Header
-        title="View Reminder"
-      />
+      <Header title="View Reminder" />
 
       {/* Reminder Details */}
       <div style={styles.reminderContainer}>

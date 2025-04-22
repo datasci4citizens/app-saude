@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 
 interface ReminderCardProps {
   title: string;
@@ -6,6 +6,7 @@ interface ReminderCardProps {
   icon: React.ReactNode;
   isChecked: boolean;
   onCheckboxChange: (checked: boolean) => void;
+  showCheckbox?: boolean;
 }
 
 const ReminderCard: React.FC<ReminderCardProps> = ({
@@ -13,14 +14,25 @@ const ReminderCard: React.FC<ReminderCardProps> = ({
   subtitle,
   icon,
   isChecked,
-  onCheckboxChange
+  onCheckboxChange,
+  showCheckbox = true,
 }) => {
+  const [checked, setChecked] = useState<boolean>(isChecked);
+
+  useEffect(() => {
+    setChecked(isChecked);
+  }, [isChecked]);
+
+  const handleCheckboxChange = () => {
+    const newChecked = !checked;
+    setChecked(newChecked);
+    onCheckboxChange(newChecked);
+  };
+
   return (
     <div style={styles.container}>
       {/* Icon container */}
-      <div style={styles.iconContainer}>
-        {icon}
-      </div>
+      <div style={styles.iconContainer}>{icon}</div>
 
       {/* Text content */}
       <div style={styles.textContainer}>
@@ -28,76 +40,87 @@ const ReminderCard: React.FC<ReminderCardProps> = ({
         <p style={styles.subtitle}>{subtitle}</p>
       </div>
 
-      {/* Checkbox */}
-      <div style={styles.checkboxContainer}>
-        <input
-          type="checkbox"
-          checked={isChecked}
-          onChange={(e) => onCheckboxChange(e.target.checked)}
-          style={styles.checkbox}
-        />
-      </div>
+      {/* Checkbox (conditionally rendered) */}
+      {showCheckbox && (
+        <div
+          style={{
+            ...styles.checkboxContainer,
+            backgroundColor: checked ? "#DDFC8E" : "transparent",
+            border: `1.5px solid #141B36`,
+          }}
+          onClick={handleCheckboxChange}
+        >
+          <input
+            type="checkbox"
+            checked={checked}
+            readOnly
+            style={styles.customCheckbox}
+          />
+        </div>
+      )}
     </div>
   );
 };
 
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#F9F9FF',
-    borderRadius: '14px',
-    padding: '16px',
-    width: '100%',
-    margin: '8px 0'
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#F9F9FF",
+    borderRadius: "14px",
+    padding: "16px",
+    width: "100%",
+    margin: "8px 0",
+    minHeight: "72px",
   },
   iconContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#EAE7FF',
-    borderRadius: '50%',
-    width: '40px',
-    height: '40px',
-    fontSize: '20px',
-    color: '#6A5ACD'
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#EAE7FF",
+    borderRadius: "50%",
+    width: "54px",
+    height: "54px",
+    fontSize: "20px",
+    color: "#6A5ACD",
   },
   textContainer: {
     flex: 1,
-    marginLeft: '16px'
+    marginLeft: "16px",
   },
   title: {
-    fontSize: '16px',
-    fontWeight: 'normal',
+    fontSize: "16px",
+    fontWeight: "normal",
     margin: 0,
-    color: '#141B36',
-    fontFamily: '"Inter", sans-serif'
+    color: "#141B36",
+    fontFamily: '"Inter", sans-serif',
   },
   subtitle: {
-    fontSize: '12px',
+    fontSize: "12px",
     margin: 0,
-    color: '#A0A3B1',
-    fontFamily: '"Inter", sans-serif'
+    color: "#A0A3B1",
+    fontFamily: '"Inter", sans-serif',
   },
   checkboxContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#6A5ACD',
-    borderRadius: '50%',
-    width: '32px',
-    height: '32px',
-    color: 'white'
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "24px",
+    height: "24px",
+    borderRadius: "25%",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease, border-color 0.3s ease",
   },
-  checkbox: {
-    appearance: 'none',
-    width: '24px',
-    height: '24px',
-    backgroundColor: 'transparent',
-    border: 'none',
-    cursor: 'pointer'
-  }
+  customCheckbox: {
+    appearance: "none",
+    width: "24px",
+    height: "24px",
+    borderRadius: "50%",
+    cursor: "pointer",
+    border: "none",
+    backgroundColor: "transparent",
+  },
 };
 
 export default ReminderCard;

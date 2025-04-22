@@ -43,9 +43,7 @@ const NewReminder: React.FC = () => {
   return (
     <div style={styles.page}>
       {/* Header */}
-      <Header
-        title="Hoje, dia 19/04"
-      />
+      <Header title="Hoje, dia 19/04" />
 
       {/* Time Picker */}
       <div style={styles.section}>
@@ -78,7 +76,9 @@ const NewReminder: React.FC = () => {
               <input
                 type="checkbox"
                 checked={repeatDays[day as keyof typeof repeatDays]}
-                onChange={() => handleCheckboxChange(day as keyof typeof repeatDays)}
+                onChange={() =>
+                  handleCheckboxChange(day as keyof typeof repeatDays)
+                }
               />
               {day}
             </label>

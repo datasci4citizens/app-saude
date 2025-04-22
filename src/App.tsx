@@ -1,9 +1,9 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import ComponentCatalog from './pages/ComponentCatalog';
-import UserOnboarding from './pages/UserOnBoarding';
-import Reminders from './pages/reminders/Reminders';
-import NewReminder from './pages/reminders/NewReminder';
-import ViewReminder from './pages/reminders/ViewReminder';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import ComponentCatalog from "./pages/ComponentCatalog";
+import UserOnboarding from "./pages/UserOnBoarding";
+import Reminders from "./pages/reminders/Reminders";
+import NewReminder from "./pages/reminders/NewReminder";
+import ViewReminder from "./pages/reminders/ViewReminder";
 
 const NotFound = () => (
   <div>
@@ -15,35 +15,42 @@ const NotFound = () => (
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <h1>Home!</h1>,
   },
   {
-    path: '/components',
+    path: "/components",
     element: <ComponentCatalog />,
   },
   {
-    path: '/forms-user-1',
+    path: "/forms-user-1",
     element: <UserOnboarding />,
   },
   {
-    path: '/reminders',
+    path: "/reminders",
     element: <Reminders />,
   },
   {
-    path: '/new-reminder',
+    path: "/new-reminder",
     element: <NewReminder />,
   },
   {
-    path: '/reminder',
-    element: <ViewReminder reminder={{
-      title: "Risperidona",
-      observation: "Tomar após refeição.",
-      time: "Alo mona"
-    }} onDelete={() => {console.log("deletar")}}/>,
+    path: "/reminder",
+    element: (
+      <ViewReminder
+        reminder={{
+          title: "Risperidona",
+          observation: "Tomar após refeição.",
+          time: "Alo mona",
+        }}
+        onDelete={() => {
+          console.log("deletar");
+        }}
+      />
+    ),
   },
   {
-    path: '*',
+    path: "*",
     element: <NotFound />,
   },
 ]);
