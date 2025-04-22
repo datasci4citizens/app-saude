@@ -7,7 +7,7 @@ export default function DiaryPage() {
     <div className="max-w-md mx-auto p-4">
       {/* Back Arrow */}
       <div className="mb-6">
-        <BackArrow onClick={() => window.history.back()} />
+        <BackArrow />
       </div>
       
       {/* Page Title */}
@@ -22,7 +22,6 @@ export default function DiaryPage() {
         Diário
       </h1>
       
-
       {/* Form */}
       <DiaryInfoForm />
     </div>

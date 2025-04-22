@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import type { ChangeEvent } from 'react'; // Type-only import
 import { Input } from '@/components/ui/input';
 
 interface TextFieldProps {
   label: string;
+  value?: string;
   defaultValue?: string;
   placeholder?: string;
   error?: string;
@@ -10,31 +12,34 @@ interface TextFieldProps {
   size?: 'medium' | 'compact' | 'large';
   multiline?: boolean;
   variant?: 'static-orange' | 'dynamic-gray-to-orange';
+  onChange?: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
 export function TextField({
   label,
+  value: propValue,
   defaultValue = '',
   placeholder,
   error,
   type = 'text',
   size = 'medium',
   multiline = false,
-  variant = 'static-orange'
+  variant = 'static-orange',
+  onChange: propOnChange
 }: TextFieldProps) {
-  const [value, setValue] = useState(defaultValue);
+  const [internalValue, setInternalValue] = useState(defaultValue);
   const [hasInput, setHasInput] = useState(false);
+
+  const value = propValue !== undefined ? propValue : internalValue;
 
   const labelStyle = "block text-[14px] font-['Inter'] font-bold text-[#141B36] mb-2";
 
-  // Responsive size configurations
   const sizeClasses = {
-    medium: 'w-[85%] md:w-[85%] h-[48px] py-2 px-4', // Full width on mobile, constrained on desktop
-    compact: 'w-[36%] h-[48px] py-2 px-3', // Takes ~half width for side-by-side
-    large: 'w-[85%] min-h-[120px] md:min-h-[152px] py-4 px-4' // 6 lines of text (~24px per line * 6)
+    medium: 'w-[85%] md:w-[85%] h-[48px] py-2 px-4',
+    compact: 'w-[36%] h-[48px] py-2 px-3',
+    large: 'w-[85%] min-h-[120px] md:min-h-[152px] py-4 px-4'
   };
 
-  // Dynamic border color logic (unchanged)
   const getBorderColor = () => {
     if (error) return 'border-red-500';
     if (variant === 'static-orange') return 'border-[#FA6E5A]';
@@ -54,6 +59,15 @@ export function TextField({
     ${multiline ? 'whitespace-pre-wrap overflow-y-auto' : ''}
   `;
 
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (propOnChange) {
+      propOnChange(e);
+    } else {
+      setInternalValue(e.target.value);
+    }
+    setHasInput(e.target.value.length > 0);
+  };
+
   return (
     <div className={`mb-4 ${size === 'compact' ? 'inline-block w-[48%]' : 'block'}`}>
       {label && <label className={labelStyle}>{label}</label>}
@@ -61,23 +75,17 @@ export function TextField({
       {multiline ? (
         <textarea
           value={value}
-          onChange={(e) => {
-            setValue(e.target.value);
-            setHasInput(e.target.value.length > 0);
-          }}
+          onChange={handleChange}
           placeholder={placeholder}
           className={`${baseClasses} resize-none`}
-          rows={6} // Ensures 6 lines visible by default
+          rows={6}
           style={{ lineHeight: '1.5' }}
         />
       ) : (
         <Input
           type={type}
           value={value}
-          onChange={(e) => {
-            setValue(e.target.value);
-            setHasInput(e.target.value.length > 0);
-          }}
+          onChange={handleChange}
           placeholder={placeholder}
           className={baseClasses}
         />
