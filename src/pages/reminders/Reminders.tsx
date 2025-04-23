@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // For navigation
-import Header from "../../components/header";
+import Header from "../../components/ui/header";
 import Card from "../../components/reminder-card";
 
 interface Reminder {
@@ -215,7 +215,7 @@ const Reminders: React.FC = () => {
         style={styles.fab}
         onClick={() => navigate("/new-reminder")}
       >
-        <span className="mgc-plus-line" style={styles.fabIcon} />
+        <span className="mgc_add_line" style={styles.fabIcon} />
       </button>
     </div>
   );

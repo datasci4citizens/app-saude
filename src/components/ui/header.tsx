@@ -25,7 +25,7 @@ const Header: React.FC<HeaderProps> = ({
     <div>
       {/* Back Button */}
       <button style={styles.backButton} onClick={handleBackClick}>
-        <span style={styles.backIcon}>&larr;</span>
+        <span className="mgc_arrow_left_line" style={styles.backIcon}></span>
       </button>
       <div style={styles.iconTextContainer}>
         <div style={styles.textContainer}>
@@ -59,8 +59,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginRight: "12px",
   },
   backIcon: {
-    fontSize: "18px",
-    color: "#333",
+    width: "28px",
+    height: "28px",
+    fontSize: "28px",
+    color: "#141B36",
   },
   textContainer: {
     flex: 1,
@@ -68,6 +70,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     flexDirection: "column",
     alignItems: "flex-start",
     justifyContent: "center",
+    marginTop: "12px",
+    marginBottom: "12px",
   },
   title: {
     fontSize: "28px",

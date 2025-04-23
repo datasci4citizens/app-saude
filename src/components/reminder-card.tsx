@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Checkbox } from "./ui/checkbox";
 
 interface ReminderCardProps {
   title: string;
@@ -42,21 +43,17 @@ const ReminderCard: React.FC<ReminderCardProps> = ({
 
       {/* Checkbox (conditionally rendered) */}
       {showCheckbox && (
-        <div
-          style={{
-            ...styles.checkboxContainer,
-            backgroundColor: checked ? "#DDFC8E" : "transparent",
-            border: `1.5px solid #141B36`,
-          }}
-          onClick={handleCheckboxChange}
+        <Checkbox
+          checked={checked}
+          onCheckedChange={handleCheckboxChange}
+          color="#DDFC8E"
+          height="h-7"
+          width="w-7"
+          radius="rounded-md"
+          showChildrenOnSelectOnly={true}
         >
-          <input
-            type="checkbox"
-            checked={checked}
-            readOnly
-            style={styles.customCheckbox}
-          />
-        </div>
+          <span className="mgc_check_line" style={styles.checkIcon} />
+        </Checkbox>
       )}
     </div>
   );
@@ -120,6 +117,10 @@ const styles: { [key: string]: React.CSSProperties } = {
     cursor: "pointer",
     border: "none",
     backgroundColor: "transparent",
+  },
+  checkIcon: {
+    fontSize: "12px",
+    color: "#141B36",
   },
 };
 
