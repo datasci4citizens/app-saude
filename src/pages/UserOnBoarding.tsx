@@ -2,14 +2,19 @@ import React, {useState} from 'react';
 import { UserInfoForm } from '@/components/forms/UserInfoForm';
 import { UserInfoForm2 } from '@/components/forms/UserInfoForm2';
 import { UserInfoForm3 } from '@/components/forms/UserInfoForm3';
-// import { useRouter } from 'next/router'; // see how to connect to backend later
+import  axios from 'axios';
+import { set } from 'react-hook-form';
+import { useRouter } from 'next/router'; // see how to connect to backend later
 
 export default function UserOnboarding() {
-  // const router = useRouter();
+  const router = useRouter();
 
   // Track form step and collected data
   const [step, setStep] = useState(1);
   const [userData, setUserData] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
 
   interface UserData {
     [key: string]: any;
@@ -19,19 +24,25 @@ export default function UserOnboarding() {
     (data: UserData): void;
   }
 
-  const handleFirstFormSubmit: FormSubmitHandler = (data) => {
+  const handleFirstFormSubmit: FormSubmitHandler = async (data) => {
     console.log('First form data submitted:', data);
-    // Save data and move to next form
-    setUserData({ ...userData, ...data });
-    setStep(2);
+    
+    try {
+      // Optional API validation for first step
+      const validation = await axios.post('http://localhost:8000/auth/login/google/complete-profile', data);
+      
+      // Save data and move to next form
+      setUserData({ ...userData, ...data });
+      console.log('User data after first form:', userData);
+      setStep(2);
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || 'Erro de validação';
+      setError(errorMessage);
+    }
   };
 
-  // Handle second form submission
-  interface SecondFormData {
-    [key: string]: any;
-  }
-
   const handleSecondFormSubmit = (data: SecondFormData): void => {
+    const validation = await axios.post('http://localhost:8000/auth/login/google/complete-profile', data);
     console.log('Second form data:', data);
     // Combine step 1 and step 2 data
     setUserData((prevData: UserData) => ({ ...prevData, ...data }));
@@ -43,22 +54,59 @@ export default function UserOnboarding() {
     [key: string]: any;
   }
 
-  const handleThirdFormSubmit = (data: ThirdFormData): void => {
+  const handleThirdFormSubmit = async (data: ThirdFormData): Promise<void> => {
     console.log('Third form data:', data);
     
     // First update the state to include the third form data
-    setUserData(prevData => ({ ...prevData, ...data }));
+    const updatedUserData = { ...userData, ...data };
+    setUserData(updatedUserData);
     
-    // Then access the complete data (need to use callback pattern since state updates are asynchronous)
-    setTimeout(() => {
-      const completeUserData = { ...userData, ...data };
-      console.log('COMPLETE USER DATA:', completeUserData);
+    // Prepare to send data to backend
+    setLoading(true);
+    setError(null);
+    
+    try {
+      // API call to register user
+      interface ApiResponse {
+        token?: string;
+        [key: string]: any;
+      }
+    
+      const response = await axios.post<ApiResponse>(
+        'http://localhost:8000/auth/login/google/complete-profile', 
+        updatedUserData,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
       
-      // Here you would send the data to your backend
-      // apiService.submitUserData(completeUserData);
+      console.log('API Response:', response.data);
       
-      alert('All forms submitted successfully!');
-    }, 0);
+      // Handle successful registration
+      if (response.status === 200 || response.status === 201) {
+        // Optional: Save auth token if returned
+        if (response.data.token) {
+          localStorage.setItem('authToken', response.data.token);
+        }
+        
+        alert('Cadastro realizado com sucesso!');
+        // Redirect user to appropriate page
+        router.push('/user-home');
+      }
+    } catch (err: any) {
+      console.error('Registration error:', err);
+      
+      // Extract error message from response if available
+      const errorMessage = err.response?.data?.message || 
+                          'Ocorreu um erro ao processar seu cadastro. Tente novamente mais tarde.';
+      
+      setError(errorMessage);
+      alert(`Erro: ${errorMessage}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Handle back button click
@@ -104,14 +152,26 @@ export default function UserOnboarding() {
         </div>
         
         <div className="pl-9 pr-4">
-          {step === 1 ? (
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-3 mb-4">
+              <p>{error}</p>
+            </div>
+          )}
+
+          {loading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#CEFA5A]"></div>
+            </div>
+          ) : (
+            step === 1 ? (
               <UserInfoForm onSubmit={handleFirstFormSubmit} />
             ) : step === 2 ? (
               <UserInfoForm2 onSubmit={handleSecondFormSubmit} />
             ) : (
-              <UserInfoForm3 onSubmit={handleThirdFormSubmit}/>
-            )}
-        </div>
+              <UserInfoForm3 onSubmit={handleThirdFormSubmit} />
+            )
+          )}
+      </div>
       </div>
     </div>
   );

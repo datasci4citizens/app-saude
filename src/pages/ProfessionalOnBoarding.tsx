@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import ProfessionalInfoForm from '@/components/forms/ProfessionalInfoForm';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 
 // Define the data type we expect from the form
 interface ProfessionalData {
@@ -13,11 +15,36 @@ interface ProfessionalData {
 
 export default function ProfessionalOnboarding() {
   // Handle form submission
-  const handleFormSubmit = (data: ProfessionalData) => {
+  // In ProfessionalOnboarding.tsx
+  const handleFormSubmit = async (data: ProfessionalData) => {
     console.log('Professional data submitted:', data);
-    alert('Cadastro realizado com sucesso!');
-    // Here you would send the data to your backend
-    // For example: router.push('/dashboard');
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.post(
+        'http://api.example.com/professionals/register',
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      // Handle response
+      if (response.status === 200 || response.status === 201) {
+        alert('Cadastro realizado com sucesso!');
+        router.push('/prof-home');
+      }
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || 
+                           'Ocorreu um erro ao processar seu cadastro. Tente novamente mais tarde.';
+      setError(errorMessage);
+      alert(`Erro: ${errorMessage}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
