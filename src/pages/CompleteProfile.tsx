@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 export default function CompleteProfile() {
   const [token, setToken] = useState<string | null>(null);
   const [userType, setUserType] = useState<'person' | 'provider' | null>(null);
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [done, setDone] = useState(false);
+  const [domains, setDomains] = useState<any[]>([]);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('accessToken');
@@ -13,11 +15,20 @@ export default function CompleteProfile() {
     } else {
       window.location.href = '/login';
     }
+
+    axios.get('http://localhost:8000/api/domains/')
+      .then(response => {
+        setDomains(response.data);
+      })
+      .catch(error => {
+        console.error('Erro ao buscar domínios e conceitos', error);
+        alert('Erro ao carregar dados.');
+      });
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,17 +52,18 @@ export default function CompleteProfile() {
       },
       body: JSON.stringify(formData),
     });
-
+    
     if (res.ok) {
       setDone(true);
     } else {
       const error = await res.json();
       console.error('Erro ao criar perfil:', error);
-      alert('Erro ao criar perfil.');
+      console.log(formData)
     }
   };
 
   if (done) {
+    console.log(formData)
     if (userType === 'provider') {
       window.location.href = '/AcsMainPage'
     } else if (userType== 'person') {
@@ -126,6 +138,48 @@ export default function CompleteProfile() {
               <label style={labelStyle}>Peso (kg)</label>
               <input type="number" step="0.1" name="weight" onChange={handleChange} style={inputStyle} />
             </div>
+
+            {domains.map(domain => {
+              if (domain.domain_name === "Gender Identity") {
+                return (
+                  <div key={domain.domain_name} style={fieldStyle}>
+                    <label style={labelStyle}>Gênero</label>
+                    <select name="gender_identity" onChange={handleChange} style={inputStyle} defaultValue="">
+                    <option value="" disabled hidden>Selecione uma opção</option>
+                      {domain.concepts.map((concept: any) => (
+                        <option key={concept.concept_id} value={concept.concept_id}>{concept.concept_name}</option>
+                      ))}
+                    </select>
+                  </div>
+                );
+              } else if (domain.domain_name === "Race") {
+                return (
+                  <div key={domain.domain_name} style={fieldStyle}>
+                    <label style={labelStyle}>Raça</label>
+                    <select name="race_concept" onChange={handleChange} style={inputStyle} defaultValue="">
+                    <option value="" disabled hidden>Selecione uma opção</option>
+                      {domain.concepts.map((concept: any) => (
+                        <option key={concept.concept_id} value={concept.concept_id}>{concept.concept_name}</option>
+                      ))}
+                    </select>
+                  </div>
+                );
+              } else if (domain.domain_name === "Biological Sex") {
+                return (
+                  <div key={domain.domain_name} style={fieldStyle}>
+                    <label style={labelStyle}>Sexo Biológico</label>
+                    <select name="biological_sex" onChange={handleChange} style={inputStyle} defaultValue="">
+                    <option value="" disabled hidden>Selecione uma opção</option>
+                      {domain.concepts.map((concept: any) => (
+                        <option key={concept.concept_id} value={concept.concept_id}>{concept.concept_name}</option>
+                      ))}
+                    </select>
+                  </div>
+                );
+              }
+              return null;
+            })}
+
           </>
         ) : (
           <>
