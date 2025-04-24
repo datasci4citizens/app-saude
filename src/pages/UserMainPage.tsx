@@ -8,7 +8,7 @@ export default function AcsMainPage() {
 
     // Funções de navegação - atualizadas para usar navigate em vez de router.push
     const handleEmergencyClick = () => {
-        navigate('/emergencies');
+        navigate('/emergencie');
     };
 
     const handleAppointmentClick = () => {
@@ -32,7 +32,7 @@ export default function AcsMainPage() {
                 navigate('/patients');
                 break;
             case 'emergency':
-                navigate('/emergencies');
+                navigate('/emergencie');
                 break;
             case 'profile':
                 navigate('/profile');
