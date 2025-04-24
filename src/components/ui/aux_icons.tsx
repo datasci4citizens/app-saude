@@ -4,6 +4,7 @@ interface Icon {
   label: string;
   icon: React.ReactNode;
   shouldFlip?: boolean;
+  //shouldFlip?: boolean;
 }
 
 const icon: Icon[] = [
@@ -34,6 +35,7 @@ const AuxIcons: React.FC = () => {
               backgroundColor:'transparent', // Change #FFFFFF to transparent or your button's white color
               borderRadius: '10px',
               transform: item.shouldFlip ? 'scaleX(-1)' : 'none', // Flip the icon horizontally, if its the case
+              // transform: item.shouldFlip ? 'scaleX(-1)' : 'none', // Flip the icon horizontally, if its the case
               }}>{item.icon}</div>
           <div style={styles.label}>{item.label}</div>
         </div>
