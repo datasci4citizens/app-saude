@@ -18,9 +18,9 @@ export default function Login() {
         localStorage.setItem('role', role)
 
         if (role === 'provider') {
-          window.location.href = '/AcsMainPage'
+          window.location.href = '/acs-main-page';
         } else if (role == 'person') {
-          window.location.href = '/UserMainPage';
+          window.location.href = '/user-main-page';
         } else {
           window.location.href = '/forms-user';
         }
