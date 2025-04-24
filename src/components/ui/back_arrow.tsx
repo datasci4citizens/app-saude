@@ -11,7 +11,7 @@ const BackArrow: React.FC<BackArrowProps> = ({ className }) => {
 
   return (
     <Button
-      variant="white"
+      variant="ghost"
       onClick={() => navigate(-1)} // Go back in history
       className={`group flex items-center p-2 h-auto space-x-2 hover:bg-gray-100 ${className}`}
       aria-label="Go back"
