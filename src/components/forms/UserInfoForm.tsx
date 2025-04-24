@@ -7,37 +7,37 @@ import { DateField } from '@/components/ui/date_input';
 // Define types for form data and errors
 interface FormData {
   legalName: string;
-  socialName: string;
-  birthSex: string;
-  gender: string;
+  social_name: string;
+  biological_sex: string;
+  gender_identity: string;
   weight: string;
   height: string;
-  birthDate: string;
-  race: string;
+  birth: string;
+  race_concept: string;
 }
 
 interface FormErrors {
   legalName?: string;
-  socialName?: string;
-  birthSex?: string;
-  gender?: string;
+  social_name?: string;
+  biological_sex?: string;
+  gender_identity?: string;
   weight?: string;
   height?: string;
-  birthDate?: string;
-  race?: string;
+  birth?: string;
+  race_concept?: string;
   [key: string]: string | undefined;
 }
 
 export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }): JSX.Element {
   const [formData, setFormData] = useState<FormData>({
     legalName: '',
-    socialName: '',
-    birthSex: '',
-    gender: '',
+    social_name: '',
+    biological_sex: '',
+    gender_identity: '',
     weight: '',
     height: '',
-    birthDate: '',
-    race: '',
+    birth: '',
+    race_concept: '',
   });
   
   const [errors, setErrors] = useState<FormErrors>({});
@@ -61,11 +61,11 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
   }
 
   const handleDateChange = (value: string) => {
-    setFormData({ ...formData, birthDate: value });
+    setFormData({ ...formData, birth: value });
     
     // Clear error when user starts typing
-    if (errors.birthDate) {
-      setErrors({ ...errors, birthDate: undefined });
+    if (errors.birth) {
+      setErrors({ ...errors, birth: undefined });
     }
   };
 
@@ -74,21 +74,21 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
     
     // Required fields
     if (!formData.legalName.trim()) newErrors.legalName = "Nome civil é obrigatório";
-    if (!formData.birthSex) newErrors.birthSex = "Sexo de nascença é obrigatório";
-    if (!formData.gender) newErrors.gender = "Gênero é obrigatório";
-    if (!formData.race) newErrors.race = "Cor/Raça é obrigatório";
+    if (!formData.biological_sex) newErrors.biological_sex = "Sexo de nascença é obrigatório";
+    if (!formData.gender_identity) newErrors.gender_identity = "Gênero é obrigatório";
+    if (!formData.race_concept) newErrors.race_concept = "Cor/Raça é obrigatório";
     
     // Validate date format (dd/mm/yyyy)
     // checks if date is empty
-    if (!formData.birthDate) {
-      newErrors.birthDate = "Data de nascimento é obrigatória";
+    if (!formData.birth) {
+      newErrors.birth = "Data de nascimento é obrigatória";
     } else {
       const datePattern = /^\d{2}\/\d{2}\/\d{4}$/;
-      if (!datePattern.test(formData.birthDate)) {
-        newErrors.birthDate = "Formato inválido. Use dd/mm/aaaa";
+      if (!datePattern.test(formData.birth)) {
+        newErrors.birth = "Formato inválido. Use dd/mm/aaaa";
       } else {
         // Check if date is valid
-        const [day, month, year] = formData.birthDate.split('/').map(Number);
+        const [day, month, year] = formData.birth.split('/').map(Number);
         if (day && month && year) {
           const date = new Date(year, month - 1, day);
           if (
@@ -99,13 +99,13 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
             // Check if date is in the future
             const today = new Date();
             if (date > today) {
-              newErrors.birthDate = "Data não pode ser no futuro";
+              newErrors.birth = "Data não pode ser no futuro";
             }
           } else {
-            newErrors.birthDate = "Data inválida";
+            newErrors.birth = "Data inválida";
           }
         } else {
-          newErrors.birthDate = "Data inválida";
+          newErrors.birth = "Data inválida";
         }
       }
     }
@@ -141,8 +141,8 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
     onSubmit(formData);
   };
   
-  // Gender options
-  const genderOptions = [
+  // gender_identity options
+  const gender_identityOptions = [
     { value: "feminino", label: "Feminino" },
     { value: "masculino", label: "Masculino" },
     { value: "nao-binario", label: "Não-binário" },
@@ -151,13 +151,13 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
   ];
   
   // Birth sex options
-  const birthSexOptions = [
+  const biological_sexOptions = [
     { value: "feminino", label: "Feminino" },
     { value: "masculino", label: "Masculino" }
   ];
   
-  // Race options
-  const raceOptions = [
+  // race_concept options
+  const race_conceptOptions = [
     { value: "branca", label: "Branca" },
     { value: "preta", label: "Preta" },
     { value: "parda", label: "Parda" },
@@ -178,37 +178,37 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
       />
       
       <TextField 
-        id="socialName"
-        name="socialName"
+        id="social_name"
+        name="social_name"
         label="Nome social (opcional)"
-        value={formData.socialName}
+        value={formData.social_name}
         onChange={handleChange}
         placeholder="Como prefere ser chamado(a)"
         helperText="Apenas para caso de uso interno, não compartilharemos com terceiros"
-        error={errors.socialName}
+        error={errors.social_name}
       />
       
       <div className="flex flex-row gap-4 max-[311px]:flex-wrap">
         <div className="flex-1">
           <SelectField
-            id="birthSex"
-            name="birthSex"
+            id="biological_sex"
+            name="biological_sex"
             label={<div className="min-h-[40px]">Sexo de nascença</div>}
-            value={formData.birthSex}
+            value={formData.biological_sex}
             onChange={handleChange}
-            options={birthSexOptions}
-            error={errors.birthSex}
+            options={biological_sexOptions}
+            error={errors.biological_sex}
           />
         </div>
         <div className="flex-1">    
           <SelectField
-            id="gender"
-            name="gender"
+            id="gender_identity"
+            name="gender_identity"
             label={<div className="min-h-[40px]">Gênero</div>}
-            value={formData.gender}
+            value={formData.gender_identity}
             onChange={handleChange}
-            options={genderOptions}
-            error={errors.gender}
+            options={gender_identityOptions}
+            error={errors.gender_identity}
           />
         </div>
       </div>
@@ -237,22 +237,22 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
       </div>
       
       <DateField 
-        id="birthDate"
-        name="birthDate"
+        id="birth"
+        name="birth"
         label="Data de nascimento"
-        value={formData.birthDate}
+        value={formData.birth}
         onChange={handleDateChange}
-        error={errors.birthDate}
+        error={errors.birth}
       />
       
       <SelectField
-        id="race"
-        name="race"
+        id="race_concept"
+        name="race_concept"
         label="Cor/Raça"
-        value={formData.race}
+        value={formData.race_concept}
         onChange={handleChange}
-        options={raceOptions}
-        error={errors.race}
+        options={race_conceptOptions}
+        error={errors.race_concept}
       />
       
       <Button 
