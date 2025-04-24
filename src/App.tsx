@@ -3,6 +3,7 @@ import ComponentCatalog from './pages/ComponentCatalog';
 import UserOnboarding from './pages/UserOnBoarding';
 import AcsMainPage from './pages/AcsMainPage';
 import UsermainPage from './pages/UserMainPage';
+import EmergencyPage from './pages/EmergencyPage';
 
 const router = createBrowserRouter([
   {
@@ -14,16 +15,20 @@ const router = createBrowserRouter([
     element: <ComponentCatalog />,
   },
   {
-    path: '/AcsMainPage',
+    path: '/acs-main-page',
     element: <AcsMainPage />,
   },
   {
-    path: '/UserMainPage',
+    path: '/user-main-page',
     element: <UsermainPage />,
   },
   {
     path: '/forms-user-1',
     element: <UserOnboarding />,
+  },
+  {
+    path: '/emergencies',
+    element: <EmergencyPage />,
   }
 ]);
 
