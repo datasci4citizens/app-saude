@@ -78,7 +78,7 @@ export default function AcsMainPage() {
 
             {/* Barra de navegação */}
             <BottomNavigationBar
-                variant="acs"
+                variant="user"
                 initialActiveId="home"
                 onItemClick={handleNavigationClick}
             />
