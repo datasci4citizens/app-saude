@@ -7,7 +7,7 @@ export default function EmergencyPage() {
   const [searchValue, setSearchValue] = useState('');
   const [activeTab, setActiveTab] = useState('todos');
   
-  // Sample data based on the image
+  // Sample data trade for a array of emergency patients
   const emergencyPatients = [
     {
       name: 'Cláudia Almeida',
@@ -39,21 +39,36 @@ export default function EmergencyPage() {
     }
   ];
 
+  // Lógica de filtro de busca por nome de paciente
+  const filteredPatients = emergencyPatients.filter(patient => 
+    patient.name.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
   const handleNavigation = (itemId: string) => {
     console.log(`Navigated to ${itemId}`);
     // Handle navigation logic here
+    if (itemId === 'home') {
+        window.location.href = '/acs-main-page';
+    }
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 pb-24">
       {/* Header with back button and title */}
-      <header className="p-4 flex items-center">
-        <button className="mr-4">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 18L9 12L15 6" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
-        <h1 className="text-xl font-bold">Emergências</h1>
+      <header className="p-4">
+        {/* Back button at the top */}
+        <div className="mb-2">
+          <button>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 18L9 12L15 6" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        
+        {/* Title centered below */}
+        <div className="flex justify-center">
+            <h1 className="font-bold" style={{ fontFamily: "'Work Sans', sans-serif", fontSize: '34px' }}>Emergências</h1>
+        </div>
       </header>
 
       {/* Search input */}
@@ -84,20 +99,26 @@ export default function EmergencyPage() {
         </button>
       </div>
 
-      {/* Emergency patients list */}
+      {/* Emergency patients list - usando a lista filtrada */}
       <div className="flex-1 px-4 overflow-auto">
-        {emergencyPatients.map((patient, index) => (
-          <PatientButton
-            key={index}
-            variant="emergency"
-            name={patient.name}
-            age={patient.age}
-            lastConsult={patient.lastConsult}
-            lastRegistry={patient.lastRegistry}
-            lastEmergency={patient.lastEmergency}
-            onClick={() => console.log(`Clicked on ${patient.name}`)}
-          />
-        ))}
+        {filteredPatients.length > 0 ? (
+          filteredPatients.map((patient, index) => (
+            <PatientButton
+              key={index}
+              variant="emergency"
+              name={patient.name}
+              age={patient.age}
+              lastConsult={patient.lastConsult}
+              lastRegistry={patient.lastRegistry}
+              lastEmergency={patient.lastEmergency}
+              onClick={() => console.log(`Clicked on ${patient.name}`)}
+            />
+          ))
+        ) : (
+          <div className="text-center p-4 text-gray-500">
+            Nenhum paciente encontrado com este nome.
+          </div>
+        )}
       </div>
 
       {/* Bottom navigation using BottomNavigationBar component */}
