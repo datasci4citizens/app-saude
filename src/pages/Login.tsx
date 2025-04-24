@@ -20,7 +20,7 @@ export default function Login() {
         if (role === 'provider') {
           window.location.href = '/AcsMainPage'
         } else if (role == 'person') {
-          window.location.href = '/PacientMainPage';
+          window.location.href = '/UserMainPage';
         } else {
           window.location.href = '/forms-user';
         }

@@ -10,7 +10,6 @@ import AcsMainPage from './pages/AcsMainPage';
 import UsermainPage from './pages/UserMainPage';
 import EmergencyPage from './pages/EmergencyPage';
 import PatientsPage from './pages/PatientsPage';
-import Login from './pages/Login';
 
 const router = createBrowserRouter([
   { path: '/', element: <h1>Home!</h1> },
@@ -47,10 +46,10 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/PacientMainPage',
+    path: '/UserMainPage',
     element: (
       <ProtectedRoute
-        element={<h1>Pacient Page</h1>}
+        element={<h1>User Page</h1>}
         allowedTypes={['person']}
       />
     ),
@@ -68,10 +67,6 @@ const router = createBrowserRouter([
   {
     path: '/patients',
     element: <PatientsPage />,
-  },
-  {
-    path: '/login',
-    element: <Login/>,
   },
 ]);
 
