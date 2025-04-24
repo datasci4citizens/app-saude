@@ -11,7 +11,6 @@ export default function Login() {
           { code },
           { withCredentials: true }
         );
-
         const { access, refresh, role } = tokens.data;
 
         localStorage.setItem('accessToken', access);
@@ -23,7 +22,7 @@ export default function Login() {
         } else if (role == 'person') {
           window.location.href = '/PacientMainPage';
         } else {
-          window.location.href = '/complete-profile';
+          window.location.href = '/forms-user';
         }
 
       } catch (err) {

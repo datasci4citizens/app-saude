@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ProfessionalInfoForm from '@/components/forms/ProfessionalInfoForm';
 import axios from 'axios';
-import { useRouter } from 'next/router';
+import { useNavigate } from 'react-router-dom'; // Adjust the import based on your routing library
 
 // Define the data type we expect from the form
 interface ProfessionalData {
@@ -15,6 +15,7 @@ interface ProfessionalData {
 
 export default function ProfessionalOnboarding() {
   // Handle form submission
+  const router = useNavigate();
   // In ProfessionalOnboarding.tsx
   const handleFormSubmit = async (data: ProfessionalData) => {
     console.log('Professional data submitted:', data);
@@ -35,7 +36,7 @@ export default function ProfessionalOnboarding() {
       // Handle response
       if (response.status === 200 || response.status === 201) {
         alert('Cadastro realizado com sucesso!');
-        router.push('/prof-home');
+        router('/prof-home');
       }
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || 

@@ -3,11 +3,10 @@ import { UserInfoForm } from '@/components/forms/UserInfoForm';
 import { UserInfoForm2 } from '@/components/forms/UserInfoForm2';
 import { UserInfoForm3 } from '@/components/forms/UserInfoForm3';
 import  axios from 'axios';
-import { set } from 'react-hook-form';
-import { useRouter } from 'next/router'; // see how to connect to backend later
+import { useNavigate } from 'react-router-dom'; // see how to connect to backend later
 
 export default function UserOnboarding() {
-  const router = useRouter();
+  const router = useNavigate();
 
   // Track form step and collected data
   const [step, setStep] = useState(1);
@@ -29,7 +28,7 @@ export default function UserOnboarding() {
     
     try {
       // Optional API validation for first step
-      const validation = await axios.post('http://localhost:8000/auth/login/google/complete-profile', data);
+      const validation = await axios.post('http://localhost:8000/api/person/', data);
       
       // Save data and move to next form
       setUserData({ ...userData, ...data });
@@ -41,8 +40,8 @@ export default function UserOnboarding() {
     }
   };
 
-  const handleSecondFormSubmit = (data: SecondFormData): void => {
-    const validation = await axios.post('http://localhost:8000/auth/login/google/complete-profile', data);
+  const handleSecondFormSubmit = async (data: SecondFormData): Promise<void> => {
+    const validation = await axios.post('http://localhost:8000/api/person/', data);
     console.log('Second form data:', data);
     // Combine step 1 and step 2 data
     setUserData((prevData: UserData) => ({ ...prevData, ...data }));
@@ -56,24 +55,24 @@ export default function UserOnboarding() {
 
   const handleThirdFormSubmit = async (data: ThirdFormData): Promise<void> => {
     console.log('Third form data:', data);
-    
+
     // First update the state to include the third form data
     const updatedUserData = { ...userData, ...data };
     setUserData(updatedUserData);
-    
+
     // Prepare to send data to backend
     setLoading(true);
     setError(null);
-    
+
     try {
       // API call to register user
       interface ApiResponse {
         token?: string;
         [key: string]: any;
       }
-    
+
       const response = await axios.post<ApiResponse>(
-        'http://localhost:8000/auth/login/google/complete-profile', 
+        'http://localhost:8000/api/person/', 
         updatedUserData,
         {
           headers: {
@@ -81,27 +80,27 @@ export default function UserOnboarding() {
           }
         }
       );
-      
+
       console.log('API Response:', response.data);
-      
+
       // Handle successful registration
       if (response.status === 200 || response.status === 201) {
         // Optional: Save auth token if returned
         if (response.data.token) {
           localStorage.setItem('authToken', response.data.token);
         }
-        
+
         alert('Cadastro realizado com sucesso!');
         // Redirect user to appropriate page
-        router.push('/user-home');
+        router('/user-home');
       }
     } catch (err: any) {
       console.error('Registration error:', err);
-      
+
       // Extract error message from response if available
       const errorMessage = err.response?.data?.message || 
                           'Ocorreu um erro ao processar seu cadastro. Tente novamente mais tarde.';
-      
+
       setError(errorMessage);
       alert(`Erro: ${errorMessage}`);
     } finally {
