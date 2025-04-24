@@ -14,6 +14,10 @@ export default function UserOnboarding() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem('authToken')
+  );
+
 
   interface UserData {
     [key: string]: any;
@@ -25,27 +29,20 @@ export default function UserOnboarding() {
 
   const handleFirstFormSubmit: FormSubmitHandler = async (data) => {
     console.log('First form data submitted:', data);
+
+    // Save data and move to next form
+    setUserData({ ...userData, ...data });
+    console.log('User data after first form:', userData);
+    setStep(2);
     
-    try {
-      // Optional API validation for first step
-      const validation = await axios.post('http://localhost:8000/api/person/', data);
-      
-      // Save data and move to next form
-      setUserData({ ...userData, ...data });
-      console.log('User data after first form:', userData);
-      setStep(2);
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Erro de validação';
-      setError(errorMessage);
-    }
   };
 
   const handleSecondFormSubmit = async (data: SecondFormData): Promise<void> => {
-    const validation = await axios.post('http://localhost:8000/api/person/', data);
-    console.log('Second form data:', data);
-    // Combine step 1 and step 2 data
-    setUserData((prevData: UserData) => ({ ...prevData, ...data }));
-    setStep(3);
+      
+      console.log('Second form data:', data);
+      // Combine step 1 and step 2 data
+      setUserData((prevData: UserData) => ({ ...prevData, ...data }));
+      setStep(3);
   };
 
   // Handle third and last form submission
@@ -76,7 +73,8 @@ export default function UserOnboarding() {
         updatedUserData,
         {
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`
           }
         }
       );
@@ -92,7 +90,7 @@ export default function UserOnboarding() {
 
         alert('Cadastro realizado com sucesso!');
         // Redirect user to appropriate page
-        router('/user-home');
+        router('/PacientMainPage');
       }
     } catch (err: any) {
       console.error('Registration error:', err);
