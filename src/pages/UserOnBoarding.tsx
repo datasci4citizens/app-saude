@@ -1,13 +1,12 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import { UserInfoForm } from '@/components/forms/UserInfoForm';
 import { UserInfoForm2 } from '@/components/forms/UserInfoForm2';
 import { UserInfoForm3 } from '@/components/forms/UserInfoForm3';
 import  axios from 'axios';
-import { set } from 'react-hook-form';
-import { useRouter } from 'next/router'; // see how to connect to backend later
+import { useNavigate } from 'react-router-dom';
 
 export default function UserOnboarding() {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   // Track form step and collected data
   const [step, setStep] = useState(1);
@@ -41,10 +40,9 @@ export default function UserOnboarding() {
     }
   };
 
-  const handleSecondFormSubmit = (data: SecondFormData): void => {
+  const handleSecondFormSubmit = async (data: SecondFormData): Promise<void> => {
     const validation = await axios.post('http://localhost:8000/auth/login/google/complete-profile', data);
     console.log('Second form data:', data);
-    // Combine step 1 and step 2 data
     setUserData((prevData: UserData) => ({ ...prevData, ...data }));
     setStep(3);
   };
@@ -93,7 +91,7 @@ export default function UserOnboarding() {
         
         alert('Cadastro realizado com sucesso!');
         // Redirect user to appropriate page
-        router.push('/user-home');
+        navigate('/user-home');
       }
     } catch (err: any) {
       console.error('Registration error:', err);
