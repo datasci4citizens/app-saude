@@ -68,6 +68,9 @@ export default function EmergencyPage() {
     if (itemId === 'home') {
         window.location.href = '/acs-main-page';
     }
+    if (itemId === 'patients') {
+        window.location.href = '/patients';
+    }
   };
 
   // Função para lidar com o clique no paciente e navegar para a página individual

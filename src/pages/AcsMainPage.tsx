@@ -25,18 +25,18 @@ export default function AcsMainPage() {
             case 'home':
                 // Já estamos na home
                 break;
-            case 'consults':
-                navigate('/appointments');
-                break;
+            //case 'consults':
+            //    navigate('/appointments');
+            //    break;
             case 'patients':
                 navigate('/patients');
                 break;
             case 'emergency':
                 navigate('/emergencies');
                 break;
-            case 'profile':
-                navigate('/profile');
-                break;
+            //case 'profile':
+            //    navigate('/profile');
+            //    break;
         }
     };
 
