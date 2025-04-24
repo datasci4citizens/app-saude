@@ -53,18 +53,25 @@ export default function AcsMainPage() {
             <div className="px-4 py-5 flex justify-center gap-4">
                 {/* Card de Emergência */}
                 <InfoCard
-                    variant="emergency"
-                    count={3}
-                    onClick={handleEmergencyClick}
+                    variant="consultations"
+                    title="Remédios"
+                    consultations={
+                        [
+                            { doctor: 'LEXAPRO', time: '10:00' },
+                            { doctor: 'RIVOTRIL', time: '12:00' },
+                        ]
+                    }
+                    onClick={handleAppointmentClick}
                 />
 
                 {/* Card de Próxima Consulta */}
                 <InfoCard
-                    variant="appointment"
-                    title="Próxima consulta"
-                    name="Amanda de Souza"
-                    date="26/04/2024"
-                    time="13:00"
+                    variant="consultations"
+                    title="Consultas"
+                    consultations={[
+                        { doctor: 'DR JOSÉ', time: '10:00' },
+                        { doctor: 'DRA TULLA', time: '12:00' },
+                    ]}
                     onClick={handleAppointmentClick}
                 />
             </div>
