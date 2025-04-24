@@ -36,7 +36,7 @@ export default function ProfessionalOnboarding() {
       // Handle response
       if (response.status === 200 || response.status === 201) {
         alert('Cadastro realizado com sucesso!');
-        router('/prof-home');
+        router('/acs-main-page'); // Redirect to the main page
       }
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || 

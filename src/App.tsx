@@ -37,22 +37,6 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/AcsMainPage',
-    element: (
-      <ProtectedRoute
-        element={<h1>Acs Page</h1>}
-        allowedTypes={['provider']}
-      />
-    ),
-  },
-  {
-    path: '/UserMainPage',
-    element: (
-      <ProtectedRoute
-        element={<h1>User Page</h1>}
-        allowedTypes={['person']}
-      />
-    ),
     path: '/acs-main-page',
     element: <AcsMainPage />,
   },
@@ -68,6 +52,7 @@ const router = createBrowserRouter([
     path: '/patients',
     element: <PatientsPage />,
   },
+  
 ]);
 
 export function App() {

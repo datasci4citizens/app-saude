@@ -90,7 +90,7 @@ export default function UserOnboarding() {
 
         alert('Cadastro realizado com sucesso!');
         // Redirect user to appropriate page
-        router('/PacientMainPage');
+        router('/user-main-page'); // Adjust the route as neededs
       }
     } catch (err: any) {
       console.error('Registration error:', err);
