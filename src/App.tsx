@@ -5,6 +5,8 @@ import AcsMainPage from './pages/AcsMainPage';
 import UsermainPage from './pages/UserMainPage';
 import EmergencyPage from './pages/EmergencyPage';
 import PatientsPage from './pages/PatientsPage';
+import Login from './pages/Login';
+
 
 const router = createBrowserRouter([
   {
@@ -35,7 +37,10 @@ const router = createBrowserRouter([
     path: '/patients',
     element: <PatientsPage />,
   },
-
+  {
+    path: '/login',
+    element: <Login/>,
+  },
 ]);
 
 export function App() {
