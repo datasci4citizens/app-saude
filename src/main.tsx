@@ -4,7 +4,9 @@ import './globals.css';
 import React from 'react';
 import '@fontsource-variable/inter';
 import { App } from './App';
-import { GoogleOAuthProvider } from '@react-oauth/google'
+import 'mingcute_icon/font/Mingcute.css';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 
 const root = document.getElementById('root');
 
