@@ -41,6 +41,7 @@
 		"embla-carousel-react": "^8.2.0",
 		"lucide-react": "^0.436.0",
 		"mingcute_icon": "^2.9.6",
+		"next": "^15.3.1",
 		"react": "^18.3.1",
 		"react-day-picker": "^8.10.1",
 		"react-dom": "^18.3.1",
@@ -56,6 +57,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "^1.8.3",
 		"@capacitor/cli": "^6.1.2",
+		"@types/next": "^8.0.7",
 		"@types/node": "^22.5.1",
 		"@types/react": "^18.3.20",
 		"@types/react-dom": "^18.3.0",
