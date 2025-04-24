@@ -6,6 +6,11 @@ import CompleteProfile from './pages/CompleteProfile';
 import Login from './pages/Login';
 import Welcome from './pages/Welcome';
 import ProtectedRoute from './components/ProtectedRoute';
+import AcsMainPage from './pages/AcsMainPage';
+import UsermainPage from './pages/UserMainPage';
+import EmergencyPage from './pages/EmergencyPage';
+import PatientsPage from './pages/PatientsPage';
+import Login from './pages/Login';
 
 const router = createBrowserRouter([
   { path: '/', element: <h1>Home!</h1> },
@@ -49,6 +54,24 @@ const router = createBrowserRouter([
         allowedTypes={['person']}
       />
     ),
+    path: '/acs-main-page',
+    element: <AcsMainPage />,
+  },
+  {
+    path: '/user-main-page',
+    element: <UsermainPage />,
+  },
+  {
+    path: '/emergencies',
+    element: <EmergencyPage />,
+  },
+  {
+    path: '/patients',
+    element: <PatientsPage />,
+  },
+  {
+    path: '/login',
+    element: <Login/>,
   },
 ]);
 
