@@ -10,7 +10,7 @@ export default function EmergencyPage() {
   // Sample data trade for a array of emergency patients
   const emergencyPatients = [
     {
-      id: 'claudia123', // Adicionando IDs únicos para cada paciente
+      id: 'claudia123',
       name: 'Cláudia Almeida',
       age: 52,
       lastConsult: '31/03/2024',
@@ -43,10 +43,24 @@ export default function EmergencyPage() {
     }
   ];
 
-  // Lógica de filtro de busca por nome de paciente
-  const filteredPatients = emergencyPatients.filter(patient => 
+  // Função auxiliar para converter data DD/MM/AAAA para objeto Date
+  const parseDate = (dateStr: string) => {
+    const [day, month, year] = dateStr.split('/').map(Number);
+    return new Date(year, month - 1, day);
+  };
+  
+  // Filtra pacientes com base na busca
+  const filteredBySearch = emergencyPatients.filter(patient => 
     patient.name.toLowerCase().includes(searchValue.toLowerCase())
   );
+  
+  // Aplica ordenação por data se estiver na aba urgentes
+  const filteredPatients = activeTab === 'urgentes'
+    ? [...filteredBySearch].sort((a, b) => {
+        // Ordena por data menos recente (mais antigas primeiro)
+        return parseDate(a.lastEmergency).getTime() - parseDate(b.lastEmergency).getTime();
+      })
+    : filteredBySearch;
 
   const handleNavigation = (itemId: string) => {
     console.log(`Navigated to ${itemId}`);
@@ -118,7 +132,7 @@ export default function EmergencyPage() {
               key={index}
               variant="emergency"
               name={patient.name}
-              age={patient.age}
+              age={patient.age || 0}  // Providing a default value of 0 when age is undefined
               lastConsult={patient.lastConsult}
               lastRegistry={patient.lastRegistry}
               lastEmergency={patient.lastEmergency}
