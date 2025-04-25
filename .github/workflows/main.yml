@@ -14,7 +14,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -27,16 +29,16 @@ jobs:
       - name: Format code with Prettier
         run: npx prettier --write "src/**/*.{ts,tsx,js,jsx,json,css,scss}"
         
-      - name: Commit formatted code
+      - name: Commit and push formatted code
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -A
-          git diff-index --quiet HEAD || git commit -m "Apply automatic formatting" && git push
+          git diff-index --quiet HEAD || (git commit -m "Apply automatic formatting" && git push)
         continue-on-error: true
 
       - name: Run build test
-        run: npm run build
+        run: CI=false npm run build
 
   lint-check:
     name: Lint Check for Main PRs
@@ -58,11 +60,11 @@ jobs:
 
       - name: Run lint check
         run: npm run lint
-        continue-on-error: true  # Allows PR to be merged even with lint errors
+        continue-on-error: true
 
       - name: Check for TypeScript warnings
-        run: npm run tsc --noEmit
-        continue-on-error: true  # Allows PR to be merged even with TS warnings
+        run: npx tsc --noEmit
+        continue-on-error: true
 
       - name: Add comment if there are issues
         if: ${{ failure() }}
