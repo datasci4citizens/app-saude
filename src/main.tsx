@@ -1,3 +1,4 @@
+import React from 'react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './globals.css';
@@ -13,7 +14,9 @@ if (!root) {
 }
 
 createRoot(root).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
+  <React.StrictMode>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <App />
+    </GoogleOAuthProvider>
+  </React.StrictMode>,
+)
