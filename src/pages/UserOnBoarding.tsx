@@ -3,21 +3,23 @@ import { UserInfoForm } from '@/components/forms/UserInfoForm';
 import { UserInfoForm2 } from '@/components/forms/UserInfoForm2';
 import { UserInfoForm3 } from '@/components/forms/UserInfoForm3';
 import  axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // see how to connect to backend later
+import { useNavigate } from 'react-router-dom';
+
+// interface to store the data returned from the API
+interface ApiResponse {
+  token?: string;
+  [key: string]: any;
+}
 
 export default function UserOnboarding() {
-  const router = useNavigate();
+  // navigate in order to change the page
+  const navigate = useNavigate();
 
   // Track form step and collected data
   const [step, setStep] = useState(1);
   const [userData, setUserData] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem('authToken')
-  );
-
 
   interface UserData {
     [key: string]: any;
@@ -28,25 +30,35 @@ export default function UserOnboarding() {
   }
 
   const handleFirstFormSubmit: FormSubmitHandler = async (data) => {
-    console.log('First form data submitted:', data);
+
+    const transformedData = {
+      // Ensure field names match backend expectations
+      legal_name: data.legalName,
+      social_name: data.social_name,
+      // Convert string numbers to actual numbers
+      weight: data.weight ? parseFloat(data.weight) : null,
+      height: data.height ? parseFloat(data.height) : null,
+      // Use the rest as-is if they match
+      biological_sex: data.biological_sex,
+      gender_identity: data.gender_identity,
+      birth: data.birth,
+      race_concept: data.race_concept
+    };
+
+    console.log('Transformed data:', data);
 
     // Save data and move to next form
     setUserData({ ...userData, ...data });
-    console.log('User data after first form:', userData);
+    // console.log('User data after first form:', userData);
     // Prepare to send data to backend
     setLoading(true);
     setError(null);
 
     try {
-      // API call to register user
-      interface ApiResponse {
-        token?: string;
-        [key: string]: any;
-      }
 
       const response = await axios.post<ApiResponse>(
         'http://localhost:8000/api/person/', 
-        data,
+        transformedData,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -66,7 +78,7 @@ export default function UserOnboarding() {
 
         alert('Cadastro realizado com sucesso!');
         // Redirect user to appropriate page
-        router('/user-main-page');
+        navigate('/user-main-page');
       }
     } catch (err: any) {
       console.error('Registration error:', err);
@@ -136,7 +148,7 @@ export default function UserOnboarding() {
 
         alert('Cadastro realizado com sucesso!');
         // Redirect user to appropriate page
-        router('/user-main-page');
+        navigate('/user-main-page');
       }
     } catch (err: any) {
       console.error('Registration error:', err);

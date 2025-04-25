@@ -4,16 +4,19 @@ import { TextField } from '@/components/ui/text_input';
 import { SelectField } from '@/components/ui/select_input';
 import { DateField } from '@/components/ui/date_input';
 
+// we'll have to change the types and options of the SelectField in order to keep consistency with the
+// backend. 
+
 // Define types for form data and errors
 interface FormData {
   legalName: string;
   social_name: string;
   biological_sex: string;
-  gender_identity: string;
-  weight: string;
-  height: string;
-  birth: string;
-  race_concept: string;
+  gender_identity: string; // int
+  weight: string; // number
+  height: string; // number
+  birth: string; // YYYY-MM-DD
+  race_concept: string; // INT
 }
 
 interface FormErrors {
