@@ -29,7 +29,7 @@ export default function AcsMainPage() {
                 navigate('/reminders');
                 break;
             case 'diary':
-                navigate('/patients');
+                navigate('/diary');
                 break;
             case 'emergency':
                 navigate('/emergencie');
