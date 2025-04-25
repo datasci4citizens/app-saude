@@ -28,9 +28,10 @@ const router = createBrowserRouter([
     element: <UserOnboarding />,
   },
   {
-    path: '/diary',
+    path: "/diary",
     element: <DiaryPage />,
   },
+  {
     path: "/reminders",
     element: <Reminders />,
   },
