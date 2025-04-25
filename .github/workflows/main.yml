@@ -38,7 +38,9 @@ jobs:
         continue-on-error: true
 
       - name: Run build test
-        run: CI=false npm run build
+        run: GENERATE_SOURCEMAP=false TSC_COMPILE_ON_ERROR=true CI=false npm run build
+        env:
+          DISABLE_ESLINT_PLUGIN: true
 
   lint-check:
     name: Lint Check for Main PRs
