@@ -6,7 +6,6 @@ import CompleteProfile from './pages/CompleteProfile';
 import Login from './pages/Login';
 import Welcome from './pages/Welcome';
 import ProtectedRoute from './components/ProtectedRoute';
-import AcsMainPage from './pages/AcsMainPage';
 import UsermainPage from './pages/UserMainPage';
 import EmergencyPage from './pages/EmergencyPage';
 import PatientsPage from './pages/PatientsPage';
@@ -37,24 +36,8 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/AcsMainPage',
-    element: (
-      <ProtectedRoute
-        element={<h1>Acs Page</h1>}
-        allowedTypes={['provider']}
-      />
-    ),
-  },
-  {
-    path: '/PacientMainPage',
-    element: (
-      <ProtectedRoute
-        element={<h1>Pacient Page</h1>}
-        allowedTypes={['person']}
-      />
-    ),
     path: '/acs-main-page',
-    element: <AcsMainPage />,
+    element: <UsermainPage />,
   },
   {
     path: '/user-main-page',

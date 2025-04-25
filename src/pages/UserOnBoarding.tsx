@@ -33,8 +33,54 @@ export default function UserOnboarding() {
     // Save data and move to next form
     setUserData({ ...userData, ...data });
     console.log('User data after first form:', userData);
+    // Prepare to send data to backend
+    setLoading(true);
+    setError(null);
+
+    try {
+      // API call to register user
+      interface ApiResponse {
+        token?: string;
+        [key: string]: any;
+      }
+
+      const response = await axios.post<ApiResponse>(
+        'http://localhost:8000/api/person/', 
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+          }
+        }
+      );
+
+      console.log('API Response:', response.data);
+
+      // Handle successful registration
+      if (response.status === 200 || response.status === 201) {
+        // Optional: Save auth token if returned
+        if (response.data.token) {
+          localStorage.setItem('authToken', response.data.token);
+        }
+
+        alert('Cadastro realizado com sucesso!');
+        // Redirect user to appropriate page
+        router('/user-main-page');
+      }
+    } catch (err: any) {
+      console.error('Registration error:', err);
+
+      // Extract error message from response if available
+      const errorMessage = err.response?.data?.message || 
+                          'Ocorreu um erro ao processar seu cadastro. Tente novamente mais tarde.';
+
+      setError(errorMessage);
+      alert(`Erro: ${errorMessage}`);
+    } finally {
+      setLoading(false);
+    }
     setStep(2);
-    
   };
 
   const handleSecondFormSubmit = async (data: SecondFormData): Promise<void> => {
