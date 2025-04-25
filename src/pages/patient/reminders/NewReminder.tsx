@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Header from "../../components/ui/header";
+import Header from "@/components/ui/header";
 import { WheelPicker } from "@/components/forms/wheel-picker";
 import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
