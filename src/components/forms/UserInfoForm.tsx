@@ -189,27 +189,28 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: FormData) => void }):
       />
       
       <div className="flex flex-row gap-4 max-[311px]:flex-wrap">
-        
+        <div className="flex-1">
           <SelectField
             id="birthSex"
             name="birthSex"
-            label="Sexo de nascença"
+            label={<div className="min-h-[40px]">Sexo de nascença</div>}
             value={formData.birthSex}
             onChange={handleChange}
             options={birthSexOptions}
             error={errors.birthSex}
           />
-        
+        </div>
+        <div className="flex-1">    
           <SelectField
             id="gender"
             name="gender"
-            label="Gênero"
+            label={<div className="min-h-[40px]">Gênero</div>}
             value={formData.gender}
             onChange={handleChange}
             options={genderOptions}
             error={errors.gender}
           />
-        
+        </div>
       </div>
       
       <div className="flex flex-row gap-4 max-[294px]:flex-wrap">

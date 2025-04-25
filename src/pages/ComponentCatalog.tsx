@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import BottomNavigationBar from "@/components/ui/task-bar";
 import AuxIcons from "@/components/ui/aux_icons";
 import PatientsPage from "@/components/ui/patient-button";
-import HomeBanner from "@/components/home-banner";
+import HomeBanner from "@/components/ui/home-banner";
 import InfoCard from "@/components/ui/info-card";
 import HabitCard from "@/components/ui/habit-card";
 import { RadioCheckbox } from "@/components/ui/radio-checkbox";

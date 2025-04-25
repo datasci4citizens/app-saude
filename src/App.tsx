@@ -5,6 +5,15 @@ import Reminders from "./pages/reminders/Reminders";
 import NewReminder from "./pages/reminders/NewReminder";
 import ViewReminder from "./pages/reminders/ViewReminder";
 import DiaryPage from './pages/Diary';
+import ProfessionalOnboarding from './pages/ProfessionalOnBoarding';
+import CompleteProfile from './pages/CompleteProfile';
+import Login from './pages/Login';
+import Welcome from './pages/Welcome';
+import ProtectedRoute from './components/ProtectedRoute';
+import AcsMainPage from './pages/AcsMainPage';
+import UsermainPage from './pages/UserMainPage';
+import EmergencyPage from './pages/EmergencyPage';
+import PatientsPage from './pages/PatientsPage';
 
 const NotFound = () => (
   <div>
@@ -15,10 +24,9 @@ const NotFound = () => (
 );
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <h1>Home!</h1>,
-  },
+  { path: '/', element: <h1>Home!</h1> },
+  { path: '/login', element: <Login /> },
+  { path: '/welcome', element: <Welcome /> },
   {
     path: "/components",
     element: <ComponentCatalog />,
@@ -50,14 +58,40 @@ const router = createBrowserRouter([
         }}
         onDelete={() => {
           console.log("deletar");
-        }}
-      />
-    ),
+        }} />)},
+  {
+    path: '/forms-prof',
+    element: <ProfessionalOnboarding />,
   },
   {
+    path: '/complete-profile',
+    element: (
+      <ProtectedRoute
+        element={<CompleteProfile />}
+        allowedTypes={['none']}
+      />
+    ),
+  },{
+    path: '/acs-main-page',
+    element: <AcsMainPage />,
+  },
+  {
+    path: '/user-main-page',
+    element: <UsermainPage />,
+  },
+  {
+    path: '/emergencies',
+    element: <EmergencyPage />,
+  },
+  {
+    path: '/patients',
+    element: <PatientsPage />,
+  },
+    {
     path: "*",
     element: <NotFound />,
   },
+  
 ]);
 
 export function App() {

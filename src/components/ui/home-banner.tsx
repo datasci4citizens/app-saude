@@ -126,3 +126,19 @@ const styles: { [key: string]: React.CSSProperties } = {
 };
 
 export default HomeBanner;
+
+// Usage example
+const handleBannerClick = () => {
+  console.log('Banner clicked');
+};
+
+const handleBannerIconClick = () => {
+  console.log('Icon clicked');
+};
+
+<HomeBanner
+    title="Registro diário"
+    subtitle="Cheque registro dos seus pacientes"
+    onClick={handleBannerClick}
+    onIconClick={handleBannerIconClick}  // Correção aqui!
+/>
