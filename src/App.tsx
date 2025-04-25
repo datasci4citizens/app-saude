@@ -1,19 +1,19 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ComponentCatalog from "./pages/ComponentCatalog";
-import UserOnboarding from "./pages/UserOnBoarding";
-import Reminders from "./pages/reminders/Reminders";
-import NewReminder from "./pages/reminders/NewReminder";
-import ViewReminder from "./pages/reminders/ViewReminder";
-import DiaryPage from './pages/Diary';
-import ProfessionalOnboarding from './pages/ProfessionalOnBoarding';
-import CompleteProfile from './pages/CompleteProfile';
-import Login from './pages/Login';
-import Welcome from './pages/Welcome';
-import ProtectedRoute from './components/ProtectedRoute';
-import AcsMainPage from './pages/AcsMainPage';
-import UsermainPage from './pages/UserMainPage';
-import EmergencyPage from './pages/EmergencyPage';
-import PatientsPage from './pages/PatientsPage';
+import UserOnboarding from "./pages/patient/onboarding/UserOnBoarding";
+import ProfessionalOnboarding from "./pages/provider/ProfessionalOnBoarding";
+import CompleteProfile from "./pages/patient/profile/CompleteProfile";
+import Login from "./pages/Login";
+import Welcome from "./pages/Welcome";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AcsMainPage from "./pages/provider/AcsMainPage";
+import UsermainPage from "./pages/patient/UserMainPage";
+import EmergencyPage from "./pages/patient/emergency/EmergencyPage";
+import PatientsPage from "./pages/provider/PatientsPage";
+import ViewReminder from "./pages/patient/reminders/ViewReminder";
+import DiaryPage from "./pages/patient/diary/Diary";
+import Reminders from "./pages/patient/reminders/Reminders";
+import NewReminder from "./pages/patient/reminders/NewReminder";
 
 const NotFound = () => (
   <div>
@@ -24,9 +24,9 @@ const NotFound = () => (
 );
 
 const router = createBrowserRouter([
-  { path: '/', element: <h1>Home!</h1> },
-  { path: '/login', element: <Login /> },
-  { path: '/welcome', element: <Welcome /> },
+  { path: "/", element: <h1>Home!</h1> },
+  { path: "/login", element: <Login /> },
+  { path: "/welcome", element: <Welcome /> },
   {
     path: "/components",
     element: <ComponentCatalog />,
@@ -58,40 +58,40 @@ const router = createBrowserRouter([
         }}
         onDelete={() => {
           console.log("deletar");
-        }} />)},
+        }}
+      />
+    ),
+  },
   {
-    path: '/forms-prof',
+    path: "/forms-prof",
     element: <ProfessionalOnboarding />,
   },
   {
-    path: '/complete-profile',
+    path: "/complete-profile",
     element: (
-      <ProtectedRoute
-        element={<CompleteProfile />}
-        allowedTypes={['none']}
-      />
+      <ProtectedRoute element={<CompleteProfile />} allowedTypes={["none"]} />
     ),
-  },{
-    path: '/acs-main-page',
+  },
+  {
+    path: "/acs-main-page",
     element: <AcsMainPage />,
   },
   {
-    path: '/user-main-page',
+    path: "/user-main-page",
     element: <UsermainPage />,
   },
   {
-    path: '/emergencies',
+    path: "/emergencies",
     element: <EmergencyPage />,
   },
   {
-    path: '/patients',
+    path: "/patients",
     element: <PatientsPage />,
   },
-    {
+  {
     path: "*",
     element: <NotFound />,
   },
-  
 ]);
 
 export function App() {

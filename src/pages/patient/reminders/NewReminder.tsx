@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import Header from "../../components/ui/header";
-import { WheelPicker } from "@/components/ui/wheel-picker";
-import { TextField } from "@/components/ui/text_input";
-import { Button } from "@/components/ui/button";
-import { DateField } from "@/components/ui/date_input";
-import { Checkbox } from "@/components/ui/checkbox";
+import Header from "@/components/ui/header";
+import { WheelPicker } from "@/components/forms/wheel-picker";
+import { TextField } from "@/components/forms/text_input";
+import { Button } from "@/components/forms/button";
+import { DateField } from "@/components/forms/date_input";
+import { Checkbox } from "@/components/forms/checkbox";
 
 const NewReminder: React.FC = () => {
   const hours = Array.from({ length: 24 }, (_, i) =>

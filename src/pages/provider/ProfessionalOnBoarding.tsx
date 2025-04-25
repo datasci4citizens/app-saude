@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ProfessionalInfoForm from '@/components/forms/ProfessionalInfoForm';
+import ProfessionalInfoForm from '@/pages/provider/ProfessionalInfoForm';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Adjust the import based on your routing library
 
