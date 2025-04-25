@@ -1,26 +1,62 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import ComponentCatalog from './pages/ComponentCatalog';
-import UserOnboarding from './pages/UserOnBoarding';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import ComponentCatalog from "./pages/ComponentCatalog";
+import UserOnboarding from "./pages/UserOnBoarding";
+import Reminders from "./pages/reminders/Reminders";
+import NewReminder from "./pages/reminders/NewReminder";
+import ViewReminder from "./pages/reminders/ViewReminder";
 import DiaryPage from './pages/Diary';
 
+const NotFound = () => (
+  <div>
+    <h1>404</h1>
+    <p>Oops! The page you're looking for does not exist.</p>
+    <a href="/">Go back to Home</a>
+  </div>
+);
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <h1>Home!</h1>,
   },
   {
-    path: '/components',
+    path: "/components",
     element: <ComponentCatalog />,
   },
   {
-    path: '/forms-user-1',
+    path: "/forms-user-1",
     element: <UserOnboarding />,
   },
   {
     path: '/diary',
     element: <DiaryPage />,
-  }
+  },
+    path: "/reminders",
+    element: <Reminders />,
+  },
+  {
+    path: "/new-reminder",
+    element: <NewReminder />,
+  },
+  {
+    path: "/reminder",
+    element: (
+      <ViewReminder
+        reminder={{
+          title: "Risperidona",
+          observation: "Tomar após refeição.",
+          time: "Alo mona",
+        }}
+        onDelete={() => {
+          console.log("deletar");
+        }}
+      />
+    ),
+  },
+  {
+    path: "*",
+    element: <NotFound />,
+  },
 ]);
 
 export function App() {
