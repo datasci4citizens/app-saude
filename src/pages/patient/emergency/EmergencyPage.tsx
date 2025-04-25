@@ -1,88 +1,83 @@
 import { useState } from 'react';
-import { TextField } from '@/components/ui/text_input';
+import { TextField } from '@/components/forms/text_input';
 import PatientButton from '@/components/ui/patient-button';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
 
-export default function PatientsPage() {
+export default function EmergencyPage() {
   const [searchValue, setSearchValue] = useState('');
   const [activeTab, setActiveTab] = useState('todos');
   
-  // Sample data for patients
-  const patients = [
+  // Sample data trade for a array of emergency patients
+  const emergencyPatients = [
     {
       id: 'claudia123',
-      name: 'Cláudia Fernandes',
-      age: 18,
+      name: 'Cláudia Almeida',
+      age: 52,
       lastConsult: '31/03/2024',
-      lastRegistry: '28/04/2025',
-      lastEmergency: '',
+      lastRegistry: '24/03/2024',
+      lastEmergency: '23/03/2024',
     },
     {
-      id: 'fernanda456',
-      name: 'Fernanda Ribeiro',
-      age: 22,
-      lastConsult: '31/03/2024',
-      lastRegistry: '29/04/2025',
-      lastEmergency: '01/01/2024',
-      highlight: true, // Usado para destacar o cartão em azul
-    },
-    {
-      id: 'jose789',
-      name: 'José Silva',
-      age: 66,
-      lastConsult: '25/03/2024',
-      lastRegistry: '26/04/2025',
-      lastEmergency: '01/01/2024',
-    },
-    {
-      id: 'amanda101',
+      id: 'amanda456',
       name: 'Amanda de Souza',
       age: 30,
-      lastConsult: '25/03/2024',
+      lastConsult: '31/03/2024', 
       lastRegistry: '25/04/2024',
-      lastEmergency: '01/01/2024',
-      urgent: true, // Usado para destacar o cartão em laranja
+      lastEmergency: '22/03/2024',
+    },
+    {
+      id: 'emerson789',
+      name: 'Emerson Silva',
+      age: 19,
+      lastConsult: '31/03/2024',
+      lastRegistry: '26/04/2024',
+      lastEmergency: '20/03/2024',
+    },
+    {
+      id: 'enzo101',
+      name: 'Enzo Ribeiro',
+      age: 72,
+      lastConsult: '31/03/2024',
+      lastRegistry: '29/04/2024',
+      lastEmergency: '29/04/2023',
     }
   ];
 
   // Função auxiliar para converter data DD/MM/AAAA para objeto Date
   const parseDate = (dateStr: string) => {
-    if (!dateStr) return new Date(0); // Data mínima se estiver vazio
     const [day, month, year] = dateStr.split('/').map(Number);
     return new Date(year, month - 1, day);
   };
   
   // Filtra pacientes com base na busca
-  const filteredBySearch = patients.filter(patient => 
+  const filteredBySearch = emergencyPatients.filter(patient => 
     patient.name.toLowerCase().includes(searchValue.toLowerCase())
   );
   
-  // Aplica ordenação por urgência se estiver na aba urgentes
+  // Aplica ordenação por data se estiver na aba urgentes
   const filteredPatients = activeTab === 'urgentes'
-    ? filteredBySearch.filter(patient => patient.urgent)
+    ? [...filteredBySearch].sort((a, b) => {
+        // Ordena por data menos recente (mais antigas primeiro)
+        return parseDate(a.lastEmergency).getTime() - parseDate(b.lastEmergency).getTime();
+      })
     : filteredBySearch;
 
   const handleNavigation = (itemId: string) => {
     console.log(`Navigated to ${itemId}`);
+    // Handle navigation logic here
     if (itemId === 'home') {
         window.location.href = '/acs-main-page';
     }
-    if (itemId === 'emergency') {
-        window.location.href = '/emergencies';
+    if (itemId === 'patients') {
+        window.location.href = '/patients';
     }
   };
 
   // Função para lidar com o clique no paciente e navegar para a página individual
   const handlePatientClick = (patient: any) => {
     console.log(`Navegando para página do paciente: ${patient.name}`);
-    window.location.href = `/patient/${patient.id}`;
-  };
-
-  // Determina a variante do botão do paciente baseado nos atributos
-  const getPatientVariant = (patient: any) => {
-    if (patient.urgent) return 'emergency';
-    // Não usa highlighted porque não é uma variante suportada
-    return 'patient';
+    // Redireciona para a página individual do paciente usando o ID
+    window.location.href = `/patient/${patient.id}/emergency`;
   };
 
   return (
@@ -100,7 +95,7 @@ export default function PatientsPage() {
         
         {/* Title centered below */}
         <div className="flex justify-center">
-            <h1 className="font-bold" style={{ fontFamily: "'Work Sans', sans-serif", fontSize: '34px' }}>Painel de pacientes</h1>
+            <h1 className="font-bold" style={{ fontFamily: "'Work Sans', sans-serif", fontSize: '34px' }}>Emergências</h1>
         </div>
       </header>
 
@@ -132,15 +127,15 @@ export default function PatientsPage() {
         </button>
       </div>
 
-      {/* Patients list */}
+      {/* Emergency patients list - usando a lista filtrada */}
       <div className="flex-1 px-4 overflow-auto">
         {filteredPatients.length > 0 ? (
           filteredPatients.map((patient, index) => (
             <PatientButton
               key={index}
-              variant={getPatientVariant(patient)}
+              variant="emergency"
               name={patient.name}
-              age={patient.age || 0}
+              age={patient.age || 0}  // Providing a default value of 0 when age is undefined
               lastConsult={patient.lastConsult}
               lastRegistry={patient.lastRegistry}
               lastEmergency={patient.lastEmergency}
@@ -157,7 +152,7 @@ export default function PatientsPage() {
       {/* Bottom navigation using BottomNavigationBar component */}
       <BottomNavigationBar 
         variant="acs" 
-        initialActiveId="patients" 
+        initialActiveId="emergency" 
         onItemClick={handleNavigation}
       />
     </div>

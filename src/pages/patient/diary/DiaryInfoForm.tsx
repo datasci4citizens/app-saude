@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { RadioCheckbox } from "@/components/ui/radio-checkbox";
+import { RadioCheckbox } from "@/components/forms/radio-checkbox";
 import HabitCard from "@/components/ui/habit-card";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select_habit';
 import { TextField } from '@/components/ui/text_input_diary';
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/forms/button";
 
 interface TrackableItem {
   id: string;

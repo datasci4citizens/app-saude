@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { TextField } from '@/components/ui/text_input';
+import { Button } from '@/components/forms/button';
+import { TextField } from '@/components/forms/text_input';
 import { FileUploader } from '@/components/ui/file-uploader';
 
 // Define types for form data and errors

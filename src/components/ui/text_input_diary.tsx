@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { ChangeEvent } from 'react'; // Type-only import
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/forms/input';
 
 interface TextFieldProps {
   label: string;

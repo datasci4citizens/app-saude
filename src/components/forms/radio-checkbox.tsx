@@ -1,5 +1,5 @@
 import React from 'react';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Checkbox } from '@/components/forms/checkbox';
 import { Label } from '@/components/ui/label';
 
 interface RadioCheckboxProps {
