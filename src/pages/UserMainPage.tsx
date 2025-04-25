@@ -12,7 +12,7 @@ export default function AcsMainPage() {
     };
 
     const handleAppointmentClick = () => {
-        navigate('/appointments/amanda');
+        navigate('/reminders');
     };
 
     const handleBannerIconClick = () => {
@@ -25,10 +25,10 @@ export default function AcsMainPage() {
             case 'home':
                 // Já estamos na home
                 break;
-            case 'consults':
-                navigate('/appointments');
+            case 'meds':
+                navigate('/reminders');
                 break;
-            case 'patients':
+            case 'diary':
                 navigate('/patients');
                 break;
             case 'emergency':
