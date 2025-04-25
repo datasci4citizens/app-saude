@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // For navigation
-import Header from "../../components/ui/header";
-import Card from "../../components/reminder-card";
+import Header from "@/components/ui/header";
+import Card from "@/components/ui/reminder-card";
 
 interface Reminder {
   title: string;

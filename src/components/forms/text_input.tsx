@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from '@/components/ui/input'; // Assuming you have this component
+import { Input } from '@/components/forms/input'; // Assuming you have this component
 
 interface TextFieldProps {
   id: string;

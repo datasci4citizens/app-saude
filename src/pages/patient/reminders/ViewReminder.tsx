@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "../../components/ui/header";
+import Header from "@/components/ui/header";
 import { FaTrash } from "react-icons/fa"; // FontAwesome trash icon for delete
 
 interface Reminder {

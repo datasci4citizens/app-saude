@@ -1,5 +1,5 @@
 import { useGoogleLogin } from '@react-oauth/google';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/forms/button';
 import axios from 'axios';
 
 export default function Login() {
