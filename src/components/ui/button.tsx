@@ -18,7 +18,7 @@ const buttonVariants = cva(
 			},
 			size: {
 				default: 'h-10 px-4 py-2',
-				responsive: 'w-[83vw] h-[63px] rounded-[38px] ',
+				responsive: 'h-[63px] w-full max-w-[84vw] rounded-[38px]',
 			},
 			position: {
 				default: '',

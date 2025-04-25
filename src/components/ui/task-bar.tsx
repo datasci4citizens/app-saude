@@ -1,41 +1,51 @@
 import React from 'react';
 
-interface Icon {
+
+interface NavItem {
   label: string;
   icon: React.ReactNode;
-  shouldFlip?: boolean;
-  //shouldFlip?: boolean;
+  active?: boolean;
 }
 
-const icon: Icon[] = [
+const navItems: NavItem[] = [
   {
-    label: 'Remedio',
-    icon: <span role="img" aria-label="capsule" className="mgc_capsule_line"></span>, // Replace with your icon component
-    shouldFlip: true,
-},
+    label: 'Casa',
+    icon: <span role="img" aria-label="home" className="mgc_home_4_line"></span>, // Replace with your icon component
+    active: true,
+  },
   {
-    label: 'Lapis',
-    icon: <span role="img" aria-label="pencil" className="mgc_pencil_line"></span>,
-    shouldFlip: false,
-},
+    label: 'Remédios e consultas',
+    icon: <span role="img" aria-label="calendar" className="mgc_calendar_line"></span>, // Replace with your icon component
+  },
+  {
+    label: 'Diário',
+    icon: <span role="img" aria-label="book" className='mgc_book_6_line'></span>, // Replace with your icon component
+  },
+  {
+    label: 'Emergências',
+    icon: <span role="img" aria-label="warning" className='mgc_emergency_flashers_line'></span>, // Replace with your icon component
+  },
+  {
+    label: 'Eu',
+    icon: <span role="img" aria-label="user" className='mgc_user_2_line'></span>, // Replace with your icon component
+  },
 ];
 
-const AuxIcons: React.FC = () => {
+const BottomNavigationBar: React.FC = () => {
   return (
     <div style={styles.container}>
-      {icon.map((item, index) => (
+      {navItems.map((item, index) => (
         <div
           key={index}
           style={{
             ...styles.item,
+            ...(item.active ? styles.activeItem : {}),
           }}
         >
             <div style={{
               ...styles.icon,
               backgroundColor:'transparent', // Change #FFFFFF to transparent or your button's white color
               borderRadius: '10px',
-              transform: item.shouldFlip ? 'scaleX(-1)' : 'none', // Flip the icon horizontally, if its the case
-              // transform: item.shouldFlip ? 'scaleX(-1)' : 'none', // Flip the icon horizontally, if its the case
               }}>{item.icon}</div>
           <div style={styles.label}>{item.label}</div>
         </div>
@@ -63,6 +73,12 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontFamily: 'Inter, sans-serif',
     cursor: 'pointer',
   },
+  activeItem: {
+    color: '#A0A3B1',
+    fontWeight: 500,
+    fontSize: '13px',
+    fontFamily: 'Inter, sans-serif',
+  },
   icon: {
     fontSize: '24px',
     marginBottom: '2px',
@@ -73,4 +89,4 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
 };
 
-export default AuxIcons;
+export default BottomNavigationBar;
