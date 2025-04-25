@@ -32,7 +32,7 @@ const router = createBrowserRouter([
     element: <ComponentCatalog />,
   },
   {
-    path: "/forms-user-1",
+    path: "/forms-user",
     element: <UserOnboarding />,
   },
   {
