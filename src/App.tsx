@@ -4,6 +4,7 @@ import UserOnboarding from "./pages/UserOnBoarding";
 import Reminders from "./pages/reminders/Reminders";
 import NewReminder from "./pages/reminders/NewReminder";
 import ViewReminder from "./pages/reminders/ViewReminder";
+import DiaryPage from './pages/Diary';
 
 const NotFound = () => (
   <div>
@@ -27,6 +28,9 @@ const router = createBrowserRouter([
     element: <UserOnboarding />,
   },
   {
+    path: '/diary',
+    element: <DiaryPage />,
+  },
     path: "/reminders",
     element: <Reminders />,
   },

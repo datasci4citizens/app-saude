@@ -43,10 +43,10 @@ const BottomNavigationBar: React.FC = () => {
           }}
         >
             <div style={{
-            ...styles.icon,
-            backgroundColor: item.active ? '#FA6E5A' : '#FFFFFF',
-            borderRadius: '10px',
-            }}>{item.icon}</div>
+              ...styles.icon,
+              backgroundColor:'transparent', // Change #FFFFFF to transparent or your button's white color
+              borderRadius: '10px',
+              }}>{item.icon}</div>
           <div style={styles.label}>{item.label}</div>
         </div>
       ))}
@@ -81,7 +81,8 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   icon: {
     fontSize: '24px',
-    marginBottom: '4px',
+    marginBottom: '2px',
+    padding: '2px', // Add some padding for better appearance,
   },
   label: {
     fontSize: '10px',

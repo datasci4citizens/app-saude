@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
+import BottomNavigationBar from "@/components/ui/task-bar";
+import AuxIcons from "@/components/ui/aux_icons";
 import PatientsPage from "@/components/ui/patient-button";
 import HomeBanner from "@/components/home-banner";
 import InfoCard from "@/components/ui/info-card";
@@ -105,7 +106,6 @@ export default function ComponentCatalog() {
         </div>
 
         <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Checkbox</h2>
-
         <h3 className="text-lg font-medium mt-4 mb-2">Variantes</h3>
         <div className="flex flex-wrap justify-center gap-4">
           <RadioCheckbox
