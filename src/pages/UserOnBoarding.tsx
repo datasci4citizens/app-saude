@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
-import { UserInfoForm } from '@/components/forms/UserInfoForm';
-import { UserInfoForm2 } from '@/components/forms/UserInfoForm2';
-import { UserInfoForm3 } from '@/components/forms/UserInfoForm3';
+import {useState} from 'react';
+import { UserInfoForm } from '@/pages/patient/onboarding/UserInfoForm';
+import { UserInfoForm2 } from '@/pages/patient/onboarding/UserInfoForm2';
+import { UserInfoForm3 } from '@/pages/patient/onboarding/UserInfoForm3';
 import  axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // see how to connect to backend later
 

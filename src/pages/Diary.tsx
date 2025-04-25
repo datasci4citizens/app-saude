@@ -1,5 +1,4 @@
-import React from 'react';
-import DiaryInfoForm from '../components/forms/DiaryInfoForm';
+import DiaryInfoForm from '@/pages/patient/diary/DiaryInfoForm';
 import BackArrow from '@/components/ui/back_arrow';
 
 export default function DiaryPage() {

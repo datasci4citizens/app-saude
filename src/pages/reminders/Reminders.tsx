@@ -45,7 +45,7 @@ const Reminders: React.FC = () => {
   ];
 
   const [selectedDate, setSelectedDate] = useState<string>(
-    today.toISOString().split("T")[0]
+    today.toISOString().split("T")[0] as string
   );
 
   const [consultationsSortOrder, setConsultationsSortOrder] = useState<

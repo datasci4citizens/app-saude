@@ -22,7 +22,7 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
   const [selectedIndex, setSelectedIndex] = useState(
     data.indexOf(selected) !== -1 ? data.indexOf(selected) : 0
   );
-  const [isScrolling, setIsScrolling] = useState(false);
+  const [_, setIsScrolling] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollTimeoutRef = useRef<number | null>(null);
 
