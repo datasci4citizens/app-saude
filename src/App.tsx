@@ -3,7 +3,7 @@ import ComponentCatalog from "./pages/ComponentCatalog";
 import UserOnboarding from "./pages/patient/onboarding/UserOnBoarding";
 import ProfessionalOnboarding from "./pages/provider/ProfessionalOnBoarding";
 import CompleteProfile from "./pages/patient/profile/CompleteProfile";
-import Login from "./pages/Login";
+import Login from "./pages/landing/Terms";
 import Welcome from "./pages/Welcome";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AcsMainPage from "./pages/provider/AcsMainPage";
@@ -14,6 +14,7 @@ import ViewReminder from "./pages/patient/reminders/ViewReminder";
 import DiaryPage from "./pages/patient/diary/Diary";
 import Reminders from "./pages/patient/reminders/Reminders";
 import NewReminder from "./pages/patient/reminders/NewReminder";
+import OnboardingSlider from "./pages/landing/OnboardingSlider";
 
 const NotFound = () => (
   <div>
@@ -25,8 +26,7 @@ const NotFound = () => (
 
 const router = createBrowserRouter([
   { path: "/", element: <h1>Home!</h1> },
-  { path: "/login", element: <Login /> },
-  { path: "/welcome", element: <Welcome /> },
+  { path: "/welcome", element: <OnboardingSlider /> },
   {
     path: "/components",
     element: <ComponentCatalog />,
