@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { Button } from '@/components/forms/button';
+import { useState } from 'react';
 
 const EntryOptionsScreen = ({ onComplete }) => {
   const [userType, setUserType] = useState(null);
@@ -38,13 +39,11 @@ const EntryOptionsScreen = ({ onComplete }) => {
           </label>
         </div>
         
-        <button 
-          className={`primary-button ${!userType ? 'disabled' : ''}`} 
+        <Button
           onClick={handleContinue}
-          disabled={!userType}
         >
           CONTINUAR
-        </button>
+        </Button>
         
         <div className="progress-indicator">
           <div className="indicator" />

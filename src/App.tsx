@@ -26,7 +26,10 @@ const NotFound = () => (
 
 const router = createBrowserRouter([
   { path: "/", element: <h1>Home!</h1> },
-  { path: "/welcome", element: <OnboardingSlider /> },
+  {
+    path: "/welcome", 
+    element: <OnboardingSlider />
+  },
   {
     path: "/components",
     element: <ComponentCatalog />,

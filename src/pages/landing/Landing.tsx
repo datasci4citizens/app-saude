@@ -1,5 +1,3 @@
-import { useGoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
 import GoogleSignin from '@/components/ui/google-signin';
 
 const LandingScreen = ({ onNext }) => {

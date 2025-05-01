@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import LandingScreen from './Landing';
 import TermsScreen from './Terms';
 import EntryOptionsScreen from './EntryOption';
