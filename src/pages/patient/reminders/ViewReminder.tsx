@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "@/components/ui/header";
-import { FaTrash } from "react-icons/fa"; 
-import type { Reminder, RecurrenceRule, WeekdayRule } from "@/lib/types/Reminder";
+import { FaTrash } from "react-icons/fa";
+import type { Reminder, RecurrenceRule } from "@/lib/types/Reminder";
 
 interface ViewReminderProps {
   reminder: Reminder;
@@ -11,7 +11,7 @@ interface ViewReminderProps {
 const ViewReminder: React.FC<ViewReminderProps> = ({ reminder, onDelete }) => {
   const formatRecurrenceRule = (rule: RecurrenceRule): string => {
     let description = "";
-    
+
     switch (rule.frequency) {
       case "once":
         return "One-time";
@@ -43,34 +43,16 @@ const ViewReminder: React.FC<ViewReminderProps> = ({ reminder, onDelete }) => {
         
       case "monthly":
         description = `Every ${rule.interval || 1} month${(rule.interval || 1) > 1 ? 's' : ''}`;
-        if (rule.byMonthDay && rule.byMonthDay.length > 0) {
-          const days = rule.byMonthDay.join(", ");
-          description += ` on day${rule.byMonthDay.length > 1 ? 's' : ''} ${days}`;
-        }
         break;
         
       case "yearly":
         description = `Every ${rule.interval || 1} year${(rule.interval || 1) > 1 ? 's' : ''}`;
-        if (rule.byMonth && rule.byMonth.length > 0) {
-          const monthNames = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-          ];
-          const months = rule.byMonth.map(m => monthNames[m - 1]).join(", ");
-          description += ` in ${months}`;
-        }
         break;
         
       default:
         description = "Custom recurrence";
     }
-    
-    if (rule.count) {
-      description += `, ${rule.count} time${rule.count > 1 ? 's' : ''}`;
-    } else if (rule.until) {
-      description += `, until ${new Date(rule.until).toLocaleDateString()}`;
-    }
-    
+
     return description;
   };
 

@@ -6,24 +6,18 @@ import { Button } from "@/components/forms/button";
 import { DateField } from "@/components/forms/date_input";
 import { Checkbox } from "@/components/forms/checkbox";
 import useSWRMutation from "swr/mutation";
-import { useRouter } from "next/router";
 import { toast } from "react-hot-toast";
 import LoadingOverlay from "@/components/ui/loading";
 
 // Updated types
 interface WeekdayRule {
   day: "SU" | "MO" | "TU" | "WE" | "TH" | "FR" | "SA";
-  occurrence?: number;
 }
 
 interface RecurrenceRule {
   frequency: "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "once";
   interval?: number;
-  count?: number;
-  until?: string;
   byDay?: WeekdayRule[];
-  byMonthDay?: number[];
-  byMonth?: number[];
 }
 
 interface ReminderPayload {
@@ -36,6 +30,7 @@ interface ReminderPayload {
   notes?: string;
   isChecked?: boolean;
   observation?: string;
+  time?: string;
 }
 
 // Day mapping for byDay property
@@ -64,7 +59,6 @@ async function sendRequest(url: string, { arg }: { arg: ReminderPayload }) {
 }
 
 const NewReminder: React.FC = () => {
-  const router = useRouter();
   const hours = Array.from({ length: 24 }, (_, i) =>
     i.toString().padStart(2, "0")
   );
@@ -90,7 +84,7 @@ const NewReminder: React.FC = () => {
   const [observation, setObservation] = useState("");
 
   // Initialize SWR mutation hook
-  const { trigger, isMutating, error } = useSWRMutation(
+  const { trigger, isMutating } = useSWRMutation(
     "/api/reminders",
     sendRequest
   );
@@ -123,7 +117,7 @@ const NewReminder: React.FC = () => {
         const today = new Date().getDay();
         const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const todayName = dayNames[today];
-        byDay.push({ day: WEEKDAY_MAP[todayName] });
+        byDay.push({ day: WEEKDAY_MAP[todayName as string] });
       }
     }
 
@@ -138,19 +132,22 @@ const NewReminder: React.FC = () => {
       recurrence.byDay = byDay;
     }
 
+    // Format time for subtitle
+    const timeString = `Às ${selectedHour}:${selectedMinute}`;
+
     // Create reminder data
     const reminderData: ReminderPayload = {
       title,
+      subtitle: timeString,
       recurrence,
       startDate: selectedDate,
-      time: `${selectedHour}:${selectedMinute}`, // Note: You'd need to adjust your backend to handle this
       type: "custom",
       observation,
     };
 
     try {
       await trigger(reminderData);
-      router.push("/reminders");
+      toast.success("Reminder created successfully!");
     } catch (err) {
       toast.error("Failed to create reminder. Please try again.");
       console.error(err);
