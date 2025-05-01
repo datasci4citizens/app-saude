@@ -1,12 +1,7 @@
 import React from "react";
 import Header from "@/components/ui/header";
-import { FaTrash } from "react-icons/fa"; // FontAwesome trash icon for delete
-
-interface Reminder {
-  title: string;
-  observation: string;
-  time: string;
-}
+import { FaTrash } from "react-icons/fa"; 
+import type { Reminder, RecurrenceRule, WeekdayRule } from "@/lib/types/Reminder";
 
 interface ViewReminderProps {
   reminder: Reminder;
@@ -14,6 +9,71 @@ interface ViewReminderProps {
 }
 
 const ViewReminder: React.FC<ViewReminderProps> = ({ reminder, onDelete }) => {
+  const formatRecurrenceRule = (rule: RecurrenceRule): string => {
+    let description = "";
+    
+    switch (rule.frequency) {
+      case "once":
+        return "One-time";
+        
+      case "hourly":
+        description = `Every ${rule.interval || 1} hour${(rule.interval || 1) > 1 ? 's' : ''}`;
+        break;
+        
+      case "daily":
+        description = `Every ${rule.interval || 1} day${(rule.interval || 1) > 1 ? 's' : ''}`;
+        break;
+        
+      case "weekly":
+        description = `Every ${rule.interval || 1} week${(rule.interval || 1) > 1 ? 's' : ''}`;
+        if (rule.byDay && rule.byDay.length > 0) {
+          const dayNames = {
+            SU: "Sunday",
+            MO: "Monday",
+            TU: "Tuesday",
+            WE: "Wednesday",
+            TH: "Thursday",
+            FR: "Friday",
+            SA: "Saturday"
+          };
+          const days = rule.byDay.map(d => dayNames[d.day]).join(", ");
+          description += ` on ${days}`;
+        }
+        break;
+        
+      case "monthly":
+        description = `Every ${rule.interval || 1} month${(rule.interval || 1) > 1 ? 's' : ''}`;
+        if (rule.byMonthDay && rule.byMonthDay.length > 0) {
+          const days = rule.byMonthDay.join(", ");
+          description += ` on day${rule.byMonthDay.length > 1 ? 's' : ''} ${days}`;
+        }
+        break;
+        
+      case "yearly":
+        description = `Every ${rule.interval || 1} year${(rule.interval || 1) > 1 ? 's' : ''}`;
+        if (rule.byMonth && rule.byMonth.length > 0) {
+          const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+          ];
+          const months = rule.byMonth.map(m => monthNames[m - 1]).join(", ");
+          description += ` in ${months}`;
+        }
+        break;
+        
+      default:
+        description = "Custom recurrence";
+    }
+    
+    if (rule.count) {
+      description += `, ${rule.count} time${rule.count > 1 ? 's' : ''}`;
+    } else if (rule.until) {
+      description += `, until ${new Date(rule.until).toLocaleDateString()}`;
+    }
+    
+    return description;
+  };
+
   return (
     <div style={styles.page}>
       {/* Header */}
@@ -22,12 +82,55 @@ const ViewReminder: React.FC<ViewReminderProps> = ({ reminder, onDelete }) => {
       {/* Reminder Details */}
       <div style={styles.reminderContainer}>
         <h2 style={styles.title}>{reminder.title}</h2>
-        <p style={styles.observation}>
-          <strong>Observation:</strong> {reminder.observation}
-        </p>
-        <p style={styles.time}>
-          <strong>Time:</strong> {reminder.time}
-        </p>
+        <p style={styles.subtitle}>{reminder.subtitle}</p>
+        
+        <div style={styles.detailRow}>
+          <strong>Type:</strong> {reminder.type.charAt(0).toUpperCase() + reminder.type.slice(1)}
+        </div>
+        
+        <div style={styles.detailRow}>
+          <strong>Start Date:</strong> {new Date(reminder.startDate).toLocaleDateString()}
+        </div>
+        
+        {reminder.endDate && (
+          <div style={styles.detailRow}>
+            <strong>End Date:</strong> {new Date(reminder.endDate).toLocaleDateString()}
+          </div>
+        )}
+        
+        <div style={styles.detailRow}>
+          <strong>Recurrence:</strong> {formatRecurrenceRule(reminder.recurrence)}
+        </div>
+        
+        {reminder.observation && (
+          <div style={styles.detailRow}>
+            <strong>Observation:</strong> {reminder.observation}
+          </div>
+        )}
+        
+        {reminder.notes && (
+          <div style={styles.detailRow}>
+            <strong>Notes:</strong> {reminder.notes}
+          </div>
+        )}
+        
+        {reminder.isChecked !== undefined && (
+          <div style={styles.detailRow}>
+            <strong>Status:</strong> {reminder.isChecked ? "Completed" : "Pending"}
+          </div>
+        )}
+        
+        {reminder.createdAt && (
+          <div style={styles.detailRow}>
+            <strong>Created:</strong> {new Date(reminder.createdAt).toLocaleString()}
+          </div>
+        )}
+        
+        {reminder.updatedAt && (
+          <div style={styles.detailRow}>
+            <strong>Last Updated:</strong> {new Date(reminder.updatedAt).toLocaleString()}
+          </div>
+        )}
       </div>
 
       {/* Delete Button */}
@@ -58,12 +161,12 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontWeight: "bold",
     marginBottom: "12px",
   },
-  observation: {
-    fontSize: "16px",
-    marginBottom: "12px",
+  subtitle: {
+    fontSize: "18px",
+    marginBottom: "16px",
     color: "#555",
   },
-  time: {
+  detailRow: {
     fontSize: "16px",
     marginBottom: "12px",
     color: "#555",

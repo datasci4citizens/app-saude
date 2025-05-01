@@ -1,48 +1,40 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // For navigation
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
 import Card from "@/components/ui/reminder-card";
+import useSWR from "swr";
+import LoadingOverlay from "@/components/ui/loading";
+import { toast } from "react-hot-toast";
+import type { Reminder } from "@/lib/types/Reminder";
 
-interface Reminder {
-  title: string;
-  subtitle: string;
-  icon: React.ReactNode;
-  repeatPattern: "daily" | "weekly";
-  startDate: string;
-  endDate?: string;
-}
+// Fetch function for SWR
+const fetcher = async (url: string) => {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error("An error occurred while fetching reminders");
+  }
+
+  return response.json();
+};
 
 const Reminders: React.FC = () => {
   const navigate = useNavigate();
   const today = new Date();
 
-  const consultations: Reminder[] = [
-    {
-      title: "Consulta com psiquiatra",
-      subtitle: "Às 13:45",
-      icon: <span className="mgc-user-line" />,
-      repeatPattern: "weekly",
-      startDate: "2023-04-19",
+  // Use SWR to fetch reminders
+  const {
+    data: reminders,
+    error,
+    isLoading,
+    mutate,
+  } = useSWR<Reminder[]>("/api/reminders", fetcher, {
+    onError: (err) => {
+      toast.error("Failed to load reminders. Please try again.");
+      console.error(err);
     },
-  ];
-
-  const medicines: Reminder[] = [
-    {
-      title: "Pimozida",
-      subtitle: "Às 11:00",
-      icon: <span className="mgc-pill-line" />,
-      repeatPattern: "daily",
-      startDate: "2023-04-22",
-    },
-    {
-      title: "Sertralina",
-      subtitle: "Às 11:00",
-      icon: <span className="mgc-pill-line" />,
-      repeatPattern: "daily",
-      startDate: "2023-04-22",
-      endDate: "2023-04-28",
-    },
-  ];
+    revalidateOnFocus: true,
+  });
 
   const [selectedDate, setSelectedDate] = useState<string>(
     today.toISOString().split("T")[0] as string
@@ -51,8 +43,9 @@ const Reminders: React.FC = () => {
   const [consultationsSortOrder, setConsultationsSortOrder] = useState<
     "asc" | "desc"
   >("asc");
-  const [medicinesSortOrder, setMedicinesSortOrder] =
-    useState<"asc" | "desc">("asc");
+  const [medicinesSortOrder, setMedicinesSortOrder] = useState<"asc" | "desc">(
+    "asc"
+  );
 
   // Generate 20 days from today for the date slider
   const dates = Array.from({ length: 20 }, (_, i) => {
@@ -66,24 +59,133 @@ const Reminders: React.FC = () => {
     };
   });
 
-  const isDateInRepeatPattern = (date: string, reminder: Reminder): boolean => {
+  const isDateInRecurrencePattern = (date: string, reminder: Reminder): boolean => {
     const startDate = new Date(reminder.startDate);
     const currentDate = new Date(date);
 
+    // Check if the date is before the start date
+    if (currentDate < startDate) return false;
+
+    // Check if the date is after the end date (if specified)
     if (reminder.endDate) {
       const endDate = new Date(reminder.endDate);
       if (currentDate > endDate) return false;
     }
 
-    if (reminder.repeatPattern === "daily") {
-      return currentDate >= startDate;
-    } else if (reminder.repeatPattern === "weekly") {
-      return (
-        currentDate >= startDate && currentDate.getDay() === startDate.getDay()
-      );
+    // Check if the date is after the until date (if specified in recurrence)
+    if (reminder.recurrence.until) {
+      const untilDate = new Date(reminder.recurrence.until);
+      if (currentDate > untilDate) return false;
+    }
+
+    const { frequency } = reminder.recurrence;
+    const interval = reminder.recurrence.interval || 1;
+
+    // Handle one-time reminders
+    if (frequency === "once") {
+      const reminderDate = startDate.toISOString().split("T")[0];
+      return reminderDate === date;
+    }
+
+    // Handle daily recurrence
+    if (frequency === "daily") {
+      const dayDiff = Math.floor((currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+      return dayDiff % interval === 0;
+    }
+
+    // Handle weekly recurrence
+    if (frequency === "weekly") {
+      const weekDiff = Math.floor((currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 7));
+      
+      // Check if this is the right week based on interval
+      if (weekDiff % interval !== 0) return false;
+      
+      // If byDay is specified, check if the current day matches one of the specified days
+      if (reminder.recurrence.byDay && reminder.recurrence.byDay.length > 0) {
+        const weekdays = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
+        const currentDay = weekdays[currentDate.getDay()];
+        return reminder.recurrence.byDay.some(day => day.day === currentDay);
+      }
+      
+      // If no byDay, check if it's the same day of the week as the start date
+      return currentDate.getDay() === startDate.getDay();
+    }
+
+    // Handle monthly recurrence
+    if (frequency === "monthly") {
+      const monthDiff = (currentDate.getFullYear() - startDate.getFullYear()) * 12 + 
+                       (currentDate.getMonth() - startDate.getMonth());
+      
+      // Check if this is the right month based on interval
+      if (monthDiff % interval !== 0) return false;
+      
+      // If byMonthDay is specified, check if the current date is one of those days
+      if (reminder.recurrence.byMonthDay && reminder.recurrence.byMonthDay.length > 0) {
+        return reminder.recurrence.byMonthDay.includes(currentDate.getDate());
+      }
+      
+      // Otherwise, check if it's the same day of month as the start date
+      return currentDate.getDate() === startDate.getDate();
+    }
+
+    // Handle yearly recurrence
+    if (frequency === "yearly") {
+      const yearDiff = currentDate.getFullYear() - startDate.getFullYear();
+      
+      // Check if this is the right year based on interval
+      if (yearDiff % interval !== 0) return false;
+      
+      // If byMonth is specified, check if the current month is one of those months
+      if (reminder.recurrence.byMonth && reminder.recurrence.byMonth.length > 0) {
+        const currentMonth = currentDate.getMonth() + 1;
+        if (!reminder.recurrence.byMonth.includes(currentMonth)) return false;
+      }
+      
+      return currentDate.getMonth() === startDate.getMonth() && 
+             currentDate.getDate() === startDate.getDate();
+    }
+
+    if (frequency === "hourly") {
+      const dayDiff = Math.floor((currentDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+      return dayDiff === 0; // Only show on the same day
     }
 
     return false;
+  };
+
+
+  // Function to handle checkbox changes and update reminder state
+  const handleCheckboxChange = async (id: string, checked: boolean) => {
+    try {
+      // Optimistically update the UI
+      mutate(
+        reminders?.map((reminder) =>
+          reminder.id === id ? { ...reminder, isChecked: checked } : reminder
+        ),
+        false
+      );
+
+      // Send the update to the server
+      const response = await fetch(`/api/reminders/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ isChecked: checked }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update reminder status");
+      }
+
+      // Revalidate the data after successful update
+      mutate();
+    } catch (err) {
+      toast.error("Failed to update reminder status. Please try again.");
+      console.error(err);
+      // Revalidate to get the correct state
+      mutate();
+    }
   };
 
   const sortRemindersByTime = (
@@ -91,29 +193,54 @@ const Reminders: React.FC = () => {
     order: "asc" | "desc"
   ): Reminder[] => {
     return [...reminders].sort((a, b) => {
-      return 0;
+      // Extract hours and minutes from subtitle (assuming format: "Às HH:MM")
+      const timeA = a.subtitle.split(" ")[1];
+      const timeB = b.subtitle.split(" ")[1];
+
+      const comparison = timeA!.localeCompare(timeB!);
+      return order === "asc" ? comparison : -comparison;
     });
   };
 
-  const relevantConsultations = sortRemindersByTime(
-    consultations.filter((reminder) =>
-      isDateInRepeatPattern(selectedDate, reminder)
-    ),
-    consultationsSortOrder
-  );
+  // Filter reminders by date and type
+  const getFilteredReminders = (type: "consultation" | "medicine") => {
+    if (!reminders) return [];
 
-  const relevantMedicines = sortRemindersByTime(
-    medicines.filter((reminder) =>
-      isDateInRepeatPattern(selectedDate, reminder)
-    ),
-    medicinesSortOrder
-  );
+    return sortRemindersByTime(
+      reminders
+        .filter((reminder) => reminder.type === type)
+        .filter((reminder) => isDateInRecurrencePattern(selectedDate, reminder)),
+      type === "consultation" ? consultationsSortOrder : medicinesSortOrder
+    );
+  };
+
+  const relevantConsultations = getFilteredReminders("consultation");
+  const relevantMedicines = getFilteredReminders("medicine");
+
+  // Format the header date
+  const formatHeaderDate = () => {
+    const selectedDateObj = new Date(selectedDate);
+    const today = new Date();
+
+    if (
+      selectedDateObj.getDate() === today.getDate() &&
+      selectedDateObj.getMonth() === today.getMonth() &&
+      selectedDateObj.getFullYear() === today.getFullYear()
+    ) {
+      return `Hoje, ${selectedDateObj.toLocaleDateString("pt-BR")}`;
+    }
+
+    return selectedDateObj.toLocaleDateString("pt-BR");
+  };
 
   return (
     <div style={styles.page}>
+      {/* Show loading overlay when fetching data */}
+      {isLoading && <LoadingOverlay />}
+
       {/* Header */}
       <Header
-        title="Hoje, dia 19/04"
+        title={formatHeaderDate()}
         rightIcon={<span style={styles.editIcon} className="mgc-pencil-line" />}
       />
 
@@ -157,15 +284,15 @@ const Reminders: React.FC = () => {
             />
           </div>
           <hr style={styles.divider} />
-          {relevantConsultations.map((reminder, index) => (
+          {relevantConsultations.map((reminder) => (
             <Card
-              key={index}
+              key={reminder.id}
               title={reminder.title}
               subtitle={reminder.subtitle}
               icon={reminder.icon}
-              isChecked={true}
+              isChecked={reminder.isChecked || false}
               onCheckboxChange={(checked) =>
-                console.log(`${reminder.title} checkbox:`, checked)
+                handleCheckboxChange(reminder.id, checked)
               }
             />
           ))}
@@ -188,15 +315,15 @@ const Reminders: React.FC = () => {
             />
           </div>
           <hr style={styles.divider} />
-          {relevantMedicines.map((reminder, index) => (
+          {relevantMedicines.map((reminder) => (
             <Card
-              key={index}
+              key={reminder.id}
               title={reminder.title}
               subtitle={reminder.subtitle}
               icon={reminder.icon}
-              isChecked={true}
+              isChecked={reminder.isChecked || false}
               onCheckboxChange={(checked) =>
-                console.log(`${reminder.title} checkbox:`, checked)
+                handleCheckboxChange(reminder.id, checked)
               }
             />
           ))}
@@ -204,17 +331,16 @@ const Reminders: React.FC = () => {
       ) : null}
 
       {/* No Reminders for the Day */}
-      {relevantConsultations.length === 0 && relevantMedicines.length === 0 ? (
+      {!isLoading &&
+      relevantConsultations.length === 0 &&
+      relevantMedicines.length === 0 ? (
         <div style={styles.noReminders}>
           <p>Não há lembretes para este dia.</p>
         </div>
       ) : null}
 
       {/* Floating Action Button */}
-      <button
-        style={styles.fab}
-        onClick={() => navigate("/new-reminder")}
-      >
+      <button style={styles.fab} onClick={() => navigate("/new-reminder")}>
         <span className="mgc_add_line" style={styles.fabIcon} />
       </button>
     </div>
@@ -222,6 +348,7 @@ const Reminders: React.FC = () => {
 };
 
 const styles: { [key: string]: React.CSSProperties } = {
+  // Styles remain the same as in your original component
   page: {
     padding: "16px",
     backgroundColor: "#FFFFFF",
