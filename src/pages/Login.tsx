@@ -1,25 +1,20 @@
 import { useGoogleLogin } from '@react-oauth/google';
 import { Button } from '@/components/forms/button';
-import axios from 'axios';
+import { AuthService } from '../api';
 
 export default function Login() {
   const login = useGoogleLogin({
     onSuccess: async ({ code }) => {
       try {
-        const tokens = await axios.post(
-          'http://localhost:8000/auth/login/google/',
-          { code },
-          { withCredentials: true }
-        );
-        const { access, refresh, role } = tokens.data;
+        const response = await AuthService.authLoginGoogleCreate({ code });
 
-        localStorage.setItem('accessToken', access);
-        localStorage.setItem('refreshToken', refresh);
-        localStorage.setItem('role', role)
+        localStorage.setItem('accessToken', response.access);
+        localStorage.setItem('refreshToken', response.refresh);
+        localStorage.setItem('role', response.role)
 
-        if (role === 'provider') {
+        if (response.role === 'provider') {
           window.location.href = '/acs-main-page';
-        } else if (role == 'person') {
+        } else if (response.role == 'person') {
           window.location.href = '/user-main-page';
         } else {
           window.location.href = '/forms-user';
