@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/ui/text_input';
 import { SelectField } from '@/components/ui/select_input';
@@ -15,14 +15,14 @@ interface SelectOption {
 // Define form data type that extends Person with form-specific fields
 interface UserFormData extends Partial<Person> {
   // Fields from Person that we'll use
-  social_name?: string | null;
-  birth_datetime?: string | null;
-  gender_concept?: number | null;
-  race_concept?: number | null;
+  social_name: string | null;
+  birth_datetime: string | null;
+  gender_concept: number | null;
+  race_concept: number | null;
   
   // Additional form fields not in Person model
-  weight?: number | null;
-  height?: number | null;
+  weight: number | null;
+  height: number | null;
 }
 
 interface FormErrors {
@@ -54,29 +54,52 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
   const [conceptError, setConceptError] = useState<string | null>(null);
 
 
-   // Fetch concepts when component mounts
-   useEffect(() => {
+   
+  // Updated useEffect to properly fetch concepts with filters
+  useEffect(() => {
     const fetchConcepts = async () => {
       setIsLoadingConcepts(true);
       setConceptError(null);
       
       try {
-        // Fetch gender concepts
-        // Assuming there's a method to fetch concepts by domain/vocabulary
-        const genderConceptsResponse = await ConceptService.apiConceptList(); // change this method later
-        const fetchedGenderOptions = genderConceptsResponse.map(concept => ({
-          value: concept.concept_id,
-          label: concept.concept_name
-        }));
-        setGenderOptions(fetchedGenderOptions);
+        // Use the class filter and language parameter
+        // Gender = gender concepts
+        // Race = race/ethnicity concepts
+        const concepts = await ConceptService.apiConceptList('Gender,Race', 'pt');
         
-        // Fetch race concepts
-        const raceConceptsResponse = await ConceptService.apiConceptList(); // change this method later
-        const fetchedRaceOptions = raceConceptsResponse.map(concept => ({
+        // Filter concepts by their class
+        const genderConcepts = concepts.filter(concept => 
+          concept.concept_class_id === 'Gender'
+        );
+        
+        const raceConcepts = concepts.filter(concept => 
+          concept.concept_class_id === 'Race'
+        );
+        
+        // Map filtered concepts to options format
+        const fetchedGenderOptions = genderConcepts
+        .filter(concept => concept.concept_name != null)  // Remove concepts with no name
+        .map(concept => ({
           value: concept.concept_id,
-          label: concept.concept_name
+          label: concept.concept_name as string  // Now safe to cast
         }));
+
+        // Do the same for race concepts
+        const fetchedRaceOptions = raceConcepts
+          .filter(concept => concept.concept_name != null)
+          .map(concept => ({
+            value: concept.concept_id, 
+            label: concept.concept_name as string
+          }));
+
+        // Update state with fetched options
+        setGenderOptions(fetchedGenderOptions);
         setRaceOptions(fetchedRaceOptions);
+        
+        // Log the fetched data for debugging
+        console.log('Fetched gender concepts:', genderConcepts);
+        console.log('Fetched race concepts:', raceConcepts);
+        
       } catch (error) {
         console.error('Error fetching concepts:', error);
         setConceptError('Erro ao carregar opções do servidor. Tente novamente mais tarde.');
