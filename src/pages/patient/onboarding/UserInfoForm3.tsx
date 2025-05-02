@@ -5,8 +5,7 @@ import { SelectField } from '@/components/forms/select_input';
 import { Observation } from '@/api/models/Observation';
 import { DrugExposure } from '@/api/models/DrugExposure';
 import { ConceptService } from '@/api/services/ConceptService';
-import { ObservationService } from '@/api/services/ObservationService';
-import { DrugExposureService } from '@/api/services/DrugExposureService';
+import { AutocompleteField } from '@/components/forms/autocomplete_input';
 
 // Define concept IDs for different types of observations
 interface ConceptIds {
@@ -16,6 +15,14 @@ interface ConceptIds {
   comorbidities: number;
 }
 
+// Add new interface for medication selection
+interface MedicationOption {
+  value: number;
+  label: string;
+  dosageForm?: string | null;
+}
+
+
 // Define form data interface (user-friendly structure)
 interface FormData {
   sleepHealth: string;
@@ -24,6 +31,9 @@ interface FormData {
   comorbidities: string;
   medications: string;
   substanceUse: string;
+  // New fields for tracking selected concepts
+  selectedMedicationId: number | null;
+  selectedSubstanceId: number | null;
 }
 
 // Define the structure for API submission
@@ -51,6 +61,8 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
     comorbidities: '',
     medications: '',
     substanceUse: '',
+    selectedMedicationId: null,
+    selectedSubstanceId: null
   });
   
   // Store concept IDs for observations
@@ -65,6 +77,11 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
   const [sleepHealthOptions, setSleepHealthOptions] = useState<{value: string, label: string}[]>([]);
   const [exerciseOptions, setExerciseOptions] = useState<{value: string, label: string}[]>([]);
   const [eatingHabitsOptions, setEatingHabitsOptions] = useState<{value: string, label: string}[]>([]);
+  
+  // Add state for medication options
+  const [medicationOptions, setMedicationOptions] = useState<MedicationOption[]>([]);
+  const [substanceOptions, setSubstanceOptions] = useState<MedicationOption[]>([]);
+  const [isLoadingDrugs, setIsLoadingDrugs] = useState(false);
   
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -90,15 +107,15 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
         const sleepConcept = concepts.find(c => c.concept_name === SLEEP_DOMAIN);
         const exerciseConcept = concepts.find(c => c.concept_name === EXERCISE_DOMAIN);
         const eatingConcept = concepts.find(c => c.concept_name === EATING_DOMAIN);
-        const comorbidityConept = concepts.find(c => c.concept_name === COMORBIDITY_DOMAIN);
+        const comobirdityConcept = concepts.find(c => c.concept_name === COMORBIDITY_DOMAIN);
         
         // Update concept IDs
-        if (sleepConcept && exerciseConcept && eatingConcept && comorbidityConept) {
+        if (sleepConcept && exerciseConcept && eatingConcept && comobirdityConcept) {
           setConceptIds({
             sleepHealth: sleepConcept.concept_id,
             physicalExercise: exerciseConcept.concept_id,
             eatingHabits: eatingConcept.concept_id,
-            comorbidities: comorbidityConept.concept_id
+            comorbidities: comobirdityConcept.concept_id
           });
         } else {
           // Fallback to hardcoded concept IDs
@@ -138,9 +155,96 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
         setIsLoading(false);
       }
     };
-    
+
+    // Add proper drug concept fetching
+    const fetchDrugConcepts = async () => {
+      setIsLoadingDrugs(true);
+
+      try {
+        // Fetch medications (RxNorm concepts)
+        const medications = await ConceptService.apiConceptList('Drug', 'pt');
+        
+        // Filter and map to options format
+        const medOptions = medications
+          .filter(drug => 
+            // Filter based on drug vocabulary (RxNorm, etc.)
+            (drug as any).vocabulary_id === 'RxNorm' && 
+            drug.concept_name != null
+          )
+          .map(drug => ({
+            value: drug.concept_id,
+            label: drug.concept_name as string,
+            dosageForm: drug.concept_class_id // Often contains info like "Pill", "Injection"
+          }));
+          
+        // Filter for substances (could be alcohol, tobacco, etc)
+        const substOptions = medications
+          .filter(drug => 
+            // Filter for substance concepts
+            ((drug as any).vocabulary_id === 'RxNorm' || drug.domain_id === 'Drug') && 
+            drug.concept_class_id?.toLowerCase().includes('substance') &&
+            drug.concept_name != null
+          )
+          .map(drug => ({
+            value: drug.concept_id,
+            label: drug.concept_name as string
+          }));
+        
+        setMedicationOptions(medOptions);
+        setSubstanceOptions(substOptions);
+        
+        console.log('Fetched medication concepts:', medications);
+      } catch (error) {
+        console.error('Error fetching drug concepts:', error);
+
+        // Fallback options
+        setMedicationOptions([
+          { value: 19019530, label: "Paracetamol 500mg" },
+          { value: 1539463, label: "Dipirona 500mg" },
+          { value: 1539411, label: "Ibuprofeno 600mg" }
+        ]);
+        
+        setSubstanceOptions([
+          { value: 4052175, label: "Álcool" },
+          { value: 4041969, label: "Tabaco" },
+          { value: 4042168, label: "Cannabis" }
+        ]);
+      } finally {
+        setIsLoadingDrugs(false);
+      }
+    };
+
     fetchConcepts();
+    fetchDrugConcepts();
   }, []);
+
+  // Add handler for medication select
+  const handleMedicationSelect = (value: string, selectedOption?: MedicationOption) => {
+    setFormData({
+      ...formData,
+      medications: value,
+      selectedMedicationId: selectedOption?.value || null
+    });
+    
+    // Clear error
+    if (errors.medications) {
+      setErrors({ ...errors, medications: undefined });
+    }
+  };
+  
+  // Add handler for substance select
+  const handleSubstanceSelect = (value: string, selectedOption?: MedicationOption) => {
+    setFormData({
+      ...formData,
+      substanceUse: value,
+      selectedSubstanceId: selectedOption?.value || null
+    });
+    
+    // Clear error
+    if (errors.substanceUse) {
+      setErrors({ ...errors, substanceUse: undefined });
+    }
+  };
   
   // Handle input change
   const handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
@@ -209,20 +313,20 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
     // Add medications if provided
     if (formData.medications.trim()) {
       drugExposures.push({
-        sig: formData.medications, // Using sig for medication instructions
+        sig: formData.medications, // Description/usage instructions
         drug_exposure_start_date: now,
-        // We would need to map to actual drug concepts, but using null for now
-        drug_concept: null
+        drug_concept: formData.selectedMedicationId,
+        drug_type_concept: 38000177 // Patient self-reported medication
       });
     }
     
     // Add substance use if provided
     if (formData.substanceUse.trim()) {
       drugExposures.push({
-        sig: formData.substanceUse,
+        sig: formData.substanceUse, // Description of use
         drug_exposure_start_date: now,
-        // Would need proper concept for substances
-        drug_concept: null
+        drug_concept: formData.selectedSubstanceId,
+        drug_type_concept: 38000177 // Patient self-reported
       });
     }
     
@@ -305,34 +409,39 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
         error={errors.comorbidities}
       />
       
-      <TextField 
+      <AutocompleteField 
         id="medications"
         name="medications"
         label="Remédios usados"
         value={formData.medications}
-        onChange={handleChange}
-        placeholder="Insira os remédios que você utiliza"
+        onChange={handleMedicationSelect}
+        options={medicationOptions}
         error={errors.medications}
+        isLoading={isLoadingDrugs}
+        placeholder="Busque medicamentos..."
       />
       
-      <TextField 
+      <AutocompleteField 
         id="substanceUse"
         name="substanceUse"
-        label="Uso de substâncias tóxicas e ilícitas e frequência"
+        label="Uso de substâncias (álcool, tabaco, etc)"
         value={formData.substanceUse}
-        onChange={handleChange}
-        placeholder="Insira informações sobre uso de substâncias"
+        onChange={handleSubstanceSelect}
+        options={substanceOptions}
         error={errors.substanceUse}
+        isLoading={isLoadingDrugs}
+        placeholder="Busque substâncias..."
       />
       
       <Button 
         type="submit" 
         variant="white" 
         className="w-full mt-4 font-['Inter'] font-bold"
-        disabled={isLoading}
+        disabled={isLoading || isLoadingDrugs}
       >
         CONTINUAR
       </Button>
+
     </form>
   );
 }
