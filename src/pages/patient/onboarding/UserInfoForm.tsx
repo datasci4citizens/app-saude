@@ -4,6 +4,13 @@ import { TextField } from '@/components/ui/text_input';
 import { SelectField } from '@/components/ui/select_input';
 import { DateField } from '@/components/ui/date_input';
 import { Person } from '@/api/models/Person';
+import { ConceptService } from '@/api/services/ConceptService';
+
+// Define the option interface
+interface SelectOption {
+  value: number | string;
+  label: string;
+}
 
 // Define form data type that extends Person with form-specific fields
 interface UserFormData extends Partial<Person> {
@@ -39,6 +46,65 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
   });
   
   const [errors, setErrors] = useState<FormErrors>({});
+
+  // State for storing fetched concepts
+  const [genderOptions, setGenderOptions] = useState<SelectOption[]>([]);
+  const [raceOptions, setRaceOptions] = useState<SelectOption[]>([]);
+  const [isLoadingConcepts, setIsLoadingConcepts] = useState(true);
+  const [conceptError, setConceptError] = useState<string | null>(null);
+
+
+   // Fetch concepts when component mounts
+   useEffect(() => {
+    const fetchConcepts = async () => {
+      setIsLoadingConcepts(true);
+      setConceptError(null);
+      
+      try {
+        // Fetch gender concepts
+        // Assuming there's a method to fetch concepts by domain/vocabulary
+        const genderConceptsResponse = await ConceptService.apiConceptList(); // change this method later
+        const fetchedGenderOptions = genderConceptsResponse.map(concept => ({
+          value: concept.concept_id,
+          label: concept.concept_name
+        }));
+        setGenderOptions(fetchedGenderOptions);
+        
+        // Fetch race concepts
+        const raceConceptsResponse = await ConceptService.apiConceptList(); // change this method later
+        const fetchedRaceOptions = raceConceptsResponse.map(concept => ({
+          value: concept.concept_id,
+          label: concept.concept_name
+        }));
+        setRaceOptions(fetchedRaceOptions);
+      } catch (error) {
+        console.error('Error fetching concepts:', error);
+        setConceptError('Erro ao carregar opções do servidor. Tente novamente mais tarde.');
+        
+        // Fallback to hardcoded options if fetch fails
+        setGenderOptions([
+          { value: 8532, label: "Feminino" },
+          { value: 8507, label: "Masculino" },
+          { value: 33284, label: "Não-binário" },
+          { value: 0, label: "Outro" },
+          { value: 0, label: "Prefiro não informar" }
+        ]);
+        
+        setRaceOptions([
+          { value: 8527, label: "Branca" },
+          { value: 8516, label: "Preta" },
+          { value: 8514, label: "Parda" },
+          { value: 8515, label: "Amarela" },
+          { value: 38003574, label: "Indígena" }
+        ]);
+      } finally {
+        setIsLoadingConcepts(false);
+      }
+    };
+    
+    fetchConcepts();
+  }, []);
+
 
   // Handle input change
   const handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
@@ -139,24 +205,6 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
     // Submit if no errors
     onSubmit(formData);
   };
-  
-  // gender_concept options matching backend values
-  const genderOptions = [
-    { value: 8532, label: "Feminino" },
-    { value: 8507, label: "Masculino" },
-    { value: 33284, label: "Não-binário" },
-    { value: 0, label: "Outro" },
-    { value: 0, label: "Prefiro não informar" }
-  ];
-  
-  // race_concept options matching backend values
-  const raceOptions = [
-    { value: 8527, label: "Branca" },
-    { value: 8516, label: "Preta" },
-    { value: 8514, label: "Parda" },
-    { value: 8515, label: "Amarela" },
-    { value: 38003574, label: "Indígena" }
-  ];
 
   // Display formatted date (YYYY-MM-DD to DD/MM/YYYY)
   const getDisplayDate = () => {
@@ -175,6 +223,12 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+      {conceptError && (
+        <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-3 mb-4">
+          <p>{conceptError}</p>
+        </div>
+      )}
+      
       <TextField 
         id="social_name"
         name="social_name"
@@ -194,6 +248,7 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
         onChange={handleChange}
         options={genderOptions}
         error={errors.gender_concept}
+        isLoading={isLoadingConcepts}
       />
       
       <div className="flex flex-row gap-4 max-[294px]:flex-wrap">
@@ -235,6 +290,7 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
         onChange={handleChange}
         options={raceOptions}
         error={errors.race_concept}
+        isLoading={isLoadingConcepts}
       />
       
       <Button 

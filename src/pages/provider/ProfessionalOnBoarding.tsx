@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ProfessionalInfoForm from '@/pages/provider/ProfessionalInfoForm';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Adjust the import based on your routing library
+import Header from '@/components/ui/header';
 
 // Define the data type we expect from the form
 interface ProfessionalData {
@@ -51,18 +52,13 @@ export default function ProfessionalOnboarding() {
   return (
     <div className="h-full bg-white overflow-y-auto" style={{height: '100vh'}}>
       <div className="max-w-md mx-auto">
-        {/* Back button */}
-        <button className="pt-9 pl-8" onClick={() => window.history.back()}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 18L9 12L15 6" stroke="#141B36" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
         
-        {/* Form title */}
-        <div className="pl-9 mt-[46px] mb-6">
-            <h1 className="text-4xl font-bold" style={{ fontFamily: 'Work Sans, sans-serif', color: '#141B36' }}> 
-              Preencha informações sobre você
-            </h1>
+      <div className="max-w-md mx-auto">
+        {/* Replace custom back button and title with Header component */}
+        <div className="px-8 pt-9">
+          <Header title="Preencha informações sobre você"
+            onBackClick={handleBackClick}
+          />
         </div>
         
         <div className="pl-9 pr-9">

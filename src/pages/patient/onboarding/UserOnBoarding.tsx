@@ -4,6 +4,7 @@ import { UserInfoForm2 } from '@/pages/patient/onboarding/UserInfoForm2';
 import { UserInfoForm3 } from '@/pages/patient/onboarding/UserInfoForm3';
 import  axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // see how to connect to backend later
+import Header from '@/components/ui/header';
 
 export default function UserOnboarding() {
   const router = useNavigate();
@@ -119,12 +120,13 @@ export default function UserOnboarding() {
   return (
     <div className="h-full bg-white overflow-y-auto" style={{height: '100vh'}}>
       <div className="max-w-md mx-auto">
-        {/* Back button */}
-        <button className="pt-9 pl-8" onClick={() => handleBackClick()}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 18L9 12L15 6" stroke="#141B36" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
+
+        {/* Replace custom back button and title with Header component */}
+        <div className="px-8 pt-9">
+          <Header title="Preencha informações sobre você"
+            onBackClick={handleBackClick}
+          />
+        </div>
         
         {/* Progress indicator - updated color */}
         <div className="mt-[30px] mb-6 mx-8">
@@ -139,13 +141,6 @@ export default function UserOnboarding() {
               className={`h-full w-1/3 ${step === 3 ? "bg-[#CEFA5A]" : "bg-transparent"}`}
             ></div>
           </div>
-        </div>
-        
-        {/* Form title - updated font and color */}
-        <div className="pl-9 mt-[46px] mb-6">
-            <h1 className="text-4xl font-bold" style={{ fontFamily: 'Work Sans, sans-serif', color: '#141B36' }}> 
-              Preencha informações sobre você
-            </h1>
         </div>
         
         <div className="pl-9 pr-4">
