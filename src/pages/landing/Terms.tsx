@@ -28,7 +28,14 @@ const TermsScreen = ({ onNext }) => {
           </p>
         </div>
 
-        <Button onClick={onNext}>CONTINUAR</Button>
+        <Button
+          type="submit"
+          variant="white"
+          onClick={onNext}
+          className="w-full mt-4 font-['Inter'] font-bold button-bottom"
+        >
+          CONTINUAR
+        </Button>
 
         <div className="progress-indicator">
           <div className="indicator" />

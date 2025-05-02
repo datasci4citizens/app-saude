@@ -1,7 +1,8 @@
-import GoogleSignin from '@/components/ui/google-signin';
+import GoogleSignin from "@/components/ui/google-signin";
+import landingImage from '@/lib/images/landing.png';
 
 const LandingScreen = ({ onNext }) => {
-    const login = onNext /*useGoogleLogin({
+  const login = onNext; /*useGoogleLogin({
         onSuccess: async ({ code }) => {
           try {
             const tokens = await axios.post(
@@ -37,7 +38,7 @@ const LandingScreen = ({ onNext }) => {
         <p className="subtitle">
           Aplicativo dedicado à sua saúde mental e tratamento
         </p>
-        
+
         <div className="illustration-container">
           {/* Placeholder for the meditation illustration - you'll add the girl image */}
           <div className="meditation-circles">
@@ -45,13 +46,18 @@ const LandingScreen = ({ onNext }) => {
               <div key={i} className={`circle circle-${i + 1}`} />
             ))}
           </div>
-          {/* You'll add the girl image here */}
+          <img 
+            src={landingImage}
+            alt="Landing illustration" 
+            className="landing-illustration"
+          />
         </div>
-        
-        <GoogleSignin 
-          onClick={login}  // <- aqui chamamos a função que o hook retorna
-        />
-        
+        <div className="button-bottom">
+          <GoogleSignin
+            onClick={login} // <- aqui chamamos a função que o hook retorna
+          />
+        </div>
+
         <div className="progress-indicator">
           <div className="indicator active" />
           <div className="indicator" />

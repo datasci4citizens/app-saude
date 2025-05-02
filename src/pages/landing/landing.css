@@ -1,23 +1,22 @@
-/* OnboardingSlider.css */
 .onboarding-slider {
     position: relative;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
     font-family: 'Roboto', sans-serif;
-  }
+}
   
-  .slider-background {
+.slider-background {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: #4169E1; /* Rich blue background */
+    background-color: #4169E1;
     z-index: -1;
-  }
+}
   
-  .slider-container {
+.slider-container {
     position: relative;
     width: 100%;
     height: 300%;
@@ -26,9 +25,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-  }
+}
   
-  .onboarding-screen {
+.onboarding-screen {
     position: relative;
     max-width: 600px;
     height: 100vh;
@@ -36,11 +35,10 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: white;
     padding: 20px;
-  }
+}
   
-  .content {
+.content {
     border-radius: 20px;
     height: 100%;
     padding: 30px 20px;
@@ -49,121 +47,151 @@
     flex-direction: column;
     align-items: center;
     position: relative;
-  }
+}
   
-  h1 {
+h1 {
     font-size: 24px;
     margin-bottom: 16px;
     font-weight: bold;
-  }
+    color: white;
+}
   
-  .subtitle {
+.subtitle {
     font-size: 16px;
     margin-bottom: 30px;
     opacity: 0.9;
-  }
+    color: white;
+}
   
-  .illustration-container {
+.illustration-container {
+    position: absolute;
+    bottom: 250px;
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.landing-illustration {
+    width: 100%;
+    margin: 0 auto;
+    display: block;
     position: relative;
-    width: 200px;
-    height: 200px;
-    margin: 20px 0;
-  }
+    z-index: 2;
+}
   
-  .meditation-circles {
+.meditation-circles {
     position: absolute;
     width: 100%;
     height: 100%;
-  }
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
   
-  .circle {
+.circle {
     position: absolute;
     border-radius: 50%;
     opacity: 0.2;
-  }
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
   
-  .circle-1 {
-    width: 200px;
-    height: 200px;
+.circle-1 {
+    width: 120%;
+    height: 120%;
     background-color: #ffffff;
-    top: 0;
-    left: 0;
-  }
+    animation: pulse 6s ease-in-out infinite;
+}
   
-  .circle-2 {
-    width: 150px;
-    height: 150px;
+.circle-2 {
+    width: 100%;
+    height: 100%;
     background-color: #ffffff;
-    top: 25px;
-    left: 25px;
-  }
+    animation: pulse 6s ease-in-out infinite 2s;
+}
   
-  .circle-3 {
-    width: 100px;
-    height: 100px;
+.circle-3 {
+    width: 80%;
+    height: 80%;
     background-color: #ffffff;
-    top: 50px;
-    left: 50px;
-  }
+    animation: pulse 6s ease-in-out infinite 4s;
+}
+
+@keyframes pulse {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
   
-  .disabled {
+.disabled {
     opacity: 0.6;
     cursor: not-allowed;
-  }
+}
   
-  .disabled:hover {
+.disabled:hover {
     transform: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
+}
   
-  .progress-indicator {
+.progress-indicator {
     position: absolute;
-    bottom: 20px;
+    bottom: 12px;
     display: flex;
     margin-top: 30px;
     gap: 8px;
-  }
+}
   
-  .indicator {
+.indicator {
     width: 30px;
     height: 4px;
     background-color: rgba(255, 255, 255, 0.3);
     border-radius: 2px;
-  }
+}
   
-  .indicator.active {
+.indicator.active {
     background-color: white;
-  }
+}
   
-  .terms-text {
+.terms-text {
     max-height: 300px;
     overflow-y: auto;
     text-align: left;
     font-size: 14px;
     margin-bottom: 20px;
     padding-right: 10px;
-  }
+}
   
-  .terms-text::-webkit-scrollbar {
+.terms-text::-webkit-scrollbar {
     width: 6px;
-  }
+}
   
-  .terms-text::-webkit-scrollbar-track {
+.terms-text::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.1);
     border-radius: 3px;
-  }
+}
   
-  .terms-text::-webkit-scrollbar-thumb {
+.terms-text::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.3);
     border-radius: 3px;
-  }
+}
   
-  .options-container {
+.options-container {
     width: 100%;
     margin: 20px 0;
-  }
+}
   
-  .radio-option {
+.radio-option {
     display: flex;
     align-items: center;
     background-color: white;
@@ -172,43 +200,60 @@
     margin-bottom: 12px;
     cursor: pointer;
     color: #333;
-  }
+}
   
-  .radio-option input[type="radio"] {
+.radio-option input[type="radio"] {
     margin-right: 10px;
-  }
+}
+
+.button-bottom {
+    position: absolute;
+    bottom: 32px;
+    width: 100%;
+    min-width: 260px;
+    max-width: 400px;
+}
   
-  @media (max-width: 480px) {
+@media (max-width: 480px) {
     .content {
-      width: 95%;
-      padding: 20px 15px;
+        width: 95%;
+        padding: 20px 15px;
     }
     
     h1 {
-      font-size: 20px;
-    }
-    
-    .illustration-container {
-      width: 150px;
-      height: 150px;
+        font-size: 20px;
     }
     
     .circle-1 {
-      width: 150px;
-      height: 150px;
+        width: 140%;
+        height: 140%;
     }
     
     .circle-2 {
-      width: 110px;
-      height: 110px;
-      top: 20px;
-      left: 20px;
+        width: 120%;
+        height: 120%;
     }
     
     .circle-3 {
-      width: 70px;
-      height: 70px;
-      top: 40px;
-      left: 40px;
+        width: 100%;
+        height: 100%;
     }
-  }
+}
+
+/* For larger screens, ensure circles don't get too large */
+@media (min-width: 1200px) {
+    .circle-1 {
+        max-width: 600px;
+        max-height: 600px;
+    }
+    
+    .circle-2 {
+        max-width: 500px;
+        max-height: 500px;
+    }
+    
+    .circle-3 {
+        max-width: 400px;
+        max-height: 400px;
+    }
+}

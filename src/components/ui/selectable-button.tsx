@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface SelectableOptionProps {
   label: string;
@@ -12,16 +12,26 @@ export const SelectableOption: React.FC<SelectableOptionProps> = ({
   onClick,
 }) => {
   return (
-    <button
-      onClick={onClick}
-      className="w-[85%] h-[43px] bg-[#F9F9FF] flex items-center rounded-lg px-4"
-    >
-      <div
-        className={`w-4 h-4 rounded-full mr-3 ${
-          selected ? 'bg-[#DDFC8E]' : 'bg-[#F9F9FF] border border-[#141B36]'
-        }`}
-      />
-      <span className="text-[16px] font-inter text-[#141B36]">{label}</span>
-    </button>
+    <div className="w-full flex justify-center">
+      <button
+        onClick={onClick}
+        className="w-full max-w-[400px] h-[56px] bg-white flex items-center rounded-2xl px-6 shadow-sm"
+      >
+        <div className="relative flex-shrink-0">
+          <div
+            className={`w-6 h-6 rounded-full border ${
+              selected ? "border-[#141B36] border-2" : "border-[#141B36]"
+            }`}
+          >
+            {selected && (
+              <div className="absolute w-5 h-5 rounded-full bg-[#DDFC8E] top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2" />
+            )}
+          </div>
+        </div>
+        <span className="text-[18px] font-medium ml-4 text-[#141B36] truncate">
+          {label}
+        </span>
+      </button>
+    </div>
   );
 };
