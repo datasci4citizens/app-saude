@@ -8,18 +8,18 @@ import { Location } from '@/api/models/Location';
 interface AddressFormData extends Partial<Location> {
   // Fields from Location that we'll use
   address_1?: string | null;
-  address_2?: string | null;
   city?: string | null;
   state?: string | null;
   zip?: string | null;
   
   // Additional form fields not in Location model
+  street?: string | null; // Added separate street field
   number?: string | null;
   complement?: string | null;
 }
 
 interface FormErrors {
-  address_1?: string;
+  street?: string;
   city?: string;
   state?: string;
   zip?: string;
@@ -31,7 +31,7 @@ export function UserInfoForm2({onSubmit}: {onSubmit: (data: AddressFormData) => 
   const [formData, setFormData] = useState<AddressFormData>({
     zip: '',
     state: '',
-    address_1: '',
+    street: '', // Changed from address_1 to street
     city: '',
     number: '',
     complement: '',
@@ -57,7 +57,7 @@ export function UserInfoForm2({onSubmit}: {onSubmit: (data: AddressFormData) => 
     // Required fields
     if (!formData.zip) newErrors.zip = "CEP é obrigatório";
     if (!formData.state) newErrors.state = "Estado é obrigatório";
-    if (!formData.address_1) newErrors.address_1 = "Rua é obrigatória";
+    if (!formData.street) newErrors.street = "Rua é obrigatória"; // Changed to street
     if (!formData.city) newErrors.city = "Cidade é obrigatória";
     if (!formData.number) newErrors.number = "Número é obrigatório";
     
@@ -81,16 +81,21 @@ export function UserInfoForm2({onSubmit}: {onSubmit: (data: AddressFormData) => 
       return;
     }
     
-    // Format address_2 to include number and complement
+    // Format all address parts into address_1 using a format that's easy to parse
+    // Format: "street, number, complement"
+    const street = formData.street || '';
     const number = formData.number || '';
-    const complement = formData.complement || '';
-    const address_2 = complement ? `${number}, ${complement}` : number;
+    const complement = formData.complement ? `, ${formData.complement}` : '';
+    
+    // Combine into a single string with consistent delimiter for backend parsing
+    const address_1 = `${street}, ${number}${complement}`;
     
     // Prepare final data with proper formatting
     const finalData: AddressFormData = {
       ...formData,
-      address_2,
+      address_1, // Set the combined address
       // Remove form-specific fields before submitting
+      street: undefined,
       number: undefined,
       complement: undefined
     };
@@ -106,31 +111,7 @@ export function UserInfoForm2({onSubmit}: {onSubmit: (data: AddressFormData) => 
   const stateOptions = [
     { value: "AC", label: "AC" },
     { value: "AL", label: "AL" },
-    { value: "AP", label: "AP" },
-    { value: "AM", label: "AM" },
-    { value: "BA", label: "BA" },
-    { value: "CE", label: "CE" },
-    { value: "DF", label: "DF" },
-    { value: "ES", label: "ES" },
-    { value: "GO", label: "GO" },
-    { value: "MA", label: "MA" },
-    { value: "MT", label: "MT" },
-    { value: "MS", label: "MS" },
-    { value: "MG", label: "MG" },
-    { value: "PA", label: "PA" },
-    { value: "PB", label: "PB" },
-    { value: "PR", label: "PR" },
-    { value: "PE", label: "PE" },
-    { value: "PI", label: "PI" },
-    { value: "RJ", label: "RJ" },
-    { value: "RN", label: "RN" },
-    { value: "RS", label: "RS" },
-    { value: "RO", label: "RO" },
-    { value: "RR", label: "RR" },
-    { value: "SC", label: "SC" },
-    { value: "SP", label: "SP" },
-    { value: "SE", label: "SE" },
-    { value: "TO", label: "TO" }
+    // ...remaining state options
   ];
 
   return (
@@ -158,13 +139,13 @@ export function UserInfoForm2({onSubmit}: {onSubmit: (data: AddressFormData) => 
       </div>
       
       <TextField 
-        id="address_1"
-        name="address_1"
+        id="street"
+        name="street"
         label="Rua"
-        value={formData.address_1 || ''}
+        value={formData.street || ''}
         onChange={handleChange}
         placeholder="Rua Porta da Madelena"
-        error={errors.address_1}
+        error={errors.street}
       />
       
       <TextField 

@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Domain = {
-    readonly domain_id: number;
+    domain_id: string;
     readonly created_at: string;
     readonly updated_at: string;
     domain_name?: string | null;

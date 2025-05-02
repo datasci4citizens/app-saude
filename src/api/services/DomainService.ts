@@ -24,7 +24,7 @@ export class DomainService {
      * @throws ApiError
      */
     public static apiDomainCreate(
-        requestBody?: Domain,
+        requestBody: Domain,
     ): CancelablePromise<Domain> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -34,12 +34,12 @@ export class DomainService {
         });
     }
     /**
-     * @param domainId A unique integer value identifying this domain.
+     * @param domainId A unique value identifying this domain.
      * @returns Domain
      * @throws ApiError
      */
     public static apiDomainRetrieve(
-        domainId: number,
+        domainId: string,
     ): CancelablePromise<Domain> {
         return __request(OpenAPI, {
             method: 'GET',
@@ -50,14 +50,14 @@ export class DomainService {
         });
     }
     /**
-     * @param domainId A unique integer value identifying this domain.
+     * @param domainId A unique value identifying this domain.
      * @param requestBody
      * @returns Domain
      * @throws ApiError
      */
     public static apiDomainUpdate(
-        domainId: number,
-        requestBody?: Domain,
+        domainId: string,
+        requestBody: Domain,
     ): CancelablePromise<Domain> {
         return __request(OpenAPI, {
             method: 'PUT',
@@ -70,13 +70,13 @@ export class DomainService {
         });
     }
     /**
-     * @param domainId A unique integer value identifying this domain.
+     * @param domainId A unique value identifying this domain.
      * @param requestBody
      * @returns Domain
      * @throws ApiError
      */
     public static apiDomainPartialUpdate(
-        domainId: number,
+        domainId: string,
         requestBody?: PatchedDomain,
     ): CancelablePromise<Domain> {
         return __request(OpenAPI, {
@@ -90,12 +90,12 @@ export class DomainService {
         });
     }
     /**
-     * @param domainId A unique integer value identifying this domain.
+     * @param domainId A unique value identifying this domain.
      * @returns void
      * @throws ApiError
      */
     public static apiDomainDestroy(
-        domainId: number,
+        domainId: string,
     ): CancelablePromise<void> {
         return __request(OpenAPI, {
             method: 'DELETE',

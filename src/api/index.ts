@@ -7,6 +7,7 @@ export { CancelablePromise, CancelError } from './core/CancelablePromise';
 export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
+export type { AdminLogin } from './models/AdminLogin';
 export type { Auth } from './models/Auth';
 export type { AuthTokenResponse } from './models/AuthTokenResponse';
 export type { CareSite } from './models/CareSite';

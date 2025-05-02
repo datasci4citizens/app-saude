@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { AdminLogin } from '../models/AdminLogin';
 import type { Auth } from '../models/Auth';
 import type { AuthTokenResponse } from '../models/AuthTokenResponse';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -9,13 +10,18 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class AuthService {
     /**
+     * @param requestBody
      * @returns any No response body
      * @throws ApiError
      */
-    public static authLoginAdminCreate(): CancelablePromise<any> {
+    public static authLoginAdminCreate(
+        requestBody: AdminLogin,
+    ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/auth/login/admin/',
+            body: requestBody,
+            mediaType: 'application/json',
         });
     }
     /**

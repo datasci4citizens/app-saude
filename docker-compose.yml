@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   backend:
-    image: aasatorres/server_saude:0.0.19
+    image: aasatorres/server_saude:0.3.0
     container_name: server_saude
     command: python manage.py runserver 0.0.0.0:8000
     ports:

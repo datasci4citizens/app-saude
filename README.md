@@ -69,3 +69,6 @@ Esse comando vai:
 
 A API estará disponível em:
 👉 http://localhost:8000
+
+### 3. Atualizando a api para comunicação com o back end (rodar sempre que houver alteração na API do server)
+ Rodar npm run generate-api
