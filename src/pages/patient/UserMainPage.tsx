@@ -16,7 +16,7 @@ export default function AcsMainPage() {
     };
 
     const handleBannerIconClick = () => {
-        navigate('/patient-registry');
+        navigate('/diary');
     };
 
     const handleNavigationClick = (itemId: string) => {
@@ -36,6 +36,9 @@ export default function AcsMainPage() {
                 break;
             case 'profile':
                 navigate('/profile');
+                break;
+            case 'diary':
+                navigate('/diary');
                 break;
         }
     };
