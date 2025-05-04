@@ -21,11 +21,11 @@ export function RadioCheckbox({
         id={id}
         checked={checked}
         onCheckedChange={onCheckedChange}
-        className="h-5 w-5 flex-shrink-0 rounded-[4px] border-gray-300 bg-white data-[state=checked]:bg-[#FA6E5A] data-[state=checked]:border-[#FA6E5A]"
+        className="h-5 w-5 flex-shrink-0 rounded-[4px] border-gray_buttons bg-background data-[state=checked]:bg-orange data-[state=checked]:border-orange"
       />
       <Label 
         htmlFor={id}
-        className="text-base font-normal text-gray-700 leading-5 pt-[1px]"
+        className="text-base font-normal text-dark_blue leading-5 pt-[1px] font-inter"
       >
         {label}
       </Label>

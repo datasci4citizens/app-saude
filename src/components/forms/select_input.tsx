@@ -33,10 +33,6 @@ export function SelectField({
   error,
   placeholder = "Selecione"
 }: SelectFieldProps) {
-  // Label and error styling remain the same
-  const labelStyle = "block text-sm font-['Inter'] font-light text-[#A0A3B1] mb-1";
-  const errorTextStyle = "text-red-500 text-xs font-['Inter'] font-light mt-1";
-
   // Handle value change and convert to expected event format
   const handleValueChange = (newValue: string) => {
     // Create synthetic event to match the onChange API expected by parent components
@@ -53,7 +49,7 @@ export function SelectField({
   return (
     <div className="mb-4">
       {label && (
-        <label htmlFor={id} className={labelStyle}>
+        <label htmlFor={id} className="block text-sm font-inter font-light text-gray_buttons mb-1">
           {label}
         </label>
       )}
@@ -61,15 +57,9 @@ export function SelectField({
       <Select value={value} onValueChange={handleValueChange}>
         <SelectTrigger 
           id={id}
-          className={`text-[#141B36] font-['Inter'] font-normal ring-offset-0 ${
-            error ? "border-red-500" : "border-gray-300"
+          className={`text-dark_blue font-inter font-normal focus-visible:ring-orange focus-visible:ring-offset-0 ${
+            error ? "border-red-500" : "border-gray_buttons"
           }`}
-          style={{
-            // avoiding double ringing
-            '--tw-ring-offset-width': '0px',
-            '--tw-ring-color': '#FA6E5A',
-            '--tw-ring-opacity': '1',
-          }}
         >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
@@ -82,7 +72,7 @@ export function SelectField({
         </SelectContent>
       </Select>
       
-      {error && <p className={errorTextStyle}>{error}</p>}
+      {error && <p className="text-red-500 text-xs font-inter font-light mt-1">{error}</p>}
     </div>
   );
 }

@@ -23,45 +23,58 @@ const PatientButton: React.FC<PatientButtonProps> = ({
     onClick,
     onClickEmergency
 }) => {
-    const [isHovered, setIsHovered] = useState(false);
     const isEmergency = variant === 'emergency';
     
     return (
         <div 
-            style={{
-                ...styles.container,
-                backgroundColor: isEmergency ? '#FA6E5A' : '#FFFFFF',
-                transform: isHovered ? 'translateY(-2px)' : 'none',
-                boxShadow: isHovered 
-                    ? '0 6px 12px rgba(0, 0, 0, 0.15)' 
-                    : '0 2px 4px rgba(0, 0, 0, 0.1)'
-            }}
+            className={`
+                rounded-xl
+                p-4
+                mb-4
+                w-full
+                max-w-[600px]
+                transition-all
+                duration-200
+                ease-in-out
+                cursor-pointer
+                hover:-translate-y-0.5
+                ${isEmergency ? 'bg-orange' : 'bg-white'}
+                ${isEmergency ? 'hover:shadow-[0_6px_12px_rgba(250,110,90,0.25)]' : 'hover:shadow-[0_6px_12px_rgba(0,0,0,0.15)]'}
+                shadow-sm
+            `}
             onClick={onClick}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
         >
-            <div style={styles.content}>
-                <div style={{
-                    ...styles.name,
-                    color: isEmergency ? '#FFFFFF' : '#000000'
-                }}>
-                    {name}{age ? `- ${age} anos` : ''}
+            <div className="flex flex-col gap-1">
+                <div className={`
+                    text-lg
+                    font-bold
+                    mb-1.5
+                    font-work-sans
+                    ${isEmergency ? 'text-off_white' : 'text-black'}
+                `}>
+                    {name}{age ? ` - ${age} anos` : ''}
                 </div>
-                <div style={{
-                    ...styles.infoText,
-                    color: isEmergency ? '#FFFFFF' : '#000000'
-                }}>
+                <div className={`
+                    text-xs
+                    mb-0.5
+                    font-inter
+                    font-normal
+                    ${isEmergency ? 'text-off_white' : 'text-black'}
+                `}>
                     Última consulta: {lastConsult}
                 </div>
-                <div style={{
-                    ...styles.infoText,
-                    color: isEmergency ? '#FFFFFF' : '#000000'
-                }}>
+                <div className={`
+                    text-xs
+                    mb-0.5
+                    font-inter
+                    font-normal
+                    ${isEmergency ? 'text-off_white' : 'text-black'}
+                `}>
                     Último registro compartilhado: {lastRegistry}
                 </div>
                 {isEmergency ? (
                     <div 
-                        style={styles.emergencyAlert}
+                        className="font-bold text-off_white mt-1.5 text-xs font-inter"
                         onClick={(e) => {
                             e.stopPropagation();
                             if (onClickEmergency) onClickEmergency();
@@ -70,53 +83,19 @@ const PatientButton: React.FC<PatientButtonProps> = ({
                         EMERGÊNCIA ATIVA DESDE {lastEmergency}
                     </div>
                 ) : (
-                    <div style={{
-                        ...styles.infoText,
-                        color: isEmergency ? '#FFFFFF' : '#000000'
-                    }}>
-                        Última emergência: {lastEmergency}
+                    <div className={`
+                        text-xs
+                        mb-0.5
+                        font-inter
+                        font-normal
+                        ${isEmergency ? 'text-off_white' : 'text-black'}
+                    `}>
+                        Última emergência: {lastEmergency || "Nenhuma"}
                     </div>
                 )}
             </div>
         </div>
     );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-    container: {
-        borderRadius: 16,
-        padding: 16,
-        marginBottom: 16,
-        // falta normalzar a margem de todos os itens
-        width: '100%',
-        maxWidth: '600px',
-        transition: 'all 0.2s ease',
-        cursor: 'pointer',
-    },
-    content: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 4,
-    },
-    name: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 6,
-        fontFamily: "'Work Sans', sans-serif",
-    },
-    infoText: {
-        fontSize: 13,
-        marginBottom: 2,
-        fontFamily: "'Inter', sans-serif",
-        fontWeight: 400,
-    },
-    emergencyAlert: {
-        fontWeight: 'bold',
-        color: '#FFFFFF',
-        marginTop: 6,
-        fontSize: 13,
-        fontFamily: "'Inter', sans-serif",
-    }
 };
 
 export default PatientButton;
