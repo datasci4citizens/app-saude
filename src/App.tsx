@@ -13,6 +13,7 @@ import DiaryPage from "./pages/patient/diary/Diary";
 import Reminders from "./pages/patient/reminders/Reminders";
 import NewReminder from "./pages/patient/reminders/NewReminder";
 import OnboardingSlider from "./pages/landing/OnboardingSlider";
+import { SWRConfig } from 'swr';
 
 const NotFound = () => (
   <div>
@@ -21,6 +22,10 @@ const NotFound = () => (
     <a href="/">Go back to Home</a>
   </div>
 );
+
+<SWRConfig value={{ revalidateOnFocus: false }}>
+  <App />
+</SWRConfig>
 
 const router = createBrowserRouter([
   { path: "/", element: <h1>Home!</h1> },
