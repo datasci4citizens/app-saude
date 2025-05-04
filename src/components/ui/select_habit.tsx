@@ -51,7 +51,7 @@ const SelectContent = forwardRef<
 		<SelectPrimitive.Content
 			ref={ref}
 			className={cn(
-				'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=closed]:animate-out data-[state=open]:animate-in',
+				'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-background text-foreground shadow-md data-[state=closed]:animate-out data-[state=open]:animate-in',
 				position === 'popper' &&
 					'data-[side=left]:-translate-x-1 data-[side=top]:-translate-y-1 data-[side=right]:translate-x-1 data-[side=bottom]:translate-y-1',
 				className,
@@ -94,7 +94,7 @@ const SelectItem = forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none focus:bg-[#DDFC8E] hover:bg-[#DDFC8E] focus:text-[#141B36] hover:text-[#141B36] data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none focus:bg-lime hover:bg-lime focus:text-dark_blue hover:text-dark_blue data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className,
     )}
     {...props}
@@ -137,10 +137,10 @@ const SelectTrigger = forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex items-center justify-between rounded-lg border bg-transparent font-inter text-[14px] ring-offset-background placeholder:text-[#A1A4B2] focus:outline-none focus:ring-2 focus:ring-[#FA6E5A] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 transition-colors',
+      'flex items-center justify-between rounded-lg border bg-transparent font-inter text-[14px] ring-offset-background placeholder:text-gray_buttons focus:outline-none focus:ring-2 focus:ring-orange focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 transition-colors',
       hasSelection 
-        ? 'border-[#FA6E5A] text-[#141B36]' // Selected state
-        : 'border-[#A1A4B2] text-[#A1A4B2]', // Default state
+        ? 'border-orange text-dark_blue' // Selected state
+        : 'border-gray_buttons text-gray_buttons', // Default state
       size === 'md' ? 'h-[48px] w-[36%] min-w-[120px] px-4' : 'h-[48px] w-[23%] min-w-[80px] px-3',
       className
     )}
@@ -150,7 +150,7 @@ const SelectTrigger = forwardRef<
     <SelectPrimitive.Icon asChild>
       <ChevronDown className={cn(
         'h-4 w-4 transition-colors',
-        hasSelection ? 'text-[#FA6E5A]' : 'text-[#8F9098]'
+        hasSelection ? 'text-orange' : 'text-gray-400'
       )} />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>

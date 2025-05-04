@@ -1,4 +1,5 @@
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 interface DateFieldProps {
   id: string;
@@ -19,14 +20,6 @@ export function DateField({
   error,
   placeholder = "dd/mm/aaaa"
 }: DateFieldProps) {
-  const baseStyle = "w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-[#FA6E5A] focus:border-[#FA6E5A] font-['Inter'] font-normal";
-  const inputStyle = error 
-    ? `${baseStyle} border-red-500 text-[#141B36]` 
-    : `${baseStyle} border-gray-300 text-[#141B36]`;
-  
-  const labelStyle = "block text-sm font-['Inter'] font-light text-[#A0A3B1] mb-1";
-  const errorTextStyle = "text-red-500 text-xs font-['Inter'] font-light mt-1";
-
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
     
@@ -51,7 +44,7 @@ export function DateField({
   return (
     <div className="mb-4">
       {label && (
-        <label htmlFor={id} className={labelStyle}>
+        <label htmlFor={id} className="block text-sm font-inter font-light text-gray_buttons mb-1">
           {label}
         </label>
       )}
@@ -63,9 +56,14 @@ export function DateField({
         onChange={(e) => handleDateChange(e)}
         placeholder={placeholder}
         maxLength={10}
-        className={inputStyle}
+        className={cn(
+          "w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-orange focus:border-orange font-inter font-normal",
+          error 
+            ? "border-red-500 text-dark_blue" 
+            : "border-gray-300 text-dark_blue"
+        )}
       />
-      {error && <p className={errorTextStyle}>{error}</p>}
+      {error && <p className="text-red-500 text-xs font-inter font-light mt-1">{error}</p>}
     </div>
   );
 }

@@ -24,76 +24,34 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <div>
       {/* Back Button */}
-      <button style={styles.backButton} onClick={handleBackClick}>
-        <span className="mgc_arrow_left_line" style={styles.backIcon}></span>
+      <button 
+        className="bg-transparent border-none cursor-pointer flex items-center justify-center mr-3" 
+        onClick={handleBackClick}
+      >
+        <span className="mgc_arrow_left_line w-7 h-7 text-[28px] text-dark_blue"></span>
       </button>
-      <div style={styles.iconTextContainer}>
-        <div style={styles.textContainer}>
-          <h1 style={styles.title}>{title}</h1>
-          {subtitle && <p style={styles.subtitle}>{subtitle}</p>}
+      
+      <div className="flex flex-nowrap items-between justify-between">
+        <div className="flex-1 flex flex-col items-start justify-center my-3">
+          <h1 className="text-[28px] font-bold m-0 font-work-sans text-dark_blue">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="text-sm m-0 font-inter text-gray-500">
+              {subtitle}
+            </p>
+          )}
         </div>
 
         {/* Optional Icon */}
-        {rightIcon && <div style={styles.rightIconContainer}>{rightIcon}</div>}
+        {rightIcon && (
+          <div className="ml-3 flex items-center justify-center text-xl text-purple">
+            {rightIcon}
+          </div>
+        )}
       </div>
-      {/* Title and Subtitle */}
     </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  iconTextContainer: {
-    display: "flex",
-    flexWrap: "nowrap",
-    alignItems: "space-between",
-    justifyContent: "space-between",
-  },
-  backButton: {
-    backgroundColor: "transparent",
-    border: "none",
-    cursor: "pointer",
-    fontSize: "18px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: "12px",
-  },
-  backIcon: {
-    width: "28px",
-    height: "28px",
-    fontSize: "28px",
-    color: "#141B36",
-  },
-  textContainer: {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "center",
-    marginTop: "12px",
-    marginBottom: "12px",
-  },
-  title: {
-    fontSize: "28px",
-    fontWeight: "bold",
-    margin: 0,
-    fontFamily: '"Work Sans", sans-serif',
-    color: "#141B36",
-  },
-  subtitle: {
-    fontSize: "14px",
-    margin: 0,
-    fontFamily: '"Inter", sans-serif',
-    color: "#666",
-  },
-  rightIconContainer: {
-    marginLeft: "12px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "20px",
-    color: "#6A5ACD",
-  },
 };
 
 export default Header;

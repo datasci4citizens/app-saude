@@ -98,35 +98,34 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   };
 
   return (
-    <div style={styles.container}>
+    <div className="flex justify-around items-center py-2.5 bg-background w-full fixed bottom-0 left-0 shadow-[0_-1px_5px_rgba(0,0,0,0.1)] z-50">
       {navItems.map((item) => {
         const isActive = activeItemId === item.id;
         
         return (
           <div
             key={item.id}
-            style={{
-              ...styles.item,
-              ...(isActive ? styles.activeItem : {}),
-              width: `${100 / navItems.length}%`, // Largura dinâmica baseada no número de itens
-            }}
+            className={`
+              flex flex-col items-center font-medium text-xs font-inter cursor-pointer
+              ${navItems.length ? `w-[${100 / navItems.length}%]` : 'w-1/5'}
+            `}
             onClick={() => handleItemClick(item.id)}
           >
             <div
-              style={{
-                ...styles.icon,
-                backgroundColor: isActive ? '#FA6E5A' : '#FFFFFF',
-                borderRadius: '10px',
-                color: isActive ? '#F9F9FF' : '#A0A3B1',
-              }}
+              className={`
+                flex justify-center items-center w-10 h-10 mb-1 text-2xl rounded-[10px]
+                transition-all duration-200 ease-in-out
+                ${isActive ? 'bg-orange text-off_white' : 'bg-background text-gray_buttons'}
+              `}
             >
               {item.icon}
             </div>
             <div 
-              style={{
-                ...styles.label,
-                color: isActive ? '#FA6E5A' : '#A0A3B1',
-              }}
+              className={`
+                flex justify-center items-center h-7 text-center text-[10px] leading-3
+                font-inter font-medium transition-colors duration-200
+                ${isActive ? 'text-orange' : 'text-gray_buttons'}
+              `}
             >
               {item.label}
             </div>
@@ -135,54 +134,6 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
       })}
     </div>
   );
-};
-
-// Estilos (mantenha seus estilos existentes)
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    padding: '10px 0',
-    backgroundColor: '#fff',
-    width: '100%',
-    position: 'fixed',
-    bottom: 0,
-    left: 0,
-    boxShadow: '0 -1px 5px rgba(0, 0, 0, 0.1)',
-    zIndex: 100,
-  },
-  item: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    fontWeight: 500,
-    fontSize: '13px',
-    fontFamily: 'Inter, sans-serif',
-    cursor: 'pointer',
-  },
-  icon: {
-    fontSize: '24px',
-    marginBottom: '4px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '40px',
-    height: '40px',
-    transition: 'all 0.2s ease-in-out',
-  },
-  label: {
-    fontSize: '10px',
-    height: '28px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-    transition: 'color 0.2s ease-in-out',
-    lineHeight: '12px',
-    fontFamily: 'Inter, sans-serif',
-    fontWeight: 500,
-  },
 };
 
 export default BottomNavigationBar;

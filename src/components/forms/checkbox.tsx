@@ -24,7 +24,7 @@ const Checkbox = forwardRef<
   (
     {
       className,
-      color = "#000000",
+      color = "bg-lime",
       radius = "rounded-sm",
       height = "h-6",
       width = "w-6",
@@ -37,24 +37,20 @@ const Checkbox = forwardRef<
     <CheckboxPrimitive.Root
       ref={ref}
       className={cn(
-        "peer shrink-0 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center",
+        "peer shrink-0 border-1.7 border-dark_blue ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center data-[state=checked]:bg-current",
         radius,
         height,
         width,
+        props.checked ? color : "bg-transparent",
         className
       )}
-      style={{
-        borderColor: "#141B36",
-        borderWidth: "1.7px",
-        backgroundColor: props.checked ? color : "transparent",
-      }}
       {...props}
     >
       {children && (!showChildrenOnSelectOnly || props.checked) ? (
         <div className="flex items-center justify-center">{children}</div>
       ) : (
         <CheckboxPrimitive.Indicator
-          className={cn("flex items-center justify-center text-current")}
+          className={cn("flex items-center justify-center text-dark_blue")}
         >
           <Check className="h-4 w-4" />
         </CheckboxPrimitive.Indicator>
