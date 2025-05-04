@@ -2,22 +2,40 @@ import React from 'react';
 import GoogleSignin from "@/components/ui/google-signin";
 import landingImage from '@/lib/images/landing.png';
 import { useGoogleLogin } from "@react-oauth/google";
-import axios from 'axios';
+import useSWRMutation from 'swr/mutation';
 
 interface LandingScreenProps {
   onNext: () => void;
 }
 
+const loginWithGoogle = async (url: string, { arg }: { arg: { code: string } }) => {
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ code: arg.code }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Erro ao fazer login');
+  }
+
+  return response.json(); // retorna { access, refresh, role }
+};
+
 const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
+  const { trigger } = useSWRMutation(
+    'http://localhost:8000/auth/login/google/',
+    loginWithGoogle
+  );
+
   const login = useGoogleLogin({
     onSuccess: async ({ code }) => {
       try {
-        const tokens = await axios.post(
-          'http://localhost:8000/auth/login/google/',
-          { code },
-          { withCredentials: true }
-        );
-        const { access, refresh, role } = tokens.data;
+        const tokens = await trigger({ code });
+        const { access, refresh, role } = tokens;
 
         localStorage.setItem('accessToken', access);
         localStorage.setItem('refreshToken', refresh);
