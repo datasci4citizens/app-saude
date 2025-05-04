@@ -2,7 +2,11 @@ import { Button } from "@/components/forms/button";
 import { SelectableOption } from "@/components/ui/selectable-button";
 import { useState } from "react";
 
-const EntryOptionsScreen = ({ onComplete }) => {
+interface EntryOptionsScreenProps {
+  onComplete: (userType: string) => void;
+}
+
+const EntryOptionsScreen: React.FC<EntryOptionsScreenProps> = ({ onComplete }) => {
   const [userType, setUserType] = useState("");
 
   const handleContinue = () => {

@@ -3,8 +3,6 @@ import ComponentCatalog from "./pages/ComponentCatalog";
 import UserOnboarding from "./pages/patient/onboarding/UserOnBoarding";
 import ProfessionalOnboarding from "./pages/provider/ProfessionalOnBoarding";
 import CompleteProfile from "./pages/patient/profile/CompleteProfile";
-import Login from "./pages/landing/Terms";
-import Welcome from "./pages/Welcome";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AcsMainPage from "./pages/provider/AcsMainPage";
 import UsermainPage from "./pages/patient/UserMainPage";
@@ -27,8 +25,8 @@ const NotFound = () => (
 const router = createBrowserRouter([
   { path: "/", element: <h1>Home!</h1> },
   {
-    path: "/welcome", 
-    element: <OnboardingSlider />
+    path: "/welcome",
+    element: <OnboardingSlider />,
   },
   {
     path: "/components",

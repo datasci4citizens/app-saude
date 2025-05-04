@@ -1,6 +1,10 @@
 import { Button } from "@/components/forms/button";
 
-const TermsScreen = ({ onNext }) => {
+interface TermsScreenProps {
+  onNext: () => void;
+}
+
+const TermsScreen: React.FC<TermsScreenProps> = ({ onNext }) => {
   return (
     <div className="onboarding-screen terms-screen">
       <div className="content">
