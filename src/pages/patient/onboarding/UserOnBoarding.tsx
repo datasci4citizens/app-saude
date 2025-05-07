@@ -9,6 +9,7 @@ import type { PersonCreate } from '@/api/models/PersonCreate';
 import type { LocationCreate } from '@/api/models/LocationCreate';
 import type { ObservationCreate } from '@/api/models/ObservationCreate';
 import type { DrugExposureCreate } from '@/api/models/DrugExposureCreate';
+import { ProgressIndicator } from '@/components/forms/progress_indicator';
 
 // Empty placeholder for future service implementation
 // Will create a placeholder service that matches the pattern you described
@@ -130,20 +131,11 @@ export default function UserOnboarding() {
           />
         </div>
         
-        {/* Progress indicator - updated color */}
-        <div className="mt-[30px] mb-6 mx-8">
-          <div className="flex h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-            <div 
-              className={`h-full w-1/3 ${step === 1 ? "bg-[#CEFA5A]" : "bg-transparent"}`}
-            ></div>
-            <div 
-              className={`h-full w-1/3 ${step === 2 ? "bg-[#CEFA5A]" : "bg-transparent"}`}
-            ></div>
-            <div 
-              className={`h-full w-1/3 ${step === 3 ? "bg-[#CEFA5A]" : "bg-transparent"}`}
-            ></div>
-          </div>
-        </div>
+        {/* Progress indicator*/}
+        <ProgressIndicator 
+          currentStep={step} 
+          totalSteps={3} 
+        />
         
         <div className="pl-9 pr-4">
           {error && (
