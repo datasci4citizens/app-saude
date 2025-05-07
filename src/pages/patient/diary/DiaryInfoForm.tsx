@@ -281,7 +281,7 @@ export default function DiaryInfoForm() {
         </div>
       </div>
       
-      <div className="space-y-2 ml-[32px]">
+      <div className="ml-[36px] mr-[1px] w-[100%]">
         <TextField
           size="large"
           multiline
@@ -292,6 +292,7 @@ export default function DiaryInfoForm() {
           onChange={(e) => setFreeText(e.target.value)}
         />
       </div>
+
 
       {/* Submit Button */}
       <div className="px-[32px]">
