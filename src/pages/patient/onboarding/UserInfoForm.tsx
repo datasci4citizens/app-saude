@@ -3,7 +3,7 @@ import { Button } from '@/components/forms/button';
 import { TextField } from '@/components/forms/text_input';
 import { SelectField } from '@/components/forms/select_input';
 import { DateField } from '@/components/forms/date_input';
-import { Person } from '@/api/models/Person';
+import type { PersonCreate } from '@/api/models/PersonCreate';
 import { ConceptService } from '@/api/services/ConceptService';
 
 // Define the option interface
@@ -13,7 +13,7 @@ interface SelectOption {
 }
 
 // Define form data type that extends Person with form-specific fields
-interface UserFormData extends Partial<Person> {
+interface UserFormData extends Partial<PersonCreate> {
   // Fields from Person that we'll use
   social_name: string | null;
   birth_datetime: string | null;
@@ -41,7 +41,7 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
     gender_concept: null,
     weight: null,
     height: null,
-    birth_datetime: '',
+    birth_datetime: '2002-08-01',
     race_concept: null,
   });
   
@@ -69,11 +69,11 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
         
         // Filter concepts by their class
         const genderConcepts = concepts.filter(concept => 
-          concept.concept_class_id === 'Gender'
+          concept.concept_class === 'Gender'
         );
         
         const raceConcepts = concepts.filter(concept => 
-          concept.concept_class_id === 'Race'
+          concept.concept_class === 'Race'
         );
         
         // Map filtered concepts to options format
@@ -81,7 +81,7 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
         .filter(concept => concept.concept_name != null)  // Remove concepts with no name
         .map(concept => ({
           value: concept.concept_id,
-          label: concept.concept_name as string  // Now safe to cast
+          label: concept.translated_name as string  // Now safe to cast
         }));
 
         // Do the same for race concepts
@@ -89,7 +89,7 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
           .filter(concept => concept.concept_name != null)
           .map(concept => ({
             value: concept.concept_id, 
-            label: concept.concept_name as string
+            label: concept.translated_name as string
           }));
 
         // Update state with fetched options

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/forms/button';
 import { TextField } from '@/components/forms/text_input';
 import { SelectField } from '@/components/forms/select_input';
 // import type { LocationRetrieve } from '@/api/models/LocationRetrieve';
+import { ConceptService } from '@/api/services/ConceptService';
 
 // Define form data type that extends Location with form-specific fields
 export interface AddressFormData extends Partial<Location> {
@@ -106,13 +107,57 @@ export function UserInfoForm2({onSubmit}: {onSubmit: (data: AddressFormData) => 
     // Submit if no errors
     onSubmit(finalData);
   };
+
+  // Define the SelectOption type
+  interface SelectOption {
+    value: string | number;
+    label: string;
+  }
   
-  // Brazilian states
-  const stateOptions = [
-    { value: "AC", label: "AC" },
-    { value: "AL", label: "AL" },
-    // ...remaining state options
-  ];
+  const [stateOptions, setStateOptions] = useState<SelectOption[]>([]);
+  const [isLoadingConcepts, setIsLoadingConcepts] = useState(true);
+  const [conceptError, setConceptError] = useState<string | null>(null);
+
+  useEffect(() => {
+      const fetchConcepts = async () => {
+        setIsLoadingConcepts(true);
+        setConceptError(null);
+        
+        try {
+            // Brazilian states
+            const concepts = await ConceptService.apiConceptList('Brazil States', 'pt');
+            
+            // Filter concepts by their class
+            const stateConcepts = concepts.filter(concept => 
+              concept.concept_class === 'Brazil States'
+            );
+            
+            const stateOptions = stateConcepts
+                .filter(concept => concept.concept_name != null)
+                .map(concept => ({
+                    value: concept.concept_id,
+                    label: concept.translated_name as string 
+                }));
+          setStateOptions(stateOptions);
+          // Log the fetched data for debugging
+         console.log('Fetched state concepts:', stateConcepts);
+        }
+        catch (error) {
+          console.error('Error fetching concepts:', error);
+          setConceptError('Erro ao carregar opções do servidor. Tente novamente mais tarde.');
+          // Fallback to hardcoded options if fetch fails
+          setStateOptions([
+            { value: "AC", label: "AC" },
+            { value: "SP", label: "SP" }
+          ]);
+        }
+        finally {
+          setIsLoadingConcepts(false);
+        }
+      };
+          
+    fetchConcepts();
+  }, []);
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>

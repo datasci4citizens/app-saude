@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/forms/button';
-import { TextField } from '@/components/forms/text_input';
 import { SelectField } from '@/components/forms/select_input';
 import type { ObservationCreate } from '@/api/models/ObservationCreate';
 import type { DrugExposureCreate } from '@/api/models/DrugExposureCreate';
 import { ConceptService } from '@/api/services/ConceptService';
-import { AutocompleteField } from '@/components/forms/autocomplete_input';
+import Select from 'react-select';
 
 // Define concept IDs for different types of observations
 interface ConceptIds {
@@ -13,27 +12,23 @@ interface ConceptIds {
   physicalExercise: number;
   eatingHabits: number;
   comorbidities: number;
+  medications: number;
+  substanceUse: number;
+  selfReported: number;
 }
-
-// Add new interface for medication selection
-interface MedicationOption {
-  value: number;
-  label: string;
-  dosageForm?: string | null;
-}
-
 
 // Define form data interface (user-friendly structure)
+// Todos sao conceptIds como String
 interface FormData {
+  // Esses são selects simples (1 escolha, com concept_id em string)
   sleepHealth: string;
   physicalExercise: string;
   eatingHabits: string;
-  comorbidities: string;
-  medications: string;
-  substanceUse: string;
-  // New fields for tracking selected concepts
-  selectedMedicationId: number | null;
-  selectedSubstanceId: number | null;
+
+  // Listas onde cada item tem concept_id + texto
+  comorbidities: string[];
+  medications: string[];
+  substanceUse: string[];
 }
 
 // Define the structure for API submission
@@ -58,30 +53,28 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
     sleepHealth: '',
     physicalExercise: '',
     eatingHabits: '',
-    comorbidities: '',
-    medications: '',
-    substanceUse: '',
-    selectedMedicationId: null,
-    selectedSubstanceId: null
-  });
-  
-  // Store concept IDs for observations
-  const [conceptIds, setConceptIds] = useState<ConceptIds>({
-    sleepHealth: 0,
-    physicalExercise: 0,
-    eatingHabits: 0,
-    comorbidities: 0
+    comorbidities: [],
+    medications: [],
+    substanceUse: []
   });
   
   // Store options for selects
+  const [conceptIds] = useState<ConceptIds>({
+    sleepHealth: 9000020,
+    physicalExercise: 9000025,
+    eatingHabits: 9000026,
+    comorbidities: 9000027,
+    medications: 9000028,
+    substanceUse: 9000029,
+    selfReported: 38000280
+  });
+
   const [sleepHealthOptions, setSleepHealthOptions] = useState<{value: string, label: string}[]>([]);
   const [exerciseOptions, setExerciseOptions] = useState<{value: string, label: string}[]>([]);
   const [eatingHabitsOptions, setEatingHabitsOptions] = useState<{value: string, label: string}[]>([]);
-  
-  // Add state for medication options
-  const [medicationOptions, setMedicationOptions] = useState<MedicationOption[]>([]);
-  const [substanceOptions, setSubstanceOptions] = useState<MedicationOption[]>([]);
-  const [isLoadingDrugs, setIsLoadingDrugs] = useState(false);
+  const [comorbiditiesOptions, setComorbiditiesOptions] = useState<{value: string, label: string}[]>([]);
+  const [medicationOptions, setMedicationOptions] = useState<{value: string, label: string}[]>([]);
+  const [substanceOptions, setSubstanceOptions] = useState<{value: string, label: string}[]>([]);
   
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -94,39 +87,76 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
       setFetchError(null);
       
       try {
-        // Get observation concept categories from the server
-        const concepts = await ConceptService.apiConceptList('Observation', 'pt');
-        
         // Define domain concepts we want to use (these would be standard OMOP concepts)
-        const SLEEP_DOMAIN = 'Sleep pattern';
-        const EXERCISE_DOMAIN = 'Physical activity';
-        const EATING_DOMAIN = 'Nutrition';
-        const COMORBIDITY_DOMAIN = 'Condition';
+        const FREQUENCY_CLASS = 'Frequency';
+        const QUALITY_CLASS = 'Quality';
+        const COMORBIDITY_CLASS = 'Comorbidity';
+        const MEDICATION_CLASS = 'Medication';
+        const SUBSTANCE_CLASS = 'Substance';
         
-        // Filter concepts by domain
-        const sleepConcept = concepts.find(c => c.concept_name === SLEEP_DOMAIN);
-        const exerciseConcept = concepts.find(c => c.concept_name === EXERCISE_DOMAIN);
-        const eatingConcept = concepts.find(c => c.concept_name === EATING_DOMAIN);
-        const comobirdityConcept = concepts.find(c => c.concept_name === COMORBIDITY_DOMAIN);
+        // Get observation concept categories from the server
+        const concepts = await ConceptService.apiConceptList(
+          `${FREQUENCY_CLASS}, ${QUALITY_CLASS}, ${COMORBIDITY_CLASS}, ${MEDICATION_CLASS}, ${SUBSTANCE_CLASS}`,
+          'pt'
+        );
+
+        // Filter and set options for each concept class
+        setSleepHealthOptions(
+          concepts
+            .filter(concept => concept.concept_class === QUALITY_CLASS)
+            .map(concept => ({
+              value: concept.concept_id.toString(),
+              label: concept.translated_name as string
+            }))
+        );
+
+        setExerciseOptions(
+          concepts
+            .filter(concept => concept.concept_class === FREQUENCY_CLASS)
+            .map(concept => ({
+              value: concept.concept_id.toString(),
+              label: concept.translated_name as string
+            }))
+        );
+
+        setEatingHabitsOptions(
+          concepts
+            .filter(concept => concept.concept_class === QUALITY_CLASS)
+            .map(concept => ({
+              value: concept.concept_id.toString(),
+              label: concept.translated_name as string
+            }))
+        );
+
+        setComorbiditiesOptions(
+          concepts
+            .filter(concept => concept.concept_class === COMORBIDITY_CLASS)
+            .map(concept => ({
+              value: concept.concept_id.toString(),
+              label: concept.translated_name as string
+            }))
+        );
+
+        setMedicationOptions(
+          concepts
+            .filter(concept => concept.concept_class === MEDICATION_CLASS)
+            .map(concept => ({
+              value: concept.concept_id.toString(),
+              label: concept.translated_name as string,
+            }))
+        );
+
+        setSubstanceOptions(
+          concepts
+            .filter(concept => concept.concept_class === SUBSTANCE_CLASS)
+            .map(concept => ({
+              value: concept.concept_id.toString(),
+              label: concept.translated_name as string,
+            }))
+        );
         
-        // Update concept IDs
-        if (sleepConcept && exerciseConcept && eatingConcept && comobirdityConcept) {
-          setConceptIds({
-            sleepHealth: sleepConcept.concept_id,
-            physicalExercise: exerciseConcept.concept_id,
-            eatingHabits: eatingConcept.concept_id,
-            comorbidities: comobirdityConcept.concept_id
-          });
-        } else {
-          // Fallback to hardcoded concept IDs
-          setConceptIds({
-            sleepHealth: 4058843,  // SNOMED concept for sleep pattern
-            physicalExercise: 4214956,  // SNOMED concept for physical activity
-            eatingHabits: 4152300,  // SNOMED concept for eating habits
-            comorbidities: 4029498   // SNOMED concept for comorbidity
-          });
-        }
-        
+        console.log('Fetched observation concepts:', concepts);
+      } catch (error) {
         // Set default options (in case we can't fetch the value options)
         setSleepHealthOptions([
           { value: "good", label: "Durmo bem" },
@@ -146,9 +176,6 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
           { value: "fair", label: "Me alimento razoavelmente" },
           { value: "poor", label: "Me alimento mal" }
         ]);
-        
-        console.log('Fetched observation concepts:', concepts);
-      } catch (error) {
         console.error('Error fetching concepts:', error);
         setFetchError('Erro ao carregar opções. Algumas funcionalidades podem estar limitadas.');
       } finally {
@@ -156,96 +183,9 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
       }
     };
 
-    // Add proper drug concept fetching
-    const fetchDrugConcepts = async () => {
-      setIsLoadingDrugs(true);
-
-      try {
-        // Fetch medications (RxNorm concepts)
-        const medications = await ConceptService.apiConceptList('Drug', 'pt');
-        
-        // Filter and map to options format
-        const medOptions = medications
-          .filter(drug => 
-            // Filter based on drug vocabulary (RxNorm, etc.)
-            (drug as any).vocabulary_id === 'RxNorm' && 
-            drug.concept_name != null
-          )
-          .map(drug => ({
-            value: drug.concept_id,
-            label: drug.concept_name as string,
-            dosageForm: drug.concept_class // Often contains info like "Pill", "Injection"
-          }));
-          
-        // Filter for substances (could be alcohol, tobacco, etc)
-        const substOptions = medications
-          .filter(drug => 
-            // Filter for substance concepts
-            ((drug as any).vocabulary_id === 'RxNorm' || drug.domain === 'Drug') && 
-            drug.concept_class?.toLowerCase().includes('substance') &&
-            drug.concept_name != null
-          )
-          .map(drug => ({
-            value: drug.concept_id,
-            label: drug.concept_name as string
-          }));
-        
-        setMedicationOptions(medOptions);
-        setSubstanceOptions(substOptions);
-        
-        console.log('Fetched medication concepts:', medications);
-      } catch (error) {
-        console.error('Error fetching drug concepts:', error);
-
-        // Fallback options
-        setMedicationOptions([
-          { value: 19019530, label: "Paracetamol 500mg" },
-          { value: 1539463, label: "Dipirona 500mg" },
-          { value: 1539411, label: "Ibuprofeno 600mg" }
-        ]);
-        
-        setSubstanceOptions([
-          { value: 4052175, label: "Álcool" },
-          { value: 4041969, label: "Tabaco" },
-          { value: 4042168, label: "Cannabis" }
-        ]);
-      } finally {
-        setIsLoadingDrugs(false);
-      }
-    };
-
     fetchConcepts();
-    fetchDrugConcepts();
   }, []);
 
-  // Add handler for medication select
-  const handleMedicationSelect = (value: string, selectedOption?: MedicationOption) => {
-    setFormData({
-      ...formData,
-      medications: value,
-      selectedMedicationId: selectedOption?.value || null
-    });
-    
-    // Clear error
-    if (errors.medications) {
-      setErrors({ ...errors, medications: undefined });
-    }
-  };
-  
-  // Add handler for substance select
-  const handleSubstanceSelect = (value: string, selectedOption?: MedicationOption) => {
-    setFormData({
-      ...formData,
-      substanceUse: value,
-      selectedSubstanceId: selectedOption?.value || null
-    });
-    
-    // Clear error
-    if (errors.substanceUse) {
-      setErrors({ ...errors, substanceUse: undefined });
-    }
-  };
-  
   // Handle input change
   const handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
     const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
@@ -271,74 +211,72 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
   // Transform form data into properly structured API objects
   const transformFormData = (): SubmissionData => {
     const now = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+    console.log('Form data before transformation:', formData);
     
     // Create observations
     const observations: ObservationCreate[] = [
       // Sleep health observation
       {
-        value_as_string: formData.sleepHealth,
+        value_as_concept: parseInt(formData.sleepHealth),
         observation_date: now,
         observation_concept: conceptIds.sleepHealth,
         shared_with_provider: true,
-        observation_type_concept: 38000280 // Patient self-reported
+        observation_type_concept: conceptIds.selfReported
       },
       // Physical exercise observation
       {
-        value_as_string: formData.physicalExercise,
+        value_as_concept: parseInt(formData.physicalExercise),
         observation_date: now,
         observation_concept: conceptIds.physicalExercise,
         shared_with_provider: true,
-        observation_type_concept: 38000280
+        observation_type_concept: conceptIds.selfReported
       },
       // Eating habits observation
       {
-        value_as_string: formData.eatingHabits,
+        value_as_concept: parseInt(formData.eatingHabits),
         observation_date: now,
         observation_concept: conceptIds.eatingHabits,
         shared_with_provider: true,
-        observation_type_concept: 38000280
-      }
-    ];
-    
-    // Add comorbidities if provided
-    if (formData.comorbidities.trim()) {
-      observations.push({
-        value_as_string: formData.comorbidities,
+        observation_type_concept: conceptIds.selfReported
+      },
+      ...formData.comorbidities.map((conceptId) => ({
+        value_as_concept: parseInt(conceptId),
         observation_date: now,
         observation_concept: conceptIds.comorbidities,
         shared_with_provider: true,
-        observation_type_concept: 38000280
-      });
-    }
+        observation_type_concept: conceptIds.selfReported
+      }))
+    ];
     
-    // Create drug exposures
-    const drugExposures: DrugExposureCreate[] = [];
-    
-    // Add medications if provided
-    if (formData.medications.trim()) {
-      drugExposures.push({
-        drug_exposure_start_date: now || null,
+    const drugExposures: DrugExposureCreate[] = [
+      ...formData.medications.map((conceptId) => ({
+        drug_exposure_start_date: now,
         drug_exposure_end_date: null,
         stop_reason: null,
         quantity: null,
         interval_hours: null,
         dose_times: null,
-        sig: formData.medications, // Description/usage instructions
+        sig: null,
         person: null,
-        drug_concept: formData.selectedMedicationId,
-        drug_type_concept: 38000177, // Patient self-reported medication
-        });
-    }
-    
-    // Add substance use if provided
-    if (formData.substanceUse.trim()) {
-      drugExposures.push({
-        sig: formData.substanceUse, // Description of use
-        drug_exposure_start_date: now || null,
-        drug_concept: formData.selectedSubstanceId,
-        drug_type_concept: 38000177 // Patient self-reported
-      });
-    }
+        drug_concept: parseInt(conceptId),
+        drug_type_concept: conceptIds.medications
+      })),
+      ...formData.substanceUse.map((conceptId) => ({
+        drug_exposure_start_date: now,
+        drug_exposure_end_date: null,
+        stop_reason: null,
+        quantity: null,
+        interval_hours: null,
+        dose_times: null,
+        sig: null,
+        person: null,
+        drug_concept: parseInt(conceptId),
+        drug_type_concept: conceptIds.substanceUse
+      }))
+    ];
+
+    console.log('Transformed data for submission:', { observations, drugExposures });
     
     return { observations, drugExposures };
   };
@@ -408,38 +346,46 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
         error={errors.eatingHabits}
         isLoading={isLoading}
       />
-      
-      <TextField 
+
+      <Select 
         id="comorbidities"
         name="comorbidities"
-        label="Comorbidades"
-        value={formData.comorbidities}
-        onChange={handleChange}
+        isMulti
+        value={comorbiditiesOptions.filter(opt => formData.comorbidities.includes(opt.value))}
+        onChange={(selectedOptions) => {
+          const selectedIds = selectedOptions.map(opt => opt.value);
+          setFormData({ ...formData, comorbidities: selectedIds });
+        }}
+        options={comorbiditiesOptions}
+        isLoading={isLoading}
         placeholder="Insira suas comorbidades, se houver"
-        error={errors.comorbidities}
       />
       
-      <AutocompleteField 
+      <Select 
         id="medications"
         name="medications"
-        label="Remédios usados"
-        value={formData.medications}
-        onChange={handleMedicationSelect}
+        placeholder="Busque remédios..."
+        isMulti
+        value={medicationOptions.filter(opt => formData.medications.includes(opt.value))}
+        onChange={(selectedOptions) => {
+          const selectedIds = selectedOptions.map(opt => opt.value);
+          setFormData({ ...formData, medications: selectedIds });
+        }}
         options={medicationOptions}
-        error={errors.medications}
-        isLoading={isLoadingDrugs}
-        placeholder="Busque medicamentos..."
+        isLoading={isLoading}
       />
       
-      <AutocompleteField 
+      <Select 
         id="substanceUse"
         name="substanceUse"
-        label="Uso de substâncias (álcool, tabaco, etc)"
-        value={formData.substanceUse}
-        onChange={handleSubstanceSelect}
+        isMulti
+        value={substanceOptions.filter(opt => formData.substanceUse.includes(opt.value))}
+        onChange={(selectedOptions) => {
+          const selectedIds = selectedOptions.map(opt => opt.value);
+          setFormData({ ...formData, substanceUse: selectedIds });
+        }}
         options={substanceOptions}
-        error={errors.substanceUse}
-        isLoading={isLoadingDrugs}
+        isLoading={isLoading}
         placeholder="Busque substâncias..."
       />
       
@@ -447,7 +393,7 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
         type="submit" 
         variant="white" 
         className="w-full mt-4 font-['Inter'] font-bold"
-        disabled={isLoading || isLoadingDrugs}
+        disabled={isLoading}
       >
         CONTINUAR
       </Button>

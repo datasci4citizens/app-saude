@@ -10,6 +10,7 @@ import type { LocationCreate } from '@/api/models/LocationCreate';
 import type { ObservationCreate } from '@/api/models/ObservationCreate';
 import type { DrugExposureCreate } from '@/api/models/DrugExposureCreate';
 import { ProgressIndicator } from '@/components/forms/progress_indicator';
+import type { FullPersonRetrieve } from '@/api/models/FullPersonRetrieve';
 
 // Empty placeholder for future service implementation
 // Will create a placeholder service that matches the pattern you described
@@ -41,28 +42,15 @@ export default function UserOnboarding() {
   const [error, setError] = useState<string | null>(null);
 
   // Setup SWR mutation
-  const { trigger, isMutating } = useSWRMutation(
-    'fullPersonOnboarding',
-    async () => {
-      const fullData: FullPersonCreate = {
-        person: person,
-        location: location,
-        observations: observations,
-        drug_exposures: drugExposures
-      };
-      
-      try {
-        const result = await FullPersonService.apiFullPersonCreate(fullData);
-        return result;
-      } catch (err: any) {
-        // Extract error message
-        const errorMessage = err.message || 
-          'Ocorreu um erro ao processar seu cadastro. Tente novamente mais tarde.';
-        setError(errorMessage);
-        throw err;
-      }
+  const { trigger, isMutating } = useSWRMutation('fullPersonOnboarding', async () => {
+    const fullData: FullPersonCreate = {
+      person,
+      location,
+      observations,
+      drug_exposures: drugExposures,
     }
-  );
+    return await FullPersonService.apiFullPersonCreate(fullData);
+  });
 
   const handleFirstFormSubmit = (data: PersonData) => {
     console.log('First form data submitted:', data);
@@ -94,20 +82,19 @@ export default function UserOnboarding() {
     // Save health data
     setObservations(data.observations);
     setDrugExposures(data.drugExposures);
-    
-    try {
-      // Trigger the SWR mutation to send all data
-      const result = await trigger();
-      console.log('Submission result:', result);
-      
-      // Handle successful submission
-      alert('Cadastro realizado com sucesso!');
-      router('/user-main-page'); // Adjust the route as needed
-    } catch (err) {
-      console.error('Registration error:', err);
-      // Error is already set in the mutation function
-      alert(`Erro: ${error}`);
-    }
+
+    // Delay a chamada até que os dados estejam atualizados
+    setTimeout(async () => {
+      try {
+        const result = await trigger();
+        console.log('Submission result:', result);
+        alert('Cadastro realizado com sucesso!');
+        router('/user-main-page');
+      } catch (err) {
+        console.error('Registration error:', err);
+        alert(`Erro: ${error}`);
+      }
+    }, 0); // Executa na próxima "pintura"
   };
 
   // Handle back button click
