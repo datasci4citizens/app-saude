@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/forms/button';
 import { TextField } from '@/components/forms/text_input';
 import { SelectField } from '@/components/forms/select_input';
-import type { Location } from '@/api/models/Location';
+// import type { LocationRetrieve } from '@/api/models/LocationRetrieve';
 
 // Define form data type that extends Location with form-specific fields
 export interface AddressFormData extends Partial<Location> {
@@ -35,7 +35,7 @@ export function UserInfoForm2({onSubmit}: {onSubmit: (data: AddressFormData) => 
     city: '',
     number: '',
     complement: '',
-    country_concept: 44508529, // Default concept ID for Brazil
+    // country_concept: 44508529, // Default concept ID for Brazil
   });
   
   const [errors, setErrors] = useState<FormErrors>({});

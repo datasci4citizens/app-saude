@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/forms/button';
 import { TextField } from '@/components/forms/text_input';
 import { SelectField } from '@/components/forms/select_input';
-import type { Observation } from '@/api/models/Observation';
-import type { DrugExposure } from '@/api/models/DrugExposure';
+import type { ObservationCreate } from '@/api/models/ObservationCreate';
+import type { DrugExposureCreate } from '@/api/models/DrugExposureCreate';
 import { ConceptService } from '@/api/services/ConceptService';
 import { AutocompleteField } from '@/components/forms/autocomplete_input';
 
@@ -38,8 +38,8 @@ interface FormData {
 
 // Define the structure for API submission
 export interface SubmissionData {
-  observations: Observation[];
-  drugExposures: DrugExposure[];
+  observations: ObservationCreate[];
+  drugExposures: DrugExposureCreate[];
 }
 
 interface FormErrors {
@@ -273,27 +273,30 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
     const now = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     
     // Create observations
-    const observations: Observation[] = [
+    const observations: ObservationCreate[] = [
       // Sleep health observation
       {
         value_as_string: formData.sleepHealth,
         observation_date: now,
         observation_concept: conceptIds.sleepHealth,
-        shared_with_provider: true
+        shared_with_provider: true,
+        observation_type_concept: 38000280 // Patient self-reported
       },
       // Physical exercise observation
       {
         value_as_string: formData.physicalExercise,
         observation_date: now,
         observation_concept: conceptIds.physicalExercise,
-        shared_with_provider: true
+        shared_with_provider: true,
+        observation_type_concept: 38000280
       },
       // Eating habits observation
       {
         value_as_string: formData.eatingHabits,
         observation_date: now,
         observation_concept: conceptIds.eatingHabits,
-        shared_with_provider: true
+        shared_with_provider: true,
+        observation_type_concept: 38000280
       }
     ];
     
@@ -303,21 +306,28 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
         value_as_string: formData.comorbidities,
         observation_date: now,
         observation_concept: conceptIds.comorbidities,
-        shared_with_provider: true
+        shared_with_provider: true,
+        observation_type_concept: 38000280
       });
     }
     
     // Create drug exposures
-    const drugExposures: DrugExposure[] = [];
+    const drugExposures: DrugExposureCreate[] = [];
     
     // Add medications if provided
     if (formData.medications.trim()) {
       drugExposures.push({
-        sig: formData.medications, // Description/usage instructions
         drug_exposure_start_date: now || null,
+        drug_exposure_end_date: null,
+        stop_reason: null,
+        quantity: null,
+        interval_hours: null,
+        dose_times: null,
+        sig: formData.medications, // Description/usage instructions
+        person: null,
         drug_concept: formData.selectedMedicationId,
-        drug_type_concept: 38000177 // Patient self-reported medication
-      });
+        drug_type_concept: 38000177, // Patient self-reported medication
+        });
     }
     
     // Add substance use if provided
