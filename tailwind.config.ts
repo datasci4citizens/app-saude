@@ -111,6 +111,10 @@ export default {
 					DEFAULT: '#FFC97E',
 					background: '#FFC97E',
 				},
+				text_gray: {
+					DEFAULT: '#464646',
+					foreground: '#464646',
+				},
 				card: {
 					// biome-ignore lint/style/useNamingConvention: external naming
 					DEFAULT: white,

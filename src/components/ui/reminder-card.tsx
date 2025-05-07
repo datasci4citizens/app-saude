@@ -31,14 +31,20 @@ const ReminderCard: React.FC<ReminderCardProps> = ({
   };
 
   return (
-    <div style={styles.container}>
+    <div className="flex items-center justify-between bg-[#F9F9FF] rounded-xl p-4 w-full my-2 min-h-[72px]">
       {/* Icon container */}
-      <div style={styles.iconContainer}>{icon}</div>
+      <div className="flex items-center justify-center bg-[#EAE7FF] rounded-full w-[54px] h-[54px] text-xl text-purple">
+        {icon}
+      </div>
 
       {/* Text content */}
-      <div style={styles.textContainer}>
-        <h4 style={styles.title}>{title}</h4>
-        <p style={styles.subtitle}>{subtitle}</p>
+      <div className="flex-1 ml-4">
+        <h4 className="text-base font-normal m-0 text-dark_blue font-inter">
+          {title}
+        </h4>
+        <p className="text-xs m-0 text-gray_buttons font-inter">
+          {subtitle}
+        </p>
       </div>
 
       {/* Checkbox (conditionally rendered) */}
@@ -52,76 +58,11 @@ const ReminderCard: React.FC<ReminderCardProps> = ({
           radius="rounded-md"
           showChildrenOnSelectOnly={true}
         >
-          <span className="mgc_check_line" style={styles.checkIcon} />
+          <span className="mgc_check_line text-xs text-dark_blue" />
         </Checkbox>
       )}
     </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "#F9F9FF",
-    borderRadius: "14px",
-    padding: "16px",
-    width: "100%",
-    margin: "8px 0",
-    minHeight: "72px",
-  },
-  iconContainer: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#EAE7FF",
-    borderRadius: "50%",
-    width: "54px",
-    height: "54px",
-    fontSize: "20px",
-    color: "#6A5ACD",
-  },
-  textContainer: {
-    flex: 1,
-    marginLeft: "16px",
-  },
-  title: {
-    fontSize: "16px",
-    fontWeight: "normal",
-    margin: 0,
-    color: "#141B36",
-    fontFamily: '"Inter", sans-serif',
-  },
-  subtitle: {
-    fontSize: "12px",
-    margin: 0,
-    color: "#A0A3B1",
-    fontFamily: '"Inter", sans-serif',
-  },
-  checkboxContainer: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "24px",
-    height: "24px",
-    borderRadius: "25%",
-    cursor: "pointer",
-    transition: "background-color 0.3s ease, border-color 0.3s ease",
-  },
-  customCheckbox: {
-    appearance: "none",
-    width: "24px",
-    height: "24px",
-    borderRadius: "50%",
-    cursor: "pointer",
-    border: "none",
-    backgroundColor: "transparent",
-  },
-  checkIcon: {
-    fontSize: "12px",
-    color: "#141B36",
-  },
 };
 
 export default ReminderCard;

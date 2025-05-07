@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
+import { cn } from '@/lib/utils';
 
 interface DateFieldProps {
   id: string;
@@ -29,7 +30,6 @@ export function DateField({
       inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
     }
   }, [value, cursorPosition]);
-
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target;
     const originalPosition = input.selectionStart || 0;

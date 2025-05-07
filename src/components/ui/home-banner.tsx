@@ -4,7 +4,7 @@ interface HomeBannerProps {
   title?: string;
   subtitle?: string;
   onClick?: () => void;
-  onIconClick?: () => void; // Nova prop para navegação ao clicar no ícone
+  onIconClick?: () => void;
 }
 
 const HomeBanner: React.FC<HomeBannerProps> = ({
@@ -15,114 +15,34 @@ const HomeBanner: React.FC<HomeBannerProps> = ({
 }) => {
   return (
     <div 
-      style={styles.container}
+      className="relative bg-blue-600 p-6 text-white overflow-hidden h-40 w-full cursor-pointer shadow-md"
       onClick={onClick}
     >
       {/* Shapes decorativos */}
-      <div style={styles.shapeTop}></div>
-      <div style={styles.shapeMiddle}></div>
-      <div style={styles.shapeBottom}></div>
+      <div className="absolute -top-[50px] right-5 w-[120px] h-[120px] rounded-full bg-white bg-opacity-10 z-[1]"></div>
+      <div className="absolute top-10 -right-5 w-[100px] h-[100px] rounded-full bg-white bg-opacity-10 z-[1]"></div>
+      <div className="absolute -bottom-10 left-[30%] w-[180px] h-[180px] rounded-full bg-white bg-opacity-10 z-[1]"></div>
       
       {/* Conteúdo */}
-      <div style={styles.content}>
+      <div className="relative flex justify-between items-start h-full z-10">
         <div>
-          <h2 style={styles.title}>{title}</h2>
-          <p style={styles.subtitle}>{subtitle}</p>
+          <h2 className="text-[28px] font-bold m-0 mb-1 font-work-sans">{title}</h2>
+          <p className="text-xs m-0 opacity-90 tracking-wider font-inter font-medium">{subtitle}</p>
         </div>
         
         {/* Ícone de editar com evento de clique próprio */}
         <div 
-          style={styles.iconContainer}
+          className="bg-white w-11 h-11 rounded-full flex items-center justify-center"
           onClick={(e) => {
             e.stopPropagation(); // Impede que o clique ative também o onClick do banner
             if (onIconClick) onIconClick();
           }}
         >
-          <span className="mgc_pencil_line" style={styles.icon}></span>
+          <span className="mgc_pencil_line text-2xl text-blue-400"></span>
         </div>
       </div>
     </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    position: 'relative',
-    backgroundColor: '#1768F2',
-    padding: '24px',
-    color: 'white',
-    overflow: 'hidden',
-    height: '160px',
-    width: '100%',
-    cursor: 'pointer',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
-  },
-  content: {
-    position: 'relative',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    height: '100%',
-    zIndex: 10
-  },
-  title: {
-    fontSize: '28px',
-    fontWeight: 'bold',
-    margin: 0,
-    marginBottom: '4px',
-    fontFamily: '"Work Sans", sans-serif'
-  },
-  subtitle: {
-    fontSize: '11px',
-    margin: 0,
-    opacity: 0.9,
-    letterSpacing: '0.5px',
-    fontFamily: '"Inter", sans-serif',
-    fontWeight: 'medium'
-  },
-  iconContainer: {
-    backgroundColor: 'white',
-    width: '44px',
-    height: '44px',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  icon: {
-    fontSize: '24px',
-    color: '#5A96FA'
-  },
-  shapeTop: {
-    position: 'absolute',
-    top: '-50px',
-    right: '20px',
-    width: '120px',
-    height: '120px',
-    borderRadius: '50%',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    zIndex: 1
-  },
-  shapeMiddle: {
-    position: 'absolute',
-    top: '40px',
-    right: '-20px',
-    width: '100px',
-    height: '100px',
-    borderRadius: '50%',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    zIndex: 1
-  },
-  shapeBottom: {
-    position: 'absolute',
-    bottom: '-40px',
-    left: '30%',
-    width: '180px',
-    height: '180px',
-    borderRadius: '50%',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    zIndex: 1
-  }
 };
 
 export default HomeBanner;
@@ -140,5 +60,5 @@ const handleBannerIconClick = () => {
     title="Registro diário"
     subtitle="Cheque registro dos seus pacientes"
     onClick={handleBannerClick}
-    onIconClick={handleBannerIconClick}  // Correção aqui!
+    onIconClick={handleBannerIconClick}
 />

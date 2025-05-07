@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { cn } from '@/lib/utils';
 
 interface WheelPickerProps {
   data: string[];
@@ -84,22 +85,17 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
 
   return (
     <div
+      className="relative overflow-hidden rounded-lg"
       style={{
         height: `${height}px`,
         width: `${width}px`,
-        position: "relative",
-        overflow: "hidden",
-        borderRadius: "8px",
       }}
     >
       <div
+        className="absolute pointer-events-none z-10 w-full"
         style={{
-          position: "absolute",
           height: `${itemHeight}px`,
-          width: "100%",
           top: `${middlePosition}px`,
-          pointerEvents: "none",
-          zIndex: 1,
         }}
       >
         {children}
@@ -107,14 +103,7 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
 
       <div
         ref={containerRef}
-        style={{
-          height: "100%",
-          overflowY: "auto",
-          overscrollBehavior: "contain",
-          WebkitOverflowScrolling: "touch",
-          msOverflowStyle: "none",
-          scrollbarWidth: "none",
-        }}
+        className="h-full overflow-y-auto overscroll-contain touch-manipulation scrollbar-none"
         onScroll={handleScroll}
         onTouchStart={handleScrollStart}
         onMouseDown={handleScrollStart}
@@ -138,16 +127,14 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
                   onChange(data[index] as string);
                   scrollToIndex(index);
                 }}
+                className={cn(
+                  "text-center text-base cursor-pointer transition-opacity duration-200",
+                  index === selectedIndex ? "font-bold text-dark_blue" : "font-normal text-gray_buttons"
+                )}
                 style={{
                   height: `${itemHeight}px`,
                   lineHeight: `${itemHeight}px`,
-                  textAlign: "center",
-                  fontSize: "16px",
-                  fontWeight: index === selectedIndex ? "bold" : "normal",
                   opacity: opacity,
-                  cursor: "pointer",
-                  transition: "opacity 0.2s ease",
-                  color: index === selectedIndex ? "#000" : "#555",
                 }}
               >
                 {item}
@@ -158,8 +145,15 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
       </div>
 
       <style>{`
-        div::-webkit-scrollbar {
+        .scrollbar-none::-webkit-scrollbar {
           display: none;
+        }
+        .scrollbar-none {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .touch-manipulation {
+          -webkit-overflow-scrolling: touch;
         }
       `}</style>
     </div>

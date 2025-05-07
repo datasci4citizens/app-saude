@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface HabitCardProps {
-  title: string;  // Made required since we're not showing numbers
+  title: string;
   className?: string;
 }
 
@@ -18,24 +18,19 @@ const HabitCard: React.FC<HabitCardProps> = ({
   return (
     <div 
       className={`
-        bg-[#FA6E5A]
-        text-white 
-        font-medium 
+        bg-orange
+        text-off_white
+        font-inter
+        font-bold
+        text-lg
         py-3 
         px-4 
         rounded-xl
         flex
-        font-bold
         shadow-sm
+        mb-1
         ${className}
       `}
-      style={{
-        fontSize: '18px',
-        fontWeight: 'bold',
-        fontFamily: 'Inter, sans-serif',
-        color: '#F9F9FF',
-        marginBottom: '4px'
-      }}
     >
       {title}
     </div>
