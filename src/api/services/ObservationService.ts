@@ -2,17 +2,19 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Observation } from '../models/Observation';
-import type { PatchedObservation } from '../models/PatchedObservation';
+import type { ObservationCreate } from '../models/ObservationCreate';
+import type { ObservationRetrieve } from '../models/ObservationRetrieve';
+import type { ObservationUpdate } from '../models/ObservationUpdate';
+import type { PatchedObservationUpdate } from '../models/PatchedObservationUpdate';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class ObservationService {
     /**
-     * @returns Observation
+     * @returns ObservationRetrieve
      * @throws ApiError
      */
-    public static apiObservationList(): CancelablePromise<Array<Observation>> {
+    public static apiObservationList(): CancelablePromise<Array<ObservationRetrieve>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/observation/',
@@ -20,12 +22,12 @@ export class ObservationService {
     }
     /**
      * @param requestBody
-     * @returns Observation
+     * @returns ObservationCreate
      * @throws ApiError
      */
     public static apiObservationCreate(
-        requestBody?: Observation,
-    ): CancelablePromise<Observation> {
+        requestBody?: ObservationCreate,
+    ): CancelablePromise<ObservationCreate> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/observation/',
@@ -35,12 +37,12 @@ export class ObservationService {
     }
     /**
      * @param observationId A unique integer value identifying this observation.
-     * @returns Observation
+     * @returns ObservationRetrieve
      * @throws ApiError
      */
     public static apiObservationRetrieve(
         observationId: number,
-    ): CancelablePromise<Observation> {
+    ): CancelablePromise<ObservationRetrieve> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/observation/{observation_id}/',
@@ -52,13 +54,13 @@ export class ObservationService {
     /**
      * @param observationId A unique integer value identifying this observation.
      * @param requestBody
-     * @returns Observation
+     * @returns ObservationUpdate
      * @throws ApiError
      */
     public static apiObservationUpdate(
         observationId: number,
-        requestBody?: Observation,
-    ): CancelablePromise<Observation> {
+        requestBody?: ObservationUpdate,
+    ): CancelablePromise<ObservationUpdate> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/observation/{observation_id}/',
@@ -72,13 +74,13 @@ export class ObservationService {
     /**
      * @param observationId A unique integer value identifying this observation.
      * @param requestBody
-     * @returns Observation
+     * @returns ObservationUpdate
      * @throws ApiError
      */
     public static apiObservationPartialUpdate(
         observationId: number,
-        requestBody?: PatchedObservation,
-    ): CancelablePromise<Observation> {
+        requestBody?: PatchedObservationUpdate,
+    ): CancelablePromise<ObservationUpdate> {
         return __request(OpenAPI, {
             method: 'PATCH',
             url: '/api/observation/{observation_id}/',

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { TextField } from '@/components/ui/text_input';
-import { SelectField } from '@/components/ui/select_input';
-import { DateField } from '@/components/ui/date_input';
+import { Button } from '@/components/forms/button';
+import { TextField } from '@/components/forms/text_input';
+import { SelectField } from '@/components/forms/select_input';
+import { DateField } from '@/components/forms/date_input';
 import { Person } from '@/api/models/Person';
 import { ConceptService } from '@/api/services/ConceptService';
 

@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Button } from '@/components/forms/button';
 import { TextField } from '@/components/forms/text_input';
 import { SelectField } from '@/components/forms/select_input';
-import { Location } from '@/api/models/Location';
+import type { Location } from '@/api/models/Location';
 
 // Define form data type that extends Location with form-specific fields
-interface AddressFormData extends Partial<Location> {
+export interface AddressFormData extends Partial<Location> {
   // Fields from Location that we'll use
   address_1?: string | null;
   city?: string | null;
@@ -135,6 +135,7 @@ export function UserInfoForm2({onSubmit}: {onSubmit: (data: AddressFormData) => 
           onChange={handleChange}
           options={stateOptions}
           error={errors.state}
+          isLoading={false} // Placeholder for loading state
         />
       </div>
       

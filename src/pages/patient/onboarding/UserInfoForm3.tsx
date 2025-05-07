@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/forms/button';
 import { TextField } from '@/components/forms/text_input';
 import { SelectField } from '@/components/forms/select_input';
-import { Observation } from '@/api/models/Observation';
-import { DrugExposure } from '@/api/models/DrugExposure';
+import type { Observation } from '@/api/models/Observation';
+import type { DrugExposure } from '@/api/models/DrugExposure';
 import { ConceptService } from '@/api/services/ConceptService';
 import { AutocompleteField } from '@/components/forms/autocomplete_input';
 
@@ -37,9 +37,9 @@ interface FormData {
 }
 
 // Define the structure for API submission
-interface SubmissionData {
-  observations: Partial<Observation>[];
-  drugExposures: Partial<DrugExposure>[];
+export interface SubmissionData {
+  observations: Observation[];
+  drugExposures: DrugExposure[];
 }
 
 interface FormErrors {
@@ -174,15 +174,15 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
           .map(drug => ({
             value: drug.concept_id,
             label: drug.concept_name as string,
-            dosageForm: drug.concept_class_id // Often contains info like "Pill", "Injection"
+            dosageForm: drug.concept_class // Often contains info like "Pill", "Injection"
           }));
           
         // Filter for substances (could be alcohol, tobacco, etc)
         const substOptions = medications
           .filter(drug => 
             // Filter for substance concepts
-            ((drug as any).vocabulary_id === 'RxNorm' || drug.domain_id === 'Drug') && 
-            drug.concept_class_id?.toLowerCase().includes('substance') &&
+            ((drug as any).vocabulary_id === 'RxNorm' || drug.domain === 'Drug') && 
+            drug.concept_class?.toLowerCase().includes('substance') &&
             drug.concept_name != null
           )
           .map(drug => ({
@@ -273,7 +273,7 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
     const now = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     
     // Create observations
-    const observations: Partial<Observation>[] = [
+    const observations: Observation[] = [
       // Sleep health observation
       {
         value_as_string: formData.sleepHealth,
@@ -308,13 +308,13 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
     }
     
     // Create drug exposures
-    const drugExposures: Partial<DrugExposure>[] = [];
+    const drugExposures: DrugExposure[] = [];
     
     // Add medications if provided
     if (formData.medications.trim()) {
       drugExposures.push({
         sig: formData.medications, // Description/usage instructions
-        drug_exposure_start_date: now,
+        drug_exposure_start_date: now || null,
         drug_concept: formData.selectedMedicationId,
         drug_type_concept: 38000177 // Patient self-reported medication
       });
@@ -324,7 +324,7 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
     if (formData.substanceUse.trim()) {
       drugExposures.push({
         sig: formData.substanceUse, // Description of use
-        drug_exposure_start_date: now,
+        drug_exposure_start_date: now || null,
         drug_concept: formData.selectedSubstanceId,
         drug_type_concept: 38000177 // Patient self-reported
       });

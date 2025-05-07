@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/forms/button';
 import { TextField } from '@/components/forms/text_input';
 import { SelectField } from '@/components/forms/select_input';
-import { DateField } from '@/components/ui/date_input';
+import { DateField } from '@/components/forms/date_input';
 import { FileUploader } from '@/components/ui/file-uploader';
-import { Provider } from '@/api/models/Provider';
+import type { ProviderCreate } from '@/api/models/ProviderCreate';
 import { ConceptService } from '@/api/services/ConceptService';
 
 // Define types for form data - extends Provider with additional UI fields
-interface ProviderFormData extends Partial<Provider> {
+interface ProviderFormData extends Partial<ProviderCreate> {
   // Fields from Provider model
   social_name?: string | null;
   birth_datetime?: string | null;

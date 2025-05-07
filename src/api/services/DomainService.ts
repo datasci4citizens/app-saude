@@ -2,17 +2,19 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Domain } from '../models/Domain';
-import type { PatchedDomain } from '../models/PatchedDomain';
+import type { DomainCreate } from '../models/DomainCreate';
+import type { DomainRetrieve } from '../models/DomainRetrieve';
+import type { DomainUpdate } from '../models/DomainUpdate';
+import type { PatchedDomainUpdate } from '../models/PatchedDomainUpdate';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class DomainService {
     /**
-     * @returns Domain
+     * @returns DomainRetrieve
      * @throws ApiError
      */
-    public static apiDomainList(): CancelablePromise<Array<Domain>> {
+    public static apiDomainList(): CancelablePromise<Array<DomainRetrieve>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/domain/',
@@ -20,12 +22,12 @@ export class DomainService {
     }
     /**
      * @param requestBody
-     * @returns Domain
+     * @returns DomainCreate
      * @throws ApiError
      */
     public static apiDomainCreate(
-        requestBody: Domain,
-    ): CancelablePromise<Domain> {
+        requestBody?: DomainCreate,
+    ): CancelablePromise<DomainCreate> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/domain/',
@@ -35,12 +37,12 @@ export class DomainService {
     }
     /**
      * @param domainId A unique value identifying this domain.
-     * @returns Domain
+     * @returns DomainRetrieve
      * @throws ApiError
      */
     public static apiDomainRetrieve(
         domainId: string,
-    ): CancelablePromise<Domain> {
+    ): CancelablePromise<DomainRetrieve> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/domain/{domain_id}/',
@@ -52,13 +54,13 @@ export class DomainService {
     /**
      * @param domainId A unique value identifying this domain.
      * @param requestBody
-     * @returns Domain
+     * @returns DomainUpdate
      * @throws ApiError
      */
     public static apiDomainUpdate(
         domainId: string,
-        requestBody: Domain,
-    ): CancelablePromise<Domain> {
+        requestBody: DomainUpdate,
+    ): CancelablePromise<DomainUpdate> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/domain/{domain_id}/',
@@ -72,13 +74,13 @@ export class DomainService {
     /**
      * @param domainId A unique value identifying this domain.
      * @param requestBody
-     * @returns Domain
+     * @returns DomainUpdate
      * @throws ApiError
      */
     public static apiDomainPartialUpdate(
         domainId: string,
-        requestBody?: PatchedDomain,
-    ): CancelablePromise<Domain> {
+        requestBody?: PatchedDomainUpdate,
+    ): CancelablePromise<DomainUpdate> {
         return __request(OpenAPI, {
             method: 'PATCH',
             url: '/api/domain/{domain_id}/',

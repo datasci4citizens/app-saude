@@ -2,17 +2,19 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Location } from '../models/Location';
-import type { PatchedLocation } from '../models/PatchedLocation';
+import type { LocationCreate } from '../models/LocationCreate';
+import type { LocationRetrieve } from '../models/LocationRetrieve';
+import type { LocationUpdate } from '../models/LocationUpdate';
+import type { PatchedLocationUpdate } from '../models/PatchedLocationUpdate';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class LocationService {
     /**
-     * @returns Location
+     * @returns LocationRetrieve
      * @throws ApiError
      */
-    public static apiLocationList(): CancelablePromise<Array<Location>> {
+    public static apiLocationList(): CancelablePromise<Array<LocationRetrieve>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/location/',
@@ -20,12 +22,12 @@ export class LocationService {
     }
     /**
      * @param requestBody
-     * @returns Location
+     * @returns LocationCreate
      * @throws ApiError
      */
     public static apiLocationCreate(
-        requestBody?: Location,
-    ): CancelablePromise<Location> {
+        requestBody?: LocationCreate,
+    ): CancelablePromise<LocationCreate> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/location/',
@@ -35,12 +37,12 @@ export class LocationService {
     }
     /**
      * @param locationId A unique integer value identifying this location.
-     * @returns Location
+     * @returns LocationRetrieve
      * @throws ApiError
      */
     public static apiLocationRetrieve(
         locationId: number,
-    ): CancelablePromise<Location> {
+    ): CancelablePromise<LocationRetrieve> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/location/{location_id}/',
@@ -52,13 +54,13 @@ export class LocationService {
     /**
      * @param locationId A unique integer value identifying this location.
      * @param requestBody
-     * @returns Location
+     * @returns LocationUpdate
      * @throws ApiError
      */
     public static apiLocationUpdate(
         locationId: number,
-        requestBody?: Location,
-    ): CancelablePromise<Location> {
+        requestBody?: LocationUpdate,
+    ): CancelablePromise<LocationUpdate> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/location/{location_id}/',
@@ -72,13 +74,13 @@ export class LocationService {
     /**
      * @param locationId A unique integer value identifying this location.
      * @param requestBody
-     * @returns Location
+     * @returns LocationUpdate
      * @throws ApiError
      */
     public static apiLocationPartialUpdate(
         locationId: number,
-        requestBody?: PatchedLocation,
-    ): CancelablePromise<Location> {
+        requestBody?: PatchedLocationUpdate,
+    ): CancelablePromise<LocationUpdate> {
         return __request(OpenAPI, {
             method: 'PATCH',
             url: '/api/location/{location_id}/',

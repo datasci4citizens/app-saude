@@ -2,17 +2,19 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { PatchedProvider } from '../models/PatchedProvider';
-import type { Provider } from '../models/Provider';
+import type { PatchedProviderUpdate } from '../models/PatchedProviderUpdate';
+import type { ProviderCreate } from '../models/ProviderCreate';
+import type { ProviderRetrieve } from '../models/ProviderRetrieve';
+import type { ProviderUpdate } from '../models/ProviderUpdate';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class ProviderService {
     /**
-     * @returns Provider
+     * @returns ProviderRetrieve
      * @throws ApiError
      */
-    public static apiProviderList(): CancelablePromise<Array<Provider>> {
+    public static apiProviderList(): CancelablePromise<Array<ProviderRetrieve>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/provider/',
@@ -20,12 +22,12 @@ export class ProviderService {
     }
     /**
      * @param requestBody
-     * @returns Provider
+     * @returns ProviderCreate
      * @throws ApiError
      */
     public static apiProviderCreate(
-        requestBody?: Provider,
-    ): CancelablePromise<Provider> {
+        requestBody?: ProviderCreate,
+    ): CancelablePromise<ProviderCreate> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/provider/',
@@ -35,12 +37,12 @@ export class ProviderService {
     }
     /**
      * @param providerId A unique integer value identifying this provider.
-     * @returns Provider
+     * @returns ProviderRetrieve
      * @throws ApiError
      */
     public static apiProviderRetrieve(
         providerId: number,
-    ): CancelablePromise<Provider> {
+    ): CancelablePromise<ProviderRetrieve> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/provider/{provider_id}/',
@@ -52,13 +54,13 @@ export class ProviderService {
     /**
      * @param providerId A unique integer value identifying this provider.
      * @param requestBody
-     * @returns Provider
+     * @returns ProviderUpdate
      * @throws ApiError
      */
     public static apiProviderUpdate(
         providerId: number,
-        requestBody?: Provider,
-    ): CancelablePromise<Provider> {
+        requestBody?: ProviderUpdate,
+    ): CancelablePromise<ProviderUpdate> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/provider/{provider_id}/',
@@ -72,13 +74,13 @@ export class ProviderService {
     /**
      * @param providerId A unique integer value identifying this provider.
      * @param requestBody
-     * @returns Provider
+     * @returns ProviderUpdate
      * @throws ApiError
      */
     public static apiProviderPartialUpdate(
         providerId: number,
-        requestBody?: PatchedProvider,
-    ): CancelablePromise<Provider> {
+        requestBody?: PatchedProviderUpdate,
+    ): CancelablePromise<ProviderUpdate> {
         return __request(OpenAPI, {
             method: 'PATCH',
             url: '/api/provider/{provider_id}/',

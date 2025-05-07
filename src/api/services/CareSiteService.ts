@@ -2,17 +2,19 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CareSite } from '../models/CareSite';
-import type { PatchedCareSite } from '../models/PatchedCareSite';
+import type { CareSiteCreate } from '../models/CareSiteCreate';
+import type { CareSiteRetrieve } from '../models/CareSiteRetrieve';
+import type { CareSiteUpdate } from '../models/CareSiteUpdate';
+import type { PatchedCareSiteUpdate } from '../models/PatchedCareSiteUpdate';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class CareSiteService {
     /**
-     * @returns CareSite
+     * @returns CareSiteRetrieve
      * @throws ApiError
      */
-    public static apiCareSiteList(): CancelablePromise<Array<CareSite>> {
+    public static apiCareSiteList(): CancelablePromise<Array<CareSiteRetrieve>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/care-site/',
@@ -20,12 +22,12 @@ export class CareSiteService {
     }
     /**
      * @param requestBody
-     * @returns CareSite
+     * @returns CareSiteCreate
      * @throws ApiError
      */
     public static apiCareSiteCreate(
-        requestBody?: CareSite,
-    ): CancelablePromise<CareSite> {
+        requestBody?: CareSiteCreate,
+    ): CancelablePromise<CareSiteCreate> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/care-site/',
@@ -35,12 +37,12 @@ export class CareSiteService {
     }
     /**
      * @param careSiteId A unique integer value identifying this care site.
-     * @returns CareSite
+     * @returns CareSiteRetrieve
      * @throws ApiError
      */
     public static apiCareSiteRetrieve(
         careSiteId: number,
-    ): CancelablePromise<CareSite> {
+    ): CancelablePromise<CareSiteRetrieve> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/care-site/{care_site_id}/',
@@ -52,13 +54,13 @@ export class CareSiteService {
     /**
      * @param careSiteId A unique integer value identifying this care site.
      * @param requestBody
-     * @returns CareSite
+     * @returns CareSiteUpdate
      * @throws ApiError
      */
     public static apiCareSiteUpdate(
         careSiteId: number,
-        requestBody?: CareSite,
-    ): CancelablePromise<CareSite> {
+        requestBody?: CareSiteUpdate,
+    ): CancelablePromise<CareSiteUpdate> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/care-site/{care_site_id}/',
@@ -72,13 +74,13 @@ export class CareSiteService {
     /**
      * @param careSiteId A unique integer value identifying this care site.
      * @param requestBody
-     * @returns CareSite
+     * @returns CareSiteUpdate
      * @throws ApiError
      */
     public static apiCareSitePartialUpdate(
         careSiteId: number,
-        requestBody?: PatchedCareSite,
-    ): CancelablePromise<CareSite> {
+        requestBody?: PatchedCareSiteUpdate,
+    ): CancelablePromise<CareSiteUpdate> {
         return __request(OpenAPI, {
             method: 'PATCH',
             url: '/api/care-site/{care_site_id}/',

@@ -2,17 +2,19 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { FactRelationship } from '../models/FactRelationship';
-import type { PatchedFactRelationship } from '../models/PatchedFactRelationship';
+import type { FactRelationshipCreate } from '../models/FactRelationshipCreate';
+import type { FactRelationshipRetrieve } from '../models/FactRelationshipRetrieve';
+import type { FactRelationshipUpdate } from '../models/FactRelationshipUpdate';
+import type { PatchedFactRelationshipUpdate } from '../models/PatchedFactRelationshipUpdate';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class FactRelationshipService {
     /**
-     * @returns FactRelationship
+     * @returns FactRelationshipRetrieve
      * @throws ApiError
      */
-    public static apiFactRelationshipList(): CancelablePromise<Array<FactRelationship>> {
+    public static apiFactRelationshipList(): CancelablePromise<Array<FactRelationshipRetrieve>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/fact-relationship/',
@@ -20,12 +22,12 @@ export class FactRelationshipService {
     }
     /**
      * @param requestBody
-     * @returns FactRelationship
+     * @returns FactRelationshipCreate
      * @throws ApiError
      */
     public static apiFactRelationshipCreate(
-        requestBody: FactRelationship,
-    ): CancelablePromise<FactRelationship> {
+        requestBody: FactRelationshipCreate,
+    ): CancelablePromise<FactRelationshipCreate> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/fact-relationship/',
@@ -35,12 +37,12 @@ export class FactRelationshipService {
     }
     /**
      * @param id A unique integer value identifying this fact relationship.
-     * @returns FactRelationship
+     * @returns FactRelationshipRetrieve
      * @throws ApiError
      */
     public static apiFactRelationshipRetrieve(
         id: number,
-    ): CancelablePromise<FactRelationship> {
+    ): CancelablePromise<FactRelationshipRetrieve> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/fact-relationship/{id}/',
@@ -52,13 +54,13 @@ export class FactRelationshipService {
     /**
      * @param id A unique integer value identifying this fact relationship.
      * @param requestBody
-     * @returns FactRelationship
+     * @returns FactRelationshipUpdate
      * @throws ApiError
      */
     public static apiFactRelationshipUpdate(
         id: number,
-        requestBody: FactRelationship,
-    ): CancelablePromise<FactRelationship> {
+        requestBody: FactRelationshipUpdate,
+    ): CancelablePromise<FactRelationshipUpdate> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/fact-relationship/{id}/',
@@ -72,13 +74,13 @@ export class FactRelationshipService {
     /**
      * @param id A unique integer value identifying this fact relationship.
      * @param requestBody
-     * @returns FactRelationship
+     * @returns FactRelationshipUpdate
      * @throws ApiError
      */
     public static apiFactRelationshipPartialUpdate(
         id: number,
-        requestBody?: PatchedFactRelationship,
-    ): CancelablePromise<FactRelationship> {
+        requestBody?: PatchedFactRelationshipUpdate,
+    ): CancelablePromise<FactRelationshipUpdate> {
         return __request(OpenAPI, {
             method: 'PATCH',
             url: '/api/fact-relationship/{id}/',

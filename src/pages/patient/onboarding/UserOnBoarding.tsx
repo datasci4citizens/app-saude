@@ -5,10 +5,18 @@ import { UserInfoForm3 } from '@/pages/patient/onboarding/UserInfoForm3';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import useSWRMutation from 'swr/mutation';
+import type { PersonCreate } from '@/api/models/PersonCreate';
+import type { LocationCreate } from '@/api/models/LocationCreate';
+import type { ObservationCreate } from '@/api/models/ObservationCreate';
+import type { DrugExposureCreate } from '@/api/models/DrugExposureCreate';
 
 // Empty placeholder for future service implementation
 // Will create a placeholder service that matches the pattern you described
-import { FullUserOnBoardingService } from '@/api/services/FullUserOnBoardingService';
+import { FullPersonService } from '@/api/services/FullPersonService';
+import type { FullPersonCreate } from '@/api/models/FullPersonCreate';
+
+import type { AddressFormData } from '@/pages/patient/onboarding/UserInfoForm2';
+import type { SubmissionData } from '@/pages/patient/onboarding/UserInfoForm3';
 
 // Define types for the incoming data from each form
 interface PersonData {
@@ -20,62 +28,30 @@ interface PersonData {
   height?: number | null;
 }
 
-interface LocationData {
-  address_1?: string | null;
-  city?: string | null;
-  state?: string | null;
-  zip?: string | null;
-  country_concept?: number;
-}
-
-interface HealthData {
-  observations: Array<{
-    value_as_string: string;
-    observation_date: string;
-    observation_concept: number;
-    shared_with_provider: boolean;
-  }>;
-  drugExposures: Array<{
-    sig: string;
-    drug_exposure_start_date: string;
-    drug_concept: number | null;
-    drug_type_concept: number;
-  }>;
-}
-
-// Master data structure that combines all form data
-interface FullOnboardingData {
-  person: PersonData;
-  location: LocationData;
-  healthData: HealthData;
-}
-
 export default function UserOnboarding() {
   const router = useNavigate();
 
   // Track form step and collected data
   const [step, setStep] = useState(1);
-  const [personData, setPersonData] = useState<PersonData>({});
-  const [locationData, setLocationData] = useState<LocationData>({});
-  const [healthData, setHealthData] = useState<HealthData>({
-    observations: [],
-    drugExposures: []
-  });
+  const [person, setPerson] = useState<PersonCreate>({});
+  const [location, setLocation] = useState<LocationCreate>({});
+  const [observations, setObservations] = useState<ObservationCreate[]>([]);
+  const [drugExposures, setDrugExposures] = useState<DrugExposureCreate[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   // Setup SWR mutation
   const { trigger, isMutating } = useSWRMutation(
-    'fullUserOnboarding',
+    'fullPersonOnboarding',
     async () => {
-      const fullData: FullOnboardingData = {
-        person: personData,
-        location: locationData,
-        healthData: healthData
+      const fullData: FullPersonCreate = {
+        person: person,
+        location: location,
+        observations: observations,
+        drug_exposures: drugExposures
       };
       
       try {
-        // This will be replaced with the actual service call when implemented
-        const result = await FullUserOnBoardingService.apiFullPersonOnBoardingCreate(fullData);
+        const result = await FullPersonService.apiFullPersonCreate(fullData);
         return result;
       } catch (err: any) {
         // Extract error message
@@ -91,23 +67,32 @@ export default function UserOnboarding() {
     console.log('First form data submitted:', data);
     
     // Save person data
-    setPersonData(data);
+    const person: PersonCreate = {
+      social_name: data.social_name,
+      birth_datetime: data.birth_datetime,
+      year_of_birth: new Date(data.birth_datetime || '').getFullYear(),
+      gender_concept: data.gender_concept,
+      ethnicity_concept: 3,// fill
+      race_concept: data.race_concept
+    };
+    setPerson(person);
     setStep(2);
   };
 
-  const handleSecondFormSubmit = (data: LocationData) => {
+  const handleSecondFormSubmit = (data: AddressFormData) => {
     console.log('Second form data:', data);
     
     // Save location data
-    setLocationData(data);
+    setLocation(data);
     setStep(3);
   };
 
-  const handleThirdFormSubmit = async (data: HealthData) => {
+  const handleThirdFormSubmit = async (data: SubmissionData) => {
     console.log('Third form data:', data);
     
     // Save health data
-    setHealthData(data);
+    setObservations(data.observations);
+    setDrugExposures(data.drugExposures);
     
     try {
       // Trigger the SWR mutation to send all data

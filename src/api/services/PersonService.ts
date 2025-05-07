@@ -2,30 +2,71 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { PatchedPerson } from '../models/PatchedPerson';
-import type { Person } from '../models/Person';
+import type { PatchedPersonUpdate } from '../models/PatchedPersonUpdate';
+import type { PersonCreate } from '../models/PersonCreate';
+import type { PersonRetrieve } from '../models/PersonRetrieve';
+import type { PersonUpdate } from '../models/PersonUpdate';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class PersonService {
     /**
-     * @returns Person
+     * @param birthDatetime
+     * @param createdAt
+     * @param ethnicityConcept
+     * @param genderConcept
+     * @param location
+     * @param ordering Which field to use when ordering the results.
+     * @param raceConcept
+     * @param search A search term.
+     * @param socialName
+     * @param updatedAt
+     * @param user
+     * @param yearOfBirth
+     * @returns PersonRetrieve
      * @throws ApiError
      */
-    public static apiPersonList(): CancelablePromise<Array<Person>> {
+    public static apiPersonList(
+        birthDatetime?: string,
+        createdAt?: string,
+        ethnicityConcept?: number,
+        genderConcept?: number,
+        location?: number,
+        ordering?: string,
+        raceConcept?: number,
+        search?: string,
+        socialName?: string,
+        updatedAt?: string,
+        user?: number,
+        yearOfBirth?: number,
+    ): CancelablePromise<Array<PersonRetrieve>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/person/',
+            query: {
+                'birth_datetime': birthDatetime,
+                'created_at': createdAt,
+                'ethnicity_concept': ethnicityConcept,
+                'gender_concept': genderConcept,
+                'location': location,
+                'ordering': ordering,
+                'race_concept': raceConcept,
+                'search': search,
+                'social_name': socialName,
+                'updated_at': updatedAt,
+                'user': user,
+                'year_of_birth': yearOfBirth,
+            },
         });
     }
     /**
      * @param requestBody
-     * @returns Person
+     * @returns PersonCreate
      * @throws ApiError
      */
     public static apiPersonCreate(
-        requestBody?: Person,
-    ): CancelablePromise<Person> {
+        requestBody?: PersonCreate,
+    ): CancelablePromise<PersonCreate> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/person/',
@@ -35,12 +76,12 @@ export class PersonService {
     }
     /**
      * @param personId A unique integer value identifying this person.
-     * @returns Person
+     * @returns PersonRetrieve
      * @throws ApiError
      */
     public static apiPersonRetrieve(
         personId: number,
-    ): CancelablePromise<Person> {
+    ): CancelablePromise<PersonRetrieve> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/person/{person_id}/',
@@ -52,13 +93,13 @@ export class PersonService {
     /**
      * @param personId A unique integer value identifying this person.
      * @param requestBody
-     * @returns Person
+     * @returns PersonUpdate
      * @throws ApiError
      */
     public static apiPersonUpdate(
         personId: number,
-        requestBody?: Person,
-    ): CancelablePromise<Person> {
+        requestBody?: PersonUpdate,
+    ): CancelablePromise<PersonUpdate> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/person/{person_id}/',
@@ -72,13 +113,13 @@ export class PersonService {
     /**
      * @param personId A unique integer value identifying this person.
      * @param requestBody
-     * @returns Person
+     * @returns PersonUpdate
      * @throws ApiError
      */
     public static apiPersonPartialUpdate(
         personId: number,
-        requestBody?: PatchedPerson,
-    ): CancelablePromise<Person> {
+        requestBody?: PatchedPersonUpdate,
+    ): CancelablePromise<PersonUpdate> {
         return __request(OpenAPI, {
             method: 'PATCH',
             url: '/api/person/{person_id}/',

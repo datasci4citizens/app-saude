@@ -5,7 +5,7 @@ import Header from '@/components/ui/header';
 import useSWRMutation from 'swr/mutation';
 
 // Import the service (this will be created)
-import { FullProviderOnBoardingService } from '@/api/services/FullProviderOnBoardingService';
+//import { FullProviderOnBoardingService } from '@/api/services/FullProviderOnBoardingService';
 
 // Define the provider data type with proper backend field naming (snake_case)
 interface ProviderData {
@@ -28,7 +28,7 @@ export default function ProfessionalOnboarding() {
     async (_: string, { arg }: { arg: ProviderData }) => {
       try {
         // Call the service with the form data
-        const result = await FullProviderOnBoardingService.apiFullProviderOnBoardingCreate(arg);
+        const result = null // await FullProviderOnBoardingService.apiFullProviderOnBoardingCreate(arg);
         return result;
       } catch (err: any) {
         // Extract error message

@@ -50,8 +50,8 @@ cp .env.model .env
 
 Depois, preencha os campos obrigatórios, como:
 ```bash
-GOOGLE_CLIENT_ID=cole_aqui_o_seu_client_id
-GOOGLE_CLIENT_SECRET=cole_aqui_o_seu_client_secret
+VITE_GOOGLE_CLIENT_ID=cole_aqui_o_seu_client_id
+VITE_GOOGLE_CLIENT_SECRET=cole_aqui_o_seu_client_secret
 ```
 
 #### 2. Rode o backend com Docker Compose
@@ -71,4 +71,5 @@ A API estará disponível em:
 👉 http://localhost:8000
 
 ### 3. Atualizando a api para comunicação com o back end (rodar sempre que houver alteração na API do server)
- Rodar npm run generate-api
+
+Rodar ./generate-api.sh
