@@ -5,7 +5,9 @@ import Header from '@/components/ui/header';
 import useSWRMutation from 'swr/mutation';
 
 // Import the service (this will be created)
-//import { FullProviderOnBoardingService } from '@/api/services/FullProviderOnBoardingService';
+import type { FullProviderCreate } from '@/api/models/FullProviderCreate';
+import type { ProviderCreate } from '@/api';
+import { FullProviderService } from '@/api/services/FullProviderService';
 
 // Define the provider data type with proper backend field naming (snake_case)
 interface ProviderData {
@@ -13,50 +15,57 @@ interface ProviderData {
   birth_datetime?: string | null;
   professional_registration?: number | null;
   specialty_concept?: number | null;
-  professional_email?: string | null;
-  civil_name?: string | null;
+  care_site?: number | null;
   document?: File | null;
 }
 
 export default function ProfessionalOnboarding() {
   const navigate = useNavigate();
+  const [provider, setProvider] = useState<ProviderCreate>({});
   const [error, setError] = useState<string | null>(null);
   
   // Setup SWR mutation
   const { trigger, isMutating } = useSWRMutation(
     'fullProviderOnboarding',
-    async (_: string, { arg }: { arg: ProviderData }) => {
-      try {
-        // Call the service with the form data
-        const result = null // await FullProviderOnBoardingService.apiFullProviderOnBoardingCreate(arg);
-        return result;
-      } catch (err: any) {
-        // Extract error message
-        const errorMessage = err.message || 
-          'Ocorreu um erro ao processar seu cadastro. Tente novamente mais tarde.';
-        setError(errorMessage);
-        throw err;
+    async () => {
+        const fullData : FullProviderCreate = {
+          provider,
       }
+      return await FullProviderService.apiFullProviderCreate(fullData);
     }
   );
 
   // Handle form submission
   const handleFormSubmit = async (data: ProviderData) => {
+
     console.log('Professional data submitted:', data);
-    
-    try {
-      // Trigger the SWR mutation with form data
-      const result = await trigger(data);
-      console.log('Submission result:', result);
-      
-      // Handle successful submission
-      alert('Cadastro realizado com sucesso!');
-      navigate('/acs-main-page'); // Redirect to the main page
-    } catch (err) {
-      console.error('Registration error:', err);
-      // Error is already set in the mutation function
-      alert(`Erro: ${error}`);
+
+    const provider : ProviderCreate = {
+      social_name: data.social_name,
+      birth_datetime: data.birth_datetime,
+      professional_registration: data.professional_registration,
+      specialty_concept: data.specialty_concept,
+      // will be null for now
+      care_site: null,
     }
+    // save provider data
+    setProvider(data);
+    // delay ate os dados estarem completados
+    setTimeout(async () => {
+      try {
+        // Trigger the SWR mutation with form data
+        const result = await trigger();
+        console.log('Submission result:', result);
+
+        // Handle successful submission
+        alert('Cadastro realizado com sucesso!');
+        navigate('/acs-main-page'); // Redirect to the main page
+      } catch (err) {
+        console.error('Registration error:', err);
+        // Error is already set in the mutation function
+        alert(`Erro: ${error}`);
+      }
+    }, 0);
   };
 
   // Handle back button click

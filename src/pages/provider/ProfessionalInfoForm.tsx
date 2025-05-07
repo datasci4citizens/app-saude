@@ -1,20 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/forms/button';
 import { TextField } from '@/components/forms/text_input';
-// import { SelectField } from '@/components/forms/select_input';
 import { DateField } from '@/components/forms/date_input';
 import { FileUploader } from '@/components/ui/file-uploader';
 import type { ProviderCreate } from '@/api/models/ProviderCreate';
-// import { ConceptService } from '@/api/services/ConceptService';
 
 // Define types for form data - extends Provider with additional UI fields
 interface ProviderFormData extends Partial<ProviderCreate> {
-  // Fields from Provider model
-  social_name?: string | null;
-  birth_datetime?: string | null;
-  professional_registration?: number | null;
-  specialty_concept?: number | null;
-  
   // Additional form fields not in Provider model
   document?: File | null;  // Document upload
 }
@@ -30,13 +23,14 @@ interface FormErrors {
 
 export function ProfessionalInfoForm({onSubmit}: {onSubmit: (data: ProviderFormData) => void}): JSX.Element {
   // Temporary concept ID for ACS (Community Health Agent)
-  const ACS_CONCEPT_ID = 9999999; // Provisional ID for ACS
+  const ACS_CONCEPT_ID = 32578; // Provisional ID for ACS
   
   const [formData, setFormData] = useState<ProviderFormData>({
     social_name: '',
     professional_registration: null,
     birth_datetime: '',
     specialty_concept: ACS_CONCEPT_ID,
+    care_site: null,
     document: null
   });
   
@@ -125,27 +119,32 @@ export function ProfessionalInfoForm({onSubmit}: {onSubmit: (data: ProviderFormD
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate form
     const formErrors = validateForm();
-    
+
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
     }
-    
+
     // Clear errors on successful validation
     setErrors({});
-    
-    // Always set specialty_concept to ACS
+
+    // Create a ProviderCreate-compatible object
+    // Only include fields that are part of the ProviderCreate model
     const finalData: ProviderFormData = {
-      ...formData,
-      specialty_concept: ACS_CONCEPT_ID
+      social_name: formData.social_name,
+      birth_datetime: formData.birth_datetime,
+      professional_registration: formData.professional_registration,
+      specialty_concept: ACS_CONCEPT_ID,
+      care_site: formData.care_site,
+      document: formData.document  // Keep this for the form handler
     };
-    
+
     // Submit form data
     onSubmit(finalData);
-  };
+    };
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
