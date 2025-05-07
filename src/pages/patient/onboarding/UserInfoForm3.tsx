@@ -3,19 +3,8 @@ import { Button } from '@/components/forms/button';
 import { SelectField } from '@/components/forms/select_input';
 import type { ObservationCreate } from '@/api/models/ObservationCreate';
 import type { DrugExposureCreate } from '@/api/models/DrugExposureCreate';
-import { ConceptService } from '@/api/services/ConceptService';
 import Select from 'react-select';
-
-// Define concept IDs for different types of observations
-interface ConceptIds {
-  sleepHealth: number;
-  physicalExercise: number;
-  eatingHabits: number;
-  comorbidities: number;
-  medications: number;
-  substanceUse: number;
-  selfReported: number;
-}
+import {useHealthConcepts} from '@/utils/conceptLoader';
 
 // Define form data interface (user-friendly structure)
 // Todos sao conceptIds como String
@@ -49,6 +38,18 @@ interface FormErrors {
 
 export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => void }): JSX.Element {
   // User-friendly form data
+  const {
+    sleepHealthOptions,
+    exerciseOptions,
+    eatingHabitsOptions,
+    comorbiditiesOptions,
+    medicationOptions,
+    substanceOptions,
+    conceptIds,
+    isLoading,
+    error: fetchError
+  } = useHealthConcepts();
+  
   const [formData, setFormData] = useState<FormData>({
     sleepHealth: '',
     physicalExercise: '',
@@ -57,134 +58,8 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
     medications: [],
     substanceUse: []
   });
-  
-  // Store options for selects
-  const [conceptIds] = useState<ConceptIds>({
-    sleepHealth: 9000020,
-    physicalExercise: 9000025,
-    eatingHabits: 9000026,
-    comorbidities: 9000027,
-    medications: 9000028,
-    substanceUse: 9000029,
-    selfReported: 38000280
-  });
 
-  const [sleepHealthOptions, setSleepHealthOptions] = useState<{value: string, label: string}[]>([]);
-  const [exerciseOptions, setExerciseOptions] = useState<{value: string, label: string}[]>([]);
-  const [eatingHabitsOptions, setEatingHabitsOptions] = useState<{value: string, label: string}[]>([]);
-  const [comorbiditiesOptions, setComorbiditiesOptions] = useState<{value: string, label: string}[]>([]);
-  const [medicationOptions, setMedicationOptions] = useState<{value: string, label: string}[]>([]);
-  const [substanceOptions, setSubstanceOptions] = useState<{value: string, label: string}[]>([]);
-  
   const [errors, setErrors] = useState<FormErrors>({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [fetchError, setFetchError] = useState<string | null>(null);
-  
-  // Fetch concept IDs and options
-  useEffect(() => {
-    const fetchConcepts = async () => {
-      setIsLoading(true);
-      setFetchError(null);
-      
-      try {
-        // Define domain concepts we want to use (these would be standard OMOP concepts)
-        const FREQUENCY_CLASS = 'Frequency';
-        const QUALITY_CLASS = 'Quality';
-        const COMORBIDITY_CLASS = 'Comorbidity';
-        const MEDICATION_CLASS = 'Medication';
-        const SUBSTANCE_CLASS = 'Substance';
-        
-        // Get observation concept categories from the server
-        const concepts = await ConceptService.apiConceptList(
-          `${FREQUENCY_CLASS}, ${QUALITY_CLASS}, ${COMORBIDITY_CLASS}, ${MEDICATION_CLASS}, ${SUBSTANCE_CLASS}`,
-          'pt'
-        );
-
-        // Filter and set options for each concept class
-        setSleepHealthOptions(
-          concepts
-            .filter(concept => concept.concept_class === QUALITY_CLASS)
-            .map(concept => ({
-              value: concept.concept_id.toString(),
-              label: concept.translated_name as string
-            }))
-        );
-
-        setExerciseOptions(
-          concepts
-            .filter(concept => concept.concept_class === FREQUENCY_CLASS)
-            .map(concept => ({
-              value: concept.concept_id.toString(),
-              label: concept.translated_name as string
-            }))
-        );
-
-        setEatingHabitsOptions(
-          concepts
-            .filter(concept => concept.concept_class === QUALITY_CLASS)
-            .map(concept => ({
-              value: concept.concept_id.toString(),
-              label: concept.translated_name as string
-            }))
-        );
-
-        setComorbiditiesOptions(
-          concepts
-            .filter(concept => concept.concept_class === COMORBIDITY_CLASS)
-            .map(concept => ({
-              value: concept.concept_id.toString(),
-              label: concept.translated_name as string
-            }))
-        );
-
-        setMedicationOptions(
-          concepts
-            .filter(concept => concept.concept_class === MEDICATION_CLASS)
-            .map(concept => ({
-              value: concept.concept_id.toString(),
-              label: concept.translated_name as string,
-            }))
-        );
-
-        setSubstanceOptions(
-          concepts
-            .filter(concept => concept.concept_class === SUBSTANCE_CLASS)
-            .map(concept => ({
-              value: concept.concept_id.toString(),
-              label: concept.translated_name as string,
-            }))
-        );
-        
-        console.log('Fetched observation concepts:', concepts);
-      } catch (error) {
-        // Set default options (in case we can't fetch the value options)
-        setSleepHealthOptions([
-          { value: "good", label: "Durmo bem" },
-          { value: "fair", label: "Durmo razoavelmente" },
-          { value: "poor", label: "Durmo mal" }
-        ]);
-        
-        setExerciseOptions([
-          { value: "regular", label: "Regularmente" },
-          { value: "occasional", label: "Ocasionalmente" },
-          { value: "rare", label: "Raramente" },
-          { value: "never", label: "Nunca" }
-        ]);
-        
-        setEatingHabitsOptions([
-          { value: "good", label: "Me alimento bem" },
-          { value: "fair", label: "Me alimento razoavelmente" },
-          { value: "poor", label: "Me alimento mal" }
-        ]);
-        console.error('Error fetching concepts:', error);
-        setFetchError('Erro ao carregar opções. Algumas funcionalidades podem estar limitadas.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchConcepts();
-  }, []);
 
   // Handle input change
   const handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
@@ -347,14 +222,14 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
         isLoading={isLoading}
       />
 
-      <Select 
+      <Select
         id="comorbidities"
         name="comorbidities"
         isMulti
         value={comorbiditiesOptions.filter(opt => formData.comorbidities.includes(opt.value))}
         onChange={(selectedOptions) => {
           const selectedIds = selectedOptions.map(opt => opt.value);
-          setFormData({ ...formData, comorbidities: selectedIds });
+          setFormData({ ...formData, comorbidities: selectedIds.map(String) });
         }}
         options={comorbiditiesOptions}
         isLoading={isLoading}
@@ -369,7 +244,7 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
         value={medicationOptions.filter(opt => formData.medications.includes(opt.value))}
         onChange={(selectedOptions) => {
           const selectedIds = selectedOptions.map(opt => opt.value);
-          setFormData({ ...formData, medications: selectedIds });
+          setFormData({ ...formData, medications: selectedIds.map(String) });
         }}
         options={medicationOptions}
         isLoading={isLoading}
@@ -382,7 +257,7 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
         value={substanceOptions.filter(opt => formData.substanceUse.includes(opt.value))}
         onChange={(selectedOptions) => {
           const selectedIds = selectedOptions.map(opt => opt.value);
-          setFormData({ ...formData, substanceUse: selectedIds });
+          setFormData({ ...formData, substanceUse: selectedIds.map(String) });
         }}
         options={substanceOptions}
         isLoading={isLoading}

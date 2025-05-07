@@ -5,6 +5,7 @@ import { SelectField } from '@/components/forms/select_input';
 import { DateField } from '@/components/forms/date_input';
 import type { PersonCreate } from '@/api/models/PersonCreate';
 import { ConceptService } from '@/api/services/ConceptService';
+import { useDemographicConcepts } from '@/utils/conceptLoader';
 
 // Define the option interface
 interface SelectOption {
@@ -36,6 +37,8 @@ interface FormErrors {
 }
 
 export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void }): JSX.Element {
+  const {genderOptions, raceOptions, isLoading: isLoadingConcepts, error: conceptError} = useDemographicConcepts();
+  
   const [formData, setFormData] = useState<UserFormData>({
     social_name: '',
     gender_concept: null,
@@ -46,88 +49,6 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
   });
   
   const [errors, setErrors] = useState<FormErrors>({});
-
-  // State for storing fetched concepts
-  const [genderOptions, setGenderOptions] = useState<SelectOption[]>([]);
-  const [raceOptions, setRaceOptions] = useState<SelectOption[]>([]);
-  const [isLoadingConcepts, setIsLoadingConcepts] = useState(true);
-  const [conceptError, setConceptError] = useState<string | null>(null);
-
-
-   
-  // Updated useEffect to properly fetch concepts with filters
-  useEffect(() => {
-    const fetchConcepts = async () => {
-      setIsLoadingConcepts(true);
-      setConceptError(null);
-      
-      try {
-        // Use the class filter and language parameter
-        // Gender = gender concepts
-        // Race = race/ethnicity concepts
-        const concepts = await ConceptService.apiConceptList('Gender,Race', 'pt');
-        
-        // Filter concepts by their class
-        const genderConcepts = concepts.filter(concept => 
-          concept.concept_class === 'Gender'
-        );
-        
-        const raceConcepts = concepts.filter(concept => 
-          concept.concept_class === 'Race'
-        );
-        
-        // Map filtered concepts to options format
-        const fetchedGenderOptions = genderConcepts
-        .filter(concept => concept.concept_name != null)  // Remove concepts with no name
-        .map(concept => ({
-          value: concept.concept_id,
-          label: concept.translated_name as string  // Now safe to cast
-        }));
-
-        // Do the same for race concepts
-        const fetchedRaceOptions = raceConcepts
-          .filter(concept => concept.concept_name != null)
-          .map(concept => ({
-            value: concept.concept_id, 
-            label: concept.translated_name as string
-          }));
-
-        // Update state with fetched options
-        setGenderOptions(fetchedGenderOptions);
-        setRaceOptions(fetchedRaceOptions);
-        
-        // Log the fetched data for debugging
-        console.log('Fetched gender concepts:', genderConcepts);
-        console.log('Fetched race concepts:', raceConcepts);
-        
-      } catch (error) {
-        console.error('Error fetching concepts:', error);
-        setConceptError('Erro ao carregar opções do servidor. Tente novamente mais tarde.');
-        
-        // Fallback to hardcoded options if fetch fails
-        setGenderOptions([
-          { value: 8532, label: "Feminino" },
-          { value: 8507, label: "Masculino" },
-          { value: 33284, label: "Não-binário" },
-          { value: 0, label: "Outro" },
-          { value: 0, label: "Prefiro não informar" }
-        ]);
-        
-        setRaceOptions([
-          { value: 8527, label: "Branca" },
-          { value: 8516, label: "Preta" },
-          { value: 8514, label: "Parda" },
-          { value: 8515, label: "Amarela" },
-          { value: 38003574, label: "Indígena" }
-        ]);
-      } finally {
-        setIsLoadingConcepts(false);
-      }
-    };
-    
-    fetchConcepts();
-  }, []);
-
 
   // Handle input change
   const handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
