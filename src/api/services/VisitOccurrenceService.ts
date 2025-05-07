@@ -2,17 +2,19 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { PatchedVisitOccurrence } from '../models/PatchedVisitOccurrence';
-import type { VisitOccurrence } from '../models/VisitOccurrence';
+import type { PatchedVisitOccurrenceUpdate } from '../models/PatchedVisitOccurrenceUpdate';
+import type { VisitOccurrenceCreate } from '../models/VisitOccurrenceCreate';
+import type { VisitOccurrenceRetrieve } from '../models/VisitOccurrenceRetrieve';
+import type { VisitOccurrenceUpdate } from '../models/VisitOccurrenceUpdate';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class VisitOccurrenceService {
     /**
-     * @returns VisitOccurrence
+     * @returns VisitOccurrenceRetrieve
      * @throws ApiError
      */
-    public static apiVisitOccurrenceList(): CancelablePromise<Array<VisitOccurrence>> {
+    public static apiVisitOccurrenceList(): CancelablePromise<Array<VisitOccurrenceRetrieve>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/visit-occurrence/',
@@ -20,12 +22,12 @@ export class VisitOccurrenceService {
     }
     /**
      * @param requestBody
-     * @returns VisitOccurrence
+     * @returns VisitOccurrenceCreate
      * @throws ApiError
      */
     public static apiVisitOccurrenceCreate(
-        requestBody?: VisitOccurrence,
-    ): CancelablePromise<VisitOccurrence> {
+        requestBody?: VisitOccurrenceCreate,
+    ): CancelablePromise<VisitOccurrenceCreate> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/visit-occurrence/',
@@ -35,12 +37,12 @@ export class VisitOccurrenceService {
     }
     /**
      * @param visitOccurrenceId A unique integer value identifying this visit occurrence.
-     * @returns VisitOccurrence
+     * @returns VisitOccurrenceRetrieve
      * @throws ApiError
      */
     public static apiVisitOccurrenceRetrieve(
         visitOccurrenceId: number,
-    ): CancelablePromise<VisitOccurrence> {
+    ): CancelablePromise<VisitOccurrenceRetrieve> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/visit-occurrence/{visit_occurrence_id}/',
@@ -52,13 +54,13 @@ export class VisitOccurrenceService {
     /**
      * @param visitOccurrenceId A unique integer value identifying this visit occurrence.
      * @param requestBody
-     * @returns VisitOccurrence
+     * @returns VisitOccurrenceUpdate
      * @throws ApiError
      */
     public static apiVisitOccurrenceUpdate(
         visitOccurrenceId: number,
-        requestBody?: VisitOccurrence,
-    ): CancelablePromise<VisitOccurrence> {
+        requestBody?: VisitOccurrenceUpdate,
+    ): CancelablePromise<VisitOccurrenceUpdate> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/visit-occurrence/{visit_occurrence_id}/',
@@ -72,13 +74,13 @@ export class VisitOccurrenceService {
     /**
      * @param visitOccurrenceId A unique integer value identifying this visit occurrence.
      * @param requestBody
-     * @returns VisitOccurrence
+     * @returns VisitOccurrenceUpdate
      * @throws ApiError
      */
     public static apiVisitOccurrencePartialUpdate(
         visitOccurrenceId: number,
-        requestBody?: PatchedVisitOccurrence,
-    ): CancelablePromise<VisitOccurrence> {
+        requestBody?: PatchedVisitOccurrenceUpdate,
+    ): CancelablePromise<VisitOccurrenceUpdate> {
         return __request(OpenAPI, {
             method: 'PATCH',
             url: '/api/visit-occurrence/{visit_occurrence_id}/',

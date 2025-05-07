@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 interface DateFieldProps {
@@ -20,31 +21,66 @@ export function DateField({
   error,
   placeholder = "dd/mm/aaaa"
 }: DateFieldProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [cursorPosition, setCursorPosition] = useState<number | null>(null);
+
+  // Apply cursor position after render
+  useEffect(() => {
+    if (cursorPosition !== null && inputRef.current) {
+      inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
+    }
+  }, [value, cursorPosition]);
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value;
+    const input = e.target;
+    const originalPosition = input.selectionStart || 0;
+    let newValue = input.value;
     
-    // Remove non-digits
-    value = value.replace(/\D/g, '');
+    // Only allow digits and slashes
+    newValue = newValue.replace(/[^\d/]/g, '');
     
-    // Apply mask as user types
-    if (value.length > 0) {
-      value = value.substring(0, 8); // Limit to 8 digits
+    // Store current cursor position before we modify the string
+    let newCursorPosition = originalPosition;
+    
+    // Format as user types, but be smarter about it
+    if (newValue.length > 0) {
+      // Remove any existing slashes first
+      const digitsOnly = newValue.replace(/\//g, '');
       
-      // Format as dd/mm/yyyy
-      if (value.length > 4) {
-        value = `${value.substring(0, 2)}/${value.substring(2, 4)}/${value.substring(4)}`;
-      } else if (value.length > 2) {
-        value = `${value.substring(0, 2)}/${value.substring(2)}`;
+      // Apply new formatting
+      let formattedValue = '';
+      
+      for (let i = 0; i < digitsOnly.length && i < 8; i++) {
+        if (i === 2 || i === 4) {
+          formattedValue += '/';
+        }
+        formattedValue += digitsOnly[i];
       }
+      
+      // Figure out new cursor position
+      // If user was typing at position where a slash was added, move cursor forward
+      if (originalPosition === 3 && formattedValue.charAt(2) === '/') {
+        newCursorPosition = 4;
+      } else if (originalPosition === 6 && formattedValue.charAt(5) === '/') {
+        newCursorPosition = 7;
+      } else if (formattedValue.length > newValue.length && originalPosition > 0) {
+        // If we added a slash and cursor was already past that point
+        const slashesBeforeOriginal = (newValue.substring(0, originalPosition).match(/\//g) || []).length;
+        const slashesBeforeFormatted = (formattedValue.substring(0, originalPosition + 1).match(/\//g) || []).length;
+        newCursorPosition = originalPosition + (slashesBeforeFormatted - slashesBeforeOriginal);
+      }
+      
+      newValue = formattedValue;
     }
     
-    onChange(value);
+    // Update the state and cursor position
+    onChange(newValue);
+    setCursorPosition(newCursorPosition);
   };
 
   return (
     <div className="mb-4">
       {label && (
-        <label htmlFor={id} className="block text-sm font-inter font-light text-gray_buttons mb-1">
+        <label htmlFor={id} className="block text-sm font-['Inter'] font-light text-[#A0A3B1] mb-1">
           {label}
         </label>
       )}
@@ -56,14 +92,11 @@ export function DateField({
         onChange={(e) => handleDateChange(e)}
         placeholder={placeholder}
         maxLength={10}
-        className={cn(
-          "w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-orange focus:border-orange font-inter font-normal",
-          error 
-            ? "border-red-500 text-dark_blue" 
-            : "border-gray-300 text-dark_blue"
-        )}
+        className={`w-full h-14 px-4 py-2 bg-white border ${
+          error ? 'border-red-500' : 'border-gray-300'
+        } rounded-lg focus:outline-none focus:border-blue_page focus:ring-1 focus:ring-blue_page font-inter`}
       />
-      {error && <p className="text-red-500 text-xs font-inter font-light mt-1">{error}</p>}
+      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
   );
 }

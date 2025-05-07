@@ -2,17 +2,19 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { PatchedVocabulary } from '../models/PatchedVocabulary';
-import type { Vocabulary } from '../models/Vocabulary';
+import type { PatchedVocabularyUpdate } from '../models/PatchedVocabularyUpdate';
+import type { VocabularyCreate } from '../models/VocabularyCreate';
+import type { VocabularyRetrieve } from '../models/VocabularyRetrieve';
+import type { VocabularyUpdate } from '../models/VocabularyUpdate';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class VocabularyService {
     /**
-     * @returns Vocabulary
+     * @returns VocabularyRetrieve
      * @throws ApiError
      */
-    public static apiVocabularyList(): CancelablePromise<Array<Vocabulary>> {
+    public static apiVocabularyList(): CancelablePromise<Array<VocabularyRetrieve>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/vocabulary/',
@@ -20,12 +22,12 @@ export class VocabularyService {
     }
     /**
      * @param requestBody
-     * @returns Vocabulary
+     * @returns VocabularyCreate
      * @throws ApiError
      */
     public static apiVocabularyCreate(
-        requestBody?: Vocabulary,
-    ): CancelablePromise<Vocabulary> {
+        requestBody?: VocabularyCreate,
+    ): CancelablePromise<VocabularyCreate> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/vocabulary/',
@@ -35,12 +37,12 @@ export class VocabularyService {
     }
     /**
      * @param vocabularyId A unique value identifying this vocabulary.
-     * @returns Vocabulary
+     * @returns VocabularyRetrieve
      * @throws ApiError
      */
     public static apiVocabularyRetrieve(
         vocabularyId: string,
-    ): CancelablePromise<Vocabulary> {
+    ): CancelablePromise<VocabularyRetrieve> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/vocabulary/{vocabulary_id}/',
@@ -52,13 +54,13 @@ export class VocabularyService {
     /**
      * @param vocabularyId A unique value identifying this vocabulary.
      * @param requestBody
-     * @returns Vocabulary
+     * @returns VocabularyUpdate
      * @throws ApiError
      */
     public static apiVocabularyUpdate(
         vocabularyId: string,
-        requestBody?: Vocabulary,
-    ): CancelablePromise<Vocabulary> {
+        requestBody: VocabularyUpdate,
+    ): CancelablePromise<VocabularyUpdate> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/vocabulary/{vocabulary_id}/',
@@ -72,13 +74,13 @@ export class VocabularyService {
     /**
      * @param vocabularyId A unique value identifying this vocabulary.
      * @param requestBody
-     * @returns Vocabulary
+     * @returns VocabularyUpdate
      * @throws ApiError
      */
     public static apiVocabularyPartialUpdate(
         vocabularyId: string,
-        requestBody?: PatchedVocabulary,
-    ): CancelablePromise<Vocabulary> {
+        requestBody?: PatchedVocabularyUpdate,
+    ): CancelablePromise<VocabularyUpdate> {
         return __request(OpenAPI, {
             method: 'PATCH',
             url: '/api/vocabulary/{vocabulary_id}/',

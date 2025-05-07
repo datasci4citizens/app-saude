@@ -2,17 +2,19 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { DrugExposure } from '../models/DrugExposure';
-import type { PatchedDrugExposure } from '../models/PatchedDrugExposure';
+import type { DrugExposureCreate } from '../models/DrugExposureCreate';
+import type { DrugExposureRetrieve } from '../models/DrugExposureRetrieve';
+import type { DrugExposureUpdate } from '../models/DrugExposureUpdate';
+import type { PatchedDrugExposureUpdate } from '../models/PatchedDrugExposureUpdate';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class DrugExposureService {
     /**
-     * @returns DrugExposure
+     * @returns DrugExposureRetrieve
      * @throws ApiError
      */
-    public static apiDrugExposureList(): CancelablePromise<Array<DrugExposure>> {
+    public static apiDrugExposureList(): CancelablePromise<Array<DrugExposureRetrieve>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/drug-exposure/',
@@ -20,12 +22,12 @@ export class DrugExposureService {
     }
     /**
      * @param requestBody
-     * @returns DrugExposure
+     * @returns DrugExposureCreate
      * @throws ApiError
      */
     public static apiDrugExposureCreate(
-        requestBody?: DrugExposure,
-    ): CancelablePromise<DrugExposure> {
+        requestBody?: DrugExposureCreate,
+    ): CancelablePromise<DrugExposureCreate> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/drug-exposure/',
@@ -35,12 +37,12 @@ export class DrugExposureService {
     }
     /**
      * @param drugExposureId A unique integer value identifying this drug exposure.
-     * @returns DrugExposure
+     * @returns DrugExposureRetrieve
      * @throws ApiError
      */
     public static apiDrugExposureRetrieve(
         drugExposureId: number,
-    ): CancelablePromise<DrugExposure> {
+    ): CancelablePromise<DrugExposureRetrieve> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/drug-exposure/{drug_exposure_id}/',
@@ -52,13 +54,13 @@ export class DrugExposureService {
     /**
      * @param drugExposureId A unique integer value identifying this drug exposure.
      * @param requestBody
-     * @returns DrugExposure
+     * @returns DrugExposureUpdate
      * @throws ApiError
      */
     public static apiDrugExposureUpdate(
         drugExposureId: number,
-        requestBody?: DrugExposure,
-    ): CancelablePromise<DrugExposure> {
+        requestBody?: DrugExposureUpdate,
+    ): CancelablePromise<DrugExposureUpdate> {
         return __request(OpenAPI, {
             method: 'PUT',
             url: '/api/drug-exposure/{drug_exposure_id}/',
@@ -72,13 +74,13 @@ export class DrugExposureService {
     /**
      * @param drugExposureId A unique integer value identifying this drug exposure.
      * @param requestBody
-     * @returns DrugExposure
+     * @returns DrugExposureUpdate
      * @throws ApiError
      */
     public static apiDrugExposurePartialUpdate(
         drugExposureId: number,
-        requestBody?: PatchedDrugExposure,
-    ): CancelablePromise<DrugExposure> {
+        requestBody?: PatchedDrugExposureUpdate,
+    ): CancelablePromise<DrugExposureUpdate> {
         return __request(OpenAPI, {
             method: 'PATCH',
             url: '/api/drug-exposure/{drug_exposure_id}/',

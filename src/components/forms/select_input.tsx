@@ -17,10 +17,11 @@ interface SelectFieldProps {
   name: string;
   label: string | React.ReactNode;
   value: string;
-  options: Option[];
+  options: { value: string | number; label: string }[];
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   error?: string;
   placeholder?: string;
+  isLoading: boolean;
 }
 
 export function SelectField({
@@ -31,6 +32,7 @@ export function SelectField({
   options,
   onChange,
   error,
+  isLoading = false,
   placeholder = "Selecione"
 }: SelectFieldProps) {
   // Handle value change and convert to expected event format
@@ -57,18 +59,23 @@ export function SelectField({
       <Select value={value} onValueChange={handleValueChange}>
         <SelectTrigger 
           id={id}
-          className={`text-dark_blue font-inter font-normal focus-visible:ring-orange focus-visible:ring-offset-0 ${
-            error ? "border-red-500" : "border-gray_buttons"
+          disabled={isLoading}
+          className={`text-[#141B36] font-['Inter'] font-normal ring-offset-0 ${
+            error ? "border-red-500" : "border-gray-300"
           }`}
         >
-          <SelectValue placeholder={placeholder} />
+        <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
+          {isLoading ? (
+            <option value="" disabled>Carregando...</option>
+          ) : (
+            options.map((option) => (
+              <SelectItem key={option.value} value={String(option.value)}>
+                {option.label}
+              </SelectItem>
+            ))
+          )}
         </SelectContent>
       </Select>
       

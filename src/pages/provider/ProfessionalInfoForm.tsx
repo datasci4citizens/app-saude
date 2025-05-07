@@ -1,41 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/forms/button';
 import { TextField } from '@/components/forms/text_input';
+// import { SelectField } from '@/components/forms/select_input';
+import { DateField } from '@/components/forms/date_input';
 import { FileUploader } from '@/components/ui/file-uploader';
+import type { ProviderCreate } from '@/api/models/ProviderCreate';
+// import { ConceptService } from '@/api/services/ConceptService';
 
-// Define types for form data and errors
-interface FormData {
-  civilName: string;
-  socialName: string;
-  professionalEmail: string;
-  registrationNumber: string;
-  document: File | null;
+// Define types for form data - extends Provider with additional UI fields
+interface ProviderFormData extends Partial<ProviderCreate> {
+  // Fields from Provider model
+  social_name?: string | null;
+  birth_datetime?: string | null;
+  professional_registration?: number | null;
+  specialty_concept?: number | null;
+  
+  // Additional form fields not in Provider model
+  document?: File | null;  // Document upload
 }
 
 interface FormErrors {
-  civilName?: string;
-  socialName?: string;
-  professionalEmail?: string;
-  registrationNumber?: string;
+  social_name?: string;
+  professional_registration?: string;
+  birth_datetime?: string;
+  specialty_concept?: string;
   document?: string;
   [key: string]: string | undefined;
 }
 
-export default function ProfessionalInfoForm({onSubmit}: {onSubmit: (data: FormData) => void}): JSX.Element {
-  const [formData, setFormData] = useState<FormData>({
-    civilName: '',
-    socialName: '',
-    professionalEmail: '',
-    registrationNumber: '',
+export function ProfessionalInfoForm({onSubmit}: {onSubmit: (data: ProviderFormData) => void}): JSX.Element {
+  // Temporary concept ID for ACS (Community Health Agent)
+  const ACS_CONCEPT_ID = 9999999; // Provisional ID for ACS
+  
+  const [formData, setFormData] = useState<ProviderFormData>({
+    social_name: '',
+    professional_registration: null,
+    birth_datetime: '',
+    specialty_concept: ACS_CONCEPT_ID,
     document: null
   });
   
   const [errors, setErrors] = useState<FormErrors>({});
-
+  
   // Handle input change
-  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    
+    // Handle numeric fields properly
+    if (name === 'professional_registration') {
+      setFormData({ 
+        ...formData, 
+        [name]: value ? Number(value) : null 
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
     
     // Clear error when user starts typing
     if (errors[name]) {
@@ -43,11 +62,29 @@ export default function ProfessionalInfoForm({onSubmit}: {onSubmit: (data: FormD
     }
   };
   
+  // Handle date change
+  const handleDateChange = (value: string) => {
+    // Convert from DD/MM/YYYY to YYYY-MM-DD
+    const datePattern = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+    const match = value.match(datePattern);
+    
+    if (match) {
+      const [_, day, month, year] = match;
+      const isoDate = `${year}-${month}-${day}`;
+      setFormData({ ...formData, birth_datetime: isoDate });
+    } else {
+      setFormData({ ...formData, birth_datetime: value });
+    }
+    
+    if (errors.birth_datetime) {
+      setErrors({ ...errors, birth_datetime: undefined });
+    }
+  };
+  
   // Handle file upload
   const handleFileChange = (file: File | null) => {
     setFormData({ ...formData, document: file });
     
-    // Clear error when user uploads a file
     if (errors.document) {
       setErrors({ ...errors, document: undefined });
     }
@@ -57,17 +94,32 @@ export default function ProfessionalInfoForm({onSubmit}: {onSubmit: (data: FormD
     const newErrors: FormErrors = {};
     
     // Required fields
-    if (!formData.civilName.trim()) newErrors.civilName = "Nome civil é obrigatório";
-    if (!formData.professionalEmail.trim()) newErrors.professionalEmail = "Email profissional é obrigatório";
-    if (!formData.registrationNumber.trim()) newErrors.registrationNumber = "Número de registro é obrigatório";
+    if (!formData.professional_registration) newErrors.professional_registration = "Número de matrícula é obrigatório";
     if (!formData.document) newErrors.document = "Documento comprobatório é obrigatório";
     
-    // Email validation
-    if (formData.professionalEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.professionalEmail)) {
-      newErrors.professionalEmail = "Email inválido";
+    // Optional validation for date if provided
+    if (formData.birth_datetime) {
+      const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+      if (!datePattern.test(formData.birth_datetime)) {
+        newErrors.birth_datetime = "Formato de data inválido";
+      }
     }
     
     return newErrors;
+  };
+
+  // Get display date format DD/MM/YYYY
+  const getDisplayDate = () => {
+    if (!formData.birth_datetime) return '';
+    
+    // Check if already in DD/MM/YYYY format
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(formData.birth_datetime)) {
+      return formData.birth_datetime;
+    }
+    
+    // Convert from YYYY-MM-DD to DD/MM/YYYY
+    const [year, month, day] = formData.birth_datetime.split('-');
+    return day && month && year ? `${day}/${month}/${year}` : '';
   };
 
   // Handle form submission
@@ -82,73 +134,75 @@ export default function ProfessionalInfoForm({onSubmit}: {onSubmit: (data: FormD
       return;
     }
     
-    // Clear all errors on successful submission
+    // Clear errors on successful validation
     setErrors({});
     
+    // Always set specialty_concept to ACS
+    const finalData: ProviderFormData = {
+      ...formData,
+      specialty_concept: ACS_CONCEPT_ID
+    };
+    
     // Submit form data
-    onSubmit(formData);
+    onSubmit(finalData);
   };
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-    <TextField 
-      id="civilName"
-      name="civilName"
-      label="Nome civil (como consta no documento)"
-      value={formData.civilName}
-      onChange={handleChange}
-      placeholder=""
-      error={errors.civilName}
-    />
-    
-    <TextField 
-      id="socialName"
-      name="socialName"
-      label="Nome social (opcional) caso seja diferente do civil, em concordância com 'identidade de gênero'"
-      value={formData.socialName}
-      onChange={handleChange}
-      placeholder=""
-      error={errors.socialName}
-    />
-    
-    <TextField 
-      id="professionalEmail"
-      name="professionalEmail"
-      label="Email profissional"
-      value={formData.professionalEmail}
-      onChange={handleChange}
-      placeholder=""
-      error={errors.professionalEmail}
-      type="email"
-    />
-    
-    <TextField 
-      id="registrationNumber"
-      name="registrationNumber"
-      label="Número de registro no conselho profissional ou identificação funcional"
-      value={formData.registrationNumber}
-      onChange={handleChange}
-      placeholder=""
-      error={errors.registrationNumber}
-    />
-    
-    <div className="mb-4">
-      <label className="block text-gray-500 text-sm mb-2">
-        Documento comprobatório digitalizado (carteira do conselho, comprovante de vínculo empregatício, etc)
-      </label>
-      <FileUploader
-        onChange={handleFileChange}
-        error={errors.document}
+      <TextField 
+        id="social_name"
+        name="social_name"
+        label="Nome social (opcional) caso seja diferente do civil"
+        value={formData.social_name || ''}
+        onChange={handleChange}
+        placeholder=""
+        error={errors.social_name}
       />
-    </div>
-    
-    <Button 
-      type="submit" 
-      variant="white" 
-      className="w-full mt-4 font-['Inter'] font-bold"
-    >
-      CONTINUAR
-    </Button>
-  </form>
-);
+      
+      <DateField 
+        id="birth_datetime"
+        name="birth_datetime"
+        label="Data de nascimento"
+        value={getDisplayDate()}
+        onChange={handleDateChange}
+        error={errors.birth_datetime}
+      />
+      
+      <TextField 
+        id="professional_registration"
+        name="professional_registration"
+        label="Número de matrícula ou identificação funcional"
+        value={formData.professional_registration?.toString() || ''}
+        onChange={handleChange}
+        placeholder="Número de matrícula ACS"
+        error={errors.professional_registration}
+        type="number"
+      />
+      
+      {/* Informative text about role instead of dropdown */}
+      <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+        <p className="text-blue-800">
+          Você está se cadastrando como <strong>Agente Comunitário de Saúde (ACS)</strong>.
+        </p>
+      </div>
+      
+      <div className="mb-4">
+        <label className="block text-gray-500 text-sm mb-2">
+          Documento comprobatório (crachá, contracheque ou declaração da UBS)
+        </label>
+        <FileUploader
+          onChange={handleFileChange}
+          error={errors.document}
+        />
+      </div>
+      
+      <Button 
+        type="submit" 
+        variant="white" 
+        className="w-full mt-4 font-['Inter'] font-bold"
+      >
+        CONTINUAR
+      </Button>
+    </form>
+  );
 }

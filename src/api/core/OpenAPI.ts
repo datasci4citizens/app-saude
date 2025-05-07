@@ -17,16 +17,18 @@ export type OpenAPIConfig = {
     PASSWORD?: string | Resolver<string> | undefined;
     HEADERS?: Headers | Resolver<Headers> | undefined;
     ENCODE_PATH?: ((path: string) => string) | undefined;
+    FETCH?: typeof fetch | undefined;
 };
 
 export const OpenAPI: OpenAPIConfig = {
-    BASE: '',
+    BASE: 'http://localhost:8000',
     VERSION: '0.0.0',
     WITH_CREDENTIALS: true,
     CREDENTIALS: 'include',
-    TOKEN: localStorage.getItem('accessToken') || undefined,
     USERNAME: undefined,
     PASSWORD: undefined,
     HEADERS: undefined,
     ENCODE_PATH: undefined,
 };
+
+OpenAPI.TOKEN = () => Promise.resolve(localStorage.getItem('accessToken') ?? '');

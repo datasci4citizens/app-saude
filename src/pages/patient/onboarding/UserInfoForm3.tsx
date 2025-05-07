@@ -1,16 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/forms/button';
-import { TextField } from '@/components/forms/text_input';
 import { SelectField } from '@/components/forms/select_input';
+import type { ObservationCreate } from '@/api/models/ObservationCreate';
+import type { DrugExposureCreate } from '@/api/models/DrugExposureCreate';
+import Select from 'react-select';
+import {useHealthConcepts} from '@/utils/conceptLoader';
 
-// Define types for form data and errors
+// Define form data interface (user-friendly structure)
+// Todos sao conceptIds como String
 interface FormData {
+  // Esses são selects simples (1 escolha, com concept_id em string)
   sleepHealth: string;
   physicalExercise: string;
   eatingHabits: string;
-  comorbidities: string;
-  medications: string;
-  substanceUse: string;
+
+  // Listas onde cada item tem concept_id + texto
+  comorbidities: string[];
+  medications: string[];
+  substanceUse: string[];
+}
+
+// Define the structure for API submission
+export interface SubmissionData {
+  observations: ObservationCreate[];
+  drugExposures: DrugExposureCreate[];
 }
 
 interface FormErrors {
@@ -23,16 +36,29 @@ interface FormErrors {
   [key: string]: string | undefined;
 }
 
-export function UserInfoForm3({onSubmit}: {onSubmit: (data: FormData) => void }): JSX.Element {
+export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => void }): JSX.Element {
+  // User-friendly form data
+  const {
+    sleepHealthOptions,
+    exerciseOptions,
+    eatingHabitsOptions,
+    comorbiditiesOptions,
+    medicationOptions,
+    substanceOptions,
+    conceptIds,
+    isLoading,
+    error: fetchError
+  } = useHealthConcepts();
+  
   const [formData, setFormData] = useState<FormData>({
     sleepHealth: '',
     physicalExercise: '',
     eatingHabits: '',
-    comorbidities: '',
-    medications: '',
-    substanceUse: '',
+    comorbidities: [],
+    medications: [],
+    substanceUse: []
   });
-  
+
   const [errors, setErrors] = useState<FormErrors>({});
 
   // Handle input change
@@ -56,6 +82,79 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: FormData) => void })
     
     return newErrors;
   };
+  
+  // Transform form data into properly structured API objects
+  const transformFormData = (): SubmissionData => {
+    const now = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+    console.log('Form data before transformation:', formData);
+    
+    // Create observations
+    const observations: ObservationCreate[] = [
+      // Sleep health observation
+      {
+        value_as_concept: parseInt(formData.sleepHealth),
+        observation_date: now,
+        observation_concept: conceptIds.sleepHealth,
+        shared_with_provider: true,
+        observation_type_concept: conceptIds.selfReported
+      },
+      // Physical exercise observation
+      {
+        value_as_concept: parseInt(formData.physicalExercise),
+        observation_date: now,
+        observation_concept: conceptIds.physicalExercise,
+        shared_with_provider: true,
+        observation_type_concept: conceptIds.selfReported
+      },
+      // Eating habits observation
+      {
+        value_as_concept: parseInt(formData.eatingHabits),
+        observation_date: now,
+        observation_concept: conceptIds.eatingHabits,
+        shared_with_provider: true,
+        observation_type_concept: conceptIds.selfReported
+      },
+      ...formData.comorbidities.map((conceptId) => ({
+        value_as_concept: parseInt(conceptId),
+        observation_date: now,
+        observation_concept: conceptIds.comorbidities,
+        shared_with_provider: true,
+        observation_type_concept: conceptIds.selfReported
+      }))
+    ];
+    
+    const drugExposures: DrugExposureCreate[] = [
+      ...formData.medications.map((conceptId) => ({
+        drug_exposure_start_date: now,
+        drug_exposure_end_date: null,
+        stop_reason: null,
+        quantity: null,
+        interval_hours: null,
+        dose_times: null,
+        sig: null,
+        person: null,
+        drug_concept: parseInt(conceptId),
+        drug_type_concept: conceptIds.medications
+      })),
+      ...formData.substanceUse.map((conceptId) => ({
+        drug_exposure_start_date: now,
+        drug_exposure_end_date: null,
+        stop_reason: null,
+        quantity: null,
+        interval_hours: null,
+        dose_times: null,
+        sig: null,
+        person: null,
+        drug_concept: parseInt(conceptId),
+        drug_type_concept: conceptIds.substanceUse
+      }))
+    ];
+
+    console.log('Transformed data for submission:', { observations, drugExposures });
+    
+    return { observations, drugExposures };
+  };
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -72,34 +171,21 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: FormData) => void })
     // Clear all errors on successful submission
     setErrors({});
     
-    // Submit if no errors
-    onSubmit(formData);
+    // Transform and submit the data
+    const submissionData = transformFormData();
+    onSubmit(submissionData);
   };
-  
-  // Options for dropdowns
-  const sleepHealthOptions = [
-    { value: "boa", label: "Durmo bem" },
-    { value: "regular", label: "Durmo razoavelmente" },
-    { value: "ruim", label: "Durmo mal" }
-  ];
-  
-  const exerciseOptions = [
-    { value: "regularmente", label: "Regularmente" },
-    { value: "ocasionalmente", label: "Ocasionalmente" },
-    { value: "raramente", label: "Raramente" },
-    { value: "nunca", label: "Nunca" }
-  ];
-  
-  const eatingHabitsOptions = [
-    { value: "boa", label: "Me alimento bem" },
-    { value: "regular", label: "Me alimento razoavelmente" },
-    { value: "ruim", label: "Me alimento mal" }
-  ];
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-    <div className="flex flex-row gap-4 max-[311px]:flex-wrap w-full">
-      <div className="flex-1">
+      {fetchError && (
+        <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-md p-3 mb-4">
+          <p>{fetchError}</p>
+        </div>
+      )}
+    
+      <div className="flex flex-row gap-4 max-[311px]:flex-wrap w-full">
+        <div className="flex-1">
           <SelectField
             id="sleepHealth"
             name="sleepHealth"
@@ -108,6 +194,7 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: FormData) => void })
             onChange={handleChange}
             options={sleepHealthOptions}
             error={errors.sleepHealth}
+            isLoading={isLoading}
           />
         </div>
         <div className="flex-1">
@@ -119,9 +206,10 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: FormData) => void })
             onChange={handleChange}
             options={exerciseOptions}
             error={errors.physicalExercise}
+            isLoading={isLoading}
           />
         </div>
-    </div>
+      </div>
       
       <SelectField
         id="eatingHabits"
@@ -131,45 +219,60 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: FormData) => void })
         onChange={handleChange}
         options={eatingHabitsOptions}
         error={errors.eatingHabits}
+        isLoading={isLoading}
       />
-      
-      <TextField 
+
+      <Select
         id="comorbidities"
         name="comorbidities"
-        label="Comorbidades"
-        value={formData.comorbidities}
-        onChange={handleChange}
+        isMulti
+        value={comorbiditiesOptions.filter(opt => formData.comorbidities.includes(opt.value))}
+        onChange={(selectedOptions) => {
+          const selectedIds = selectedOptions.map(opt => opt.value);
+          setFormData({ ...formData, comorbidities: selectedIds.map(String) });
+        }}
+        options={comorbiditiesOptions}
+        isLoading={isLoading}
         placeholder="Insira suas comorbidades, se houver"
-        error={errors.comorbidities}
       />
       
-      <TextField 
+      <Select 
         id="medications"
         name="medications"
-        label="Remédios usados"
-        value={formData.medications}
-        onChange={handleChange}
-        placeholder="Insira os remédios que você utiliza"
-        error={errors.medications}
+        placeholder="Busque remédios..."
+        isMulti
+        value={medicationOptions.filter(opt => formData.medications.includes(opt.value))}
+        onChange={(selectedOptions) => {
+          const selectedIds = selectedOptions.map(opt => opt.value);
+          setFormData({ ...formData, medications: selectedIds.map(String) });
+        }}
+        options={medicationOptions}
+        isLoading={isLoading}
       />
       
-      <TextField 
+      <Select 
         id="substanceUse"
         name="substanceUse"
-        label="Uso de substâncias tóxicas e ilícitas e frequência"
-        value={formData.substanceUse}
-        onChange={handleChange}
-        placeholder="Insira informações sobre uso de substâncias"
-        error={errors.substanceUse}
+        isMulti
+        value={substanceOptions.filter(opt => formData.substanceUse.includes(opt.value))}
+        onChange={(selectedOptions) => {
+          const selectedIds = selectedOptions.map(opt => opt.value);
+          setFormData({ ...formData, substanceUse: selectedIds.map(String) });
+        }}
+        options={substanceOptions}
+        isLoading={isLoading}
+        placeholder="Busque substâncias..."
       />
       
       <Button 
         type="submit" 
         variant="white" 
         className="w-full mt-4 font-['Inter'] font-bold"
+        disabled={isLoading}
       >
         CONTINUAR
       </Button>
+
     </form>
   );
 }
