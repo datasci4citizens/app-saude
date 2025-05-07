@@ -1,10 +1,10 @@
-import { StrictMode } from 'react';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './globals.css';
-import React from 'react';
 import '@fontsource-variable/inter';
+import 'mingcute_icon/font/Mingcute.css'
 import { App } from './App';
-import { GoogleOAuthProvider } from '@react-oauth/google'
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const root = document.getElementById('root');
 

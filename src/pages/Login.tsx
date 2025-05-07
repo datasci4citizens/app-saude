@@ -1,26 +1,24 @@
 import { useGoogleLogin } from '@react-oauth/google';
-import { Button } from '@/components/ui/button';
-import axios from 'axios';
+import { Button } from '@/components/forms/button';
+import { AuthService } from '../api';
 
 export default function Login() {
   const login = useGoogleLogin({
     onSuccess: async ({ code }) => {
       try {
-        const tokens = await axios.post('http://localhost:8000/auth/login/google/',
-          { code },
-          { withCredentials: true }
-        );
+        const response = await AuthService.authLoginGoogleCreate({ code });
 
-        console.log('Tokens:', tokens.data);
+        localStorage.setItem('accessToken', response.access);
+        localStorage.setItem('refreshToken', response.refresh);
+        localStorage.setItem('role', response.role)
 
-        // Agora testa se o usuário está logado
-        const res = await fetch('http://localhost:8000/auth/me/', {
-          headers: {
-            Authorization: `Bearer ${tokens.data.access}`,
-          },
-        });
-        const userData = await res.json();
-        console.log('User data:', userData);
+        if (response.role === 'provider') {
+          window.location.href = '/acs-main-page';
+        } else if (response.role == 'person') {
+          window.location.href = '/user-main-page';
+        } else {
+          window.location.href = '/forms-user';
+        }
       } catch (err) {
         console.error('Erro ao logar:', err);
       }
@@ -36,7 +34,6 @@ export default function Login() {
     >
       <div className="bg-white p-8 rounded-lg shadow-md flex flex-col items-center">
         <h1 className="text-2xl font-bold mb-8 text-gray-800">App Saúde</h1>
-        
         <Button 
           onClick={login}  // <- aqui chamamos a função que o hook retorna
           className="flex items-center gap-2 bg-white text-gray-700 border border-gray-300 hover:bg-gray-100 px-6 py-3 rounded-lg font-medium"
@@ -62,7 +59,6 @@ export default function Login() {
           </svg>
           Entrar com Google
         </Button>
-        
         <p className="text-sm text-gray-500 mt-6 text-center">
           Esta tela é para testes de autenticação.<br/>
           Ambiente de desenvolvimento.
