@@ -4,14 +4,7 @@ import { TextField } from '@/components/forms/text_input';
 import { SelectField } from '@/components/forms/select_input';
 import { DateField } from '@/components/forms/date_input';
 import type { PersonCreate } from '@/api/models/PersonCreate';
-import { ConceptService } from '@/api/services/ConceptService';
 import { useDemographicConcepts } from '@/utils/conceptLoader';
-
-// Define the option interface
-interface SelectOption {
-  value: number | string;
-  label: string;
-}
 
 // Define form data type that extends Person with form-specific fields
 interface UserFormData extends Partial<PersonCreate> {
@@ -44,7 +37,7 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
     gender_concept: null,
     weight: null,
     height: null,
-    birth_datetime: '2002-08-01',
+    birth_datetime: '',
     race_concept: null,
   });
   
@@ -150,21 +143,6 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
     onSubmit(formData);
   };
 
-  // Display formatted date (YYYY-MM-DD to DD/MM/YYYY)
-  const getDisplayDate = () => {
-    if (!formData.birth_datetime) return '';
-    
-    // Check if the date is already in DD/MM/YYYY format
-    const datePattern = /^\d{2}\/\d{2}\/\d{4}$/;
-    if (datePattern.test(formData.birth_datetime)) {
-      return formData.birth_datetime;
-    }
-    
-    // Convert from YYYY-MM-DD to DD/MM/YYYY for display
-    const [year, month, day] = formData.birth_datetime.split('-');
-    return day && month && year ? `${day}/${month}/${year}` : '';
-  };
-
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
       {conceptError && (
@@ -221,7 +199,7 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
         id="birth_datetime"
         name="birth_datetime"
         label="Data de nascimento"
-        value={getDisplayDate()}
+        value={formData.birth_datetime || ''}
         onChange={handleDateChange}
         error={errors.birth_datetime}
       />
