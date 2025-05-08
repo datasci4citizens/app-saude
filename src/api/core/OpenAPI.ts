@@ -20,14 +20,13 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-    BASE: 'http://localhost:8000',
+    BASE: 'localhost:8000',
     VERSION: '0.0.0',
-    WITH_CREDENTIALS: false,
+    WITH_CREDENTIALS: true,
     CREDENTIALS: 'include',
     TOKEN: async () => {
-        // Recupera o token do localStorage
         const token = localStorage.getItem('accessToken');
-        return `${token || ''}`; // Retorna o token no formato correto, garantindo que seja uma string
+        return `${token || ''}`;
     },
     USERNAME: undefined,
     PASSWORD: undefined,

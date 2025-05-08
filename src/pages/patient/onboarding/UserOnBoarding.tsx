@@ -88,6 +88,7 @@ export default function UserOnboarding() {
         const result = await trigger();
         console.log('Submission result:', result);
         alert('Cadastro realizado com sucesso!');
+        localStorage.setItem('personId', String(result.person.person_id));
         router('/user-main-page');
       } catch (err) {
         console.error('Registration error:', err);
