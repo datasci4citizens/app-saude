@@ -6,7 +6,7 @@ import useSWRMutation from 'swr/mutation';
 
 // Import the service (this will be created)
 import type { FullProviderCreate } from '@/api/models/FullProviderCreate';
-import type { ProviderCreate } from '@/api';
+import { ApiService, type ProviderCreate } from '@/api';
 import { FullProviderService } from '@/api/services/FullProviderService';
 
 // Define the provider data type with proper backend field naming (snake_case)
@@ -51,15 +51,35 @@ export default function ProfessionalOnboarding() {
     // save provider data
     setProvider(provider);
     // delay ate os dados estarem completados
+
+    // Exemplo de como recuperar o ID
+    const fetchUserEntity = async () => {
+      try {
+        const result = await ApiService.apiUserEntityRetrieve();
+        console.log('User entity result:', result);
+    
+        if (result.person_id) {
+          alert(`Cadastro realizado com sucesso! Seu Person ID é: ${result.person_id}`);
+        } else if (result.provider_id) {
+          alert(`Cadastro realizado com sucesso! Seu Provider ID é: ${result.provider_id}`);
+        } else {
+          alert('Cadastro realizado com sucesso, mas nenhum ID foi retornado.');
+        }
+    
+        navigate('/acs-main-page'); // Redireciona para a página principal
+      } catch (err) {
+        console.error('Erro ao buscar entidade do usuário:', err);
+        alert('Erro ao buscar entidade do usuário.');
+      }
+    };
+
     setTimeout(async () => {
       try {
         // Trigger the SWR mutation with form data
         const result = await trigger();
         console.log('Submission result:', result);
 
-        // Handle successful submission
-        alert('Cadastro realizado com sucesso!');
-        navigate('/acs-main-page'); // Redirect to the main page
+        await fetchUserEntity();
       } catch (err) {
         console.error('Registration error:', err);
         // Error is already set in the mutation function
