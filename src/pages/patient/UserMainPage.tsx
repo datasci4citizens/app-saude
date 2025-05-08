@@ -10,8 +10,9 @@ import type { ConceptRetrieve } from "@/api/models/ConceptRetrieve";
 import type { DrugExposureRetrieve } from "@/api";
 
 // Fetch medications for a specific person
-const medicationsFetcher = async () => {
-    const person_id = 10; // Could be made dynamic with props or context
+const medicationsFetcher = async (keys: [string, number]) => {
+    const [_keyName, person_id] = keys;
+    
     const allDrugExposures = await DrugExposureService.apiDrugExposureList();
     
     // Filter for the specific person and type concept
@@ -21,7 +22,7 @@ const medicationsFetcher = async () => {
 };
 
 // Fetch medication names using concept IDs
-const medicationsNameFetcher = async (key, drugExposures) => {
+const medicationsNameFetcher = async (key:string, drugExposures:DrugExposureRetrieve[]) => {
     if (!drugExposures || drugExposures.length === 0) return [];
     
     const drugNames: ConceptRetrieve[] = [];
@@ -40,6 +41,9 @@ const medicationsNameFetcher = async (key, drugExposures) => {
 
 export default function AcsMainPage() {
     const navigate = useNavigate();
+    
+    // Definir o person_id que queremos usar
+    const person_id = 10;
 
     // Funções de navegação
     const handleEmergencyClick = () => {
@@ -59,7 +63,7 @@ export default function AcsMainPage() {
         data: drugExposures, 
         error: drugExposuresError, 
         isLoading: isDrugExposuresLoading 
-    } = useSWR('drugExposureFiltered', medicationsFetcher);
+    } = useSWR(['drugExposureFiltered', person_id], medicationsFetcher);
 
     // Fetch medication names only if we have drugExposures
     const { 
