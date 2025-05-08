@@ -159,12 +159,12 @@ export function ProfessionalInfoForm({onSubmit}: {onSubmit: (data: ProviderFormD
       />
       
       <DateField 
-        id="birth_datetime"
-        name="birth_datetime"
-        label="Data de nascimento"
-        value={getDisplayDate()}
-        onChange={handleDateChange}
-        error={errors.birth_datetime}
+      id="birth_datetime"
+      name="birth_datetime"
+      label="Data de nascimento"
+      value={formData.birth_datetime || ''}  // Use this direct approach
+      onChange={handleDateChange}
+      error={errors.birth_datetime}
       />
       
       <TextField 
