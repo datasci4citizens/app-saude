@@ -2,26 +2,46 @@ import { useNavigate } from "react-router-dom";
 import HomeBanner from "@/components/ui/home-banner";
 import InfoCard from "@/components/ui/info-card";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
+import useSWR from "swr";
 
 import { DrugExposureService } from "@/api/services/DrugExposureService";
-import type { DrugExposureRetrieve } from "@/api/models/DrugExposureRetrieve";
-import { PersonService } from "@/api/services/PersonService";
-import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
-interface Person{
-    person_id:number
-}
+import { ConceptService } from "@/api/services/ConceptService";
+import type { ConceptRetrieve } from "@/api/models/ConceptRetrieve";
+import type { DrugExposureRetrieve } from "@/api";
 
+// Fetch medications for a specific person
+const medicationsFetcher = async () => {
+    const person_id = 10; // Could be made dynamic with props or context
+    const allDrugExposures = await DrugExposureService.apiDrugExposureList();
+    
+    // Filter for the specific person and type concept
+    return allDrugExposures.filter(exposure => 
+      exposure.person === person_id && exposure.drug_type_concept === 9000028
+    );
+};
 
-interface Medication{
-    name:string
-    days:number[]
-    times:number[]
-}
+// Fetch medication names using concept IDs
+const medicationsNameFetcher = async (key, drugExposures) => {
+    if (!drugExposures || drugExposures.length === 0) return [];
+    
+    const drugNames: ConceptRetrieve[] = [];
+    for (const exposure of drugExposures) {
+        if (exposure.drug_concept) {
+            try {
+                const conceptData = await ConceptService.apiConceptRetrieve(Number(exposure.drug_concept));
+                drugNames.push(conceptData);
+            } catch (error) {
+                console.error(`Failed to fetch concept for drug_concept ${exposure.drug_concept}:`, error);
+            }
+        }
+    }
+    return drugNames;
+};
 
 export default function AcsMainPage() {
     const navigate = useNavigate();
 
-    // Funções de navegação - atualizadas para usar navigate em vez de router.push
+    // Funções de navegação
     const handleEmergencyClick = () => {
         navigate('/emergencie');
     };
@@ -34,8 +54,50 @@ export default function AcsMainPage() {
         navigate('/patient-registry');
     };
 
-    const handleNavigationClick = (itemId: string) => {
-        // Implementar navegação baseada no item clicado
+    // Fetch medication exposures
+    const { 
+        data: drugExposures, 
+        error: drugExposuresError, 
+        isLoading: isDrugExposuresLoading 
+    } = useSWR('drugExposureFiltered', medicationsFetcher);
+
+    // Fetch medication names only if we have drugExposures
+    const { 
+        data: medicationNames, 
+        error: medicationNamesError, 
+        isLoading: isMedicationNamesLoading 
+    } = useSWR(
+        drugExposures ? ['medicationNames', drugExposures] : null,
+        (key) => medicationsNameFetcher(key, drugExposures)
+    );
+
+    // Handle loading state
+    if (isDrugExposuresLoading || isMedicationNamesLoading) {
+        return <div className="flex justify-center items-center h-screen">Loading medications data...</div>;
+    }
+    
+    // Handle error states
+    if (drugExposuresError) {
+        return <div className="text-red-500 p-4">Error fetching drug exposures: {drugExposuresError.message}</div>;
+    }
+    
+    if (medicationNamesError) {
+        return <div className="text-red-500 p-4">Error fetching medication names: {medicationNamesError.message}</div>;
+    }
+
+    // Prepare medication data for display - use translated_name as fallback if concept_name is null
+    const medicationItems = medicationNames?.map(concept => ({
+        doctor: concept.concept_name || concept.translated_name || 'Unknown Medication',
+        time: 'Daily' // You might want to fetch actual dosage information
+    })) || [];
+
+    // Static consultation data (could be replaced with API data in the future)
+    const consultationItems = [
+        { doctor: 'DR JOSÉ', time: '10:00' },
+        { doctor: 'DRA TULLA', time: '12:00' },
+    ];
+
+    const handleNavigationClick = (itemId) => {
         switch (itemId) {
             case 'home':
                 // Já estamos na home
@@ -66,15 +128,13 @@ export default function AcsMainPage() {
 
             {/* Container para os cards */}
             <div className="px-4 py-5 flex justify-center gap-4">
-                {/* Card de Emergência */}
+                {/* Card de Medicamentos - usando dados da API */}
                 <InfoCard
                     variant="consultations"
                     title="Remédios"
-                    consultations={
-                        [
-                            { doctor: 'LEXAPRO', time: '10:00' },
-                            { doctor: 'RIVOTRIL', time: '12:00' },
-                        ]
+                    consultations={medicationItems.length > 0 
+                        ? medicationItems 
+                        : [{ doctor: 'Nenhum medicamento encontrado', time: '' }]
                     }
                     onClick={handleAppointmentClick}
                 />
@@ -83,10 +143,7 @@ export default function AcsMainPage() {
                 <InfoCard
                     variant="consultations"
                     title="Consultas"
-                    consultations={[
-                        { doctor: 'DR JOSÉ', time: '10:00' },
-                        { doctor: 'DRA TULLA', time: '12:00' },
-                    ]}
+                    consultations={consultationItems}
                     onClick={handleAppointmentClick}
                 />
             </div>
