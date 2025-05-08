@@ -1,6 +1,7 @@
 import { Button } from "@/components/forms/button";
 import { SelectableOption } from "@/components/ui/selectable-button";
 import { useState } from "react";
+import {useNavigate} from "react-router-dom";
 
 interface EntryOptionsScreenProps {
   onComplete: (userType: string) => void;
@@ -8,10 +9,13 @@ interface EntryOptionsScreenProps {
 
 const EntryOptionsScreen: React.FC<EntryOptionsScreenProps> = ({ onComplete }) => {
   const [userType, setUserType] = useState("");
+  const navigate = useNavigate();
 
   const handleContinue = () => {
-    if (userType) {
-      onComplete(userType);
+    if (userType === "patient") {
+      navigate("/forms-user"); // Redirect to user form path
+    } else if (userType === "professional") {
+      navigate("/forms-prof"); // Redirect to professional form path
     }
   };
 
