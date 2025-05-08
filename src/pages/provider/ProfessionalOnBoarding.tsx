@@ -49,7 +49,7 @@ export default function ProfessionalOnboarding() {
       care_site: null,
     }
     // save provider data
-    setProvider(data);
+    setProvider(provider);
     // delay ate os dados estarem completados
     setTimeout(async () => {
       try {
