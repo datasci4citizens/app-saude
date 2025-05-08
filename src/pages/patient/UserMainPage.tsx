@@ -7,9 +7,13 @@ import useSWR from "swr";
 import { DrugExposureService } from "@/api/services/DrugExposureService";
 import { ConceptService } from "@/api/services/ConceptService";
 import { VisitOccurrenceService } from "@/api/services/VisitOccurrenceService";
+import { ApiService } from "@/api/services/ApiService";
+import { PersonService } from "@/api/services/PersonService";
+
 import type { ConceptRetrieve } from "@/api/models/ConceptRetrieve";
 import type { DrugExposureRetrieve } from "@/api";
 import type { VisitOccurrenceRetrieve } from "@/api/models/VisitOccurrenceRetrieve";
+
 
 // Fetch medications for a specific person
 const medicationsFetcher = async (keys: [string, number]) => {
@@ -41,6 +45,14 @@ const medicationsNameFetcher = async (key:string, drugExposures:DrugExposureRetr
     return drugNames;
 };
 
+
+const idFetcher = async () => {
+    const id = await ApiService.apiUserEntityRetrieve();
+    return id.person_id;
+}
+
+
+
 // Fetch consultations for a specific person and provider
 const consultationsFetcher = async (keys: [string, number, number]) => {
     const [_keyName, person_id, provider_id] = keys;
@@ -56,7 +68,12 @@ const consultationsFetcher = async (keys: [string, number, number]) => {
 export default function AcsMainPage() {
     const navigate = useNavigate();
     
-    const person_id = 10; // Definir o person_id que queremos usar
+    // Fetch person_id using SWR
+    const { 
+        data: person_id, 
+        error: personIdError, 
+        isLoading: isPersonIdLoading 
+    } = useSWR('userId', idFetcher);
     const provider_id = 1; // Definir o provider_id que queremos usar
 
     // Funções de navegação
