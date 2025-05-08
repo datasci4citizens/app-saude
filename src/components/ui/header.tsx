@@ -24,22 +24,20 @@ const Header: React.FC<HeaderProps> = ({
   return (
     <div>
       {/* Back Button */}
-      <button 
-        className="bg-transparent border-none cursor-pointer flex items-center justify-center mr-3" 
+      <button
+        className="bg-transparent border-none cursor-pointer flex items-center justify-center mr-3"
         onClick={handleBackClick}
       >
-        <span className="mgc_arrow_left_line w-7 h-7 text-[28px] text-dark_blue"></span>
+        <span className="mgc_arrow_left_line w-7 h-7 text-[28px] text-[#141B36]"></span>
       </button>
-      
+
       <div className="flex flex-nowrap items-between justify-between">
         <div className="flex-1 flex flex-col items-start justify-center my-3">
           <h1 className="text-[28px] font-bold m-0 font-work-sans text-dark_blue">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-sm m-0 font-inter text-gray-500">
-              {subtitle}
-            </p>
+            <p className="text-sm m-0 font-inter text-[#A1A4B2]">{subtitle}</p>
           )}
         </div>
 
