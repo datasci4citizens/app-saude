@@ -3,6 +3,21 @@ import HomeBanner from "@/components/ui/home-banner";
 import InfoCard from "@/components/ui/info-card";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 
+import { DrugExposureService } from "@/api/services/DrugExposureService";
+import type { DrugExposureRetrieve } from "@/api/models/DrugExposureRetrieve";
+import { PersonService } from "@/api/services/PersonService";
+import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
+interface Person{
+    person_id:number
+}
+
+
+interface Medication{
+    name:string
+    days:number[]
+    times:number[]
+}
+
 export default function AcsMainPage() {
     const navigate = useNavigate();
 
