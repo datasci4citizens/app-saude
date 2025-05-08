@@ -29,4 +29,14 @@ export class ApiService {
             },
         });
     }
+    /**
+     * @returns any No response body
+     * @throws ApiError
+     */
+    public static apiUserEntityRetrieve(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/user-entity/',
+        });
+    }
 }

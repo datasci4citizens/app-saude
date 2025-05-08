@@ -11,13 +11,46 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class ProviderService {
     /**
+     * @param birthDatetime
+     * @param careSite
+     * @param createdAt
+     * @param ordering Which field to use when ordering the results.
+     * @param professionalRegistration
+     * @param search A search term.
+     * @param socialName
+     * @param specialtyConcept
+     * @param updatedAt
+     * @param user
      * @returns ProviderRetrieve
      * @throws ApiError
      */
-    public static apiProviderList(): CancelablePromise<Array<ProviderRetrieve>> {
+    public static apiProviderList(
+        birthDatetime?: string,
+        careSite?: number,
+        createdAt?: string,
+        ordering?: string,
+        professionalRegistration?: number,
+        search?: string,
+        socialName?: string,
+        specialtyConcept?: number,
+        updatedAt?: string,
+        user?: number,
+    ): CancelablePromise<Array<ProviderRetrieve>> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/provider/',
+            query: {
+                'birth_datetime': birthDatetime,
+                'care_site': careSite,
+                'created_at': createdAt,
+                'ordering': ordering,
+                'professional_registration': professionalRegistration,
+                'search': search,
+                'social_name': socialName,
+                'specialty_concept': specialtyConcept,
+                'updated_at': updatedAt,
+                'user': user,
+            },
         });
     }
     /**

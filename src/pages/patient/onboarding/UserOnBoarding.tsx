@@ -10,7 +10,6 @@ import type { LocationCreate } from '@/api/models/LocationCreate';
 import type { ObservationCreate } from '@/api/models/ObservationCreate';
 import type { DrugExposureCreate } from '@/api/models/DrugExposureCreate';
 import { ProgressIndicator } from '@/components/forms/progress_indicator';
-import type { FullPersonRetrieve } from '@/api/models/FullPersonRetrieve';
 
 // Empty placeholder for future service implementation
 // Will create a placeholder service that matches the pattern you described

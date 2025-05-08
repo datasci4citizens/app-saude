@@ -17,18 +17,20 @@ export type OpenAPIConfig = {
     PASSWORD?: string | Resolver<string> | undefined;
     HEADERS?: Headers | Resolver<Headers> | undefined;
     ENCODE_PATH?: ((path: string) => string) | undefined;
-    FETCH?: typeof fetch | undefined;
 };
 
 export const OpenAPI: OpenAPIConfig = {
     BASE: 'http://localhost:8000',
     VERSION: '0.0.0',
-    WITH_CREDENTIALS: true,
+    WITH_CREDENTIALS: false,
     CREDENTIALS: 'include',
+    TOKEN: async () => {
+        // Recupera o token do localStorage
+        const token = localStorage.getItem('accessToken');
+        return `${token || ''}`; // Retorna o token no formato correto, garantindo que seja uma string
+    },
     USERNAME: undefined,
     PASSWORD: undefined,
     HEADERS: undefined,
     ENCODE_PATH: undefined,
 };
-
-OpenAPI.TOKEN = () => Promise.resolve(localStorage.getItem('accessToken') ?? '');
