@@ -33,6 +33,8 @@ export type { FactRelationshipRetrieve } from './models/FactRelationshipRetrieve
 export type { FactRelationshipUpdate } from './models/FactRelationshipUpdate';
 export type { FullPersonCreate } from './models/FullPersonCreate';
 export type { FullPersonRetrieve } from './models/FullPersonRetrieve';
+export type { FullProviderCreate } from './models/FullProviderCreate';
+export type { FullProviderRetrieve } from './models/FullProviderRetrieve';
 export type { LocationCreate } from './models/LocationCreate';
 export type { LocationRetrieve } from './models/LocationRetrieve';
 export type { LocationUpdate } from './models/LocationUpdate';
@@ -80,6 +82,7 @@ export { DomainService } from './services/DomainService';
 export { DrugExposureService } from './services/DrugExposureService';
 export { FactRelationshipService } from './services/FactRelationshipService';
 export { FullPersonService } from './services/FullPersonService';
+export { FullProviderService } from './services/FullProviderService';
 export { LocationService } from './services/LocationService';
 export { MeasurementService } from './services/MeasurementService';
 export { ObservationService } from './services/ObservationService';
