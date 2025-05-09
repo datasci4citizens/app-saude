@@ -6,5 +6,8 @@ export type AuthTokenResponse = {
     access: string;
     refresh: string;
     role: string;
+    user_id: number;
+    provider_id: number | null;
+    person_id: number | null;
 };
 
