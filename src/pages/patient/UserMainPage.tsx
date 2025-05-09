@@ -9,6 +9,7 @@ import { ConceptService } from "@/api/services/ConceptService";
 import { VisitOccurrenceService } from "@/api/services/VisitOccurrenceService";
 import { ApiService } from "@/api/services/ApiService";
 import { PersonService } from "@/api/services/PersonService";
+import { ProviderService } from "@/api/services/ProviderService";
 
 import type { ConceptRetrieve } from "@/api/models/ConceptRetrieve";
 import type { DrugExposureRetrieve } from "@/api";
@@ -65,6 +66,42 @@ const consultationsFetcher = async (keys: [string, number, number]) => {
     );
 };
 
+// Fetch provider names using provider IDs
+const providerNameFetcher = async (key: string, providerId: number) => {
+    try {
+        const providerData = await ProviderService.apiProviderRetrieve(providerId);
+        return providerData.social_name || `Provider ${providerId}`;
+    } catch (error) {
+        console.error(`Failed to fetch provider for provider_id ${providerId}:`, error);
+        return `Provider ${providerId}`;
+    }
+};
+
+// Fetch consultations with provider names
+const consultationsWithProviderNamesFetcher = async (keys: [string, number, number]) => {
+    const consultations = await consultationsFetcher(keys);
+
+    const consultationsWithNames = await Promise.all(
+        consultations.map(async (visit) => {
+            const providerName = visit.provider
+                ? await providerNameFetcher('providerName', visit.provider)
+                : 'Unknown Provider';
+
+            return {
+                doctor: providerName, // Nome do provider
+                time: visit.visit_start_date 
+                    ? new Date(visit.visit_start_date).toLocaleString('pt-BR', {
+                        dateStyle: 'short',
+                        timeStyle: 'short',
+                    }) // Data e hora formatadas
+                    : 'Horário não definido',
+            };
+        })
+    );
+
+    return consultationsWithNames;
+};
+
 export default function AcsMainPage() {
     const navigate = useNavigate();
     
@@ -106,12 +143,12 @@ export default function AcsMainPage() {
         (key) => medicationsNameFetcher(key, drugExposures)
     );
 
-    // Fetch consultations
+    // Fetch consultations with provider names
     const { 
-        data: consultations, 
+        data: consultationItems, 
         error: consultationsError, 
         isLoading: isConsultationsLoading 
-    } = useSWR(['consultations', person_id, provider_id], consultationsFetcher);
+    } = useSWR(['consultations', person_id, provider_id], consultationsWithProviderNamesFetcher);
 
     // Handle loading state
     if (isDrugExposuresLoading || isMedicationNamesLoading || isConsultationsLoading) {
@@ -135,12 +172,6 @@ export default function AcsMainPage() {
     const medicationItems = medicationNames?.map(concept => ({
         doctor: concept.concept_name || concept.translated_name || 'Unknown Medication',
         time: 'Daily' // You might want to fetch actual dosage information
-    })) || [];
-
-    // Prepare consultation data for display
-    const consultationItems = consultations?.map(visit => ({
-        doctor: `Consulta ${visit.visit_concept || ''}`,
-        time: visit.visit_start_date ? new Date(visit.visit_start_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Horário não definido',
     })) || [];
 
     const handleNavigationClick = (itemId) => {
