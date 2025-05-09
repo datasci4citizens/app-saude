@@ -90,27 +90,9 @@ const ViewReminder: React.FC<ViewReminderProps> = ({ reminder, onDelete }) => {
           </div>
         )}
         
-        {reminder.notes && (
-          <div style={styles.detailRow}>
-            <strong>Notes:</strong> {reminder.notes}
-          </div>
-        )}
-        
         {reminder.isChecked !== undefined && (
           <div style={styles.detailRow}>
             <strong>Status:</strong> {reminder.isChecked ? "Completed" : "Pending"}
-          </div>
-        )}
-        
-        {reminder.createdAt && (
-          <div style={styles.detailRow}>
-            <strong>Created:</strong> {new Date(reminder.createdAt).toLocaleString()}
-          </div>
-        )}
-        
-        {reminder.updatedAt && (
-          <div style={styles.detailRow}>
-            <strong>Last Updated:</strong> {new Date(reminder.updatedAt).toLocaleString()}
           </div>
         )}
       </div>
