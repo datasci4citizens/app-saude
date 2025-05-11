@@ -228,43 +228,45 @@ export default function DiaryInfoForm() {
         </div>
       ))}
 
-      {/* Well-being Section */}
-      <div className="space-y-2 ml-[32px]">
-        <h3 className="font-semibold text-[16px] font-inter text-[#3F414E]">
-          Bem-estar geral:
-        </h3>
-        <div className="flex items-center gap-2 ml-[12px] mb-4">
-          <h3 className="font-normal text-[14px] font-inter text-[#A1A4B2]">
-            Compartilhar com profissionais da saúde
-          </h3>
-          <Switch checked={shareWellBeing} onCheckedChange={setShareWellBeing} />
-        </div>
-        
-        {wellBeingQuestions.map((question) => (
-          <div key={question.id} className="flex w-full mr-[4px] mb-4">
-            <div className="w-[70%]">
-              <HabitCard title={question.name} />
-            </div>
-            <div className="w-[30%] pl-4">
-              <Select
-                value={question.value}
-                onValueChange={(value) => handleItemChange(wellBeingQuestions, setWellBeingQuestions, question.id, value)}
-              >
-                <SelectTrigger hasSelection={!!question.value} size="sm">
-                  <SelectValue placeholder={
-                    question.measurementType === 'scale' ? '1-10' : 
-                    question.measurementType === 'yesno' ? 'Sim/Não' : 
-                    question.measurementType === 'hours' ? 'Horas' : 'Vezes'
-                  } />
-                </SelectTrigger>
-                <SelectContent>
-                  {renderSelectOptions(question.measurementType)}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        ))}
-      </div>
+
+{/* Well-being Section */}
+<div className="space-y-2 ml-[32px]">
+  <h3 className="font-semibold text-[16px] font-inter text-[#3F414E]">
+    Bem-estar geral:
+  </h3>
+  <div className="flex items-center gap-2 ml-[12px] mb-4">
+    <h3 className="font-normal text-[14px] font-inter text-[#A1A4B2]">
+      Compartilhar com profissionais da saúde
+    </h3>
+    <Switch checked={shareWellBeing} onCheckedChange={setShareWellBeing} />
+  </div>
+</div>
+
+{/* Well-being Questions */}
+{wellBeingQuestions.map((question) => (
+  <div key={question.id} className="flex w-full ml-[36px] mr-[4px] mb-4">
+    <div className="w-[70%]">
+      <HabitCard title={question.name} />
+    </div>
+    <div className="w-[30%] pl-4">
+      <Select
+        value={question.value}
+        onValueChange={(value) => handleItemChange(wellBeingQuestions, setWellBeingQuestions, question.id, value)}
+      >
+        <SelectTrigger hasSelection={!!question.value} size="sm">
+          <SelectValue placeholder={
+            question.measurementType === 'scale' ? '1-10' : 
+            question.measurementType === 'yesno' ? 'Sim/Não' : 
+            question.measurementType === 'hours' ? 'Horas' : 'Vezes'
+          } />
+        </SelectTrigger>
+        <SelectContent>
+          {renderSelectOptions(question.measurementType)}
+        </SelectContent>
+      </Select>
+    </div>
+  </div>
+))}
 
       {/* Free Text Section */}
       <div className="space-y-2 ml-[32px]">
@@ -279,7 +281,7 @@ export default function DiaryInfoForm() {
         </div>
       </div>
       
-      <div className="space-y-2 ml-[32px]">
+      <div className="ml-[36px] mr-[1px] w-[100%]">
         <TextField
           size="large"
           multiline
@@ -290,6 +292,7 @@ export default function DiaryInfoForm() {
           onChange={(e) => setFreeText(e.target.value)}
         />
       </div>
+
 
       {/* Submit Button */}
       <div className="px-[32px]">
