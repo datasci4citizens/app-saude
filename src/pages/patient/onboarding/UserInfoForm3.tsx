@@ -3,9 +3,8 @@ import { Button } from '@/components/forms/button';
 import { SelectField } from '@/components/forms/select_input';
 import type { ObservationCreate } from '@/api/models/ObservationCreate';
 import type { DrugExposureCreate } from '@/api/models/DrugExposureCreate';
-import Select from 'react-select';
 import {useHealthConcepts} from '@/utils/conceptLoader';
-import { StylesConfig } from 'react-select';
+import { MultiSelectCustom } from '@/components/forms/multi_select_custom';
 
 // later create a theme file with css values with methods for getting colors and use them  here
 // for easily changing color theme
@@ -241,49 +240,46 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
         isLoading={isLoading}
       />
 
-      <Select
+      <MultiSelectCustom
         id="comorbidities"
         name="comorbidities"
-        isMulti
-        styles={customSelectStyles}
-        value={comorbiditiesOptions.filter(opt => formData.comorbidities.includes(opt.value))}
-        onChange={(selectedOptions) => {
-          const selectedIds = selectedOptions.map(opt => opt.value);
-          setFormData({ ...formData, comorbidities: selectedIds.map(String) });
+        label="Comorbidades"
+        value={formData.comorbidities}
+        onChange={(selectedValues) => {
+          setFormData({ ...formData, comorbidities: selectedValues });
         }}
         options={comorbiditiesOptions}
         isLoading={isLoading}
         placeholder="Insira suas comorbidades, se houver"
+        error={errors.comorbidities}
       />
-      
-      <Select 
+
+      <MultiSelectCustom
         id="medications"
         name="medications"
-        placeholder="Busque remédios..."
-        isMulti
-        styles={customSelectStyles}
-        value={medicationOptions.filter(opt => formData.medications.includes(opt.value))}
-        onChange={(selectedOptions) => {
-          const selectedIds = selectedOptions.map(opt => opt.value);
-          setFormData({ ...formData, medications: selectedIds.map(String) });
+        label="Medicamentos"
+        value={formData.medications}
+        onChange={(selectedValues) => {
+          setFormData({ ...formData, medications: selectedValues });
         }}
         options={medicationOptions}
         isLoading={isLoading}
+        placeholder="Busque remédios..."
+        error={errors.medications}
       />
-      
-      <Select 
+
+      <MultiSelectCustom
         id="substanceUse"
         name="substanceUse"
-        isMulti
-        styles={customSelectStyles}
-        value={substanceOptions.filter(opt => formData.substanceUse.includes(opt.value))}
-        onChange={(selectedOptions) => {
-          const selectedIds = selectedOptions.map(opt => opt.value);
-          setFormData({ ...formData, substanceUse: selectedIds.map(String) });
+        label="Substâncias"
+        value={formData.substanceUse}
+        onChange={(selectedValues) => {
+          setFormData({ ...formData, substanceUse: selectedValues });
         }}
         options={substanceOptions}
         isLoading={isLoading}
         placeholder="Busque substâncias..."
+        error={errors.substanceUse}
       />
       
       <Button 
