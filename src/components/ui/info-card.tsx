@@ -79,7 +79,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
           </div>
         ) : isConsultations ? (
           /* Card de Lista de Consultas */
-          <div className="flex flex-col h-full">
+          <div className="flex flex-col h-full, bg-offwhite">
             {/* Cabeçalho */}
             <div className="p-4 pb-2">
               <h3 className="text-lg font-bold font-inter text-typography mb-1">{title}</h3>
@@ -89,7 +89,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
                 {consultations.map((consultation, index) => (
                   <div key={index} className="mb-2">
                     <div className="text-xs font-inter text-typography mb-0.5">{consultation.doctor}</div>
-                    <div className="text-xs text-gray2 font-inter mb-3">{consultation.time}</div>
+                    <div className="text-xs text-black font-inter mb-3">{consultation.time}</div>
                   </div>
                 ))}
               </div>

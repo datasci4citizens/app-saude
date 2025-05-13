@@ -113,9 +113,6 @@ export default function PatientsPage() {
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           placeholder="Buscar pacientes..."
-          className="border-[#FA6E5A] focus:border-[#FA6E5A]"
-          borderColor="#FA6E5A"
-          customBorderColor="#FA6E5A"
         />
       </div>
 
