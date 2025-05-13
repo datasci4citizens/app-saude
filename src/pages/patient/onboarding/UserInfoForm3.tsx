@@ -7,19 +7,20 @@ import Select from 'react-select';
 import {useHealthConcepts} from '@/utils/conceptLoader';
 import { StylesConfig } from 'react-select';
 
-// Add this inside the UserInfoForm3 component before the return statement
+// later create a theme file with css values with methods for getting colors and use them  here
+// for easily changing color theme
 const customSelectStyles: StylesConfig = {
   control: (provided, state) => ({
     ...provided,
-    borderColor: state.isFocused ? '#FF7320' : '#A0A3B1', // orange when focused, gray_buttons otherwise
-    boxShadow: state.isFocused ? '0 0 0 1px #FF7320' : provided.boxShadow,
+    borderColor: state.isFocused ? '#FA6E5A' : '#A0A3B1', // orange when focused, gray_buttons otherwise
+    boxShadow: state.isFocused ? '0 0 0 1px #FA6E5A' : provided.boxShadow,
     '&:hover': {
-      borderColor: state.isFocused ? '#FF7320' : '#A0A3B1'
+      borderColor: state.isFocused ? '#FA6E5A' : '#A0A3B1'
     }
   }),
   option: (provided, state) => ({
     ...provided,
-    backgroundColor: state.isSelected ? '#FF7320' : state.isFocused ? 'rgba(255, 115, 32, 0.1)' : null,
+    backgroundColor: state.isSelected ? '#FA6E5A' : state.isFocused ? 'rgba(255, 115, 32, 0.1)' : null,
     color: state.isSelected ? 'white' : provided.color
   })
 };

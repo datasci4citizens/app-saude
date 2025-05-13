@@ -39,7 +39,7 @@ export function TextField({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`text-dark_blue font-inter font-normal focus:ring-orange focus:ring-offset-0 ${
+        className={`text-dark_blue font-inter font-normal focus:ring-orange focus:ring-2 focus:border-none ${
           error ? 'border-red-500' : 'border-gray_buttons'
         }`}
       />
