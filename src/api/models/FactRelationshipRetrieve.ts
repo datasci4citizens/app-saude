@@ -8,8 +8,8 @@ export type FactRelationshipRetrieve = {
     readonly updated_at: string;
     fact_id_1: number;
     fact_id_2: number;
-    domain_concept_id_1: number;
-    domain_concept_id_2: number;
+    domain_concept_1: number;
+    domain_concept_2: number;
     relationship_concept: number;
 };
 

@@ -2,13 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { RecurrenceRuleCreate } from './RecurrenceRuleCreate';
 export type DrugExposureCreate = {
-    drug_exposure_start_date?: string | null;
-    drug_exposure_end_date?: string | null;
+    recurrence_rule?: RecurrenceRuleCreate;
     stop_reason?: string | null;
     quantity?: number | null;
-    interval_hours?: number | null;
-    dose_times?: string | null;
     sig?: string | null;
     person?: number | null;
     drug_concept?: number | null;

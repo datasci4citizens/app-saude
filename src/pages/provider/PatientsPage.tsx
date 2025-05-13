@@ -2,10 +2,15 @@ import { useState } from 'react';
 import { TextField } from '@/components/forms/text_input';
 import PatientButton from '@/components/ui/patient-button';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
+import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
+import { Button } from '@/components/forms/button';
 
 export default function PatientsPage() {
   const [searchValue, setSearchValue] = useState('');
   const [activeTab, setActiveTab] = useState('todos');
+  const [linkCode, setLinkCode] = useState<string | null>(null);
+  const [isGeneratingCode, setIsGeneratingCode] = useState(false);
+  const [codeError, setCodeError] = useState<string | null>(null);
   
   // Sample data for patients
   const patients = [
@@ -85,6 +90,31 @@ export default function PatientsPage() {
     return 'patient';
   };
 
+  // Function to generate provider link code
+  const generateLinkCode = async () => {
+    setIsGeneratingCode(true);
+    setCodeError(null);
+    
+    try {
+      const response = await LinkPersonProviderService.providerLinkCodeCreate();
+      setLinkCode(response.code);
+    } catch (error) {
+      console.error('Error generating link code:', error);
+      setCodeError('Não foi possível gerar o código. Tente novamente.');
+    } finally {
+      setIsGeneratingCode(false);
+    }
+  };
+
+  // Function to copy code to clipboard
+  const copyToClipboard = () => {
+    if (linkCode) {
+      navigator.clipboard.writeText(linkCode);
+    }
+  };
+
+
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 pb-24">
       {/* Header with back button and title */}
@@ -103,6 +133,59 @@ export default function PatientsPage() {
             <h1 className="font-bold" style={{ fontFamily: "'Work Sans', sans-serif", fontSize: '34px' }}>Painel de pacientes</h1>
         </div>
       </header>
+
+      {/* Link code generator */}
+      <div className="px-4 mb-4">
+        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+          <h2 className="text-lg font-semibold mb-2 font-['Work Sans']">Conectar com paciente</h2>
+          <p className="text-sm text-gray-600 mb-3">
+            Gere um código para compartilhar com um paciente que deseja se conectar com você.
+          </p>
+          
+          {linkCode ? (
+            <div className="mb-3">
+              <div className="flex items-center">
+                <div className="bg-orange bg-opacity-10 p-3 rounded-lg flex-1 mr-2">
+                  <p className="text-center font-bold text-xl text-orange">{linkCode}</p>
+                </div>
+                <Button 
+                  onClick={copyToClipboard}
+                  variant="orange" 
+                  className="whitespace-nowrap"
+                >
+                  Copiar
+                </Button>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Este código expira em 10 minutos.
+              </p>
+            </div>
+          ) : (
+            <Button 
+              onClick={generateLinkCode} 
+              variant="orange" 
+              className="w-full"
+              disabled={isGeneratingCode}
+            >
+              {isGeneratingCode ? "Gerando..." : "Gerar código de conexão"}
+            </Button>
+          )}
+          
+          {codeError && (
+            <p className="text-red-500 text-sm mt-1">{codeError}</p>
+          )}
+          
+          {linkCode && (
+            <Button 
+              onClick={() => setLinkCode(null)} 
+              variant="orange" 
+              className="w-full mt-2 text-gray_buttons"
+            >
+              Gerar novo código
+            </Button>
+          )}
+        </div>
+      </div>
 
       {/* Search input */}
       <div className="px-4 mb-4">
