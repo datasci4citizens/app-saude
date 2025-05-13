@@ -43,7 +43,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
         rounded-xl 
         h-[250px] 
         overflow-hidden
-        ${isEmergency ? 'bg-destructive' : 'bg-background'}
+        ${isEmergency ? 'bg-accent  ' : 'bg-background'}
       `}
     >
       <CardContent className="p-0 h-full">

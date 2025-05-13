@@ -40,12 +40,12 @@ export function TextField({
         onChange={onChange}
         placeholder={placeholder}
         className={`text-typography font-inter font-normal focus:ring-primary focus:ring-offset-0 ${
-          error ? 'border-destructive' : 'border-input'
+          error ? 'border-selection' : 'border-input'
         }`}
       />
       
       {helperText && <span className="text-xs font-inter font-light text-gray2-foreground">{helperText}</span>}
-      {error && <p className="text-destructive text-xs font-inter font-light mt-1">{error}</p>}
+      {error && <p className="text-selection text-xs font-inter font-light mt-1">{error}</p>}
     </div>
   );
 }

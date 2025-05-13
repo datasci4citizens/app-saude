@@ -86,7 +86,7 @@ export default function PatientsPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray1 pb-24">
+    <div className="flex flex-col min-h-screen bg-white pb-24">
       {/* Header with back button and title */}
       <header className="p-4">
         {/* Back button at the top */}
@@ -113,6 +113,9 @@ export default function PatientsPage() {
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           placeholder="Buscar pacientes..."
+          className="border-[#FA6E5A] focus:border-[#FA6E5A]"
+          borderColor="#FA6E5A"
+          customBorderColor="#FA6E5A"
         />
       </div>
 
