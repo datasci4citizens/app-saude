@@ -37,7 +37,7 @@ const AlertTitle = forwardRef<
 >(({ className, ...props }, ref) => (
 	<h5
 		ref={ref}
-		className={cn('mb-1 font-medium leading-none tracking-tight', className)}
+		className={cn('mb-1 font-medium text-typography leading-none tracking-tight font-inter', className)}
 		{...props}
 	/>
 ));
@@ -49,7 +49,7 @@ const AlertDescription = forwardRef<
 >(({ className, ...props }, ref) => (
 	<div
 		ref={ref}
-		className={cn('text-sm [&_p]:leading-relaxed', className)}
+		className={cn('text-sm text-gray2 font-inter [&_p]:leading-relaxed', className)}
 		{...props}
 	/>
 ));

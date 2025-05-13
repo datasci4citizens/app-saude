@@ -38,7 +38,7 @@ const PatientButton: React.FC<PatientButtonProps> = ({
                 ease-in-out
                 cursor-pointer
                 hover:-translate-y-0.5
-                ${isEmergency ? 'bg-orange' : 'bg-white'}
+                ${isEmergency ? 'bg-primary' : 'bg-background'}
                 ${isEmergency ? 'hover:shadow-[0_6px_12px_rgba(250,110,90,0.25)]' : 'hover:shadow-[0_6px_12px_rgba(0,0,0,0.15)]'}
                 shadow-sm
             `}
@@ -49,8 +49,8 @@ const PatientButton: React.FC<PatientButtonProps> = ({
                     text-lg
                     font-bold
                     mb-1.5
-                    font-work-sans
-                    ${isEmergency ? 'text-off_white' : 'text-black'}
+                    font-inter
+                    ${isEmergency ? 'text-primary-foreground' : 'text-typography'}
                 `}>
                     {name}{age ? ` - ${age} anos` : ''}
                 </div>
@@ -59,7 +59,7 @@ const PatientButton: React.FC<PatientButtonProps> = ({
                     mb-0.5
                     font-inter
                     font-normal
-                    ${isEmergency ? 'text-off_white' : 'text-black'}
+                    ${isEmergency ? 'text-primary-foreground' : 'text-typography'}
                 `}>
                     Última consulta: {lastConsult}
                 </div>
@@ -68,13 +68,13 @@ const PatientButton: React.FC<PatientButtonProps> = ({
                     mb-0.5
                     font-inter
                     font-normal
-                    ${isEmergency ? 'text-off_white' : 'text-black'}
+                    ${isEmergency ? 'text-primary-foreground' : 'text-typography'}
                 `}>
                     Último registro compartilhado: {lastRegistry}
                 </div>
                 {isEmergency ? (
                     <div 
-                        className="font-bold text-off_white mt-1.5 text-xs font-inter"
+                        className="font-bold text-primary-foreground mt-1.5 text-xs font-inter"
                         onClick={(e) => {
                             e.stopPropagation();
                             if (onClickEmergency) onClickEmergency();
@@ -88,7 +88,7 @@ const PatientButton: React.FC<PatientButtonProps> = ({
                         mb-0.5
                         font-inter
                         font-normal
-                        ${isEmergency ? 'text-off_white' : 'text-black'}
+                        ${isEmergency ? 'text-primary-foreground' : 'text-typography'}
                     `}>
                         Última emergência: {lastEmergency || "Nenhuma"}
                     </div>

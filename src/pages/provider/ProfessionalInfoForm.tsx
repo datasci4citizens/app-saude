@@ -179,14 +179,14 @@ export function ProfessionalInfoForm({onSubmit}: {onSubmit: (data: ProviderFormD
       />
       
       {/* Informative text about role instead of dropdown */}
-      <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-        <p className="text-blue-800">
+      <div className="mb-4 p-3 bg-info/10 border border-info/20 rounded-md">
+        <p className="text-info">
           Você está se cadastrando como <strong>Agente Comunitário de Saúde (ACS)</strong>.
         </p>
       </div>
       
       <div className="mb-4">
-        <label className="block text-gray-500 text-sm mb-2">
+        <label className="block text-gray2 text-sm mb-2">
           Documento comprobatório (crachá, contracheque ou declaração da UBS)
         </label>
         <FileUploader
@@ -198,7 +198,7 @@ export function ProfessionalInfoForm({onSubmit}: {onSubmit: (data: ProviderFormD
       <Button 
         type="submit" 
         variant="white" 
-        className="w-full mt-4 font-['Inter'] font-bold"
+        className="w-full mt-4 font-inter font-bold"
       >
         CONTINUAR
       </Button>

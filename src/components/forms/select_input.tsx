@@ -51,7 +51,7 @@ export function SelectField({
   return (
     <div className="mb-4">
       {label && (
-        <label htmlFor={id} className="block text-sm font-inter font-light text-gray_buttons mb-1">
+        <label htmlFor={id} className="block text-sm font-inter font-light text-typography mb-1">
           {label}
         </label>
       )}
@@ -79,7 +79,7 @@ export function SelectField({
         </SelectContent>
       </Select>
       
-      {error && <p className="text-red-500 text-xs font-inter font-light mt-1">{error}</p>}
+      {error && <p className="text-destructive text-xs font-inter font-light mt-1">{error}</p>}
     </div>
   );
 }

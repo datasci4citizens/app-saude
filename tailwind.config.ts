@@ -56,114 +56,90 @@ export default {
 				'100': '1',
 			},
 			colors: {
-				border: stone[200],
-				input: stone[200],
-				background: white,
-				foreground: stone[950],
-				//00 color
-				orange: {
-					DEFAULT: '#FA6E5A',
-					background: '#FA6E5A',
-					border: '#FA6E5A',
-					input: '#FA6E5A',
+				border: '#e6e6e6',
+				input: '#e6e6e6',
+				background: '#ffffff',
+				foreground: '#000000',
+				selection: {
+					DEFAULT: '#fa6e5a',
+					background: '#fa6e5a',
+					border: '#fa6e5a',
+					input: '#fa6e5a',
 				},
-				//01 color
-				blue_page:{
-					DEFAULT: '#5A96FA',
-					background: '#5A96FA',
+				homeblue: {
+					DEFAULT: '#5a96fa',
+					background: '#5a96fa',
 				},
-				//02 color
-				// opacity 68
-				yellow_select:{
-					DEFAULT: '#CEFA5A',
-					background: '#CEFA5A',
+				selected: {
+					DEFAULT: '#cefa5a',
+					background: '#cefa5a',
 					opacity: "var(--tw-opacity, 0.68)",
 				},
-				//03 color
-				blue_tittle:{
-					DEFAULT: '#141B36',
-					foreground: '#141B36',
-				},
-				//04 color
-				off_white:{
-					DEFAULT: '#F9F9FF',
-					foreground: '#F9F9FF',
-				},
-				//typografy
 				typography: {
-					DEFAULT: '#000000',
-					foreground: '#000000',
+					DEFAULT: '#141b36',
+					foreground: '#141b36',
 				},
-				//color 5
-				gray_text:{
-					DEFAULT: "#E6E6E6",
-					foreground: "#E6E6E6",
+				offwhite: {
+					DEFAULT: '#f9f9ff',
+					foreground: '#f9f9ff',
 				},
-				//color 6
-				gray_buttons:{
-					DEFAULT: "#A0A3B1",
-					foreground: "#A0A3B1",
-					border: "#A0A3B1",
-					input: "#A0A3B1",
+				gray1: {
+					DEFAULT: '#e6e6e6',
+					foreground: '#e6e6e6',
 				},
-				//color 7
-				allert_color:{
-					DEFAULT: '#FFC97E',
-					background: '#FFC97E',
+				gray2: {
+					DEFAULT: '#a0a3b1',
+					foreground: '#a0a3b1',
+					border: '#a0a3b1',
+					input: '#a0a3b1',
 				},
-				text_gray: {
+				accent1: {
+					DEFAULT: '#ffc97e',
+					background: '#ffc97e',
+				},
+				accent2: {
 					DEFAULT: '#464646',
 					foreground: '#464646',
 				},
 				card: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: white,
-					foreground: stone[950],
+					DEFAULT: '#ffffff',
+					foreground: '#000000',
 				},
 				popover: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: white,
-					foreground: stone[950],
+					DEFAULT: '#ffffff',
+					foreground: '#000000',
 				},
 				primary: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: orange[500],
-					foreground: orange[50],
+					DEFAULT: '#fa6e5a',
+					foreground: '#ffffff',
 				},
 				secondary: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: stone[100],
-					foreground: stone[900],
+					DEFAULT: '#e6e6e6',
+					foreground: '#000000',
 				},
 				muted: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: stone[100],
-					foreground: stone[500],
+					DEFAULT: '#e6e6e6',
+					foreground: '#a0a3b1',
 				},
 				accent: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: orange[100],
-					foreground: orange[900],
+					DEFAULT: '#ffc97e',
+					foreground: '#464646',
 				},
 				destructive: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: red[500],
-					foreground: red[50],
+					DEFAULT: '#fa6e5a',
+					foreground: '#ffffff',
 				},
 				success: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: green[500],
-					foreground: green[50],
+					DEFAULT: '#5a96fa',
+					foreground: '#ffffff',
 				},
 				warning: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: yellow[500],
-					foreground: yellow[50],
+					DEFAULT: '#ffc97e',
+					foreground: '#ffffff',
 				},
 				info: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: blue[500],
-					foreground: blue[50],
+					DEFAULT: '#5a96fa',
+					foreground: '#ffffff',
 				},
 			},
 		},

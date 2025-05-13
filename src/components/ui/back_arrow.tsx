@@ -13,14 +13,14 @@ const BackArrow: React.FC<BackArrowProps> = ({ className }) => {
     <Button
       variant="ghost"
       onClick={() => navigate(-1)} // Go back in history
-      className={`group flex items-center p-2 h-auto space-x-2 hover:bg-gray-100 ${className}`}
+      className={`group flex items-center p-2 h-auto space-x-2 hover:bg-muted ${className}`}
       aria-label="Go back"
     >
       <div className="flex items-center">
         <span 
           role="img" 
           aria-label="arrow" 
-          className="mgc_arrow_left_line text-3xl"
+          className="mgc_arrow_left_line text-3xl text-typography"
         ></span>
       </div>
     </Button>

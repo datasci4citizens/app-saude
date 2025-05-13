@@ -212,10 +212,11 @@ const CarouselPrevious = forwardRef<
 			variant={variant}
 			size={size}
 			className={cn(
-				'absolute h-8 w-8 rounded-full',
+				'absolute h-8 w-8 rounded-full border-input bg-background text-typography',
 				orientation === 'horizontal'
 					? '-left-12 -translate-y-1/2 top-1/2'
 					: '-top-12 -translate-x-1/2 left-1/2 rotate-90',
+				!canScrollPrev && 'opacity-50 cursor-not-allowed',
 				className,
 			)}
 			disabled={!canScrollPrev}
@@ -241,10 +242,11 @@ const CarouselNext = forwardRef<
 			variant={variant}
 			size={size}
 			className={cn(
-				'absolute h-8 w-8 rounded-full',
+				'absolute h-8 w-8 rounded-full border-input bg-background text-typography',
 				orientation === 'horizontal'
 					? '-right-12 -translate-y-1/2 top-1/2'
 					: '-bottom-12 -translate-x-1/2 left-1/2 rotate-90',
+				!canScrollNext && 'opacity-50 cursor-not-allowed',
 				className,
 			)}
 			disabled={!canScrollNext}

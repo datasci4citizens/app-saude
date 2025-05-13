@@ -1,6 +1,5 @@
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
-import { cn } from '@/lib/utils';
 
 interface DateFieldProps {
   id: string;
@@ -80,7 +79,7 @@ export function DateField({
   return (
     <div className="mb-4">
       {label && (
-        <label htmlFor={id} className="block text-sm font-['Inter'] font-light text-[#A0A3B1] mb-1">
+        <label htmlFor={id} className="block text-sm font-inter font-light text-typography mb-1">
           {label}
         </label>
       )}
@@ -92,11 +91,11 @@ export function DateField({
         onChange={(e) => handleDateChange(e)}
         placeholder={placeholder}
         maxLength={10}
-        className={`w-full h-14 px-4 py-2 bg-white border ${
-          error ? 'border-red-500' : 'border-gray-300'
-        } rounded-lg focus:outline-none focus:border-blue_page focus:ring-1 focus:ring-blue_page font-inter`}
+        className={`w-full h-14 px-4 py-2 bg-background border ${
+          error ? 'border-destructive' : 'border-input'
+        } rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-inter`}
       />
-      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+      {error && <p className="text-destructive text-xs mt-1">{error}</p>}
     </div>
   );
 }
