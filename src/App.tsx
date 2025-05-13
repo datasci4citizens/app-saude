@@ -7,6 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AcsMainPage from "./pages/provider/AcsMainPage";
 import UsermainPage from "./pages/patient/UserMainPage";
 import EmergencyPage from "./pages/patient/emergency/EmergencyPage";
+import EmergencyUser from "./pages/patient/emergency/EmergencyUser";
 import PatientsPage from "./pages/provider/PatientsPage";
 import ViewReminder from "./pages/patient/reminders/ViewReminder";
 import DiaryPage from "./pages/patient/diary/Diary";
@@ -15,6 +16,7 @@ import NewReminder from "./pages/patient/reminders/NewReminder";
 import OnboardingSlider from "./pages/landing/OnboardingSlider";
 import { SWRConfig } from 'swr';
 import AddProfessionalPage from "./pages/patient/profile/AddProfessionalPage";
+import ModifyHabits from "./pages/patient/diary/modify-habits";
 
 const NotFound = () => (
   <div>
@@ -100,9 +102,18 @@ const router = createBrowserRouter([
     element: <AddProfessionalPage />,
   },
   {
+    path: "/emergency-user",
+    element: <EmergencyUser />,
+  },
+  {
+  path: '/modify-habits',
+  element: <ModifyHabits />
+  },
+  {
     path: "*",
     element: <NotFound />,
   },
+  
 ]);
 
 export function App() {

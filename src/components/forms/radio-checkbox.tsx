@@ -16,6 +16,7 @@ export function RadioCheckbox({
 }: RadioCheckboxProps) {
   return (
     <div className="flex items-center space-x-2">
+
       <Checkbox 
         id={id}
         checked={checked}
@@ -25,6 +26,7 @@ export function RadioCheckbox({
       <Label 
         htmlFor={id}
         className="text-base font-normal text-typography leading-5 pt-[1px] font-inter"
+
       >
         {label}
       </Label>

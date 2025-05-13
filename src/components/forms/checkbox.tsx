@@ -14,7 +14,7 @@ interface CheckboxProps
   height?: string;
   width?: string;
   children?: React.ReactNode;
-  showChildrenOnSelectOnly?: boolean; // Controls when children should be visible
+  showChildrenOnSelectOnly?: boolean;
 }
 
 const Checkbox = forwardRef<
@@ -29,7 +29,7 @@ const Checkbox = forwardRef<
       height = "h-6",
       width = "w-6",
       children,
-      showChildrenOnSelectOnly = false, // Default to showing children all the time
+      showChildrenOnSelectOnly = false,
       ...props
     },
     ref
@@ -37,7 +37,9 @@ const Checkbox = forwardRef<
     <CheckboxPrimitive.Root
       ref={ref}
       className={cn(
+
         "peer shrink-0 border-1.7 border-typography ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center data-[state=checked]:bg-current",
+
         radius,
         height,
         width,

@@ -91,9 +91,11 @@ export function DateField({
         onChange={(e) => handleDateChange(e)}
         placeholder={placeholder}
         maxLength={10}
+
         className={`w-full h-14 px-4 py-2 bg-background border ${
           error ? 'border-destructive' : 'border-input'
         } rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-inter`}
+
       />
       {error && <p className="text-destructive text-xs mt-1">{error}</p>}
     </div>
