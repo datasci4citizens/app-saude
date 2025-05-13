@@ -5,6 +5,24 @@ import type { ObservationCreate } from '@/api/models/ObservationCreate';
 import type { DrugExposureCreate } from '@/api/models/DrugExposureCreate';
 import Select from 'react-select';
 import {useHealthConcepts} from '@/utils/conceptLoader';
+import { StylesConfig } from 'react-select';
+
+// Add this inside the UserInfoForm3 component before the return statement
+const customSelectStyles: StylesConfig = {
+  control: (provided, state) => ({
+    ...provided,
+    borderColor: state.isFocused ? '#FF7320' : '#A0A3B1', // orange when focused, gray_buttons otherwise
+    boxShadow: state.isFocused ? '0 0 0 1px #FF7320' : provided.boxShadow,
+    '&:hover': {
+      borderColor: state.isFocused ? '#FF7320' : '#A0A3B1'
+    }
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isSelected ? '#FF7320' : state.isFocused ? 'rgba(255, 115, 32, 0.1)' : null,
+    color: state.isSelected ? 'white' : provided.color
+  })
+};
 
 // Define form data interface (user-friendly structure)
 // Todos sao conceptIds como String
@@ -226,6 +244,7 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
         id="comorbidities"
         name="comorbidities"
         isMulti
+        styles={customSelectStyles}
         value={comorbiditiesOptions.filter(opt => formData.comorbidities.includes(opt.value))}
         onChange={(selectedOptions) => {
           const selectedIds = selectedOptions.map(opt => opt.value);
@@ -241,6 +260,7 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
         name="medications"
         placeholder="Busque remédios..."
         isMulti
+        styles={customSelectStyles}
         value={medicationOptions.filter(opt => formData.medications.includes(opt.value))}
         onChange={(selectedOptions) => {
           const selectedIds = selectedOptions.map(opt => opt.value);
@@ -254,6 +274,7 @@ export function UserInfoForm3({onSubmit}: {onSubmit: (data: SubmissionData) => v
         id="substanceUse"
         name="substanceUse"
         isMulti
+        styles={customSelectStyles}
         value={substanceOptions.filter(opt => formData.substanceUse.includes(opt.value))}
         onChange={(selectedOptions) => {
           const selectedIds = selectedOptions.map(opt => opt.value);
