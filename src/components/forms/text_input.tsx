@@ -40,7 +40,7 @@ export function TextField({
         onChange={onChange}
         placeholder={placeholder}
         className={`text-typography font-inter font-normal focus:ring-primary focus:ring-offset-0 ${
-          error ? 'border-selection' : 'border-input'
+          error ? 'border-selection' : 'border-gray2'
         }`}
       />
       

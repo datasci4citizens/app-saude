@@ -24,7 +24,7 @@ export const SelectableOption: React.FC<SelectableOptionProps> = ({
             }`}
           >
             {selected && (
-              <div className="absolute w-5 h-5 rounded-full bg-secondary top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2" />
+              <div className="absolute w-5 h-5 rounded-full bg-selected top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2" />
             )}
           </div>
         </div>
