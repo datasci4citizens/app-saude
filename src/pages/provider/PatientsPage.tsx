@@ -4,6 +4,8 @@ import PatientButton from '@/components/ui/patient-button';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
 import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
 import { Button } from '@/components/forms/button';
+import Header from '@/components/ui/header';
+
 
 export default function PatientsPage() {
   const [searchValue, setSearchValue] = useState('');
@@ -117,22 +119,13 @@ export default function PatientsPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 pb-24">
-      {/* Header with back button and title */}
-      <header className="p-4">
-        {/* Back button at the top */}
-        <div className="mb-2">
-          <button onClick={() => window.history.back()}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 18L9 12L15 6" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-        </div>
-        
-        {/* Title centered below */}
-        <div className="flex justify-center">
-            <h1 className="font-bold" style={{ fontFamily: "'Work Sans', sans-serif", fontSize: '34px' }}>Painel de pacientes</h1>
-        </div>
-      </header>
+      
+      {/* Header component */}
+      <div className="p-4">
+        <Header 
+          title="Painel de pacientes" 
+        />
+      </div>
 
       {/* Link code generator */}
       <div className="px-4 mb-4">
