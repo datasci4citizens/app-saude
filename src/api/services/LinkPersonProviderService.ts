@@ -4,7 +4,9 @@
 /* eslint-disable */
 import type { PersonLinkProviderRequest } from '../models/PersonLinkProviderRequest';
 import type { PersonLinkProviderResponse } from '../models/PersonLinkProviderResponse';
+import type { PersonRetrieve } from '../models/PersonRetrieve';
 import type { ProviderLinkCodeResponse } from '../models/ProviderLinkCodeResponse';
+import type { ProviderRetrieve } from '../models/ProviderRetrieve';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -25,6 +27,31 @@ export class LinkPersonProviderService {
         });
     }
     /**
+     * @returns ProviderRetrieve
+     * @throws ApiError
+     */
+    public static personProvidersList(): CancelablePromise<Array<ProviderRetrieve>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/person/providers/',
+        });
+    }
+    /**
+     * @param requestBody
+     * @returns ProviderRetrieve
+     * @throws ApiError
+     */
+    public static providerByLinkCodeCreate(
+        requestBody: PersonLinkProviderRequest,
+    ): CancelablePromise<ProviderRetrieve> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/provider/by-link-code/',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
      * @returns ProviderLinkCodeResponse
      * @throws ApiError
      */
@@ -32,6 +59,16 @@ export class LinkPersonProviderService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/provider/link-code/',
+        });
+    }
+    /**
+     * @returns PersonRetrieve
+     * @throws ApiError
+     */
+    public static providerPersonsList(): CancelablePromise<Array<PersonRetrieve>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/provider/persons/',
         });
     }
 }

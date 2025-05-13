@@ -2,7 +2,7 @@ version: '5.2'
 
 services:
   backend:
-    image: aasatorres/server_saude:0.5.2
+    image: unjun/server-saude-web:0.5.3
     container_name: server_saude
     command: python manage.py runserver 0.0.0.0:8000
     ports:
