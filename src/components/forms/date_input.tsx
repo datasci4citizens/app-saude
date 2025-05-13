@@ -94,7 +94,8 @@ export function DateField({
         maxLength={10}
         className={`w-full h-14 px-4 py-2 bg-white border ${
           error ? 'border-red-500' : 'border-gray-300'
-        } rounded-lg focus:outline-none focus:border-blue_page focus:ring-1 focus:ring-blue_page font-inter`}
+        } rounded-lg focus:outline-none focus:border-orange focus:ring-1 focus:ring-orange font-inter`}
+        ref={inputRef}
       />
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
     </div>
