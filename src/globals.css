@@ -17,7 +17,7 @@
     height: 100%;
     overflow: auto;
   }
-  s
+
   [class^='mgc_']::before,
   [class*=' mgc_']::before {
     color: inherit !important;

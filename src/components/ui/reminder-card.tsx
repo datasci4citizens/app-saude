@@ -31,18 +31,18 @@ const ReminderCard: React.FC<ReminderCardProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-between bg-[#F9F9FF] rounded-xl p-4 w-full my-2 min-h-[72px]">
+    <div className="flex items-center justify-between bg-muted rounded-xl p-4 w-full my-2 min-h-[72px]">
       {/* Icon container */}
-      <div className="flex items-center justify-center bg-[#EAE7FF] rounded-full w-[54px] h-[54px] text-xl text-purple">
+      <div className="flex items-center justify-center bg-secondary rounded-full w-[54px] h-[54px] text-xl text-success">
         {icon}
       </div>
 
       {/* Text content */}
       <div className="flex-1 ml-4">
-        <h4 className="text-base font-normal m-0 text-dark_blue font-inter">
+        <h4 className="text-base font-normal m-0 text-typography font-inter">
           {title}
         </h4>
-        <p className="text-xs m-0 text-gray_buttons font-inter">
+        <p className="text-xs m-0 text-gray2 font-inter">
           {subtitle}
         </p>
       </div>
@@ -58,7 +58,7 @@ const ReminderCard: React.FC<ReminderCardProps> = ({
           radius="rounded-md"
           showChildrenOnSelectOnly={true}
         >
-          <span className="mgc_check_line text-xs text-dark_blue" />
+          <span className="mgc_check_line text-xs text-typography" />
         </Checkbox>
       )}
     </div>

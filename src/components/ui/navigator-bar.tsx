@@ -98,7 +98,7 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   };
 
   return (
-    <div className="flex justify-around items-center py-2.5 bg-background w-full fixed bottom-0 left-0 shadow-[0_-1px_5px_rgba(0,0,0,0.1)] z-50">
+    <div className="flex justify-around items-center py-2.5 bg-background w-full fixed bottom-0 left-0 shadow-[0_-1px_5px_rgba(0,0,0,0.1)] border-t border-input z-50">
       {navItems.map((item) => {
         const isActive = activeItemId === item.id;
         
@@ -115,7 +115,7 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
               className={`
                 flex justify-center items-center w-10 h-10 mb-1 text-2xl rounded-[10px]
                 transition-all duration-200 ease-in-out
-                ${isActive ? 'bg-orange text-off_white' : 'bg-background text-gray_buttons'}
+                ${isActive ? 'bg-selection text-offwhite' : 'bg-background text-gray2'}
               `}
             >
               {item.icon}
@@ -124,7 +124,7 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
               className={`
                 flex justify-center items-center h-7 text-center text-[10px] leading-3
                 font-inter font-medium transition-colors duration-200
-                ${isActive ? 'text-orange' : 'text-gray_buttons'}
+                ${isActive ? 'text-primary' : 'text-gray2'}
               `}
             >
               {item.label}

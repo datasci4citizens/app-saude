@@ -43,7 +43,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
         rounded-xl 
         h-[250px] 
         overflow-hidden
-        ${isEmergency ? 'bg-allert_color' : 'bg-background'}
+        ${isEmergency ? 'bg-accent  ' : 'bg-background'}
       `}
     >
       <CardContent className="p-0 h-full">
@@ -70,7 +70,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
             {/* Container do botão alinhado à direita inferior */}
             <div className="mt-auto p-4 flex justify-end">
               <Button 
-                className="rounded-full px-6 py-2 text-sm bg-blue_tittle text-off_white hover:bg-blue_tittle/90"
+                className="rounded-full px-6 py-2 text-sm bg-typography text-primary-foreground hover:bg-success/90"
                 onClick={onClick}
               >
                 VER
@@ -79,17 +79,17 @@ const InfoCard: React.FC<InfoCardProps> = ({
           </div>
         ) : isConsultations ? (
           /* Card de Lista de Consultas */
-          <div className="flex flex-col h-full">
+          <div className="flex flex-col h-full, bg-offwhite">
             {/* Cabeçalho */}
             <div className="p-4 pb-2">
-              <h3 className="text-lg font-bold font-inter text-gray-600 mb-1">{title}</h3>
+              <h3 className="text-lg font-bold font-inter text-typography mb-1">{title}</h3>
               
               {/* Lista de consultas */}
               <div className="mt-3">
                 {consultations.map((consultation, index) => (
                   <div key={index} className="mb-2">
-                    <div className="text-xs font-inter text-gray-600 mb-0.5">{consultation.doctor}</div>
-                    <div className="text-xs text-gray-600 font-inter mb-3">{consultation.time}</div>
+                    <div className="text-xs font-inter text-typography mb-0.5">{consultation.doctor}</div>
+                    <div className="text-xs text-black font-inter mb-3">{consultation.time}</div>
                   </div>
                 ))}
               </div>
@@ -99,7 +99,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
             <div className="mt-auto p-4 pt-2 flex justify-center">
               <Button 
                 onClick={onClick}
-                className="rounded-full px-6 py-2 text-sm bg-orange text-off_white hover:bg-orange/90"
+                className="rounded-full px-6 py-2 text-sm bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 VER
               </Button>
@@ -110,9 +110,9 @@ const InfoCard: React.FC<InfoCardProps> = ({
           <div className="flex flex-col h-full">
             {/* Cabeçalho */}
             <div className="flex flex-col items-center pt-4 flex-grow">
-              <h3 className="text-lg font-bold font-inter text-gray-600 mb-1">{title}:</h3>
-              <p className="font-bold text-lg leading-tight font-inter text-gray-600">{name}</p>
-              <div className="text-xs font-medium font-work-sans text-gray-600">
+              <h3 className="text-lg font-bold font-inter text-typography mb-1">{title}:</h3>
+              <p className="font-bold text-lg leading-tight font-inter text-typography">{name}</p>
+              <div className="text-xs font-medium font-inter text-gray2">
                 {date} - {time}
               </div>
             </div>
@@ -121,7 +121,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
             <div className="mt-auto p-4 flex justify-end">
               <Button 
                 onClick={onClick}
-                className="rounded-full px-6 py-2 text-sm bg-orange text-off_white hover:bg-orange/90"
+                className="rounded-full px-6 py-2 text-sm bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 VER
               </Button>

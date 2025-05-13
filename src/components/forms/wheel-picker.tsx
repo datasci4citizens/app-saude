@@ -129,7 +129,7 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
                 }}
                 className={cn(
                   "text-center text-base cursor-pointer transition-opacity duration-200",
-                  index === selectedIndex ? "font-bold text-dark_blue" : "font-normal text-gray_buttons"
+                  index === selectedIndex ? "font-bold text-typography" : "font-normal text-gray2-foreground"
                 )}
                 style={{
                   height: `${itemHeight}px`,

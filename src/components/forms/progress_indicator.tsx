@@ -11,7 +11,7 @@ interface ProgressIndicatorProps {
 export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   currentStep,
   totalSteps,
-  activeColor = "bg-[#CEFA5A]",
+  activeColor = "bg-selected",
   inactiveColor = "bg-transparent", 
   className = "",
 }) => {
@@ -20,7 +20,7 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   
   return (
     <div className={`mt-[30px] mb-6 mx-8 ${className}`}>
-      <div className="flex h-2 w-full bg-gray-200 rounded-full overflow-hidden">
+      <div className="flex h-2 w-full bg-gray1 rounded-full overflow-hidden">
         {steps.map((step) => (
           <div
             key={step}

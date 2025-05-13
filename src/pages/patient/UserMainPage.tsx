@@ -157,15 +157,15 @@ export default function AcsMainPage() {
     
     // Handle error states
     if (drugExposuresError) {
-        return <div className="text-red-500 p-4">Error fetching drug exposures: {drugExposuresError.message}</div>;
+        return <div className="text-selection p-4">Error fetching drug exposures: {drugExposuresError.message}</div>;
     }
     
     if (medicationNamesError) {
-        return <div className="text-red-500 p-4">Error fetching medication names: {medicationNamesError.message}</div>;
+        return <div className="text-selection p-4">Error fetching medication names: {medicationNamesError.message}</div>;
     }
 
     if (consultationsError) {
-        return <div className="text-red-500 p-4">Error fetching consultations: {consultationsError.message}</div>;
+        return <div className="text-selection p-4">Error fetching consultations: {consultationsError.message}</div>;
     }
 
     // Prepare medication data for display - use translated_name as fallback if concept_name is null

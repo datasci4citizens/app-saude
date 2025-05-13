@@ -87,7 +87,7 @@ const DrawerTitle = forwardRef<
 	<DrawerPrimitive.Title
 		ref={ref}
 		className={cn(
-			'font-semibold text-lg leading-none tracking-tight',
+			'font-semibold text-lg text-typography font-inter leading-none tracking-tight',
 			className,
 		)}
 		{...props}
@@ -101,7 +101,7 @@ const DrawerDescription = forwardRef<
 >(({ className, ...props }, ref) => (
 	<DrawerPrimitive.Description
 		ref={ref}
-		className={cn('text-muted-foreground text-sm', className)}
+		className={cn('text-gray2 text-sm font-inter', className)}
 		{...props}
 	/>
 ));

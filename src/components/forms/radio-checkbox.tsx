@@ -1,4 +1,3 @@
-import React from 'react';
 import { Checkbox } from '@/components/forms/checkbox';
 import { Label } from '@/components/ui/label';
 
@@ -17,22 +16,17 @@ export function RadioCheckbox({
 }: RadioCheckboxProps) {
   return (
     <div className="flex items-center space-x-2">
-    <Checkbox 
-      id={id}
-      checked={checked}
-      onCheckedChange={onCheckedChange}
-      className={`
-        h-5 w-5 flex-shrink-0 rounded-[4px] 
-        border-gray-300 bg-white 
-        data-[state=checked]:!bg-[#FA6E5A] 
-        data-[state=checked]:!border-[#FA6E5A] 
-        data-[state=checked]:!text-white 
-        transition-colors
-      `}
-    />
+
+      <Checkbox 
+        id={id}
+        checked={checked}
+        onCheckedChange={onCheckedChange}
+        className="h-5 w-5 flex-shrink-0 rounded-[4px] border-input bg-background data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+      />
       <Label 
         htmlFor={id}
-        className="text-base font-normal text-gray-700 leading-5 pt-[1px]"
+        className="text-base font-normal text-typography leading-5 pt-[1px] font-inter"
+
       >
         {label}
       </Label>

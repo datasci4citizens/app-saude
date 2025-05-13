@@ -95,7 +95,7 @@ export default function ProfessionalOnboarding() {
   };
 
   return (
-    <div className="h-full bg-white overflow-y-auto" style={{height: '100vh'}}>
+    <div className="h-full bg-background overflow-y-auto" style={{height: '100vh'}}>
       <div className="max-w-md mx-auto">
         
         {/* Header */}
@@ -108,14 +108,14 @@ export default function ProfessionalOnboarding() {
         
         <div className="pl-9 pr-9">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-3 mb-4">
+            <div className="bg-destructive/10 border border-destructive/20 text-destructive rounded-md p-3 mb-4">
               <p>{error}</p>
             </div>
           )}
 
           {isMutating ? (
             <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#CEFA5A]"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-selected"></div>
             </div>
           ) : (
             <ProfessionalInfoForm onSubmit={handleFormSubmit} />

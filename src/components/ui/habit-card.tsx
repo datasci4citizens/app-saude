@@ -18,8 +18,8 @@ const HabitCard: React.FC<HabitCardProps> = ({
   return (
     <div 
       className={`
-        bg-orange
-        text-off_white
+        bg-primary
+        text-primary-foreground
         font-inter
         font-bold
         text-lg
