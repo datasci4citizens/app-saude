@@ -1,76 +1,79 @@
-// EmergencyScreen.tsx
-// src/pages/patient/emergency/EmergencyUser.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useSWR from 'swr';
 import { RadioCheckbox } from "@/components/forms/radio-checkbox";
 import { Button } from "@/components/forms/button";
-import { TextField } from '@/components/ui/text_input_diary';
-import { ProviderService } from '@/api/services/ProviderService';
-import type { Provider } from '@/api/models/Provider';
-import { ObservationService } from '@/api/services/ObservationService';
-import BackArrow from '@/components/ui/back_arrow';
+import { TextField } from '@/components/forms/text_input';
+import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
+import { ApiService } from '@/api/services/ApiService';
+import type { ProviderRetrieve } from '@/api/models/ProviderRetrieve';
+import { EmergencyService } from '@/api/services/EmergencyService';
+import Header from "@/components/ui/header";
+import type { ObservationCreate } from '@/api/models/ObservationCreate';
 
-// Dados mockados temporários
-const MOCK_USER = {
-  person_id: 999, // ID fixo para desenvolvimento
-  token: 'fake-token' // Token mockado
+// Fetcher function for SWR
+const fetcher = async (url: string) => {
+  if (url === 'providers') {
+    return await LinkPersonProviderService.personProvidersList();
+  }
+  if (url === 'user') {
+    return await ApiService.apiUserEntityRetrieve();
+  }
+  throw new Error('Unknown fetcher URL');
 };
 
 export default function EmergencyScreen() {
   const navigate = useNavigate();
-  const [providers, setProviders] = useState<Provider[]>([]);
   const [selectedProviders, setSelectedProviders] = useState<number[]>([]);
   const [freeText, setFreeText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Buscar profissionais (mockado)
-  useEffect(() => {
-    const loadProviders = async () => {
-      try {
-        // Versão mockada
-        const mockProviders = [
-          { provider_id: 1, social_name: 'Dr. Teste Silva' },
-          { provider_id: 2, social_name: 'Enf. Teste Souza' }
-        ];
-        setProviders(mockProviders);
+  // Fetch user data
+  const { data: user, error: userError, isLoading: isUserLoading } = useSWR(
+    'user',
+    fetcher,
+    {
+      revalidateOnFocus: false,
+    }
+  );
 
-        // Se quiser usar a API real (ajuste a URL):
-        // const providers = await ProviderService.apiProviderList();
-        // setProviders(providers);
-      } catch (error) {
-        console.error('Erro ao carregar profissionais:', error);
-      }
-    };
-
-    loadProviders();
-  }, []);
+  // Fetch linked providers
+  const { data: providers, error: providersError, isLoading: isProvidersLoading } = useSWR(
+    user ? 'providers' : null,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 60000, // Cache for 1 minute
+    }
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!user?.person_id) {
+      console.error('User ID is missing');
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
-      // Dados fixos para desenvolvimento
-      const observationData = {
-        observation_concept: 456, // ID mockado
-        person: MOCK_USER.person_id,
-        provider: selectedProviders[0], // Primeiro selecionado
-        value_as_string: freeText,
+      // Create emergency observations for each selected provider
+      const emergencyRequests: ObservationCreate[] = selectedProviders.map(providerId => ({
+        observation_concept: 6000, // ID for emergency concept - replace with actual concept ID
+        person: user.person_id, // Replace with actual user ID
+        provider: providerId, 
+        value_as_string: freeText || "Emergência",
         observation_date: new Date().toISOString(),
         shared_with_provider: true
-      };
+      }));
 
-      // Simular chamada à API
-      console.log('Dados enviados:', observationData);
+      // Send the emergency request
+      await EmergencyService.emergencySendCreate(emergencyRequests);
       
-      // Se quiser usar a API real:
-      // await ObservationService.apiObservationCreate(observationData);
-
-      alert('Alerta enviado com sucesso! (Modo de desenvolvimento)');
-      navigate('/');
+      navigate('/user-main-page');
     } catch (error) {
-      console.error('Erro simulado:', error);
-      alert('Erro simulado - consulte o console');
+      console.error('Erro ao enviar emergência:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -84,27 +87,71 @@ export default function EmergencyScreen() {
     );
   };
 
+  // Handle loading state
+  if (isUserLoading || isProvidersLoading) {
+    return (
+      <div className="max-w-md mx-auto p-4">
+        <Header title="Emergência" />
+        <div className="mt-8 text-center">
+          <p className="text-gray2">Carregando profissionais...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Handle error state
+  if (providersError) {
+    return (
+      <div className="max-w-md mx-auto p-4">
+        <Header title="Emergência" />
+        <div className="mt-8 text-center">
+          <p className="text-destructive">Erro ao carregar seus profissionais</p>
+          <Button 
+            variant="orange" 
+            className="mt-4"
+            onClick={() => navigate('/user-main-page')}
+          >
+            Voltar para tela inicial
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Handle no linked providers
+  if (providers && providers.length === 0) {
+    return (
+      <div className="max-w-md mx-auto p-4">
+        <Header title="Emergência" />
+        <div className="mt-8 text-center">
+          <p className="text-gray2 mb-2">Você não possui profissionais vinculados</p>
+          <p className="text-gray2 mb-4">Para enviar alertas de emergência, você precisa adicionar um profissional ao seu perfil.</p>
+          <Button 
+            variant="orange" 
+            onClick={() => navigate('/patient/profile/add-professional')}
+          >
+            Adicionar profissional
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-md mx-auto p-4">
-      <div className="mb-6">
-        <BackArrow />
-      </div>
-
-      <h1 className="font-bold text-[28px] ml-8" style={{ fontFamily: "'Work Sans', sans-serif", color: '#3F414E' }}>
-        Emergência
-      </h1>
+      <Header title="Emergência" />
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2 ml-8">
-          <h3 className="font-semibold text-[16px] font-inter text-[#3F414E]">
+          <h3 className="font-semibold text-[16px] font-inter text-typography">
             Quais profissionais você deseja alertar?
           </h3>
           <div className="flex flex-col gap-4">
-            {providers.map(provider => (
+            {providers && providers.map((provider: ProviderRetrieve) => (
               <RadioCheckbox
                 key={provider.provider_id}
                 id={`provider-${provider.provider_id}`}
-                label={provider.social_name || 'Profissional sem nome'}
+                label={provider.social_name || provider.name || 'Profissional sem nome'}
                 checked={selectedProviders.includes(provider.provider_id)}
                 onCheckedChange={() => handleProviderSelect(provider.provider_id)}
               />
@@ -116,7 +163,6 @@ export default function EmergencyScreen() {
           <TextField
             size="large"
             multiline
-            variant="static-orange"
             label="Mensagem"
             placeholder="Descreva sua emergência..."
             value={freeText}
