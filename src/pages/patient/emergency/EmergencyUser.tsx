@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import { RadioCheckbox } from "@/components/forms/radio-checkbox";
 import { Button } from "@/components/forms/button";
-import { TextField } from '@/components/forms/text_input';
+import { TextField } from '@/components/forms/text_input'; // deixar este text_input
 import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
 import { ApiService } from '@/api/services/ApiService';
 import type { ProviderRetrieve } from '@/api/models/ProviderRetrieve';
@@ -60,8 +60,7 @@ export default function EmergencyScreen() {
     try {
       // Create emergency observations for each selected provider
       const emergencyRequests: ObservationCreate[] = selectedProviders.map(providerId => ({
-        observation_concept: 6000, // ID for emergency concept - replace with actual concept ID
-        person: user.person_id, // Replace with actual user ID
+        person: user.person_id,
         provider: providerId, 
         value_as_string: freeText || "Emergência",
         observation_date: new Date().toISOString(),
