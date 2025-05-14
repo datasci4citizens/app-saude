@@ -61,8 +61,8 @@ export function SelectField({
           id={id}
           disabled={isLoading}
           className={`text-[#141B36] font-['Inter'] font-normal ring-offset-0 ${
-            error ? "border-red-500" : "border-gray-300"
-          } focus:ring-orange focus:ring-2 focus:border-none`}
+            error ? "border-destructive" : "border-gray1"
+          } focus:ring-primary focus:ring-2 focus:border-none`}
         >
         <SelectValue placeholder={placeholder} />
         </SelectTrigger>
