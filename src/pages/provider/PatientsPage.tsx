@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TextField } from '@/components/forms/text_input';
 import PatientButton from '@/components/ui/patient-button';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
@@ -6,6 +6,17 @@ import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderServ
 import { Button } from '@/components/forms/button';
 import Header from '@/components/ui/header';
 
+import { ProviderService } from '@/api/services/ProviderService';
+
+interface Patient {
+  id: string | number;
+  name: string;
+  age: number;
+  lastVisit?: string;
+  lastEmergency?: string;
+  urgent?: boolean;
+  highlight?: boolean;
+}
 
 export default function PatientsPage() {
   const [searchValue, setSearchValue] = useState('');
@@ -13,51 +24,41 @@ export default function PatientsPage() {
   const [linkCode, setLinkCode] = useState<string | null>(null);
   const [isGeneratingCode, setIsGeneratingCode] = useState(false);
   const [codeError, setCodeError] = useState<string | null>(null);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
-  // Sample data for patients
-  const patients = [
-    {
-      id: 'claudia123',
-      name: 'Cláudia Fernandes',
-      age: 18,
-      lastConsult: '31/03/2024',
-      lastRegistry: '28/04/2025',
-      lastEmergency: '',
-    },
-    {
-      id: 'fernanda456',
-      name: 'Fernanda Ribeiro',
-      age: 22,
-      lastConsult: '31/03/2024',
-      lastRegistry: '29/04/2025',
-      lastEmergency: '01/01/2024',
-      highlight: true, // Usado para destacar o cartão em azul
-    },
-    {
-      id: 'jose789',
-      name: 'José Silva',
-      age: 66,
-      lastConsult: '25/03/2024',
-      lastRegistry: '26/04/2025',
-      lastEmergency: '01/01/2024',
-    },
-    {
-      id: 'amanda101',
-      name: 'Amanda de Souza',
-      age: 30,
-      lastConsult: '25/03/2024',
-      lastRegistry: '25/04/2024',
-      lastEmergency: '01/01/2024',
-      urgent: true, // Usado para destacar o cartão em laranja
-    }
-  ];
+  // Buscar pacientes da API ao montar o componente
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        setLoading(true);
+        const apiPatients = await ProviderService.providerPersonsRetrieve();
+        
+        // Converter os dados da API para o formato esperado pelo componente
+        const formattedPatients: Patient[] = apiPatients.map((patient: any) => ({
+          id: patient.person_id,
+          name: patient.name,
+          age: patient.age || 0,
+          lastVisit: patient.last_visit_date || '',
+          lastEmergency: patient.last_emergency_date || '',
+          // Marcar como urgente se tiver emergência nos últimos 30 dias
+          urgent: patient.last_emergency_date ? 
+            (new Date().getTime() - new Date(patient.last_emergency_date).getTime()) / (1000 * 3600 * 24) < 30 : false,
+        }));
+        
+        setPatients(formattedPatients);
+      } catch (err) {
+        console.error('Erro ao buscar pacientes:', err);
+        setError('Não foi possível carregar a lista de pacientes.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPatients();
+  }, []);
 
-  // Função auxiliar para converter data DD/MM/AAAA para objeto Date
-  const parseDate = (dateStr: string) => {
-    if (!dateStr) return new Date(0); // Data mínima se estiver vazio
-    const [day, month, year] = dateStr.split('/').map(Number);
-    return new Date(year, month - 1, day);
-  };
   
   // Filtra pacientes com base na busca
   const filteredBySearch = patients.filter(patient => 
@@ -210,16 +211,23 @@ export default function PatientsPage() {
 
       {/* Patients list */}
       <div className="flex-1 px-4 overflow-auto">
-        {filteredPatients.length > 0 ? (
+        {loading ? (
+          <div className="text-center p-4 text-gray-500">
+            Carregando pacientes...
+          </div>
+        ) : error ? (
+          <div className="text-center p-4 text-red-500">
+            {error}
+          </div>
+        ) : filteredPatients.length > 0 ? (
           filteredPatients.map((patient, index) => (
             <PatientButton
               key={index}
               variant={getPatientVariant(patient)}
               name={patient.name}
               age={patient.age || 0}
-              lastConsult={patient.lastConsult}
-              lastRegistry={patient.lastRegistry}
-              lastEmergency={patient.lastEmergency}
+              lastEmergency={patient.lastEmergency || 'Sem emergência'}
+              lastVisit={patient.lastVisit || 'Sem visitas recentes'}
               onClick={() => handlePatientClick(patient)}
             />
           ))

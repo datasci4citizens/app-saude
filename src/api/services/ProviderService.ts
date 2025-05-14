@@ -140,4 +140,81 @@ export class ProviderService {
             },
         });
     }
+    /**
+     * Função para obter todos os pacientes vinculados ao médico (provider) autenticado
+     *
+     * Returns:
+     * lista de dicionários com os dados de cada paciente:
+     * - person_id: ID do paciente
+     * - name: Nome do paciente (social_name ou nome do usuário)
+     * - age: Idade calculada com base na data de nascimento ou ano de nascimento
+     * - last_visit_date: Data da última consulta com este provider
+     * - last_visit_notes: Notas da última consulta com este provider
+     * - last_emergency_date: Data da última emergência registrada
+     * @param providerId
+     * @returns any No response body
+     * @throws ApiError
+     */
+    public static providerPersonsRetrieve2(
+        providerId: number,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/provider/{provider_id}/persons/',
+            path: {
+                'provider_id': providerId,
+            },
+        });
+    }
+    /**
+     * Função para obter o número de emergências ativas para os pacientes vinculados ao provider autenticado
+     *
+     * Returns:
+     * objeto com a contagem de emergências ativas:
+     * - emergency_count: número de emergências ativas
+     * @returns any No response body
+     * @throws ApiError
+     */
+    public static providerEmergencyCountRetrieve(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/provider/emergency-count/',
+        });
+    }
+    /**
+     * Função para obter a próxima visita agendada para o provider autenticado
+     *
+     * Returns:
+     * objeto com informações sobre a próxima visita:
+     * - person_name: Nome do paciente
+     * - visit_date: Data e horário da consulta
+     * @returns any No response body
+     * @throws ApiError
+     */
+    public static providerNextVisitRetrieve(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/provider/next-visit/',
+        });
+    }
+    /**
+     * Função para obter todos os pacientes vinculados ao médico (provider) autenticado
+     *
+     * Returns:
+     * lista de dicionários com os dados de cada paciente:
+     * - person_id: ID do paciente
+     * - name: Nome do paciente (social_name ou nome do usuário)
+     * - age: Idade calculada com base na data de nascimento ou ano de nascimento
+     * - last_visit_date: Data da última consulta com este provider
+     * - last_visit_notes: Notas da última consulta com este provider
+     * - last_emergency_date: Data da última emergência registrada
+     * @returns any No response body
+     * @throws ApiError
+     */
+    public static providerPersonsRetrieve(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/provider/persons/',
+        });
+    }
 }

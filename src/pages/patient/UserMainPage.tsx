@@ -115,7 +115,7 @@ export default function AcsMainPage() {
 
     // Funções de navegação
     const handleEmergencyClick = () => {
-        navigate('/emergencie');
+        navigate('/emegency-user');
     };
 
     const handleAppointmentClick = () => {
@@ -186,7 +186,7 @@ export default function AcsMainPage() {
                 navigate('/patients');
                 break;
             case 'emergency':
-                navigate('/emergencie');
+                navigate('/emergency-user');
                 break;
             case 'profile':
                 navigate('/profile');
