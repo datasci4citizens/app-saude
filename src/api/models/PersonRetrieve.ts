@@ -9,7 +9,7 @@ export type PersonRetrieve = {
     social_name?: string | null;
     birth_datetime?: string | null;
     year_of_birth?: number | null;
-    user?: number | null;
+    user: number;
     gender_concept?: number | null;
     ethnicity_concept?: number | null;
     race_concept?: number | null;
