@@ -4,9 +4,8 @@ interface PatientButtonProps {
     variant?: 'patient' | 'emergency';
     name: string; 
     age?: number;
-    lastConsult: string;
-    lastRegistry: string;
-    lastEmergency: string;
+    lastEmergency?: string;
+    lastVisit?: string;
     active?: boolean;
     onClick?: () => void;
     onClickEmergency?: () => void;
@@ -16,9 +15,8 @@ const PatientButton: React.FC<PatientButtonProps> = ({
     variant = 'patient',
     name,
     age,
-    lastConsult,
-    lastRegistry,
     lastEmergency,
+    lastVisit,
     active = false,
     onClick,
     onClickEmergency
@@ -38,7 +36,7 @@ const PatientButton: React.FC<PatientButtonProps> = ({
                 ease-in-out
                 cursor-pointer
                 hover:-translate-y-0.5
-                ${isEmergency ? 'bg-primary' : 'bg-background'}
+                ${isEmergency ? 'bg-primary' : 'bg-offwhite'}
                 ${isEmergency ? 'hover:shadow-[0_6px_12px_rgba(250,110,90,0.25)]' : 'hover:shadow-[0_6px_12px_rgba(0,0,0,0.15)]'}
                 shadow-sm
             `}
@@ -61,16 +59,7 @@ const PatientButton: React.FC<PatientButtonProps> = ({
                     font-normal
                     ${isEmergency ? 'text-primary-foreground' : 'text-typography'}
                 `}>
-                    Última consulta: {lastConsult}
-                </div>
-                <div className={`
-                    text-xs
-                    mb-0.5
-                    font-inter
-                    font-normal
-                    ${isEmergency ? 'text-primary-foreground' : 'text-typography'}
-                `}>
-                    Último registro compartilhado: {lastRegistry}
+                    Última consulta: {lastVisit || "Nenhuma"}
                 </div>
                 {isEmergency ? (
                     <div 

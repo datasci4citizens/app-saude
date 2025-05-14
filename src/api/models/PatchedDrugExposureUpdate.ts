@@ -2,14 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { RecurrenceRuleUpdate } from './RecurrenceRuleUpdate';
 export type PatchedDrugExposureUpdate = {
     readonly drug_exposure_id?: number;
-    drug_exposure_start_date?: string | null;
-    drug_exposure_end_date?: string | null;
+    recurrence_rule?: RecurrenceRuleUpdate;
     stop_reason?: string | null;
     quantity?: number | null;
-    interval_hours?: number | null;
-    dose_times?: string | null;
     sig?: string | null;
     person?: number | null;
     drug_concept?: number | null;
