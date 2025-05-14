@@ -1,3 +1,4 @@
+
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
@@ -20,11 +21,14 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-    BASE: '',
+    BASE: 'http://localhost:8000',
     VERSION: '0.0.0',
-    WITH_CREDENTIALS: false,
+    WITH_CREDENTIALS: true,
     CREDENTIALS: 'include',
-    TOKEN: undefined,
+    TOKEN: async () => {
+        const token = localStorage.getItem('accessToken');
+        return `${token || ''}`;
+    },
     USERNAME: undefined,
     PASSWORD: undefined,
     HEADERS: undefined,
