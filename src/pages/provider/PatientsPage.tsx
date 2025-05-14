@@ -52,12 +52,6 @@ export default function PatientsPage() {
     fetchPatients();
   }, []);
 
-  // Função auxiliar para converter data DD/MM/AAAA para objeto Date
-  const parseDate = (dateStr: string) => {
-    if (!dateStr) return new Date(0); // Data mínima se estiver vazio
-    const [day, month, year] = dateStr.split('/').map(Number);
-    return new Date(year, month - 1, day);
-  };
   
   // Filtra pacientes com base na busca
   const filteredBySearch = patients.filter(patient => 
