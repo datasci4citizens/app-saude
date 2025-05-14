@@ -6,33 +6,38 @@ import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderServ
 import type { PersonLinkProviderRequest } from '@/api/models/PersonLinkProviderRequest';
 import type { ProviderRetrieve } from '@/api/models/ProviderRetrieve';
 
+import errorImage from "@/lib/images/error.png"; // ajuste o caminho conforme necessário
+
 const AddProfessionalPage = () => {
   const [providerCode, setProviderCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLinking, setIsLinking] = useState(false);
-  const [linkError, setLinkError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [linkSuccess, setLinkSuccess] = useState(false);
   const [provider, setProvider] = useState<ProviderRetrieve | null>(null);
+  const [showVisualError, setShowVisualError] = useState(false);
 
   // Fetch provider details by code
   const fetchProviderByCode = async () => {
     if (!providerCode || providerCode.length !== 6) {
       setError("O código deve ter 6 dígitos");
+      setShowVisualError(true);
       return;
     }
-    
+
     setIsLoading(true);
     setError(null);
+    setShowVisualError(false);
     setProvider(null);
-    
+
     try {
       const request: PersonLinkProviderRequest = { code: providerCode };
       const providerData = await LinkPersonProviderService.providerByLinkCodeCreate(request);
       setProvider(providerData);
     } catch (err) {
       console.error('Error fetching provider:', err);
-      setError('Código inválido ou expirado. Verifique e tente novamente.');
+      setError("Não foi possível vincular ao profissional. Verifique o código e tente novamente.");
+      setShowVisualError(true);
     } finally {
       setIsLoading(false);
     }
@@ -40,34 +45,26 @@ const AddProfessionalPage = () => {
 
   // Function to handle linking with provider
   const handleAddProvider = async () => {
-    if (!providerCode || providerCode.length !== 6){
-      setLinkError("O código deve ter 6 dígitos");
+    if (!providerCode || providerCode.length !== 6) {
+      setError("O código deve ter 6 dígitos");
+      setShowVisualError(true)
       return;
     }
 
     setIsLinking(true);
-    setLinkError(null);
 
     try {
-      // Create the request payload
       const linkRequest: PersonLinkProviderRequest = {
         code: providerCode
       };
 
-      // Call the API to link patient with provider
       const response = await LinkPersonProviderService.personLinkCodeCreate(linkRequest);
 
-      // Handle success
       setLinkSuccess(true);
-
-      // show success message
-      // not in console though
       alert("Profissional vinculado com sucesso!");
       console.log('Successfully linked with provider:', response);
     } catch (error) {
-      // Handle errors
       console.error('Error linking with provider:', error);
-      setLinkError('Não foi possível vincular ao profissional. Verifique o código e tente novamente.');
     } finally {
       setIsLinking(false);
     }
@@ -88,22 +85,32 @@ const AddProfessionalPage = () => {
           value={providerCode}
           onChange={(e) => setProviderCode(e.target.value)}
           placeholder="Código de 6 dígitos"
-          error={error || undefined}
+          error={error && !showVisualError ? error : undefined}
         />
-        
+
+        {showVisualError && !provider && !linkSuccess && (
+          <div className="text-center flex flex-col items-center mt-6">
+            <img
+              src={errorImage}
+              alt="Landing illustration"
+              className="w-64 h-64 mb-4"
+            />
+            <div className="text-[#141B36]">{error}</div>
+          </div>
+        )}
+
         {!provider && !linkSuccess && (
           <Button
             onClick={fetchProviderByCode}
             variant="white"
-            className="w-full mt-4"
+            className="w-[calc(100%-44px)] mt-4 fixed bottom-[48px] mx-[24px] px-6 left-0"
             disabled={isLoading || providerCode.length !== 6}
           >
             {isLoading ? "Buscando..." : "Buscar profissional"}
           </Button>
         )}
       </div>
-      
-      {/* Provider details */}
+
       {provider && !linkSuccess && (
         <div className="mt-6">
           <div className="bg-gray-50 p-4 rounded-xl flex items-center space-x-4">
@@ -136,11 +143,10 @@ const AddProfessionalPage = () => {
           </p>
         </div>
       )}
-      
-      {/* Success message */}
+
       {linkSuccess && (
         <div className="mt-6 p-4 bg-green-50 border border-green-100 text-green-700 rounded-lg flex items-center">
-          <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
           <div>
@@ -149,8 +155,7 @@ const AddProfessionalPage = () => {
           </div>
         </div>
       )}
-      
-      {/* Link or back buttons */}
+
       <div className="fixed bottom-[44px] left-0 right-0 px-6">
         {provider && !linkSuccess ? (
           <div className="flex gap-3">
@@ -175,6 +180,7 @@ const AddProfessionalPage = () => {
             onClick={() => window.history.back()}
             variant="white"
             className="w-full"
+
           >
             Voltar ao perfil
           </Button>
