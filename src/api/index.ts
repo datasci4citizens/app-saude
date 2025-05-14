@@ -89,6 +89,7 @@ export { DevLoginAsPersonService } from './services/DevLoginAsPersonService';
 export { DevLoginAsProviderService } from './services/DevLoginAsProviderService';
 export { DomainService } from './services/DomainService';
 export { DrugExposureService } from './services/DrugExposureService';
+export { EmergencyService } from './services/EmergencyService';
 export { FactRelationshipService } from './services/FactRelationshipService';
 export { FullPersonService } from './services/FullPersonService';
 export { FullProviderService } from './services/FullProviderService';

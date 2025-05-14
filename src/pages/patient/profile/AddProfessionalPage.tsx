@@ -161,7 +161,7 @@ const AddProfessionalPage = () => {
           <div className="flex gap-3">
             <Button
               onClick={() => setProvider(null)}
-              variant="orange"
+              variant="primary"
               className="flex-1"
             >
               Cancelar
