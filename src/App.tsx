@@ -16,6 +16,7 @@ import NewReminder from "./pages/patient/reminders/NewReminder";
 import OnboardingSlider from "./pages/landing/OnboardingSlider";
 import { SWRConfig } from 'swr';
 import AddProfessionalPage from "./pages/patient/profile/AddProfessionalPage";
+import ModifyHabits from "./pages/patient/diary/modify-habits";
 
 const NotFound = () => (
   <div>
@@ -103,6 +104,10 @@ const router = createBrowserRouter([
   {
     path: "/emergency-user",
     element: <EmergencyUser />,
+  },
+  {
+  path: '/modify-habits',
+  element: <ModifyHabits />
   },
   {
     path: "*",

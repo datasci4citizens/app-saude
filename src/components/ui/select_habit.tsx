@@ -94,7 +94,7 @@ const SelectItem = forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-none focus:bg-lime hover:bg-lime focus:text-dark_blue hover:text-dark_blue data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pr-2 pl-8 text-sm font-inter outline-none focus:bg-secondary hover:bg-secondary focus:text-typography hover:text-typography data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className,
     )}
     {...props}
@@ -137,10 +137,10 @@ const SelectTrigger = forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex items-center justify-between rounded-lg border bg-transparent font-inter text-[14px] ring-offset-background placeholder:text-gray_buttons focus:outline-none focus:ring-2 focus:ring-orange focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 transition-colors',
+      'flex items-center justify-between rounded-lg border bg-transparent font-inter text-[14px] ring-offset-background placeholder:text-gray2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 transition-colors',
       hasSelection 
-        ? 'border-orange text-dark_blue' // Selected state
-        : 'border-gray_buttons text-gray_buttons', // Default state
+        ? 'border-primary text-typography' // Selected state
+        : 'border-input text-gray2', // Default state
       size === 'md' ? 'h-[48px] w-[36%] min-w-[120px] px-4' : 'h-[48px] w-[23%] min-w-[80px] px-3',
       className
     )}
@@ -150,7 +150,7 @@ const SelectTrigger = forwardRef<
     <SelectPrimitive.Icon asChild>
       <ChevronDown className={cn(
         'h-4 w-4 transition-colors',
-        hasSelection ? 'text-orange' : 'text-gray-400'
+        hasSelection ? 'text-primary' : 'text-gray2'
       )} />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>

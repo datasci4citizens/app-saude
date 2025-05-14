@@ -15,7 +15,7 @@ const HomeBanner: React.FC<HomeBannerProps> = ({
 }) => {
   return (
     <div 
-      className="relative bg-blue-600 p-6 text-white overflow-hidden h-40 w-full cursor-pointer shadow-md"
+      className="relative bg-success p-6 text-primary-foreground overflow-hidden h-40 w-full cursor-pointer shadow-md"
       onClick={onClick}
     >
       {/* Shapes decorativos */}
@@ -26,19 +26,19 @@ const HomeBanner: React.FC<HomeBannerProps> = ({
       {/* Conteúdo */}
       <div className="relative flex justify-between items-start h-full z-10">
         <div>
-          <h2 className="text-[28px] font-bold m-0 mb-1 font-work-sans">{title}</h2>
+          <h2 className="text-[28px] font-bold m-0 mb-1 font-inter">{title}</h2>
           <p className="text-xs m-0 opacity-90 tracking-wider font-inter font-medium">{subtitle}</p>
         </div>
         
         {/* Ícone de editar com evento de clique próprio */}
         <div 
-          className="bg-white w-11 h-11 rounded-full flex items-center justify-center"
+          className="bg-background w-11 h-11 rounded-full flex items-center justify-center"
           onClick={(e) => {
             e.stopPropagation(); // Impede que o clique ative também o onClick do banner
             if (onIconClick) onIconClick();
           }}
         >
-          <span className="mgc_pencil_line text-2xl text-blue-400"></span>
+          <span className="mgc_pencil_line text-2xl text-success"></span>
         </div>
       </div>
     </div>
@@ -47,7 +47,8 @@ const HomeBanner: React.FC<HomeBannerProps> = ({
 
 export default HomeBanner;
 
-// Usage example
+// Usage example - Comentando para evitar erros
+/* 
 const handleBannerClick = () => {
   console.log('Banner clicked');
 };
@@ -62,3 +63,4 @@ const handleBannerIconClick = () => {
     onClick={handleBannerClick}
     onIconClick={handleBannerIconClick}
 />
+*/

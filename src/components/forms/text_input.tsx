@@ -27,7 +27,7 @@ export function TextField({
   return (
     <div className="mb-4">
       {label && (
-        <label htmlFor={id} className="block text-sm font-inter font-light text-gray_buttons mb-1">
+        <label htmlFor={id} className="block text-sm font-inter font-light text-typography mb-1">
           {label}
         </label>
       )}
@@ -39,13 +39,13 @@ export function TextField({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`text-dark_blue font-inter font-normal focus:ring-orange focus:ring-2 focus:border-none ${
-          error ? 'border-red-500' : 'border-gray_buttons'
+        className={`text-typography font-inter font-normal focus:ring-primary focus:ring-offset-0 ${
+          error ? 'border-selection' : 'border-gray2'
         }`}
       />
       
-      {helperText && <span className="text-xs font-inter font-light text-gray_buttons">{helperText}</span>}
-      {error && <p className="text-red-500 text-xs font-inter font-light mt-1">{error}</p>}
+      {helperText && <span className="text-xs font-inter font-light text-gray2-foreground">{helperText}</span>}
+      {error && <p className="text-selection text-xs font-inter font-light mt-1">{error}</p>}
     </div>
   );
 }

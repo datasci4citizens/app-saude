@@ -20,15 +20,15 @@ export const SelectableOption: React.FC<SelectableOptionProps> = ({
         <div className="relative flex-shrink-0">
           <div
             className={`w-6 h-6 rounded-full border ${
-              selected ? "border-[#141B36] border-2" : "border-[#141B36]"
+              selected ? "border-typography border-2" : "border-typography"
             }`}
           >
             {selected && (
-              <div className="absolute w-5 h-5 rounded-full bg-lime top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 bg-[#ddfc8e]" />
+              <div className="absolute w-5 h-5 rounded-full bg-selected top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2" />
             )}
           </div>
         </div>
-        <span className="text-[18px] font-medium ml-4 text-dark_blue truncate">
+        <span className="text-[18px] font-medium ml-4 text-typography truncate font-inter">
           {label}
         </span>
       </button>

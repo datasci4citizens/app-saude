@@ -4,17 +4,17 @@ import { type VariantProps, cva } from 'class-variance-authority';
 import { type ButtonHTMLAttributes, forwardRef } from 'react';
 
 const buttonVariants = cva(
-    'inline-flex items-center justify-center whitespace-nowrap rounded-[38px] font-inter font-semibold text-14 ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+    'inline-flex items-center justify-center whitespace-nowrap rounded-[38px] font-inter font-semibold text-14 ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
 
     {
         variants: {
             variant: {
-                default: 'bg-orange text-off_white hover:bg-orange/90',
-                orange: 'bg-orange text-off_white hover:bg-orange/90',
-                white: 'bg-off_white text-typografy hover:bg-typografy/90',
-                blue: 'bg-blue_tittle text-off_white hover:bg-blue_tittle/90',
-                outlineWhite: 'bg-transparent text-off_white border-2 border-off_white hover:bg-off_white/10',
-                outlineOrange: 'bg-transparent text-orange border-2 border-orange hover:bg-orange/10',
+                default: 'bg-primary text-offwhite hover:bg-primary/90',
+                orange: 'bg-primary text-offwhite hover:bg-primary/90',
+                white: 'bg-white text-typography hover:bg-typography/90',
+                blue: 'bg-info text-offwhite hover:bg-info/90',
+                outlineWhite: 'bg-transparent text-offwhite border-2 border-offwhite hover:bg-offwhite/10',
+                outlineOrange: 'bg-transparent text-primary border-2 border-primary hover:bg-primary/10',
             },
             size: {
                 default: 'h-10 px-4 py-2',

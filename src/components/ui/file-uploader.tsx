@@ -19,12 +19,12 @@ export function FileUploader({ onChange, error }: FileUploaderProps) {
       <div className="flex items-center">
         <label 
           htmlFor="file-upload" 
-          className="flex items-center px-4 py-2 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50"
+          className="flex items-center px-4 py-2 border border-input rounded-md cursor-pointer hover:bg-muted font-inter"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
           </svg>
-          <span className="text-gray-700">Selecionar arquivo</span>
+          <span className="text-typography">Selecionar arquivo</span>
         </label>
         <input 
           id="file-upload" 
@@ -33,10 +33,10 @@ export function FileUploader({ onChange, error }: FileUploaderProps) {
           onChange={handleFileChange}
         />
         {fileName && (
-          <span className="ml-3 text-sm text-gray-500">{fileName}</span>
+          <span className="ml-3 text-sm font-inter text-gray2">{fileName}</span>
         )}
       </div>
-      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
+      {error && <p className="mt-1 text-sm font-inter text-destructive">{error}</p>}
     </div>
   );
 }

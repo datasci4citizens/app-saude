@@ -16,7 +16,7 @@ export function LabeledSwitch({
 }: LabeledSwitchProps) {
   return (
     <div className="flex items-center justify-between">
-      <div className="text-[#A0A3B1] text-sm font-normal">
+      <div className="text-gray2 text-sm font-normal font-inter">
         {label}
       </div>
       <Switch 

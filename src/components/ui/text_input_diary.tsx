@@ -32,7 +32,7 @@ export function TextField({
 
   const value = propValue !== undefined ? propValue : internalValue;
 
-  const labelStyle = "block text-[14px] font-inter font-bold text-dark_blue mb-2";
+  const labelStyle = "block text-[14px] font-inter font-bold text-typography mb-2";
 
   const sizeClasses = {
     medium: 'w-[85%] md:w-[85%] h-[48px] py-2 px-4',
@@ -41,20 +41,20 @@ export function TextField({
   };
 
   const getBorderColor = () => {
-    if (error) return 'border-red-500';
-    if (variant === 'static-orange') return 'border-orange';
-    return hasInput ? 'border-orange' : 'border-gray_buttons';
+    if (error) return 'border-destructive';
+    if (variant === 'static-orange') return 'border-primary';
+    return hasInput ? 'border-primary' : 'border-input';
   };
 
   const baseClasses = `
     bg-transparent
     border ${getBorderColor()}
-    text-dark_blue
+    text-typography
     font-inter
     font-normal
     rounded-lg
     focus-visible:ring-1
-    focus-visible:ring-orange
+    focus-visible:ring-primary
     transition-colors
     ${sizeClasses[size]}
     ${multiline ? 'whitespace-pre-wrap overflow-y-auto' : ''}
@@ -93,7 +93,7 @@ export function TextField({
       )}
       
       {error && (
-        <p className="mt-1 text-xs text-red-500">{error}</p>
+        <p className="mt-1 text-xs text-destructive">{error}</p>
       )}
     </div>
   );
