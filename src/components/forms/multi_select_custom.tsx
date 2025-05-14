@@ -73,14 +73,14 @@ export function MultiSelectCustom({
   return (
     <div className="mb-2" ref={containerRef}>
       {label && (
-        <label htmlFor={id} className="block text-sm font-inter font-light text-gray_buttons mb-1">
+        <label htmlFor={id} className="block text-sm font-inter font-light text-gray2 mb-1">
           {label}
         </label>
       )}
       
       <div 
-        className={`relative rounded-lg border ${error ? 'border-red-500' : 'border-gray_buttons'} 
-          ${isOpen ? 'ring-2 ring-orange border-none' : ''} bg-white`}
+        className={`relative rounded-lg border ${error ? 'border-destructive' : 'border-gray2'} 
+          ${isOpen ? 'ring-2 ring-primary border-none' : ''} bg-white`}
       >
         {/* Selected items and input container */}
         <div 
@@ -93,13 +93,13 @@ export function MultiSelectCustom({
           {selectedItems.length > 0 && selectedItems.map(item => (
             <div 
               key={item.value} 
-              className="bg-orange bg-opacity-10 text-dark_blue px-2 py-1 rounded-md flex items-center text-sm"
+              className="bg-primary bg-opacity-10 text-typography px-2 py-1 rounded-md flex items-center text-sm"
             >
               {item.label}
               <button 
                 type="button" 
                 onClick={(e) => removeItem(e, item.value)}
-                className="ml-1 text-orange hover:bg-orange hover:bg-opacity-20 rounded-full h-5 w-5 flex items-center justify-center"
+                className="ml-1 text-primary hover:bg-primary hover:bg-opacity-20 rounded-full h-5 w-5 flex items-center justify-center"
               >
                 &times;
               </button>
@@ -109,7 +109,7 @@ export function MultiSelectCustom({
           <input
             ref={inputRef}
             type="text"
-            className="flex-1 outline-none min-w-[80px] text-dark_blue placeholder:text-gray_buttons"
+            className="flex-1 outline-none min-w-[80px] text-typography placeholder:text-gray2"
             placeholder={selectedItems.length === 0 ? placeholder : ""}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -120,27 +120,27 @@ export function MultiSelectCustom({
         
         {/* Dropdown */}
         {isOpen && (
-          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+          <div className="absolute z-10 w-full mt-1 bg-white border border-gray1 rounded-lg shadow-lg max-h-60 overflow-auto">
             {isLoading ? (
-              <div className="p-2 text-center text-gray-500">Carregando...</div>
+              <div className="p-2 text-center text-gray2">Carregando...</div>
             ) : filteredOptions.length === 0 ? (
-              <div className="p-2 text-center text-gray-500">Nenhuma opção encontrada</div>
+              <div className="p-2 text-center text-gray2">Nenhuma opção encontrada</div>
             ) : (
               filteredOptions.map(option => (
                 <div
                   key={option.value}
-                  className={`px-3 py-2 cursor-pointer hover:bg-orange hover:bg-opacity-10 
-                    ${value.includes(option.value) ? 'bg-orange bg-opacity-10' : ''}`}
+                  className={`px-3 py-2 cursor-pointer hover:bg-primary hover:bg-opacity-10 
+                    ${value.includes(option.value) ? 'bg-primary bg-opacity-10' : ''}`}
                   onClick={() => toggleOption(option.value)}
                 >
                   <div className="flex items-center">
                     <input
                       type="checkbox"
-                      className="mr-2 accent-orange"
+                      className="mr-2 accent-primary"
                       checked={value.includes(option.value)}
                       onChange={() => {}}
                     />
-                    <span>{option.label}</span>
+                    <span className="text-typography">{option.label}</span>
                   </div>
                 </div>
               ))
@@ -149,7 +149,7 @@ export function MultiSelectCustom({
         )}
       </div>
       
-      {error && <p className="text-red-500 text-xs font-inter font-light mt-1">{error}</p>}
+      {error && <p className="text-destructive text-xs font-inter font-light mt-1">{error}</p>}
     </div>
   );
 }
