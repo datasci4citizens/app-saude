@@ -6,8 +6,17 @@ import { ProviderService } from '@/api/services/ProviderService';
 import { useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 
-// Interface para os dados dos pacientes em emergência
+// Interface para os dados dos pacientes em emergência conforme API
 interface EmergencyPatient {
+  id: number | string;
+  name: string;
+  age: number;
+  last_visit_date: string;
+  last_emergency_date: string;
+}
+
+// Interface para o formato utilizado na UI
+interface FormattedEmergencyPatient {
   id: number | string;
   name: string;
   age: number;
@@ -30,20 +39,22 @@ export default function EmergencyPage() {
         const patientData = await ProviderService.providerPersonsRetrieve();
         
         // Convertendo e formatando os dados da API para o formato esperado pelo componente
-        const formattedPatients: EmergencyPatient[] = patientData
+        const formattedPatients: FormattedEmergencyPatient[] = patientData
           // Filtrando apenas pacientes com emergências registradas
-          .filter(patient => patient.last_emergency_date)
-          .map(patient => ({
-            id: patient.person_id,
+          .filter((patient: EmergencyPatient) => patient.last_emergency_date)
+          .map((patient: EmergencyPatient) => ({
+            id: patient.id,
             name: patient.name,
             age: patient.age || 0,
             lastVisit: patient.last_visit_date || '-',
             lastEmergency: patient.last_emergency_date || '-',
           }))
-          // Filtrando para selecionar cards onde lastVisit > lastEmergency OU lastVisit é null/'-'
-          .filter(patient => {
-            // Inclui pacientes sem visita registrada (lastVisit é null ou '-')
-            if (!patient.lastVisit || patient.lastVisit === '-') {
+          // Filtrando para selecionar cards onde:
+          // 1. last_visit_date é null OU
+          // 2. lastVisit > lastEmergency
+          .filter((patient: FormattedEmergencyPatient) => {
+            // Se o paciente não tem last_visit_date na API original (null)
+            if (patient.lastVisit === '-') {
               return true;
             }
             
@@ -76,7 +87,10 @@ export default function EmergencyPage() {
       return new Date(dateStr);
     } else {
       // Formato DD/MM/YYYY
-      const [day, month, year] = dateStr.split('/').map(Number);
+      const parts = dateStr.split('/').map(Number);
+      const day = parts[0] || 0;
+      const month = parts[1] || 0;
+      const year = parts[2] || 0;
       return new Date(year, month - 1, day);
     }
   };
@@ -106,7 +120,7 @@ export default function EmergencyPage() {
   };
 
   // Função para lidar com o clique no paciente e navegar para a página individual
-  const handlePatientClick = (patient: EmergencyPatient) => {
+  const handlePatientClick = (patient: FormattedEmergencyPatient) => {
     navigate(`/patient/${patient.id}/emergency`);
   };
 
