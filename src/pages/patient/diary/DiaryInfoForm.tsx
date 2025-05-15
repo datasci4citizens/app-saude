@@ -121,161 +121,163 @@ export default function DiaryInfoForm() {
     }
   };
 
-  return (
-    <form onSubmit={handleSubmit} className="max-w-3xl mx-auto px-4 space-y-8">
-      <div className="space-y-4">
-        <h3 className="font-semibold text-lg text-neutral-700">
-          A qual período de tempo esse diário se refere?
-        </h3>
-        <div className="flex flex-col gap-3">
-          <RadioCheckbox
-            id="today"
-            label="Hoje"
-            checked={timeRange === 'today'}
-            onCheckedChange={() => setTimeRange('today')}
-          />
-          <RadioCheckbox
-            id="sinceLast"
-            label="Desde o último diário"
-            checked={timeRange === 'sinceLast'}
-            onCheckedChange={() => setTimeRange('sinceLast')}
-          />
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <div className="flex flex-col gap-2">
-          <h3 className="font-semibold text-lg text-neutral-700">
-            Seus Hábitos Personalizados
-          </h3>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">
-              Compartilhar com profissionais da saúde
-            </span>
-            <Switch checked={shareHabits} onCheckedChange={setShareHabits} />
-          </div>
-        </div>
-
-        {/* Habits content */}
-        <div className="space-y-4">
-          {habits.map((habit) => (
-            <div key={habit.id} className="flex flex-col md:flex-row gap-4 w-full">
-              <div className="flex-1 min-w-[200px]">
-                <HabitCard title={habit.name} />
-              </div>
-              <div className="w-full md:w-[200px]">
-                <Select 
-                  value={habit.value}
-                  onValueChange={(value) => handleItemChange(habits, setHabits, habit.id, value)}
-                >
-                  <SelectTrigger hasSelection={!!habit.value}>
-                    <SelectValue placeholder={
-                      habit.measurementType === 'scale' ? '1-10' : 
-                      habit.measurementType === 'yesno' ? 'Sim/Não' : 
-                      habit.measurementType === 'hours' ? 'Horas' : 'Vezes'
-                    } />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {renderSelectOptions(habit.measurementType)}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          ))}
-
-          <div 
-            className="flex flex-col md:flex-row gap-4 w-full cursor-pointer"
-            onClick={handleAddHabit}
-          >
-          <div className="flex-1 min-w-[200px]">
-            <div className="bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors 
-                            rounded-full w-16 h-16 flex items-center justify-center">
-              <span className="text-3xl">+</span>
-              </div>
-            </div>
-            <div className="w-full md:w-[200px] flex items-center justify-center">
-              <span className="text-gray-500 text-sm"></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* well being content */}
-      <div className="space-y-4">
-        <div className="flex flex-col gap-2">
-          <h3 className="font-semibold text-lg text-neutral-700">
-            Bem-estar geral:
-          </h3>
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-sm text-gray-500">
-              Compartilhar com profissionais da saúde
-            </span>
-            <Switch checked={shareWellBeing} onCheckedChange={setShareWellBeing} />
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          {wellBeingQuestions.map((question) => (
-            <div key={question.id} className="flex flex-col md:flex-row gap-4 w-full">
-              <div className="flex-1 min-w-[200px]">
-                <HabitCard title={question.name} />
-              </div>
-              <div className="w-full md:w-[200px]">
-                <Select
-                  value={question.value}
-                  onValueChange={(value) => handleItemChange(wellBeingQuestions, setWellBeingQuestions, question.id, value)}
-                >
-                  <SelectTrigger hasSelection={!!question.value}>
-                    <SelectValue placeholder={
-                      question.measurementType === 'scale' ? '1-10' : 
-                      question.measurementType === 'yesno' ? 'Sim/Não' : 
-                      question.measurementType === 'hours' ? 'Horas' : 'Vezes'
-                    } />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {renderSelectOptions(question.measurementType)}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <div className="flex flex-col gap-2">
-          <h3 className="font-semibold text-lg text-neutral-700">Texto</h3>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">
-              Compartilhar com profissionais da saúde
-            </span>
-            <Switch checked={shareText} onCheckedChange={setShareText} />
-          </div>
-        </div>
-        
-        {/* Free text */}
-        <TextField
-          size="large"
-          multiline
-          variant="static-orange"
-          className="w-full"
-          value={freeText}
-          onChange={(e) => setFreeText(e.target.value)}
+return (
+  <form onSubmit={handleSubmit} className="max-w-3xl mx-auto px-4 space-y-6">
+    {/* Time Range Section - Tightened */}
+    <div className="space-y-3">
+      <h3 className="font-semibold text-lg text-neutral-700 mb-1">
+        A qual período de tempo esse diário se refere?
+      </h3>
+      <div className="flex flex-col gap-2">
+        <RadioCheckbox
+          id="today"
+          label="Hoje"
+          checked={timeRange === 'today'}
+          onCheckedChange={() => setTimeRange('today')}
+          className="py-2"
+        />
+        <RadioCheckbox
+          id="sinceLast"
+          label="Desde o último diário"
+          checked={timeRange === 'sinceLast'}
+          onCheckedChange={() => setTimeRange('sinceLast')}
+          className="py-2"
         />
       </div>
+    </div>
 
-      {/* button */}
-      <div className="text-center">
-        <Button 
-          variant="orange" 
-          size="responsive"
-          type="submit"
-          disabled={isSubmitting}
-          className="mx-auto inline-block"
-        >
-          {isSubmitting ? 'Salvando...' : 'SALVAR'}
-        </Button>
+    {/* Habits Section */}
+    <div className="space-y-4">
+      <div className="flex flex-col gap-1">
+        <h3 className="font-semibold text-lg text-neutral-700 mb-1">
+          Seus Hábitos Personalizados
+        </h3>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-500">
+            Compartilhar com profissionais da saúde
+          </span>
+          <Switch checked={shareHabits} onCheckedChange={setShareHabits} />
+        </div>
       </div>
-    </form>
-  );
+
+      <div className="space-y-3">
+        {habits.map((habit) => (
+          <div key={habit.id} className="flex flex-col md:flex-row gap-3 w-full items-center">
+            <div className="flex-1 min-w-[200px] w-full">
+              <HabitCard title={habit.name} />
+            </div>
+            <div className="w-full md:w-[200px]">
+              <Select 
+                value={habit.value}
+                onValueChange={(value) => handleItemChange(habits, setHabits, habit.id, value)}
+              >
+                <SelectTrigger hasSelection={!!habit.value} className="h-10">
+                  <SelectValue placeholder={
+                    habit.measurementType === 'scale' ? '1-10' : 
+                    habit.measurementType === 'yesno' ? 'Sim/Não' : 
+                    habit.measurementType === 'hours' ? 'Horas' : 'Vezes'
+                  } />
+                </SelectTrigger>
+                <SelectContent>
+                  {renderSelectOptions(habit.measurementType)}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        ))}
+
+        <div 
+          className="flex flex-col md:flex-row gap-3 w-full cursor-pointer items-center"
+          onClick={handleAddHabit}
+        >
+          <div className="flex-1 min-w-[200px]">
+            <div className="bg-gray-100 hover:bg-gray-200 transition-colors rounded-full w-14 h-14 flex items-center justify-center">
+              <span className="text-2xl text-gray-600">+</span>
+            </div>
+          </div>
+          <div className="w-full md:w-[200px] flex items-center justify-center">
+            <span className="text-sm text-gray-500">Adicionar hábito</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Well-being Section */}
+    <div className="space-y-4">
+      <div className="flex flex-col gap-1">
+        <h3 className="font-semibold text-lg text-neutral-700 mb-1">
+          Bem-estar geral:
+        </h3>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-500">
+            Compartilhar com profissionais da saúde
+          </span>
+          <Switch checked={shareWellBeing} onCheckedChange={setShareWellBeing} />
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {wellBeingQuestions.map((question) => (
+          <div key={question.id} className="flex flex-col md:flex-row gap-3 w-full items-center">
+            <div className="flex-1 min-w-[200px] w-full">
+              <HabitCard title={question.name} />
+            </div>
+            <div className="w-full md:w-[200px]">
+              <Select
+                value={question.value}
+                onValueChange={(value) => handleItemChange(wellBeingQuestions, setWellBeingQuestions, question.id, value)}
+              >
+                <SelectTrigger hasSelection={!!question.value} className="h-10">
+                  <SelectValue placeholder={
+                    question.measurementType === 'scale' ? '1-10' : 
+                    question.measurementType === 'yesno' ? 'Sim/Não' : 
+                    question.measurementType === 'hours' ? 'Horas' : 'Vezes'
+                  } />
+                </SelectTrigger>
+                <SelectContent>
+                  {renderSelectOptions(question.measurementType)}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Text Section */}
+    <div className="space-y-3">
+      <div className="flex flex-col gap-1">
+        <h3 className="font-semibold text-lg text-neutral-700 mb-1">Texto</h3>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-500">
+            Compartilhar com profissionais da saúde
+          </span>
+          <Switch checked={shareText} onCheckedChange={setShareText} />
+        </div>
+      </div>
+      
+      <TextField
+        size="large"
+        multiline
+        variant="static-orange"
+        className="w-full min-h-[150px]"
+        value={freeText}
+        onChange={(e) => setFreeText(e.target.value)}
+      />
+    </div>
+
+    {/* Submit Button */}
+    <div className="pt-4 text-center">
+      <Button 
+        variant="orange" 
+        size="lg"
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full max-w-[280px] mx-auto py-3 text-base"
+      >
+        {isSubmitting ? 'Salvando...' : 'SALVAR DIÁRIO'}
+      </Button>
+    </div>
+  </form>
+);
 }

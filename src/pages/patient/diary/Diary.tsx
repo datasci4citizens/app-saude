@@ -3,26 +3,18 @@ import BackArrow from '@/components/ui/back_arrow';
 
 export default function DiaryPage() {
   return (
-    <div className="max-w-md mx-auto p-4">
-      {/* Back Arrow */}
-      <div className="mb-6">
+    <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4"> {/* Reduced py */}
+      <div className="mb-4"> {/* Reduced from mb-6 */}
         <BackArrow />
       </div>
       
-      {/* Page Title */}
-      <h1 
-        className="font-bold text-[28px]"
-        style={{
-          fontFamily: "'Work Sans', sans-serif",
-          color: '#3F414E',
-          marginLeft: '32px'
-        }}
-      >
+      <h1 className="font-bold text-3xl md:text-4xl text-neutral-800 mb-4"> {/* Added mb-4 */}
         Diário
       </h1>
       
-      {/* Form */}
-      <DiaryInfoForm />
+      <div className="w-full mt-4"> {/* Reduced from mt-8 */}
+        <DiaryInfoForm />
+      </div>
     </div>
   );
 }
