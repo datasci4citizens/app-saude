@@ -1,10 +1,39 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import HomeBanner from "@/components/ui/home-banner";
 import InfoCard from "@/components/ui/info-card";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
+import { ProviderService } from "@/api/services/ProviderService";
 
 export default function AcsMainPage() {
     const navigate = useNavigate();
+    const [emergencyCount, setEmergencyCount] = useState<number>(0);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    // Busca a contagem de emergências ao carregar a página
+    useEffect(() => {
+        const fetchEmergencyCount = async () => {
+            try {
+                setLoading(true);
+                const response = await ProviderService.providerEmergencyCountRetrieve();
+                // Verifica se a resposta contém a propriedade emergency_count
+                if (response && 'emergency_count' in response) {
+                    setEmergencyCount(response.emergency_count);
+                } else {
+                    console.error('Formato de resposta inválido:', response);
+                    setError('Não foi possível obter o número de emergências.');
+                }
+            } catch (err) {
+                console.error('Erro ao buscar contagem de emergências:', err);
+                setError('Erro ao carregar contagem de emergências.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchEmergencyCount();
+    }, []);
 
     // Funções de navegação - atualizadas para usar navigate em vez de router.push
     const handleEmergencyClick = () => {
@@ -54,8 +83,9 @@ export default function AcsMainPage() {
                 {/* Card de Emergência */}
                 <InfoCard
                     variant="emergency"
-                    count={3}
+                    count={emergencyCount}
                     onClick={handleEmergencyClick}
+
                 />
 
                 {/* Card de Próxima Consulta */}
