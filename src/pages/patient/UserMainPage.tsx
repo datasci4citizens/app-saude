@@ -123,7 +123,7 @@ export default function AcsMainPage() {
     };
 
     const handleBannerIconClick = () => {
-        navigate('/patient-registry');
+        navigate('/diary');
     };
 
     // Fetch medication exposures
