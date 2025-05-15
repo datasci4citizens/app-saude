@@ -179,10 +179,10 @@ export default function AcsMainPage() {
             case 'home':
                 // Já estamos na home
                 break;
-            case 'consults':
+            case 'meds':
                 navigate('/reminders');
                 break;
-            case 'patients':
+            case 'diary':
                 navigate('/diary');
                 break;
             case 'emergency':
