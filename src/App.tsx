@@ -6,7 +6,7 @@ import CompleteProfile from "./pages/patient/profile/CompleteProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AcsMainPage from "./pages/provider/AcsMainPage";
 import UsermainPage from "./pages/patient/UserMainPage";
-import EmergencyPage from "./pages/patient/emergency/EmergencyPage";
+import EmergencyPage from "./pages/provider/EmergencyPage";
 import EmergencyUser from "./pages/patient/emergency/EmergencyUser";
 import PatientsPage from "./pages/provider/PatientsPage";
 import ViewReminder from "./pages/patient/reminders/ViewReminder";
