@@ -119,7 +119,7 @@ export default function AcsMainPage() {
     };
 
     const handleAppointmentClick = () => {
-        navigate('/appointments/amanda');
+        navigate('/reminders');
     };
 
     const handleBannerIconClick = () => {
@@ -180,16 +180,16 @@ export default function AcsMainPage() {
                 // Já estamos na home
                 break;
             case 'consults':
-                navigate('/appointments');
+                navigate('/reminders');
                 break;
             case 'patients':
-                navigate('/patients');
+                navigate('/diary');
                 break;
             case 'emergency':
                 navigate('/emergency-user');
                 break;
             case 'profile':
-                navigate('/profile');
+                navigate('/add-professional');
                 break;
         }
     };
