@@ -227,7 +227,7 @@ export default function PatientsPage() {
               name={patient.name}
               age={patient.age || 0}
               lastEmergency={patient.lastEmergency || 'Sem emergência'}
-              lastVisit={patient.lastVisit || 'Sem visitas recentes'}
+              lastVisit={patient.lastVisit || '-'}
               onClick={() => handlePatientClick(patient)}
             />
           ))

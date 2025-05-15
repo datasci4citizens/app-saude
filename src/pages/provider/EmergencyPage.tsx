@@ -1,58 +1,92 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TextField } from '@/components/forms/text_input';
 import PatientButton from '@/components/ui/patient-button';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
+import { ProviderService } from '@/api/services/ProviderService';
+import { useNavigate } from 'react-router-dom';
+import useSWR from 'swr';
+
+// Interface para os dados dos pacientes em emergência
+interface EmergencyPatient {
+  id: number | string;
+  name: string;
+  age: number;
+  lastVisit: string;
+  lastEmergency: string;
+}
 
 export default function EmergencyPage() {
+  const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState('');
   const [activeTab, setActiveTab] = useState('todos');
+  const [error, setError] = useState<string | null>(null);
   
-  // Sample data trade for a array of emergency patients
-  const emergencyPatients = [
-    {
-      id: 'claudia123',
-      name: 'Cláudia Almeida',
-      age: 52,
-      lastConsult: '31/03/2024',
-      lastRegistry: '24/03/2024',
-      lastEmergency: '23/03/2024',
+  // Usando SWR para buscar os dados dos pacientes em emergência
+  const { data: emergencyPatients, error: fetchError, isLoading } = useSWR(
+    'emergencyPatients',
+    async () => {
+      try {
+        // Buscando dados dos pacientes vinculados ao provider
+        const patientData = await ProviderService.providerPersonsRetrieve();
+        
+        // Convertendo e formatando os dados da API para o formato esperado pelo componente
+        const formattedPatients: EmergencyPatient[] = patientData
+          // Filtrando apenas pacientes com emergências registradas
+          .filter(patient => patient.last_emergency_date)
+          .map(patient => ({
+            id: patient.person_id,
+            name: patient.name,
+            age: patient.age || 0,
+            lastVisit: patient.last_visit_date || '-',
+            lastEmergency: patient.last_emergency_date || '-',
+          }))
+          // Filtrando para selecionar cards onde lastVisit > lastEmergency OU lastVisit é null/'-'
+          .filter(patient => {
+            // Inclui pacientes sem visita registrada (lastVisit é null ou '-')
+            if (!patient.lastVisit || patient.lastVisit === '-') {
+              return true;
+            }
+            
+            // Ou pacientes cuja última visita foi após a emergência
+            const visitDate = parseDate(patient.lastVisit);
+            const emergencyDate = parseDate(patient.lastEmergency);
+            return visitDate > emergencyDate;
+          });
+          
+        return formattedPatients;
+      } catch (err) {
+        console.error('Erro ao buscar pacientes em emergência:', err);
+        setError('Não foi possível carregar a lista de pacientes em emergência.');
+        return [];
+      }
     },
     {
-      id: 'amanda456',
-      name: 'Amanda de Souza',
-      age: 30,
-      lastConsult: '31/03/2024', 
-      lastRegistry: '25/04/2024',
-      lastEmergency: '22/03/2024',
-    },
-    {
-      id: 'emerson789',
-      name: 'Emerson Silva',
-      age: 19,
-      lastConsult: '31/03/2024',
-      lastRegistry: '26/04/2024',
-      lastEmergency: '20/03/2024',
-    },
-    {
-      id: 'enzo101',
-      name: 'Enzo Ribeiro',
-      age: 72,
-      lastConsult: '31/03/2024',
-      lastRegistry: '29/04/2024',
-      lastEmergency: '29/04/2023',
+      revalidateOnFocus: false,
+      dedupingInterval: 60000, // Cache por 1 minuto
     }
-  ];
+  );
 
   // Função auxiliar para converter data DD/MM/AAAA para objeto Date
   const parseDate = (dateStr: string) => {
-    const [day, month, year] = dateStr.split('/').map(Number);
-    return new Date(year, month - 1, day);
+    if (!dateStr || dateStr === '-') return new Date(0); // Data mínima para valores vazios
+    
+    // Verifica se a data está no formato ISO ou DD/MM/YYYY
+    if (dateStr.includes('-') && !dateStr.includes('/')) {
+      // Formato ISO (YYYY-MM-DD)
+      return new Date(dateStr);
+    } else {
+      // Formato DD/MM/YYYY
+      const [day, month, year] = dateStr.split('/').map(Number);
+      return new Date(year, month - 1, day);
+    }
   };
   
   // Filtra pacientes com base na busca
-  const filteredBySearch = emergencyPatients.filter(patient => 
-    patient.name.toLowerCase().includes(searchValue.toLowerCase())
-  );
+  const filteredBySearch = emergencyPatients 
+    ? emergencyPatients.filter(patient => 
+        patient.name.toLowerCase().includes(searchValue.toLowerCase())
+      )
+    : [];
   
   // Aplica ordenação por data se estiver na aba urgentes
   const filteredPatients = activeTab === 'urgentes'
@@ -63,21 +97,17 @@ export default function EmergencyPage() {
     : filteredBySearch;
 
   const handleNavigation = (itemId: string) => {
-    console.log(`Navigated to ${itemId}`);
-    // Handle navigation logic here
     if (itemId === 'home') {
-        window.location.href = '/acs-main-page';
+      navigate('/acs-main-page');
     }
     if (itemId === 'patients') {
-        window.location.href = '/patients';
+      navigate('/patients');
     }
   };
 
   // Função para lidar com o clique no paciente e navegar para a página individual
-  const handlePatientClick = (patient: any) => {
-    console.log(`Navegando para página do paciente: ${patient.name}`);
-    // Redireciona para a página individual do paciente usando o ID
-    window.location.href = `/patient/${patient.id}/emergency`;
+  const handlePatientClick = (patient: EmergencyPatient) => {
+    navigate(`/patient/${patient.id}/emergency`);
   };
 
   return (
@@ -86,7 +116,7 @@ export default function EmergencyPage() {
       <header className="p-4">
         {/* Back button at the top */}
         <div className="mb-2">
-          <button onClick={() => window.history.back()}>
+          <button onClick={() => navigate(-1)}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M15 18L9 12L15 6" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -129,15 +159,22 @@ export default function EmergencyPage() {
 
       {/* Emergency patients list - usando a lista filtrada */}
       <div className="flex-1 px-4 overflow-auto">
-        {filteredPatients.length > 0 ? (
+        {isLoading ? (
+          <div className="text-center p-4 text-gray-500">
+            Carregando pacientes...
+          </div>
+        ) : fetchError ? (
+          <div className="text-center p-4 text-red-500">
+            {error}
+          </div>
+        ) : filteredPatients.length > 0 ? (
           filteredPatients.map((patient, index) => (
             <PatientButton
               key={index}
               variant="emergency"
               name={patient.name}
-              age={patient.age || 0}  // Providing a default value of 0 when age is undefined
-              lastConsult={patient.lastConsult}
-              lastRegistry={patient.lastRegistry}
+              age={patient.age || 0}
+              lastVisit={patient.lastVisit}
               lastEmergency={patient.lastEmergency}
               onClick={() => handlePatientClick(patient)}
             />
