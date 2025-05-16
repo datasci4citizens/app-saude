@@ -1,15 +1,15 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import './globals.css';
-import React from 'react';
-import '@fontsource-variable/inter';
-import { App } from './App';
-import { GoogleOAuthProvider } from '@react-oauth/google'
+import React from "react";
+import { createRoot } from "react-dom/client";
+import "./globals.css";
+import "@fontsource-variable/inter";
+import "mingcute_icon/font/Mingcute.css";
+import { App } from "./App";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
-const root = document.getElementById('root');
+const root = document.getElementById("root");
 
 if (!root) {
-  throw new Error('Falha ao encontrar raiz do projeto.');
+  throw new Error("Falha ao encontrar raiz do projeto.");
 }
 
 createRoot(root).render(
@@ -18,4 +18,4 @@ createRoot(root).render(
       <App />
     </GoogleOAuthProvider>
   </React.StrictMode>,
-)
+);

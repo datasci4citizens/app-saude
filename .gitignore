@@ -6,7 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
+docker-compose.yml
 node_modules
 dist
 dist-ssr
@@ -23,3 +23,4 @@ dist-ssr
 *.sln
 *.sw?
 .env
+schema.yaml

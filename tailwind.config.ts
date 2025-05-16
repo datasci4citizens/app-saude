@@ -26,8 +26,17 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ['"Inter Variable"', 'sans-serif'],
+                sans: ['Inter', 'sans-serif'],
+                inter: ['Inter', 'sans-serif'],
+                'work-sans': ['"Work Sans"', 'sans-serif'],
 			},
+			fontWeight: {
+                light: '300',
+                normal: '400',
+                medium: '500',
+                semibold: '600',
+                bold: '700',
+            },
 			keyframes: {
 				'accordion-down': {
 					from: { height: '0' },
@@ -42,60 +51,95 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 			},
+			opacity:{
+				'68': '0.68',
+				'100': '1',
+			},
 			colors: {
-				border: stone[200],
-				input: stone[200],
-				background: white,
-				foreground: stone[950],
+				border: '#e6e6e6',
+				input: '#e6e6e6',
+				background: '#ffffff',
+				foreground: '#000000',
+				selection: {
+					DEFAULT: '#fa6e5a',
+					background: '#fa6e5a',
+					border: '#fa6e5a',
+					input: '#fa6e5a',
+				},
+				homeblue: {
+					DEFAULT: '#5a96fa',
+					background: '#5a96fa',
+				},
+				selected: {
+					DEFAULT: '#cefa5a',
+					background: '#cefa5a',
+					opacity: "var(--tw-opacity, 0.68)",
+				},
+				typography: {
+					DEFAULT: '#141b36',
+					foreground: '#141b36',
+				},
+				offwhite: {
+					DEFAULT: '#f9f9ff',
+					foreground: '#f9f9ff',
+				},
+				gray1: {
+					DEFAULT: '#e6e6e6',
+					foreground: '#e6e6e6',
+				},
+				gray2: {
+					DEFAULT: '#a0a3b1',
+					foreground: '#a0a3b1',
+					border: '#a0a3b1',
+					input: '#a0a3b1',
+				},
+				accent1: {
+					DEFAULT: '#ffc97e',
+					background: '#ffc97e',
+				},
+				accent2: {
+					DEFAULT: '#464646',
+					foreground: '#464646',
+				},
 				card: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: white,
-					foreground: stone[950],
+					DEFAULT: '#ffffff',
+					foreground: '#000000',
 				},
 				popover: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: white,
-					foreground: stone[950],
+					DEFAULT: '#ffffff',
+					foreground: '#000000',
 				},
 				primary: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: orange[500],
-					foreground: orange[50],
+					DEFAULT: '#fa6e5a',
+					foreground: '#ffffff',
 				},
 				secondary: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: stone[100],
-					foreground: stone[900],
+					DEFAULT: '#e6e6e6',
+					foreground: '#000000',
 				},
 				muted: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: stone[100],
-					foreground: stone[500],
+					DEFAULT: '#e6e6e6',
+					foreground: '#a0a3b1',
 				},
 				accent: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: orange[100],
-					foreground: orange[900],
+					DEFAULT: '#ffc97e',
+					foreground: '#464646',
 				},
 				destructive: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: red[500],
-					foreground: red[50],
+					DEFAULT: '#fa6e5a',
+					foreground: '#ffffff',
 				},
 				success: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: green[500],
-					foreground: green[50],
+					DEFAULT: '#5a96fa',
+					foreground: '#ffffff',
 				},
 				warning: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: yellow[500],
-					foreground: yellow[50],
+					DEFAULT: '#ffc97e',
+					foreground: '#ffffff',
 				},
 				info: {
-					// biome-ignore lint/style/useNamingConvention: external naming
-					DEFAULT: blue[500],
-					foreground: blue[50],
+					DEFAULT: '#5a96fa',
+					foreground: '#ffffff',
 				},
 			},
 		},
