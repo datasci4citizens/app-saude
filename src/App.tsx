@@ -14,7 +14,7 @@ import DiaryPage from "./pages/patient/diary/Diary";
 import Reminders from "./pages/patient/reminders/Reminders";
 import NewReminder from "./pages/patient/reminders/NewReminder";
 import OnboardingSlider from "./pages/landing/OnboardingSlider";
-import { SWRConfig } from 'swr';
+import { SWRConfig } from "swr";
 import AddProfessionalPage from "./pages/patient/profile/AddProfessionalPage";
 import ModifyHabits from "./pages/patient/diary/modify-habits";
 
@@ -28,7 +28,7 @@ const NotFound = () => (
 
 <SWRConfig value={{ revalidateOnFocus: false }}>
   <App />
-</SWRConfig>
+</SWRConfig>;
 
 const router = createBrowserRouter([
   { path: "/", element: <h1>Home!</h1> },
@@ -106,14 +106,13 @@ const router = createBrowserRouter([
     element: <EmergencyUser />,
   },
   {
-  path: '/modify-habits',
-  element: <ModifyHabits />
+    path: "/modify-habits",
+    element: <ModifyHabits />,
   },
   {
     path: "*",
     element: <NotFound />,
   },
-  
 ]);
 
 export function App() {

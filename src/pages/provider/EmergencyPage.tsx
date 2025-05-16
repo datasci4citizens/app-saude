@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { TextField } from '@/components/forms/text_input';
-import PatientButton from '@/components/ui/patient-button';
-import BottomNavigationBar from '@/components/ui/navigator-bar';
-import { ProviderService } from '@/api/services/ProviderService';
-import { useNavigate } from 'react-router-dom';
-import useSWR from 'swr';
+import { useState, useEffect } from "react";
+import { TextField } from "@/components/forms/text_input";
+import PatientButton from "@/components/ui/patient-button";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
+import { ProviderService } from "@/api/services/ProviderService";
+import { useNavigate } from "react-router-dom";
+import useSWR from "swr";
 
 // Interface para os dados dos pacientes em emergência conforme API
 interface EmergencyPatient {
@@ -26,18 +26,22 @@ interface FormattedEmergencyPatient {
 
 export default function EmergencyPage() {
   const navigate = useNavigate();
-  const [searchValue, setSearchValue] = useState('');
-  const [activeTab, setActiveTab] = useState('todos');
+  const [searchValue, setSearchValue] = useState("");
+  const [activeTab, setActiveTab] = useState("todos");
   const [error, setError] = useState<string | null>(null);
-  
+
   // Usando SWR para buscar os dados dos pacientes em emergência
-  const { data: emergencyPatients, error: fetchError, isLoading } = useSWR(
-    'emergencyPatients',
+  const {
+    data: emergencyPatients,
+    error: fetchError,
+    isLoading,
+  } = useSWR(
+    "emergencyPatients",
     async () => {
       try {
         // Buscando dados dos pacientes vinculados ao provider
         const patientData = await ProviderService.providerPersonsRetrieve();
-        
+
         // Convertendo e formatando os dados da API para o formato esperado pelo componente
         const formattedPatients: FormattedEmergencyPatient[] = patientData
           // Filtrando apenas pacientes com emergências registradas
@@ -46,76 +50,82 @@ export default function EmergencyPage() {
             id: patient.id,
             name: patient.name,
             age: patient.age || 0,
-            lastVisit: patient.last_visit_date || '-',
-            lastEmergency: patient.last_emergency_date || '-',
+            lastVisit: patient.last_visit_date || "-",
+            lastEmergency: patient.last_emergency_date || "-",
           }))
           // Filtrando para selecionar cards onde:
           // 1. last_visit_date é null OU
           // 2. lastVisit > lastEmergency
           .filter((patient: FormattedEmergencyPatient) => {
             // Se o paciente não tem last_visit_date na API original (null)
-            if (patient.lastVisit === '-') {
+            if (patient.lastVisit === "-") {
               return true;
             }
-            
+
             // Ou pacientes cuja última visita foi após a emergência
             const visitDate = parseDate(patient.lastVisit);
             const emergencyDate = parseDate(patient.lastEmergency);
             return visitDate > emergencyDate;
           });
-          
+
         return formattedPatients;
       } catch (err) {
-        console.error('Erro ao buscar pacientes em emergência:', err);
-        setError('Não foi possível carregar a lista de pacientes em emergência.');
+        console.error("Erro ao buscar pacientes em emergência:", err);
+        setError(
+          "Não foi possível carregar a lista de pacientes em emergência.",
+        );
         return [];
       }
     },
     {
       revalidateOnFocus: false,
       dedupingInterval: 60000, // Cache por 1 minuto
-    }
+    },
   );
 
   // Função auxiliar para converter data DD/MM/AAAA para objeto Date
   const parseDate = (dateStr: string) => {
-    if (!dateStr || dateStr === '-') return new Date(0); // Data mínima para valores vazios
-    
+    if (!dateStr || dateStr === "-") return new Date(0); // Data mínima para valores vazios
+
     // Verifica se a data está no formato ISO ou DD/MM/YYYY
-    if (dateStr.includes('-') && !dateStr.includes('/')) {
+    if (dateStr.includes("-") && !dateStr.includes("/")) {
       // Formato ISO (YYYY-MM-DD)
       return new Date(dateStr);
     } else {
       // Formato DD/MM/YYYY
-      const parts = dateStr.split('/').map(Number);
+      const parts = dateStr.split("/").map(Number);
       const day = parts[0] || 0;
       const month = parts[1] || 0;
       const year = parts[2] || 0;
       return new Date(year, month - 1, day);
     }
   };
-  
+
   // Filtra pacientes com base na busca
-  const filteredBySearch = emergencyPatients 
-    ? emergencyPatients.filter(patient => 
-        patient.name.toLowerCase().includes(searchValue.toLowerCase())
+  const filteredBySearch = emergencyPatients
+    ? emergencyPatients.filter((patient) =>
+        patient.name.toLowerCase().includes(searchValue.toLowerCase()),
       )
     : [];
-  
+
   // Aplica ordenação por data se estiver na aba urgentes
-  const filteredPatients = activeTab === 'urgentes'
-    ? [...filteredBySearch].sort((a, b) => {
-        // Ordena por data menos recente (mais antigas primeiro)
-        return parseDate(a.lastEmergency).getTime() - parseDate(b.lastEmergency).getTime();
-      })
-    : filteredBySearch;
+  const filteredPatients =
+    activeTab === "urgentes"
+      ? [...filteredBySearch].sort((a, b) => {
+          // Ordena por data menos recente (mais antigas primeiro)
+          return (
+            parseDate(a.lastEmergency).getTime() -
+            parseDate(b.lastEmergency).getTime()
+          );
+        })
+      : filteredBySearch;
 
   const handleNavigation = (itemId: string) => {
-    if (itemId === 'home') {
-      navigate('/acs-main-page');
+    if (itemId === "home") {
+      navigate("/acs-main-page");
     }
-    if (itemId === 'patients') {
-      navigate('/patients');
+    if (itemId === "patients") {
+      navigate("/patients");
     }
   };
 
@@ -131,15 +141,32 @@ export default function EmergencyPage() {
         {/* Back button at the top */}
         <div className="mb-2">
           <button onClick={() => navigate(-1)}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 18L9 12L15 6" stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M15 18L9 12L15 6"
+                stroke="#000000"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </button>
         </div>
-        
+
         {/* Title centered below */}
         <div className="flex justify-center">
-            <h1 className="font-bold" style={{ fontFamily: "'Work Sans', sans-serif", fontSize: '34px' }}>Emergências</h1>
+          <h1
+            className="font-bold"
+            style={{ fontFamily: "'Work Sans', sans-serif", fontSize: "34px" }}
+          >
+            Emergências
+          </h1>
         </div>
       </header>
 
@@ -158,14 +185,14 @@ export default function EmergencyPage() {
       {/* Tabs */}
       <div className="px-4 flex border-b mb-4">
         <button
-          className={`py-2 px-4 ${activeTab === 'todos' ? 'border-b-2 border-[#FA6E5A] text-[#FA6E5A] font-medium' : ''}`}
-          onClick={() => setActiveTab('todos')}
+          className={`py-2 px-4 ${activeTab === "todos" ? "border-b-2 border-[#FA6E5A] text-[#FA6E5A] font-medium" : ""}`}
+          onClick={() => setActiveTab("todos")}
         >
           Todos
         </button>
         <button
-          className={`py-2 px-4 ${activeTab === 'urgentes' ? 'border-b-2 border-[#FA6E5A] text-[#FA6E5A] font-medium' : ''}`}
-          onClick={() => setActiveTab('urgentes')}
+          className={`py-2 px-4 ${activeTab === "urgentes" ? "border-b-2 border-[#FA6E5A] text-[#FA6E5A] font-medium" : ""}`}
+          onClick={() => setActiveTab("urgentes")}
         >
           Urgentes
         </button>
@@ -178,9 +205,7 @@ export default function EmergencyPage() {
             Carregando pacientes...
           </div>
         ) : fetchError ? (
-          <div className="text-center p-4 text-red-500">
-            {error}
-          </div>
+          <div className="text-center p-4 text-red-500">{error}</div>
         ) : filteredPatients.length > 0 ? (
           filteredPatients.map((patient, index) => (
             <PatientButton
@@ -201,9 +226,9 @@ export default function EmergencyPage() {
       </div>
 
       {/* Bottom navigation using BottomNavigationBar component */}
-      <BottomNavigationBar 
-        variant="acs" 
-        initialActiveId="emergency" 
+      <BottomNavigationBar
+        variant="acs"
+        initialActiveId="emergency"
         onItemClick={handleNavigation}
       />
     </div>

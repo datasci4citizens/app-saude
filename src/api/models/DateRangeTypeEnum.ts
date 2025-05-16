@@ -3,8 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * * `linked` - linked
+ * * `today` - today
+ * * `since_last` - since_last
  */
-export enum StatusEnum {
-  LINKED = "linked",
+export enum DateRangeTypeEnum {
+  TODAY = "today",
+  SINCE_LAST = "since_last",
 }

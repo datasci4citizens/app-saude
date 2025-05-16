@@ -1,8 +1,8 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { AuthService } from '@/api/services/AuthService';
+import { createContext, useContext, useState, useEffect } from "react";
+import { AuthService } from "@/api/services/AuthService";
 
 type AuthContextType = {
-  user: { 
+  user: {
     token: string;
     person_id?: number;
   } | null;
@@ -13,42 +13,42 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType>(null!);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<AuthContextType['user']>(null);
+  const [user, setUser] = useState<AuthContextType["user"]>(null);
 
   const login = async (code: string) => {
     try {
       const response = await AuthService.authLoginGoogleCreate({ code });
-      localStorage.setItem('token', response.access);
-      
+      localStorage.setItem("token", response.access);
+
       // Buscar dados do usuário após login
       const me = await AuthService.authMeRetrieve();
-      
-      setUser({ 
+
+      setUser({
         token: response.access,
-        person_id: me.person_id // Supondo que a resposta inclua person_id
+        person_id: me.person_id, // Supondo que a resposta inclua person_id
       });
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error("Login failed:", error);
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setUser(null);
   };
 
   useEffect(() => {
     const initAuth = async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (token) {
         try {
           const me = await AuthService.authMeRetrieve();
           setUser({
             token,
-            person_id: me.person_id
+            person_id: me.person_id,
           });
         } catch (error) {
-          console.error('Session validation failed:', error);
+          console.error("Session validation failed:", error);
           logout();
         }
       }

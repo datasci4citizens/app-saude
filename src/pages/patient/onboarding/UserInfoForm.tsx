@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/forms/button';
-import { TextField } from '@/components/forms/text_input';
-import { SelectField } from '@/components/forms/select_input';
-import { DateField } from '@/components/forms/date_input';
-import type { PersonCreate } from '@/api/models/PersonCreate';
-import { useDemographicConcepts } from '@/utils/conceptLoader';
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/forms/button";
+import { TextField } from "@/components/forms/text_input";
+import { SelectField } from "@/components/forms/select_input";
+import { DateField } from "@/components/forms/date_input";
+import type { PersonCreate } from "@/api/models/PersonCreate";
+import { useDemographicConcepts } from "@/utils/conceptLoader";
 
 // Define form data type that extends Person with form-specific fields
 interface UserFormData extends Partial<PersonCreate> {
@@ -13,7 +13,7 @@ interface UserFormData extends Partial<PersonCreate> {
   birth_datetime: string | null;
   gender_concept: number | null;
   race_concept: number | null;
-  
+
   // Additional form fields not in Person model
   weight: number | null;
   height: number | null;
@@ -29,43 +29,59 @@ interface FormErrors {
   [key: string]: string | undefined;
 }
 
-export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void }): JSX.Element {
-  const {genderOptions, raceOptions, isLoading: isLoadingConcepts, error: conceptError} = useDemographicConcepts();
-  
+export function UserInfoForm({
+  onSubmit,
+}: {
+  onSubmit: (data: UserFormData) => void;
+}): JSX.Element {
+  const {
+    genderOptions,
+    raceOptions,
+    isLoading: isLoadingConcepts,
+    error: conceptError,
+  } = useDemographicConcepts();
+
   const [formData, setFormData] = useState<UserFormData>({
-    social_name: '',
+    social_name: "",
     gender_concept: null,
     weight: null,
     height: null,
-    birth_datetime: '',
+    birth_datetime: "",
     race_concept: null,
   });
-  
+
   const [errors, setErrors] = useState<FormErrors>({});
 
   // Handle input change
-  const handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
+  const handleChange: React.ChangeEventHandler<
+    HTMLInputElement | HTMLSelectElement
+  > = (e) => {
     const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
-    
+
     // Convert numeric fields to numbers
-    if (name === 'gender_concept' || name === 'race_concept' || name === 'weight' || name === 'height') {
+    if (
+      name === "gender_concept" ||
+      name === "race_concept" ||
+      name === "weight" ||
+      name === "height"
+    ) {
       setFormData({ ...formData, [name]: value ? Number(value) : null });
     } else {
       setFormData({ ...formData, [name]: value });
     }
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors({ ...errors, [name]: undefined });
     }
   };
-  
+
   // Handle date change - convert DD/MM/YYYY to ISO format for backend
   const handleDateChange = (value: string) => {
     // Check if the input is in DD/MM/YYYY format
     const datePattern = /^(\d{2})\/(\d{2})\/(\d{4})$/;
     const match = value.match(datePattern);
-    
+
     if (match) {
       // Convert DD/MM/YYYY to YYYY-MM-DD format for backend
       const [_, day, month, year] = match;
@@ -75,7 +91,7 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
       // Just store the value as is (for validation later)
       setFormData({ ...formData, birth_datetime: value });
     }
-    
+
     // Clear error when user starts typing
     if (errors.birth_datetime) {
       setErrors({ ...errors, birth_datetime: undefined });
@@ -84,7 +100,7 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
 
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
-    
+
     // Required fields - add as needed
     if (!formData.social_name) newErrors.social_name = "Nome social é obrigatório";
     if (formData.gender_concept === null) newErrors.gender_concept = "Gênero é obrigatório";
@@ -112,34 +128,34 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
         }
       }
     }
-    
+
     // Validate weight and height if provided
     if (formData.weight !== null && formData.weight <= 0) {
       newErrors.weight = "Peso deve ser maior que zero";
     }
-    
+
     if (formData.height !== null && formData.height <= 0) {
       newErrors.height = "Altura deve ser maior que zero";
     }
-    
+
     return newErrors;
   };
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate form
     const formErrors = validateForm();
-    
+
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
     }
-    
+
     // Clear all errors on successful submission
     setErrors({});
-    
+
     // Submit if no errors
     onSubmit(formData);
   };
@@ -151,74 +167,80 @@ export function UserInfoForm({onSubmit}: {onSubmit: (data: UserFormData) => void
           <p>{conceptError}</p>
         </div>
       )}
-      
-      <TextField 
+
+      <TextField
         id="social_name"
         name="social_name"
         label="Nome social (opcional)"
-        value={formData.social_name || ''}
+        value={formData.social_name || ""}
         onChange={handleChange}
         placeholder="Como prefere ser chamado(a)"
         helperText="Apenas para caso de uso interno, não compartilharemos com terceiros"
         error={errors.social_name}
       />
-      
+
       <SelectField
         id="gender_concept"
         name="gender_concept"
         label="Gênero"
-        value={formData.gender_concept !== null ? formData.gender_concept.toString() : ''}
+        value={
+          formData.gender_concept !== null
+            ? formData.gender_concept.toString()
+            : ""
+        }
         onChange={handleChange}
         options={genderOptions}
         error={errors.gender_concept}
         isLoading={isLoadingConcepts}
       />
-      
+
       <div className="flex flex-row gap-4 max-[294px]:flex-wrap">
-        <TextField 
+        <TextField
           id="weight"
           name="weight"
           type="number"
           label="Peso (kg)"
-          value={formData.weight !== null ? formData.weight.toString() : ''}
+          value={formData.weight !== null ? formData.weight.toString() : ""}
           onChange={handleChange}
           error={errors.weight}
         />
-        
-        <TextField 
+
+        <TextField
           id="height"
           name="height"
           type="number"
           label="Altura (cm)"
-          value={formData.height !== null ? formData.height.toString() : ''}
+          value={formData.height !== null ? formData.height.toString() : ""}
           onChange={handleChange}
           error={errors.height}
         />
       </div>
-      
-      <DateField 
+
+      <DateField
         id="birth_datetime"
         name="birth_datetime"
         label="Data de nascimento"
-        value={formData.birth_datetime || ''}
+        value={formData.birth_datetime || ""}
         onChange={handleDateChange}
         error={errors.birth_datetime}
       />
-      
+
       <SelectField
         id="race_concept"
         name="race_concept"
         label="Cor/Raça"
-        value={formData.race_concept !== null ? formData.race_concept.toString() : ''}
+        value={
+          formData.race_concept !== null ? formData.race_concept.toString() : ""
+        }
         onChange={handleChange}
         options={raceOptions}
         error={errors.race_concept}
         isLoading={isLoadingConcepts}
       />
-      
-      <Button 
-        type="submit" 
-        variant="white" 
+
+      <Button
+        type="submit"
+        variant="white"
         className="w-full mt-4 font-['Inter'] font-bold"
       >
         CONTINUAR

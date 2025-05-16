@@ -17,9 +17,9 @@ const BackArrow: React.FC<BackArrowProps> = ({ className }) => {
       aria-label="Go back"
     >
       <div className="flex items-center">
-        <span 
-          role="img" 
-          aria-label="arrow" 
+        <span
+          role="img"
+          aria-label="arrow"
           className="mgc_arrow_left_line text-3xl text-typography"
         ></span>
       </div>

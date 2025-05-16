@@ -45,14 +45,15 @@ const Reminders: React.FC = () => {
   ];
 
   const [selectedDate, setSelectedDate] = useState<string>(
-    today.toISOString().split("T")[0] as string
+    today.toISOString().split("T")[0] as string,
   );
 
   const [consultationsSortOrder, setConsultationsSortOrder] = useState<
     "asc" | "desc"
   >("asc");
-  const [medicinesSortOrder, setMedicinesSortOrder] =
-    useState<"asc" | "desc">("asc");
+  const [medicinesSortOrder, setMedicinesSortOrder] = useState<"asc" | "desc">(
+    "asc",
+  );
 
   // Generate 20 days from today for the date slider
   const dates = Array.from({ length: 20 }, (_, i) => {
@@ -88,7 +89,7 @@ const Reminders: React.FC = () => {
 
   const sortRemindersByTime = (
     reminders: Reminder[],
-    order: "asc" | "desc"
+    order: "asc" | "desc",
   ): Reminder[] => {
     return [...reminders].sort((a, b) => {
       return 0;
@@ -97,16 +98,16 @@ const Reminders: React.FC = () => {
 
   const relevantConsultations = sortRemindersByTime(
     consultations.filter((reminder) =>
-      isDateInRepeatPattern(selectedDate, reminder)
+      isDateInRepeatPattern(selectedDate, reminder),
     ),
-    consultationsSortOrder
+    consultationsSortOrder,
   );
 
   const relevantMedicines = sortRemindersByTime(
     medicines.filter((reminder) =>
-      isDateInRepeatPattern(selectedDate, reminder)
+      isDateInRepeatPattern(selectedDate, reminder),
     ),
-    medicinesSortOrder
+    medicinesSortOrder,
   );
 
   return (
@@ -151,7 +152,7 @@ const Reminders: React.FC = () => {
               className="mgc-sort-line"
               onClick={() =>
                 setConsultationsSortOrder(
-                  consultationsSortOrder === "asc" ? "desc" : "asc"
+                  consultationsSortOrder === "asc" ? "desc" : "asc",
                 )
               }
             />
@@ -182,7 +183,7 @@ const Reminders: React.FC = () => {
               className="mgc-sort-line"
               onClick={() =>
                 setMedicinesSortOrder(
-                  medicinesSortOrder === "asc" ? "desc" : "asc"
+                  medicinesSortOrder === "asc" ? "desc" : "asc",
                 )
               }
             />
@@ -211,10 +212,7 @@ const Reminders: React.FC = () => {
       ) : null}
 
       {/* Floating Action Button */}
-      <button
-        style={styles.fab}
-        onClick={() => navigate("/new-reminder")}
-      >
+      <button style={styles.fab} onClick={() => navigate("/new-reminder")}>
         <span className="mgc_add_line" style={styles.fabIcon} />
       </button>
     </div>

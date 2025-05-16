@@ -42,9 +42,7 @@ const ReminderCard: React.FC<ReminderCardProps> = ({
         <h4 className="text-base font-normal m-0 text-typography font-inter">
           {title}
         </h4>
-        <p className="text-xs m-0 text-gray2 font-inter">
-          {subtitle}
-        </p>
+        <p className="text-xs m-0 text-gray2 font-inter">{subtitle}</p>
       </div>
 
       {/* Checkbox (conditionally rendered) */}

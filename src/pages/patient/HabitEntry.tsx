@@ -2,8 +2,8 @@ interface HabitEntryProps {
   habit: {
     id: string;
     name: string;
-    measurementType: 'scale' | 'hours' | 'times' | 'yesno';
-    frequency: 'daily' | 'weekly' | 'monthly';
+    measurementType: "scale" | "hours" | "times" | "yesno";
+    frequency: "daily" | "weekly" | "monthly";
     shared: boolean;
     value?: number | boolean;
   };
@@ -11,7 +11,11 @@ interface HabitEntryProps {
   onRemove?: () => void;
 }
 
-export default function HabitEntry({ habit, onChange, onRemove }: HabitEntryProps) {
+export default function HabitEntry({
+  habit,
+  onChange,
+  onRemove,
+}: HabitEntryProps) {
   return (
     <div className="p-4 border rounded-lg space-y-3">
       {/* Habit Name */}
@@ -28,7 +32,9 @@ export default function HabitEntry({ habit, onChange, onRemove }: HabitEntryProp
       <div className="flex space-x-4">
         <select
           value={habit.measurementType}
-          onChange={(e) => onChange({ ...habit, measurementType: e.target.value as any })}
+          onChange={(e) =>
+            onChange({ ...habit, measurementType: e.target.value as any })
+          }
           className="p-2 border rounded"
           disabled={!onRemove}
         >
@@ -41,7 +47,9 @@ export default function HabitEntry({ habit, onChange, onRemove }: HabitEntryProp
         {/* Frequency */}
         <select
           value={habit.frequency}
-          onChange={(e) => onChange({ ...habit, frequency: e.target.value as any })}
+          onChange={(e) =>
+            onChange({ ...habit, frequency: e.target.value as any })
+          }
           className="p-2 border rounded"
           disabled={!onRemove}
         >
@@ -53,13 +61,15 @@ export default function HabitEntry({ habit, onChange, onRemove }: HabitEntryProp
 
       {/* Input Based on Measurement Type */}
       <div className="pt-2">
-        {habit.measurementType === 'scale' && (
+        {habit.measurementType === "scale" && (
           <input
             type="range"
             min="1"
             max="10"
-            value={habit.value as number || 5}
-            onChange={(e) => onChange({ ...habit, value: parseInt(e.target.value) })}
+            value={(habit.value as number) || 5}
+            onChange={(e) =>
+              onChange({ ...habit, value: parseInt(e.target.value) })
+            }
             className="w-full"
           />
         )}

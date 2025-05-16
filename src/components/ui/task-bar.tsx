@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface NavItem {
   label: string;
@@ -8,25 +8,43 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   {
-    label: 'Casa',
-    icon: <span role="img" aria-label="home" className="mgc_home_4_line"></span>,
+    label: "Casa",
+    icon: (
+      <span role="img" aria-label="home" className="mgc_home_4_line"></span>
+    ),
     active: true,
   },
   {
-    label: 'Remédios e consultas',
-    icon: <span role="img" aria-label="calendar" className="mgc_calendar_line"></span>,
+    label: "Remédios e consultas",
+    icon: (
+      <span
+        role="img"
+        aria-label="calendar"
+        className="mgc_calendar_line"
+      ></span>
+    ),
   },
   {
-    label: 'Diário',
-    icon: <span role="img" aria-label="book" className='mgc_book_6_line'></span>,
+    label: "Diário",
+    icon: (
+      <span role="img" aria-label="book" className="mgc_book_6_line"></span>
+    ),
   },
   {
-    label: 'Emergências',
-    icon: <span role="img" aria-label="warning" className='mgc_emergency_flashers_line'></span>,
+    label: "Emergências",
+    icon: (
+      <span
+        role="img"
+        aria-label="warning"
+        className="mgc_emergency_flashers_line"
+      ></span>
+    ),
   },
   {
-    label: 'Eu',
-    icon: <span role="img" aria-label="user" className='mgc_user_2_line'></span>,
+    label: "Eu",
+    icon: (
+      <span role="img" aria-label="user" className="mgc_user_2_line"></span>
+    ),
   },
 ];
 
@@ -37,10 +55,12 @@ const BottomNavigationBar: React.FC = () => {
         <div
           key={index}
           className={`flex flex-col items-center text-gray2 font-medium text-xs font-inter cursor-pointer ${
-            item.active ? 'text-primary' : ''
+            item.active ? "text-primary" : ""
           }`}
         >
-          <div className="text-2xl mb-0.5 p-0.5 bg-transparent rounded-lg">{item.icon}</div>
+          <div className="text-2xl mb-0.5 p-0.5 bg-transparent rounded-lg">
+            {item.icon}
+          </div>
           <div className="text-[10px]">{item.label}</div>
         </div>
       ))}

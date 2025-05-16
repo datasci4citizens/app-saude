@@ -32,19 +32,18 @@ const Checkbox = forwardRef<
       showChildrenOnSelectOnly = false,
       ...props
     },
-    ref
+    ref,
   ) => (
     <CheckboxPrimitive.Root
       ref={ref}
       className={cn(
-
         "peer shrink-0 border-[1.7px] ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center",
         "border-gray-300 data-[state=checked]:border-dark_blue", // Border fix
         radius,
         height,
         width,
         props.checked ? color : "bg-transparent",
-        className
+        className,
       )}
       {...props}
     >
@@ -58,7 +57,7 @@ const Checkbox = forwardRef<
         </CheckboxPrimitive.Indicator>
       )}
     </CheckboxPrimitive.Root>
-  )
+  ),
 );
 
 Checkbox.displayName = CheckboxPrimitive.Root.displayName;
