@@ -6,12 +6,16 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select_habit';
 import { TextField } from '@/components/ui/text_input_diary';
 import { Button } from "@/components/forms/button";
+import type { DiaryCreate } from "@/api/models/DiaryCreate";
+import { DiariesService } from '@/api/services/DiariesService';
+import { DateRangeTypeEnum } from '@/api';
+import { ConceptService } from '@/api/services/ConceptService';
 
 interface TrackableItem {
   id: string;
   name: string;
-  measurementType: 'scale' | 'hours' | 'times' | 'yesno';
-  value?: string;
+  measurementType: string;
+  value?: string | null | undefined;
 }
 
 export default function DiaryInfoForm() {
@@ -27,27 +31,29 @@ export default function DiaryInfoForm() {
 
   const [habits, setHabits] = useState<TrackableItem[]>([]);
 
-  const [wellBeingQuestions] = useState<TrackableItem[]>([
-    { id: 'sleep', name: 'Qualidade do sono', measurementType: 'scale' },
-    { id: 'medicine', name: 'Tomar medicamentos', measurementType: 'yesno' },
-    { id: 'medication_effects', name: 'Efeitos da medicação', measurementType: 'scale' },
-    { id: 'side_effects', name: 'Efeitos colaterais da medicação', measurementType: 'yesno' },
-    { id: 'physical_symptoms', name: 'Sintomas físicos', measurementType: 'yesno' },
-    { id: 'thoughts', name: 'Pensamentos', measurementType: 'scale' },
-    { id: 'triggers', name: 'Exposição a gatilhos', measurementType: 'times' },
-    { id: 'work', name: 'Trabalho', measurementType: 'scale' },
-    { id: 'chores', name: 'Tarefas domésticas', measurementType: 'scale' },
-    { id: 'food', name: 'Alimentação', measurementType: 'scale' },
-    { id: 'hobbies', name: 'Hobbies', measurementType: 'scale' },
-    { id: 'exercise', name: 'Exercício físico', measurementType: 'hours' },
-    { id: 'water', name: 'Consumo de água', measurementType: 'scale' },
-    { id: 'social', name: 'Socialização', measurementType: 'scale' },
-    { id: 'self_harm', name: 'Auto mutilação', measurementType: 'times' },
-    { id: 'intrusive_thoughts', name: 'Pensamentos intrusivos', measurementType: 'scale' },
-    { id: 'suicidal_ideation', name: 'Ideação suicida', measurementType: 'yesno' },
-    { id: 'dissociation', name: 'Disassociação', measurementType: 'scale' },
-    { id: 'paranoia', name: 'Paranóia', measurementType: 'scale' }
-  ]);
+  const [wellBeingQuestions, setWellBeingQuestions] = useState<TrackableItem[]>([]);
+    useEffect(() => {
+      const fetchConcepts = async () => {
+        try {
+          const concepts = await ConceptService.apiConceptList('Wellness', 'pt', 'has_value_type');
+
+          const formatted: TrackableItem[] = concepts.map((c) => ({
+            id: c.concept_id.toString(),
+            name: c.translated_name ?? c.concept_name,
+            measurementType: c.related_concept?.concept_code ?? 'unknown', // ex: "scale", "yes_no"
+            value: c.related_concept?.concept_code
+          }));
+
+          console.log('Conceitos de bem-estar:', formatted);
+
+          setWellBeingQuestions(formatted);
+        } catch (error) {
+          console.error('Erro ao buscar conceitos de bem-estar', error);
+        }
+      };
+
+      fetchConcepts();
+    }, []);
 
   useEffect(() => {
     if (location.state?.newHabit) {
@@ -70,25 +76,31 @@ export default function DiaryInfoForm() {
     setIsSubmitting(true);
 
     try {
-      const formData = {
-        timeRange,
+      const diary: DiaryCreate = {
+        date_range_type: DateRangeTypeEnum.SINCE_LAST, // FIXME: this should be dynamic
+        text: freeText,
+        text_shared: shareText,
+        habits_shared: shareHabits,
+        wellness_shared: shareWellBeing,
         habits: habits.map(habit => ({
-          ...habit,
+          concept_id: habit.id,
+          value: habit.value,
           shared: shareHabits
         })),
-        wellBeingQuestions: wellBeingQuestions.map(q => ({
-          ...q,
+        wellness: wellBeingQuestions.map(q => ({
+          concept_id: q.id,
+          value: q.value,
           shared: shareWellBeing
         })),
-        freeText,
-        textShared: shareText
       };
 
-      console.log('Submitting diary:', formData);
+      console.log('Submitting diary:', diary);
+
+      await DiariesService.diariesCreate(diary);
       await new Promise(resolve => setTimeout(resolve, 1000));
       navigate(-1);
     } catch (error) {
-      console.error('Error saving diary:', error);
+      console.error('Failed to submit diary', error);
       alert('Ocorreu um erro ao salvar o diário. Por favor, tente novamente.');
     } finally {
       setIsSubmitting(false);
@@ -101,7 +113,7 @@ export default function DiaryInfoForm() {
         return Array.from({ length: 10 }, (_, i) => (
           <SelectItem key={i} value={(i + 1).toString()}>{i + 1}</SelectItem>
         ));
-      case 'yesno':
+      case 'yes_no':
         return (
           <>
             <SelectItem value="yes">Sim</SelectItem>
@@ -174,7 +186,7 @@ return (
                 <SelectTrigger hasSelection={!!habit.value} className="h-10">
                   <SelectValue placeholder={
                     habit.measurementType === 'scale' ? '1-10' : 
-                    habit.measurementType === 'yesno' ? 'Sim/Não' : 
+                    habit.measurementType === 'yes_no' ? 'Sim/Não' : 
                     habit.measurementType === 'hours' ? 'Horas' : 'Vezes'
                   } />
                 </SelectTrigger>

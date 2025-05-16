@@ -5,7 +5,7 @@ set -e  # Para o script parar em caso de erro
 TMP_DIR="temp-api"
 TARGET_DIR="src/api"
 CORE_SUBDIR="core"
-KEEP_FILES=('FetchWithRefresh.ts')
+KEEP_FILES=()
 
 # 1. Salva cópias dos arquivos a preservar
 echo "💾 Salvando arquivos OpenAPI antigos..."

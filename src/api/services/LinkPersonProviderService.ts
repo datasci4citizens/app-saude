@@ -4,7 +4,6 @@
 /* eslint-disable */
 import type { PersonLinkProviderRequest } from '../models/PersonLinkProviderRequest';
 import type { PersonLinkProviderResponse } from '../models/PersonLinkProviderResponse';
-import type { PersonRetrieve } from '../models/PersonRetrieve';
 import type { ProviderLinkCodeResponse } from '../models/ProviderLinkCodeResponse';
 import type { ProviderRetrieve } from '../models/ProviderRetrieve';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -59,16 +58,6 @@ export class LinkPersonProviderService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/provider/link-code/',
-        });
-    }
-    /**
-     * @returns PersonRetrieve
-     * @throws ApiError
-     */
-    public static providerPersonsList(): CancelablePromise<Array<PersonRetrieve>> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/provider/persons/',
         });
     }
 }

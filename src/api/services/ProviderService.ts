@@ -198,6 +198,41 @@ export class ProviderService {
         });
     }
     /**
+     * @param patientId
+     * @returns any No response body
+     * @throws ApiError
+     */
+    public static providerPatientsDiariesRetrieve(
+        patientId: number,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/provider/patients/{patient_id}/diaries/',
+            path: {
+                'patient_id': patientId,
+            },
+        });
+    }
+    /**
+     * @param diaryId
+     * @param patientId
+     * @returns any No response body
+     * @throws ApiError
+     */
+    public static providerPatientsDiariesRetrieve2(
+        diaryId: string,
+        patientId: number,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/provider/patients/{patient_id}/diaries/{diary_id}/',
+            path: {
+                'diary_id': diaryId,
+                'patient_id': patientId,
+            },
+        });
+    }
+    /**
      * Função para obter todos os pacientes vinculados ao médico (provider) autenticado
      *
      * Returns:

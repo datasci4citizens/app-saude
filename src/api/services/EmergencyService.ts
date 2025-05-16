@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ObservationCreate } from '../models/ObservationCreate';
+import type { EmergencyCreate } from '../models/EmergencyCreate';
 import type { ObservationRetrieve } from '../models/ObservationRetrieve';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -14,7 +14,7 @@ export class EmergencyService {
      * @throws ApiError
      */
     public static emergencySendCreate(
-        requestBody: Array<ObservationCreate>,
+        requestBody: Array<EmergencyCreate>,
     ): CancelablePromise<Array<ObservationRetrieve>> {
         return __request(OpenAPI, {
             method: 'POST',

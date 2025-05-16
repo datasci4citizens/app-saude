@@ -13,12 +13,14 @@ export class ConceptService {
     /**
      * @param _class Lista de concept_class_id (ex: class=Gender,Ethnicity)
      * @param lang Idioma da tradução (ex: pt)
+     * @param relationship relationship_id a buscar para cada concept (ex: has_value_type)
      * @returns ConceptRetrieve
      * @throws ApiError
      */
     public static apiConceptList(
         _class?: string,
         lang?: string,
+        relationship?: string,
     ): CancelablePromise<Array<ConceptRetrieve>> {
         return __request(OpenAPI, {
             method: 'GET',
@@ -26,12 +28,14 @@ export class ConceptService {
             query: {
                 'class': _class,
                 'lang': lang,
+                'relationship': relationship,
             },
         });
     }
     /**
      * @param _class Lista de concept_class_id (ex: class=Gender,Ethnicity)
      * @param lang Idioma da tradução (ex: pt)
+     * @param relationship relationship_id a buscar para cada concept (ex: has_value_type)
      * @param requestBody
      * @returns ConceptCreate
      * @throws ApiError
@@ -39,6 +43,7 @@ export class ConceptService {
     public static apiConceptCreate(
         _class?: string,
         lang?: string,
+        relationship?: string,
         requestBody?: ConceptCreate,
     ): CancelablePromise<ConceptCreate> {
         return __request(OpenAPI, {
@@ -47,6 +52,7 @@ export class ConceptService {
             query: {
                 'class': _class,
                 'lang': lang,
+                'relationship': relationship,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -56,6 +62,7 @@ export class ConceptService {
      * @param conceptId A unique integer value identifying this concept.
      * @param _class Lista de concept_class_id (ex: class=Gender,Ethnicity)
      * @param lang Idioma da tradução (ex: pt)
+     * @param relationship relationship_id a buscar para cada concept (ex: has_value_type)
      * @returns ConceptRetrieve
      * @throws ApiError
      */
@@ -63,6 +70,7 @@ export class ConceptService {
         conceptId: number,
         _class?: string,
         lang?: string,
+        relationship?: string,
     ): CancelablePromise<ConceptRetrieve> {
         return __request(OpenAPI, {
             method: 'GET',
@@ -73,6 +81,7 @@ export class ConceptService {
             query: {
                 'class': _class,
                 'lang': lang,
+                'relationship': relationship,
             },
         });
     }
@@ -80,6 +89,7 @@ export class ConceptService {
      * @param conceptId A unique integer value identifying this concept.
      * @param _class Lista de concept_class_id (ex: class=Gender,Ethnicity)
      * @param lang Idioma da tradução (ex: pt)
+     * @param relationship relationship_id a buscar para cada concept (ex: has_value_type)
      * @param requestBody
      * @returns ConceptUpdate
      * @throws ApiError
@@ -88,6 +98,7 @@ export class ConceptService {
         conceptId: number,
         _class?: string,
         lang?: string,
+        relationship?: string,
         requestBody?: ConceptUpdate,
     ): CancelablePromise<ConceptUpdate> {
         return __request(OpenAPI, {
@@ -99,6 +110,7 @@ export class ConceptService {
             query: {
                 'class': _class,
                 'lang': lang,
+                'relationship': relationship,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -108,6 +120,7 @@ export class ConceptService {
      * @param conceptId A unique integer value identifying this concept.
      * @param _class Lista de concept_class_id (ex: class=Gender,Ethnicity)
      * @param lang Idioma da tradução (ex: pt)
+     * @param relationship relationship_id a buscar para cada concept (ex: has_value_type)
      * @param requestBody
      * @returns ConceptUpdate
      * @throws ApiError
@@ -116,6 +129,7 @@ export class ConceptService {
         conceptId: number,
         _class?: string,
         lang?: string,
+        relationship?: string,
         requestBody?: PatchedConceptUpdate,
     ): CancelablePromise<ConceptUpdate> {
         return __request(OpenAPI, {
@@ -127,6 +141,7 @@ export class ConceptService {
             query: {
                 'class': _class,
                 'lang': lang,
+                'relationship': relationship,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -136,6 +151,7 @@ export class ConceptService {
      * @param conceptId A unique integer value identifying this concept.
      * @param _class Lista de concept_class_id (ex: class=Gender,Ethnicity)
      * @param lang Idioma da tradução (ex: pt)
+     * @param relationship relationship_id a buscar para cada concept (ex: has_value_type)
      * @returns void
      * @throws ApiError
      */
@@ -143,6 +159,7 @@ export class ConceptService {
         conceptId: number,
         _class?: string,
         lang?: string,
+        relationship?: string,
     ): CancelablePromise<void> {
         return __request(OpenAPI, {
             method: 'DELETE',
@@ -153,6 +170,7 @@ export class ConceptService {
             query: {
                 'class': _class,
                 'lang': lang,
+                'relationship': relationship,
             },
         });
     }
