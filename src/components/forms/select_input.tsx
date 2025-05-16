@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Option {
   value: string;
@@ -33,7 +33,7 @@ export function SelectField({
   onChange,
   error,
   isLoading = false,
-  placeholder = "Selecione"
+  placeholder = "Selecione",
 }: SelectFieldProps) {
   // Handle value change and convert to expected event format
   const handleValueChange = (newValue: string) => {
@@ -41,34 +41,39 @@ export function SelectField({
     const syntheticEvent = {
       target: {
         name,
-        value: newValue
-      }
+        value: newValue,
+      },
     } as React.ChangeEvent<HTMLSelectElement>;
-    
+
     onChange(syntheticEvent);
   };
 
   return (
     <div className="mb-4">
       {label && (
-        <label htmlFor={id} className="block text-sm font-inter font-light text-typography mb-1">
+        <label
+          htmlFor={id}
+          className="block text-sm font-inter font-light text-typography mb-1"
+        >
           {label}
         </label>
       )}
-      
+
       <Select value={value} onValueChange={handleValueChange}>
-        <SelectTrigger 
+        <SelectTrigger
           id={id}
           disabled={isLoading}
           className={`text-[#141B36] font-['Inter'] font-normal ring-offset-0 ${
             error ? "border-destructive" : "border-gray1"
           } focus:ring-primary focus:ring-2 focus:border-none`}
         >
-        <SelectValue placeholder={placeholder} />
+          <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
           {isLoading ? (
-            <option value="" disabled>Carregando...</option>
+            <option value="" disabled>
+              Carregando...
+            </option>
           ) : (
             options.map((option) => (
               <SelectItem key={option.value} value={String(option.value)}>
@@ -78,8 +83,12 @@ export function SelectField({
           )}
         </SelectContent>
       </Select>
-      
-      {error && <p className="text-destructive text-xs font-inter font-light mt-1">{error}</p>}
+
+      {error && (
+        <p className="text-destructive text-xs font-inter font-light mt-1">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

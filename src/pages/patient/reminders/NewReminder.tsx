@@ -8,10 +8,10 @@ import { Checkbox } from "@/components/forms/checkbox";
 
 const NewReminder: React.FC = () => {
   const hours = Array.from({ length: 24 }, (_, i) =>
-    i.toString().padStart(2, "0")
+    i.toString().padStart(2, "0"),
   ); // 24-hour format
   const minutes = Array.from({ length: 60 }, (_, i) =>
-    i.toString().padStart(2, "0")
+    i.toString().padStart(2, "0"),
   );
 
   const [selectedDate, setSelectedDate] = useState<string>(""); // String format for DateField
@@ -164,7 +164,7 @@ const NewReminder: React.FC = () => {
                   type="button"
                   onClick={() =>
                     setRepeatType(
-                      type as "Hour" | "Day" | "Week" | "Month" | "Year"
+                      type as "Hour" | "Day" | "Week" | "Month" | "Year",
                     )
                   }
                   style={{
@@ -188,7 +188,7 @@ const NewReminder: React.FC = () => {
                   />
                 )}
               </React.Fragment>
-            )
+            ),
           )}
         </div>
       </div>

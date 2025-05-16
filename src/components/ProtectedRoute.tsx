@@ -1,7 +1,7 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate } from "react-router-dom";
 
 function getUserType() {
-  return localStorage.getItem('role'); 
+  return localStorage.getItem("role");
 }
 
 export default function ProtectedRoute({ element, allowedTypes }) {

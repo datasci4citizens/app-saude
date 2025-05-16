@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
 interface ProgressIndicatorProps {
   currentStep: number;
   totalSteps: number;
-  activeColor?: string; 
+  activeColor?: string;
   inactiveColor?: string;
   className?: string;
 }
@@ -12,12 +12,12 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   currentStep,
   totalSteps,
   activeColor = "bg-selected",
-  inactiveColor = "bg-transparent", 
+  inactiveColor = "bg-transparent",
   className = "",
 }) => {
   // Create an array of steps to map through
   const steps = Array.from({ length: totalSteps }, (_, i) => i + 1);
-  
+
   return (
     <div className={`mt-[30px] mb-6 mx-8 ${className}`}>
       <div className="flex h-2 w-full bg-gray1 rounded-full overflow-hidden">

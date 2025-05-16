@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 interface WheelPickerProps {
   data: string[];
@@ -21,7 +21,7 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
   children,
 }) => {
   const [selectedIndex, setSelectedIndex] = useState(
-    data.indexOf(selected) !== -1 ? data.indexOf(selected) : 0
+    data.indexOf(selected) !== -1 ? data.indexOf(selected) : 0,
   );
   const [_, setIsScrolling] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -129,7 +129,9 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
                 }}
                 className={cn(
                   "text-center text-base cursor-pointer transition-opacity duration-200",
-                  index === selectedIndex ? "font-bold text-typography" : "font-normal text-gray2-foreground"
+                  index === selectedIndex
+                    ? "font-bold text-typography"
+                    : "font-normal text-gray2-foreground",
                 )}
                 style={{
                   height: `${itemHeight}px`,

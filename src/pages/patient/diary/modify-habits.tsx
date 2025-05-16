@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/forms/button";
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select_habit';
-import { TextField } from '@/components/ui/text_input_diary';
-import BackArrow from '@/components/ui/back_arrow';
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select_habit";
+import { TextField } from "@/components/ui/text_input_diary";
+import BackArrow from "@/components/ui/back_arrow";
 
 const ModifyHabits = () => {
   const navigate = useNavigate();
-  const [habitName, setHabitName] = useState('');
-  const [measurementType, setMeasurementType] = useState<'scale' | 'hours' | 'times' | 'yesno'>('scale');
+  const [habitName, setHabitName] = useState("");
+  const [measurementType, setMeasurementType] = useState<
+    "scale" | "hours" | "times" | "yesno"
+  >("scale");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,9 +25,9 @@ const ModifyHabits = () => {
         newHabit: {
           id: Date.now().toString(),
           name: habitName,
-          measurementType
-        }
-      }
+          measurementType,
+        },
+      },
     });
   };
 
@@ -29,10 +37,10 @@ const ModifyHabits = () => {
       <div className="mb-6 cursor-pointer" onClick={() => navigate(-1)}>
         <BackArrow />
       </div>
-      
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <h2 className="text-2xl font-bold mb-6">Criar Novo Hábito</h2>
-        
+
         <TextField
           label="Nome do Hábito"
           value={habitName}
@@ -42,7 +50,10 @@ const ModifyHabits = () => {
 
         <div className="space-y-2">
           <label className="block text-sm font-medium">Tipo de Medição</label>
-          <Select value={measurementType} onValueChange={(value) => setMeasurementType(value as any)}>
+          <Select
+            value={measurementType}
+            onValueChange={(value) => setMeasurementType(value as any)}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Selecione o tipo" />
             </SelectTrigger>

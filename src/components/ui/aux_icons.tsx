@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface Icon {
   label: string;
@@ -8,13 +8,17 @@ interface Icon {
 
 const icon: Icon[] = [
   {
-    label: 'Remedio',
-    icon: <span role="img" aria-label="capsule" className="mgc_capsule_line"></span>,
+    label: "Remedio",
+    icon: (
+      <span role="img" aria-label="capsule" className="mgc_capsule_line"></span>
+    ),
     shouldFlip: true,
   },
   {
-    label: 'Lapis',
-    icon: <span role="img" aria-label="pencil" className="mgc_pencil_line"></span>,
+    label: "Lapis",
+    icon: (
+      <span role="img" aria-label="pencil" className="mgc_pencil_line"></span>
+    ),
     shouldFlip: false,
   },
 ];
@@ -27,9 +31,11 @@ const AuxIcons: React.FC = () => {
           key={index}
           className="flex flex-col items-center text-gray2 font-medium text-xs font-inter cursor-pointer"
         >
-          <div className={`text-2xl mb-0.5 p-0.5 bg-transparent rounded-lg ${
-            item.shouldFlip ? 'scale-x-[-1]' : ''
-          }`}>
+          <div
+            className={`text-2xl mb-0.5 p-0.5 bg-transparent rounded-lg ${
+              item.shouldFlip ? "scale-x-[-1]" : ""
+            }`}
+          >
             {item.icon}
           </div>
           <div className="text-[10px]">{item.label}</div>

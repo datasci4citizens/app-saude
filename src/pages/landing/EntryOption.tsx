@@ -1,13 +1,15 @@
 import { Button } from "@/components/forms/button";
 import { SelectableOption } from "@/components/ui/selectable-button";
 import { useState } from "react";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface EntryOptionsScreenProps {
   onComplete: (userType: string) => void;
 }
 
-const EntryOptionsScreen: React.FC<EntryOptionsScreenProps> = ({ onComplete }) => {
+const EntryOptionsScreen: React.FC<EntryOptionsScreenProps> = ({
+  onComplete,
+}) => {
   const [userType, setUserType] = useState("");
   const navigate = useNavigate();
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface HabitCardProps {
   title: string;
@@ -7,16 +7,13 @@ interface HabitCardProps {
 
 /**
  * HabitCard - Componente para exibir um hábito como card
- * 
+ *
  * @param title - Texto do hábito (obrigatório)
  * @param className - Classes adicionais para customização
  */
-const HabitCard: React.FC<HabitCardProps> = ({ 
-  title, 
-  className = "" 
-}) => {
+const HabitCard: React.FC<HabitCardProps> = ({ title, className = "" }) => {
   return (
-    <div 
+    <div
       className={`
         bg-primary
         text-primary-foreground
@@ -38,4 +35,3 @@ const HabitCard: React.FC<HabitCardProps> = ({
 };
 
 export default HabitCard;
-
