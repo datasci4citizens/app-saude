@@ -137,8 +137,8 @@ export default function DiaryInfoForm() {
       case "yes_no":
         return (
           <>
-            <SelectItem value="yes">Sim</SelectItem>
-            <SelectItem value="no">Não</SelectItem>
+            <SelectItem value="value_yes">Sim</SelectItem>
+            <SelectItem value="value_no">Não</SelectItem>
           </>
         );
       case "hours":
