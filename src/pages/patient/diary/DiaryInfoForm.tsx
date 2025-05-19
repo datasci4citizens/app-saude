@@ -16,6 +16,8 @@ import type { DiaryCreate } from "@/api/models/DiaryCreate";
 import { DiariesService } from "@/api/services/DiariesService";
 import { DateRangeTypeEnum } from "@/api";
 import { ConceptService } from "@/api/services/ConceptService";
+import { Slider } from "@/components/ui/slider";
+
 
 interface TrackableItem {
   id: string;
@@ -42,6 +44,22 @@ export default function DiaryInfoForm() {
   const [wellBeingQuestions, setWellBeingQuestions] = useState<TrackableItem[]>(
     [],
   );
+
+function getSliderParams(measurementType: string) {
+  switch (measurementType) {
+    case "scale":
+      return { min: 1, max: 10, step: 1 };
+    case "hours":
+      return { min: 1, max: 24, step: 1 };
+    case "times":
+      return { min: 1, max: 10, step: 1 };
+    case "yes_no":  // Add handling for yes/no if needed
+    case "yesno":   // Handle both cases if necessary
+    default:
+      return { min: 0, max: 1, step: 1 }; // Or use different input type
+  }
+}
+  
   useEffect(() => {
     const fetchConcepts = async () => {
       try {
@@ -183,136 +201,236 @@ export default function DiaryInfoForm() {
         </div>
       </div>
 
-      {/* Habits Section */}
-      <div className="space-y-4">
-        <div className="flex flex-col gap-1">
-          <h3 className="font-semibold text-lg text-neutral-700 mb-1">
-            Seus Hábitos Personalizados
-          </h3>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">
-              Compartilhar com profissionais da saúde
-            </span>
-            <Switch checked={shareHabits} onCheckedChange={setShareHabits} />
-          </div>
-        </div>
+{/* Habits Section */}
+<div className="space-y-4">
+  <div className="flex flex-col gap-1">
+    <h3 className="font-semibold text-lg text-neutral-700 mb-1">
+      Seus Hábitos Personalizados
+    </h3>
+    <div className="flex items-center gap-3">
+      <span className="text-sm text-gray-500">
+        Compartilhar com profissionais da saúde
+      </span>
+      <Switch checked={shareHabits} onCheckedChange={setShareHabits} />
+    </div>
+  </div>
 
-        <div className="space-y-3">
-          {habits.map((habit) => (
-            <div
-              key={habit.id}
-              className="flex flex-col md:flex-row gap-3 w-full items-center"
-            >
-              <div className="flex-1 min-w-[200px] w-full">
-                <HabitCard title={habit.name} />
-              </div>
-              <div className="w-full md:w-[200px]">
-                <Select
-                  value={habit.value}
-                  onValueChange={(value) =>
-                    handleItemChange(habits, setHabits, habit.id, value)
-                  }
-                >
-                  <SelectTrigger hasSelection={!!habit.value} className="h-10">
-                    <SelectValue
-                      placeholder={
-                        habit.measurementType === "scale"
-                          ? "1-10"
-                          : habit.measurementType === "yes_no"
-                            ? "Sim/Não"
-                            : habit.measurementType === "hours"
-                              ? "Horas"
-                              : "Vezes"
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {renderSelectOptions(habit.measurementType)}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          ))}
+  <div className="space-y-6">
+    {habits.map((habit) => {
+      const measurementType = habit.measurementType.toLowerCase();
+      const isYesNoType = ["yes_no", "yesno"].includes(measurementType);
+      const isScaleType = measurementType === "scale";
+      
+      // Value parsing and conversion
+      const rawValue = habit.value ? parseInt(habit.value) : null;
+      const isValid = rawValue !== null && !isNaN(rawValue);
 
-          <div
-            className="flex flex-col md:flex-row gap-3 w-full cursor-pointer items-center"
-            onClick={handleAddHabit}
-          >
-            <div className="flex-1 min-w-[200px]">
-              <div className="bg-gray-100 hover:bg-gray-200 transition-colors rounded-full w-14 h-14 flex items-center justify-center">
-                <span className="text-2xl text-gray-600">+</span>
-              </div>
-            </div>
-            <div className="w-full md:w-[200px] flex items-center justify-center">
-              <span className="text-sm text-gray-500">Adicionar hábito</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      // Get display value with suffix
+      const getDisplayValue = () => {
+        if (!isValid) {
+          return {
+            text: isYesNoType ? "sim ou não" : 
+                 isScaleType ? "-/5" :
+                 measurementType === "hours" ? "- horas" :
+                 measurementType === "times" ? "- vezes" : "-",
+            value: "-"
+          };
+        }
 
-      {/* Well-being Section */}
-      <div className="space-y-4">
-        <div className="flex flex-col gap-1">
-          <h3 className="font-semibold text-lg text-neutral-700 mb-1">
-            Bem-estar geral:
-          </h3>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">
-              Compartilhar com profissionais da saúde
-            </span>
-            <Switch
-              checked={shareWellBeing}
-              onCheckedChange={setShareWellBeing}
+        if (isYesNoType) {
+          return { text: rawValue === 1 ? "sim" : "não", value: rawValue.toString() };
+        }
+        if (isScaleType) {
+          const frontendValue = Math.round(rawValue / 2);
+          return { text: `${frontendValue}/5`, value: frontendValue.toString() };
+        }
+        return {
+          text: `${rawValue} ${measurementType === "hours" ? "horas" : "vezes"}`,
+          value: rawValue.toString()
+        };
+      };
+
+      const display = getDisplayValue();
+      const sliderParams = (() => {
+        if (isYesNoType) return { min: 0, max: 1, step: 1 };
+        if (isScaleType) return { min: 1, max: 5, step: 1 };
+        if (measurementType === "hours") return { min: 1, max: 24, step: 1 };
+        if (measurementType === "times") return { min: 1, max: 10, step: 1 };
+        return { min: 0, max: 1, step: 1 };
+      })();
+
+      return (
+        <div key={habit.id} className="space-y-4">
+          <HabitCard title={habit.name} />
+          
+          <div className="flex flex-col gap-2">
+            <Slider
+              value={[isValid ? (isScaleType ? parseInt(display.value) : rawValue) : sliderParams.min]}
+              onValueChange={(value) => {
+                let backendValue;
+                if (isYesNoType) {
+                  backendValue = value[0].toString();
+                } else if (isScaleType) {
+                  backendValue = (value[0] * 2).toString();
+                } else {
+                  backendValue = value[0].toString();
+                }
+                handleItemChange(
+                  habits,
+                  setHabits,
+                  habit.id,
+                  backendValue
+                );
+              }}
+              min={sliderParams.min}
+              max={sliderParams.max}
+              step={sliderParams.step}
             />
+            <div className="flex justify-between items-center text-sm text-gray-500">
+              <span>
+                {sliderParams.min === 0 && isYesNoType ? "não" : sliderParams.min}
+                {isScaleType && "/5"}
+                {measurementType === "hours" && " horas"}
+                {measurementType === "times" && " vezes"}
+              </span>
+              <span className="font-medium text-primary">
+                {display.text}
+              </span>
+              <span>
+                {sliderParams.max === 1 && isYesNoType ? "sim" : sliderParams.max}
+                {isScaleType && "/5"}
+                {measurementType === "hours" && " horas"}
+                {measurementType === "times" && " vezes"}
+              </span>
+            </div>
           </div>
         </div>
+      );
+    })}
 
-        <div className="space-y-3">
-          {wellBeingQuestions.map((question) => (
-            <div
-              key={question.id}
-              className="flex flex-col md:flex-row gap-3 w-full items-center"
-            >
-              <div className="flex-1 min-w-[200px] w-full">
-                <HabitCard title={question.name} />
-              </div>
-              <div className="w-full md:w-[200px]">
-                <Select
-                  value={question.value}
-                  onValueChange={(value) =>
-                    handleItemChange(
-                      wellBeingQuestions,
-                      setWellBeingQuestions,
-                      question.id,
-                      value,
-                    )
-                  }
-                >
-                  <SelectTrigger
-                    hasSelection={!!question.value}
-                    className="h-10"
-                  >
-                    <SelectValue
-                      placeholder={
-                        question.measurementType === "scale"
-                          ? "1-10"
-                          : question.measurementType === "yesno"
-                            ? "Sim/Não"
-                            : question.measurementType === "hours"
-                              ? "Horas"
-                              : "Vezes"
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {renderSelectOptions(question.measurementType)}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          ))}
-        </div>
+    <div
+      className="flex flex-col items-center gap-2 p-4 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+      onClick={handleAddHabit}
+    >
+      <div className="bg-gray-100 rounded-full w-12 h-12 flex items-center justify-center">
+        <span className="text-2xl text-gray-600">+</span>
       </div>
+      <span className="text-sm text-gray-500">Adicionar hábito</span>
+    </div>
+  </div>
+</div>
+
+{/* Well-being Section */}
+<div className="space-y-4">
+  <div className="flex flex-col gap-1">
+    <h3 className="font-semibold text-lg text-neutral-700 mb-1">
+      Bem-estar geral:
+    </h3>
+    <div className="flex items-center gap-3">
+      <span className="text-sm text-gray-500">
+        Compartilhar com profissionais da saúde
+      </span>
+      <Switch
+        checked={shareWellBeing}
+        onCheckedChange={setShareWellBeing}
+      />
+    </div>
+  </div>
+
+  <div className="space-y-6">
+    {wellBeingQuestions.map((question) => {
+      const measurementType = question.measurementType.toLowerCase();
+      const isYesNoType = ["yes_no", "yesno"].includes(measurementType);
+      const isScaleType = measurementType === "scale";
+      
+      // Value parsing and conversion
+      const rawValue = question.value ? parseInt(question.value) : null;
+      const isValid = rawValue !== null && !isNaN(rawValue);
+
+      // Get display value with suffix
+      const getDisplayValue = () => {
+        if (!isValid) {
+          return {
+            text: isYesNoType ? "sim ou não" : 
+                 isScaleType ? "-/5" :
+                 measurementType === "hours" ? "- horas" :
+                 measurementType === "times" ? "- vezes" : "-",
+            value: "-"
+          };
+        }
+
+        if (isYesNoType) {
+          return { text: rawValue === 1 ? "sim" : "não", value: rawValue.toString() };
+        }
+        if (isScaleType) {
+          const frontendValue = Math.round(rawValue / 2);
+          return { text: `${frontendValue}/5`, value: frontendValue.toString() };
+        }
+        return {
+          text: `${rawValue} ${measurementType === "hours" ? "horas" : "vezes"}`,
+          value: rawValue.toString()
+        };
+      };
+
+      const display = getDisplayValue();
+      const sliderParams = (() => {
+        if (isYesNoType) return { min: 0, max: 1, step: 1 };
+        if (isScaleType) return { min: 1, max: 5, step: 1 };
+        if (measurementType === "hours") return { min: 1, max: 24, step: 1 };
+        if (measurementType === "times") return { min: 1, max: 10, step: 1 };
+        return { min: 0, max: 1, step: 1 };
+      })();
+
+      return (
+        <div key={question.id} className="space-y-4">
+          <HabitCard title={question.name} />
+          
+          <div className="flex flex-col gap-2">
+            <Slider
+              value={[isValid ? (isScaleType ? parseInt(display.value) : rawValue) : sliderParams.min]}
+              onValueChange={(value) => {
+                let backendValue;
+                if (isYesNoType) {
+                  backendValue = value[0].toString();
+                } else if (isScaleType) {
+                  backendValue = (value[0] * 2).toString();
+                } else {
+                  backendValue = value[0].toString();
+                }
+                handleItemChange(
+                  wellBeingQuestions,
+                  setWellBeingQuestions,
+                  question.id,
+                  backendValue
+                );
+              }}
+              min={sliderParams.min}
+              max={sliderParams.max}
+              step={sliderParams.step}
+            />
+            <div className="flex justify-between items-center text-sm text-gray-500">
+              <span>
+                {sliderParams.min === 0 && isYesNoType ? "não" : sliderParams.min}
+                {isScaleType && "/5"}
+                {measurementType === "hours" && " horas"}
+                {measurementType === "times" && " vezes"}
+              </span>
+              <span className="font-medium text-primary">
+                {display.text}
+              </span>
+              <span>
+                {sliderParams.max === 1 && isYesNoType ? "sim" : sliderParams.max}
+                {isScaleType && "/5"}
+                {measurementType === "hours" && " horas"}
+                {measurementType === "times" && " vezes"}
+              </span>
+            </div>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</div>
 
       {/* Text Section */}
       <div className="space-y-3">
@@ -345,7 +463,7 @@ export default function DiaryInfoForm() {
           disabled={isSubmitting}
           className="w-full max-w-[280px] mx-auto py-3 text-base"
         >
-          {isSubmitting ? "Salvando..." : "SALVAR DIÁRIO"}
+          {isSubmitting ? "Salvando..." : "SALVAR"}
         </Button>
       </div>
     </form>

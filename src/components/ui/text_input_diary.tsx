@@ -38,7 +38,7 @@ export function TextField({
   const sizeClasses = {
     medium: "w-[85%] md:w-[85%] h-[48px] py-2 px-4",
     compact: "w-[36%] h-[48px] py-2 px-3",
-    large: "w-[85%] min-h-[120px] md:min-h-[152px] py-4 px-4",
+    large: "w-[100%] min-h-[120px] md:min-h-[152px] py-4 px-4",
   };
 
   const getBorderColor = () => {
