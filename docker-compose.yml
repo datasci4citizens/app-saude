@@ -1,0 +1,29 @@
+version: '5.2'
+
+services:
+  backend:
+    image: aasatorres/server_saude:0.6.0
+    container_name: server_saude
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: saude_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: saude_db
+      POSTGRES_USER: saude_user
+      POSTGRES_PASSWORD: saude_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

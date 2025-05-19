@@ -8,7 +8,8 @@
 		"build": "tsc -b && vite build",
 		"check": "biome check",
 		"check:write": "biome check --write",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"generate-api": "npx openapi-typescript-codegen --input http://localhost:8000/api/schema --output src/api --client fetch"
 	},
 	"dependencies": {
 		"@capacitor/android": "^6.1.2",
@@ -34,18 +35,22 @@
 		"@radix-ui/react-switch": "^1.1.0",
 		"@radix-ui/react-tabs": "^1.1.0",
 		"@radix-ui/react-toast": "^1.2.1",
-		"class-variance-authority": "^0.7.1",
+		"@react-oauth/google": "^0.12.1",
+		"axios": "^1.8.4",
+		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.1",
 		"embla-carousel-react": "^8.2.0",
 		"lucide-react": "^0.436.0",
 		"mingcute_icon": "^2.9.6",
+		"next": "^15.3.1",
 		"react": "^18.3.1",
 		"react-day-picker": "^8.10.1",
 		"react-dom": "^18.3.1",
 		"react-hook-form": "^7.53.0",
 		"react-icons": "^5.5.0",
 		"react-router-dom": "^6.26.1",
-		"swr": "^2.2.5",
+		"react-select": "^5.10.1",
+		"swr": "^2.3.3",
 		"tailwind-merge": "^2.5.2",
 		"tailwindcss-animate": "^1.0.7",
 		"vaul": "^0.9.1",
@@ -54,14 +59,17 @@
 	"devDependencies": {
 		"@biomejs/biome": "^1.8.3",
 		"@capacitor/cli": "^6.1.2",
+		"@types/next": "^8.0.7",
 		"@types/node": "^22.5.1",
 		"@types/react": "^18.3.20",
 		"@types/react-dom": "^18.3.0",
+		"@types/react-router-dom": "^5.3.3",
 		"@vitejs/plugin-react-swc": "^3.5.0",
 		"autoprefixer": "^10.4.20",
+		"openapi-typescript-codegen": "^0.29.0",
 		"postcss": "^8.4.41",
 		"tailwindcss": "^3.4.10",
 		"typescript": "^5.5.3",
-		"vite": "^5.4.1"
+		"vite": "^5.4.19"
 	}
 }
