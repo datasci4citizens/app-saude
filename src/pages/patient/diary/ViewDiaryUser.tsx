@@ -1,4 +1,176 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import BackArrow from "@/components/ui/back_arrow";
+
+
+
+// Header component - keeping this consistent with your other components
+const PageHeader = ({ title }) => (
+  <h1 className="text-2xl font-bold text-gray-800 mb-6">{title}</h1>
+);
+
+// Mock diary data
+const MOCK_DIARIES = [
+  {
+    id: "2025-05-20",
+    date: "2025-05-20T09:00:00.000Z",
+    text: "Today was a productive day. I managed to complete the React component for the diary view. I'm feeling good about the progress I'm making on this project.",
+    habitsCount: 3,
+    wellnessCount: 5,
+    shared: true
+  },
+  {
+    id: "2025-05-19",
+    date: "2025-05-19T09:00:00.000Z",
+    text: "Struggled a bit with the API integration today. Need to revisit the authentication flow tomorrow. Made some progress on the UI design though.",
+    habitsCount: 2,
+    wellnessCount: 4,
+    shared: false
+  },
+  {
+    id: "2025-05-18",
+    date: "2025-05-18T09:00:00.000Z",
+    text: "Had a great brainstorming session with the team. We decided on the core features for the MVP. I'm excited to start implementing them.",
+    habitsCount: 4,
+    wellnessCount: 5,
+    shared: true
+  },
+  {
+    id: "2025-05-17",
+    date: "2025-05-17T09:00:00.000Z",
+    text: "",
+    habitsCount: 1,
+    wellnessCount: 3,
+    shared: false
+  },
+  {
+    id: "2025-05-16",
+    date: "2025-05-16T09:00:00.000Z",
+    text: "Feeling a bit under the weather today. Took it easy and focused on documentation rather than coding. Should be back to full productivity tomorrow.",
+    habitsCount: 0,
+    wellnessCount: 2,
+    shared: false
+  }
+];
+
+export default function ViewDiaryUser() {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+  const [diaries, setDiaries] = useState([]);
+  const [user, setUser] = useState(null);
+  
+  // Mock authentication check and data loading
+  useEffect(() => {
+    // Simulate loading delay
+    const loadData = async () => {
+      try {
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        // Mock successful authentication
+        setUser({ id: 1, name: "Test User", person_id: 123 });
+        
+        // Set mock diary data
+        setDiaries(MOCK_DIARIES);
+      } catch (error) {
+        console.error("Error loading data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadData();
+  }, [navigate]);
+
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4">
+        <PageHeader title="Diário" />
+        <div className="text-center text-gray-500">Carregando...</div>
+      </div>
+    );
+  }
+  
+  // Handle authentication error or redirect
+  if (!user) {
+    return (
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4">
+        <PageHeader title="Diário" />
+        <div className="text-center text-red-500">
+          Você precisa estar logado para acessar esta página
+        </div>
+      </div>
+    );
+  }
+  
+  // Handle no diary entries
+  if (diaries.length === 0) {
+    return (
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4">
+        <div className="mb-4">
+          <BackArrow />
+        </div>
+        <PageHeader title="Diário" />
+        <div className="text-center text-gray-500">Nenhum diário encontrado</div>
+      </div>
+    );
+  }
+  
+  // Normal render with diary entries
+  return (
+    <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4">
+      <div className="mb-4">
+        <BackArrow />
+      </div>
+      <PageHeader title="Histórico Diário" />
+      <div className="space-y-4">
+        {diaries.map((diary) => (
+          <Link
+            to={`/diary/${encodeURIComponent(diary.id)}`}
+            key={diary.id}
+            className="block group"
+          >
+            <div className={`p-4 border rounded-lg  border-offwhite-200 bg-offwhite hover:shadow-md transition-shadow ${
+              diary.shared ? 'border-offwhite-200 bg-offwhite-50' : 'border-offwhite-200 bg-offwhite'
+            }`}>
+              <div className="flex justify-between items-start mb-2">
+                <h2 className="font-semibold text-lg text-neutral-700">
+                  {new Date(diary.date).toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                  })}
+                </h2>
+                {diary.shared && (
+                  <span className="bg-primary-100 text-primary-800 text-xs px-2 py-1 rounded-full">
+                    Compartilhado
+                  </span>
+                )}
+              </div>
+              <div className="flex gap-4 text-sm text-gray-500 mb-3">
+                <span>{diary.habitsCount} hábitos</span>
+                <span>{diary.wellnessCount} bem estar</span>
+              </div>
+              {diary.text ? (
+                <p className="text-gray-600 line-clamp-2">
+                  {diary.text}
+                </p>
+              ) : (
+                <p className="text-gray-400 italic">No journal entry</p>
+              )}
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>  
+  );
+}
+
+/* 
+ORIGINAL CODE COMMENTED OUT FOR REFERENCE
+------------------------------------------------------
+
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BackArrow from "@/components/ui/back_arrow";
@@ -144,119 +316,5 @@ export default function ViewDiaryUser() {
     );
   }, [diaries]);
 
-  // Handle loading state
-  if (isUserLoading || isDiariesLoading) {
-    return (
-      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4">
-        <PageHeader title="Diário" />
-        <div className="text-center text-gray-500">Carregando...</div>
-      </div>
-    );
-  }
-  
-  // Handle authentication error or redirect
-  if (!user) {
-    return (
-      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4">
-        <PageHeader title="Diário" />
-        <div className="text-center text-red-500">
-          Você precisa estar logado para acessar esta página
-        </div>
-      </div>
-    );
-  }
-  
-  // Handle error states with more details
-  if (userError) {
-    console.error("User data error details:", userError);
-    return (
-      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4">
-        <PageHeader title="Diário" />
-        <div className="text-center text-red-500">
-          Erro ao carregar dados do usuário
-        </div>
-        <div className="text-center mt-2">
-          <button 
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-          >
-            Tentar novamente
-          </button>
-        </div>
-      </div>
-    );
-  }
-  
-  if (diariesError) {
-    return (
-      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4">
-        <PageHeader title="Diário" />
-        <div className="text-center text-red-500">
-          Erro ao carregar diários
-        </div>
-      </div>
-    );
-  }
-  
-  // Handle no diary entries
-  if (processedDiaries.length === 0) {
-    return (
-      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4">
-        <div className="mb-4">
-          <BackArrow />
-        </div>
-        <PageHeader title="Diário" />
-        <div className="text-center text-gray-500">Nenhum diário encontrado</div>
-      </div>
-    );
-  }
-  
-  // Normal render with diary entries
-  return (
-    <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4">
-      <div className="mb-4">
-        <BackArrow />
-      </div>
-      <PageHeader title="Diário" />
-      <div className="space-y-4">
-        {processedDiaries.map((diary) => (
-          <Link
-            to={`/diary/${encodeURIComponent(diary.id)}`}
-            key={diary.id}
-            className="block group"
-          >
-            <div className={`p-4 border rounded-lg hover:shadow-md transition-shadow ${
-              diary.shared ? 'border-blue-200 bg-blue-50' : 'border-gray-200 bg-white'
-            }`}>
-              <div className="flex justify-between items-start mb-2">
-                <h2 className="font-semibold text-lg text-neutral-700">
-                  {new Date(diary.date).toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: 'long',
-                    year: 'numeric'
-                  })}
-                </h2>
-                {diary.shared && (
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                    Shared
-                  </span>
-                )}
-              </div>
-              <div className="flex gap-4 text-sm text-gray-500 mb-3">
-                <span>{diary.habitsCount} habits tracked</span>
-                <span>{diary.wellnessCount} wellness questions</span>
-              </div>
-              {diary.text ? (
-                <p className="text-gray-600 line-clamp-2">
-                  {diary.text}
-                </p>
-              ) : (
-                <p className="text-gray-400 italic">No journal entry</p>
-              )}
-            </div>
-          </Link>
-        ))}
-      </div>
-    </div>  
-  );
-}
+  // UI rendering and other logic follows...
+*/
