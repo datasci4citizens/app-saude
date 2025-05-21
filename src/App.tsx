@@ -19,6 +19,7 @@ import AddProfessionalPage from "./pages/patient/profile/AddProfessionalPage";
 import ModifyHabits from "./pages/patient/diary/modify-habits";
 import ViewDiaryUser from "./pages/patient/diary/ViewDiaryUser";
 import ViewPatientDiaries from "./pages/patient/diary/ViewDiaryProvider";
+import ViewDiaryEntry from "./pages/patient/diary/ViewDiary";
 
 
 
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
     {
     path: "/view-diary-provider",
     element: <ViewPatientDiaries />,
+  },
+    {
+    path: "/diary/:diaryId",
+    element: <ViewDiaryEntry />,
   },
   {
     path: "/reminders",

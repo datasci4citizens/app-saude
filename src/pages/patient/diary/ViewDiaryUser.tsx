@@ -1,3 +1,4 @@
+/*
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BackArrow from "@/components/ui/back_arrow";
@@ -167,11 +168,10 @@ export default function ViewDiaryUser() {
   );
 }
 
-/* 
-ORIGINAL CODE COMMENTED OUT FOR REFERENCE
-------------------------------------------------------
+*/
 
-import React from "react";
+
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BackArrow from "@/components/ui/back_arrow";
 import { ObservationService } from "@/api/services/ObservationService";
@@ -179,8 +179,10 @@ import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
 import { useAuth } from "@/contexts/auth";
 import { ApiService } from "@/api/services/ApiService"; 
 import useSWR from "swr";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
-// Header component - keeping this consistent with your other components
+// Header component
 const PageHeader = ({ title }: { title: string }) => (
   <h1 className="text-2xl font-bold text-gray-800 mb-6">{title}</h1>
 );
@@ -316,5 +318,143 @@ export default function ViewDiaryUser() {
     );
   }, [diaries]);
 
-  // UI rendering and other logic follows...
-*/
+  // Helper function to format dates nicely
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return format(date, "d 'de' MMMM 'de' yyyy", { locale: ptBR });
+    } catch (e) {
+      return dateString;
+    }
+  };
+
+  // Handle diary selection
+  const handleDiarySelect = (diaryId: string) => {
+    navigate(`/diary/${diaryId}`);
+  };
+
+  // Loading state
+  if (isUserLoading || isDiariesLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center mb-6">
+          <BackArrow onClick={() => navigate(-1)} />
+          <PageHeader title="Meus Diários" />
+        </div>
+        <div className="flex justify-center items-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (userError || diariesError) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center mb-6">
+          <BackArrow onClick={() => navigate(-1)} />
+          <PageHeader title="Meus Diários" />
+        </div>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+          Ocorreu um erro ao carregar seus diários. Por favor, tente novamente.
+        </div>
+        <div className="mt-6 text-center">
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-6 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700"
+          >
+            Recarregar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Empty state
+  if (processedDiaries.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center mb-6">
+          <BackArrow onClick={() => navigate(-1)} />
+          <PageHeader title="Meus Diários" />
+        </div>
+        <div className="text-center py-12">
+          <div className="mb-4 text-gray-500">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-medium text-gray-700 mb-2">Nenhum diário encontrado</h3>
+          <p className="text-gray-500 mb-6">Você ainda não criou nenhum diário.</p>
+          <Link 
+            to="/create-diary" 
+            className="inline-flex items-center px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-full"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+            </svg>
+            Criar Novo Diário
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex items-center mb-6">
+        <BackArrow onClick={() => navigate(-1)} />
+        <PageHeader title="Meus Diários" />
+      </div>
+      
+      <div className="space-y-4">
+        {processedDiaries.map((diary) => (
+          <div 
+            key={diary.id}
+            onClick={() => handleDiarySelect(diary.id)}
+            className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+          >
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+              <div className="mb-2 md:mb-0">
+                <h3 className="font-medium text-lg text-gray-800">{formatDate(diary.date)}</h3>
+                {diary.text && (
+                  <p className="text-gray-600 mt-1 line-clamp-2">{diary.text}</p>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {diary.habitsCount > 0 && (
+                  <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs rounded-full">
+                    {diary.habitsCount} hábito{diary.habitsCount !== 1 ? 's' : ''}
+                  </span>
+                )}
+                {diary.wellnessCount > 0 && (
+                  <span className="px-3 py-1 bg-green-50 text-green-700 text-xs rounded-full">
+                    {diary.wellnessCount} bem-estar
+                  </span>
+                )}
+                {diary.shared && (
+                  <span className="px-3 py-1 bg-purple-50 text-purple-700 text-xs rounded-full">
+                    Compartilhado
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      <div className="mt-8 text-center">
+        <Link 
+          to="/create-diary" 
+          className="inline-flex items-center px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-full"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+          </svg>
+          Criar Novo Diário
+        </Link>
+      </div>
+    </div>
+  );
+}
