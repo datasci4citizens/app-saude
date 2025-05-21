@@ -18,6 +18,11 @@ import OnboardingSlider from "./pages/landing/OnboardingSlider";
 import { SWRConfig } from "swr";
 import AddProfessionalPage from "./pages/patient/profile/AddProfessionalPage";
 import ModifyHabits from "./pages/patient/diary/modify-habits";
+import ViewDiaryUser from "./pages/patient/diary/ViewDiaryUser";
+import ViewPatientDiaries from "./pages/patient/diary/ViewDiaryProvider";
+import ViewDiaryEntry from "./pages/patient/diary/ViewDiary";
+
+
 
 const NotFound = () => (
   <div>
@@ -48,6 +53,18 @@ const router = createBrowserRouter([
   {
     path: "/diary",
     element: <DiaryPage />,
+  },
+  {
+    path: "/view-diary-user",
+    element: <ViewDiaryUser />,
+  },
+    {
+    path: "/view-diary-provider",
+    element: <ViewPatientDiaries />,
+  },
+    {
+    path: "/diary/:diaryId",
+    element: <ViewDiaryEntry />,
   },
   {
     path: "/reminders",
