@@ -17,6 +17,8 @@ import OnboardingSlider from "./pages/landing/OnboardingSlider";
 import { SWRConfig } from "swr";
 import AddProfessionalPage from "./pages/patient/profile/AddProfessionalPage";
 import ModifyHabits from "./pages/patient/diary/modify-habits";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { ThemeToggle } from "./components/ui/ThemeToggle";
 
 const NotFound = () => (
   <div>
@@ -116,5 +118,14 @@ const router = createBrowserRouter([
 ]);
 
 export function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ThemeProvider>
+      <div className="min-h-screen bg-background text-foreground">
+        <RouterProvider router={router} />
+        <div className="fixed top-4 right-4">
+          <ThemeToggle />
+        </div>
+      </div>
+    </ThemeProvider>
+  );
 }
