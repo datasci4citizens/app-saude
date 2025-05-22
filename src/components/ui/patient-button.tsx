@@ -36,7 +36,7 @@ const PatientButton: React.FC<PatientButtonProps> = ({
                 ease-in-out
                 cursor-pointer
                 hover:-translate-y-0.5
-                ${isEmergency ? "bg-primary" : "bg-offwhite"}
+                ${isEmergency ? "bg-selection" : "bg-offwhite"}
                 ${isEmergency ? "hover:shadow-[0_6px_12px_rgba(250,110,90,0.25)]" : "hover:shadow-[0_6px_12px_rgba(0,0,0,0.15)]"}
                 shadow-sm
             `}

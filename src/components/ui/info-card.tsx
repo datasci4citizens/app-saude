@@ -43,7 +43,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
         rounded-xl 
         h-[250px] 
         overflow-hidden
-        ${isEmergency ? "bg-accent  " : "bg-background"}
+        ${isEmergency ? "bg-accent1  " : "bg-offwhite"}
       `}
     >
       <CardContent className="p-0 h-full">
@@ -56,21 +56,21 @@ const InfoCard: React.FC<InfoCardProps> = ({
               <div className="mb-3">
                 <span
                   role="img"
-                  className="mgc_alert_diamond_line text-[60px] w-[60px] h-[60px] inline-block"
+                  className="mgc_alert_diamond_line text-[60px] w-[60px] h-[60px] inline-block text-selection"
                 ></span>
               </div>
 
               {/* Número de emergências */}
-              <div className="text-4xl font-bold mb-1">{count}</div>
+              <div className="text-4xl text-typography font-bold mb-1">{count}</div>
 
               {/* Texto fixo de emergências */}
-              <div className="text-xs font-bold mb-4">EMERGÊNCIA(S)</div>
+              <div className="text-xs font-bold mb-4 text-typography">EMERGÊNCIA(S)</div>
             </div>
 
             {/* Container do botão alinhado à direita inferior */}
             <div className="mt-auto p-4 flex justify-end">
               <Button
-                className="rounded-full px-6 py-2 text-sm bg-typography text-primary-foreground hover:bg-success/90"
+                className="rounded-full px-6 py-2 text-sm bg-typography text-offwhite-foreground hover:bg-primary/90"
                 onClick={onClick}
               >
                 VER
@@ -105,7 +105,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
             <div className="mt-auto p-4 pt-2 flex justify-center">
               <Button
                 onClick={onClick}
-                className="rounded-full px-6 py-2 text-sm bg-primary text-primary-foreground hover:bg-primary/90"
+                className="rounded-full px-6 py-2 text-sm bg-selection text-primary hover:bg-primary/90"
               >
                 VER
               </Button>
@@ -131,7 +131,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
             <div className="mt-auto p-4 flex justify-end">
               <Button
                 onClick={onClick}
-                className="rounded-full px-6 py-2 text-sm bg-primary text-primary-foreground hover:bg-primary/90"
+                className="rounded-full px-6 py-2 text-sm bg-selection text-primary hover:bg-primary/90"
               >
                 VER
               </Button>
