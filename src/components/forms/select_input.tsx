@@ -63,13 +63,13 @@ export function SelectField({
         <SelectTrigger
           id={id}
           disabled={isLoading}
-          className={`bg-white h-14 text-typography font-['Inter'] font-normal focus:border-selection ${
+          className={`bg-primary h-14 text-typography font-['Inter'] font-normal focus:border-selection ${
             error ? "border-selection" : "border-gray1"
           }`}
         >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
-        <SelectContent className="bg-white">
+        <SelectContent className="bg-primary">
           {isLoading ? (
             <option value="" disabled>
               Carregando...
