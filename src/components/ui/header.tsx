@@ -25,7 +25,7 @@ const Header: React.FC<HeaderProps> = ({
     <div>
       {/* Back Button */}
       <button
-        className="bg-transparent border-none cursor-pointer flex items-center justify-center mr-3"
+        className="bg-primary border-none cursor-pointer flex items-center justify-center mr-3"
         onClick={handleBackClick}
       >
         <span className="mgc_arrow_left_line w-7 h-7 text-[28px] text-typography"></span>
@@ -43,7 +43,7 @@ const Header: React.FC<HeaderProps> = ({
 
         {/* Optional Icon */}
         {rightIcon && (
-          <div className="ml-3 flex items-center justify-center text-xl text-primary">
+          <div className="ml-3 flex items-center justify-center text-xl text-typography ">
             {rightIcon}
           </div>
         )}

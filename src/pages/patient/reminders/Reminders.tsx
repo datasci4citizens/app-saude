@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // For navigation
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
 import Card from "@/components/ui/reminder-card";
 
@@ -20,7 +20,7 @@ const Reminders: React.FC = () => {
     {
       title: "Consulta com psiquiatra",
       subtitle: "Às 13:45",
-      icon: <span className="mgc-user-line" />,
+      icon: <span className="mgc-user-line text-typography" />,
       repeatPattern: "weekly",
       startDate: "2023-04-19",
     },
@@ -30,14 +30,14 @@ const Reminders: React.FC = () => {
     {
       title: "Pimozida",
       subtitle: "Às 11:00",
-      icon: <span className="mgc-pill-line" />,
+      icon: <span className="mgc-pill-line text-typography" />,
       repeatPattern: "daily",
       startDate: "2023-04-22",
     },
     {
       title: "Sertralina",
       subtitle: "Às 11:00",
-      icon: <span className="mgc-pill-line" />,
+      icon: <span className="mgc-pill-line text-typography" />,
       repeatPattern: "daily",
       startDate: "2023-04-22",
       endDate: "2023-04-28",
@@ -111,28 +111,28 @@ const Reminders: React.FC = () => {
   );
 
   return (
-    <div style={styles.page}>
+    <div className="p-4 bg-primary min-h-screen font-inter relative">
       {/* Header */}
       <Header
         title="Hoje, dia 19/04"
-        rightIcon={<span style={styles.editIcon} className="mgc-pencil-line" />}
+        rightIcon={<span className="mgc-pencil-line text-lg text-typography cursor-pointer" />}
       />
 
       {/* Horizontal Scrollable Date List */}
-      <div style={styles.dateListContainer}>
+      <div className="flex overflow-x-auto gap-4 my-4 py-2">
         {dates.map((date) => (
           <div
             key={date.iso}
-            style={{
-              ...styles.dateBox,
-              backgroundColor:
-                date.iso === selectedDate ? "#FA6E5A" : "#F9F9FF",
-            }}
+            className={`flex-shrink-0 w-[54px] h-[80px] rounded-3xl flex items-center justify-center cursor-pointer text-center ${
+              date.iso === selectedDate ? "bg-selection" : "bg-offwhite"
+            }`}
             onClick={() => setSelectedDate(date.iso as string)}
           >
             <div>
-              <h5 style={styles.dateNumber}>{date.display.split(" ")[1]}</h5>
-              <h6 style={styles.weekday}>
+              <h5 className="text-base font-bold text-typography">
+                {date.display.split(" ")[1]}
+              </h5>
+              <h6 className="text-xs font-normal text-typography">
                 {new Date(date.iso as string).toLocaleDateString("pt-BR", {
                   weekday: "short",
                 })}
@@ -144,12 +144,11 @@ const Reminders: React.FC = () => {
 
       {/* Consultations Section */}
       {relevantConsultations.length > 0 ? (
-        <div style={styles.section}>
-          <div style={styles.sectionHeader}>
-            <h2 style={styles.sectionTitle}>Consultas</h2>
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-base font-semibold m-0 text-typography">Consultas</h2>
             <span
-              style={styles.sortIcon}
-              className="mgc-sort-line"
+              className="mgc-sort-line text-lg text-typography cursor-pointer ml-2"
               onClick={() =>
                 setConsultationsSortOrder(
                   consultationsSortOrder === "asc" ? "desc" : "asc",
@@ -157,7 +156,7 @@ const Reminders: React.FC = () => {
               }
             />
           </div>
-          <hr style={styles.divider} />
+          <hr className="border-none border-t border-gray2 border-opacity-20 mb-3" />
           {relevantConsultations.map((reminder, index) => (
             <Card
               key={index}
@@ -175,12 +174,11 @@ const Reminders: React.FC = () => {
 
       {/* Medicines Section */}
       {relevantMedicines.length > 0 ? (
-        <div style={styles.section}>
-          <div style={styles.sectionHeader}>
-            <h2 style={styles.sectionTitle}>Medicamentos</h2>
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-base font-semibold m-0 text-typography">Medicamentos</h2>
             <span
-              style={styles.sortIcon}
-              className="mgc-sort-line"
+              className="mgc-sort-line text-lg text-typography cursor-pointer ml-2"
               onClick={() =>
                 setMedicinesSortOrder(
                   medicinesSortOrder === "asc" ? "desc" : "asc",
@@ -188,7 +186,7 @@ const Reminders: React.FC = () => {
               }
             />
           </div>
-          <hr style={styles.divider} />
+          <hr className="border-none border-t border-gray2 border-opacity-20 mb-3" />
           {relevantMedicines.map((reminder, index) => (
             <Card
               key={index}
@@ -206,111 +204,20 @@ const Reminders: React.FC = () => {
 
       {/* No Reminders for the Day */}
       {relevantConsultations.length === 0 && relevantMedicines.length === 0 ? (
-        <div style={styles.noReminders}>
+        <div className="mt-6 text-center text-gray2 text-base">
           <p>Não há lembretes para este dia.</p>
         </div>
       ) : null}
 
-      {/* Floating Action Button */}
-      <button style={styles.fab} onClick={() => navigate("/new-reminder")}>
-        <span className="mgc_add_line" style={styles.fabIcon} />
+      {/* Floating Action Button - mudando o ícone para usar text-typography */}
+      <button 
+        className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-selection flex items-center justify-center shadow-md border-none cursor-pointer"
+        onClick={() => navigate("/new-reminder")}
+      >
+        <span className="mgc_add_line text-2xl text-typography" />
       </button>
     </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  page: {
-    padding: "16px",
-    backgroundColor: "#FFFFFF",
-    minHeight: "100vh",
-    fontFamily: '"Inter", sans-serif',
-    position: "relative",
-  },
-  editIcon: {
-    fontSize: "18px",
-    color: "#6A5ACD",
-    cursor: "pointer",
-  },
-  sortIcon: {
-    fontSize: "18px",
-    color: "#6A5ACD",
-    cursor: "pointer",
-    marginLeft: "8px",
-  },
-  dateListContainer: {
-    display: "flex",
-    overflowX: "scroll",
-    gap: "16px",
-    margin: "16px 0",
-    padding: "8px 0",
-  },
-  dateBox: {
-    flexShrink: 0,
-    width: "54px",
-    height: "80px",
-    borderRadius: "24px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    cursor: "pointer",
-    textAlign: "center",
-  },
-  dateNumber: {
-    fontSize: "16px",
-    fontWeight: "bold",
-    color: "#141B36",
-  },
-  weekday: {
-    fontSize: "12px",
-    fontWeight: "normal",
-    color: "#141B36",
-  },
-  section: {
-    marginTop: "24px",
-  },
-  sectionHeader: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: "8px",
-  },
-  sectionTitle: {
-    fontSize: "16px",
-    fontWeight: "600",
-    margin: 0,
-    color: "#141B36",
-  },
-  divider: {
-    border: "none",
-    borderTop: "1px solid rgba(173, 184, 217, 0.2)",
-    marginBottom: "12px",
-  },
-  noReminders: {
-    marginTop: "24px",
-    textAlign: "center",
-    color: "#999",
-    fontSize: "16px",
-  },
-  fab: {
-    position: "fixed",
-    bottom: "24px",
-    right: "24px",
-    width: "56px",
-    height: "56px",
-    borderRadius: "50%",
-    backgroundColor: "#FA6E5A",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-    border: "none",
-    cursor: "pointer",
-  },
-  fabIcon: {
-    fontSize: "24px",
-    color: "#FFFFFF",
-  },
 };
 
 export default Reminders;

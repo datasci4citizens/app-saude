@@ -91,9 +91,9 @@ export default function EmergencyScreen() {
   // Handle loading state
   if (isUserLoading || isProvidersLoading) {
     return (
-      <div className="max-w-md mx-auto p-4">
+      <div className="flex flex-col h-screen max-w-md mx-auto p-4">
         <Header title="Emergência" />
-        <div className="mt-8 text-center">
+        <div className="flex-1 flex items-center justify-center">
           <p className="text-gray2">Carregando profissionais...</p>
         </div>
       </div>
@@ -103,9 +103,9 @@ export default function EmergencyScreen() {
   // Handle error state
   if (providersError) {
     return (
-      <div className="max-w-md mx-auto p-4">
+      <div className="flex flex-col h-screen max-w-md mx-auto p-4">
         <Header title="Emergência" />
-        <div className="mt-8 text-center">
+        <div className="flex-1 flex flex-col items-center justify-center">
           <p className="text-destructive">
             Erro ao carregar seus profissionais
           </p>
@@ -124,9 +124,9 @@ export default function EmergencyScreen() {
   // Handle no linked providers
   if (providers && providers.length === 0) {
     return (
-      <div className="max-w-md mx-auto p-4">
+      <div className="flex flex-col h-screen max-w-md mx-auto p-4">
         <Header title="Emergência" />
-        <div className="mt-8 text-center">
+        <div className="flex-1 flex flex-col items-center justify-center">
           <p className="text-gray2 mb-2">
             Você não possui profissionais vinculados
           </p>
@@ -146,10 +146,10 @@ export default function EmergencyScreen() {
   }
 
   return (
-    <div className="max-w-md mx-auto p-4">
+    <div className="flex flex-col h-screen max-w-md mx-auto p-4 bg-primary">
       <Header title="Emergência" />
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-6">
         <div className="space-y-2 ml-8">
           <h3 className="font-semibold text-[16px] font-inter text-typography">
             Quais profissionais você deseja alertar?
@@ -185,7 +185,7 @@ export default function EmergencyScreen() {
           />
         </div>
 
-        <div className="px-8">
+        <div className="px-8 mt-auto pb-4">
           <Button
             variant="orange"
             size="responsive"

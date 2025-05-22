@@ -42,9 +42,9 @@ export function TextField({
   };
 
   const getBorderColor = () => {
-    if (error) return "border-destructive";
-    if (variant === "static-orange") return "border-primary";
-    return hasInput ? "border-primary" : "border-input";
+    if (error) return "border-selection";
+    if (variant === "static-orange") return "border-selection";
+    return hasInput ? "border-selection" : "border-selection";
   };
 
   const baseClasses = `
@@ -97,7 +97,7 @@ export function TextField({
         />
       )}
 
-      {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
+      {error && <p className="mt-1 text-xs text-typography">{error}</p>}
     </div>
   );
 }
