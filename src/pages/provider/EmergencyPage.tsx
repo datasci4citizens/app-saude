@@ -135,7 +135,7 @@ export default function EmergencyPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 pb-24">
+    <div className="flex flex-col min-h-screen bg-primary pb-24">
       {/* Header with back button and title */}
       <header className="p-4">
         {/* Back button at the top */}
@@ -160,7 +160,7 @@ export default function EmergencyPage() {
         </div>
 
         {/* Title centered below */}
-        <div className="flex justify-center">
+        <div className="flex justify-center text-typography">
           <h1
             className="font-bold"
             style={{ fontFamily: "'Work Sans', sans-serif", fontSize: "34px" }}
@@ -185,13 +185,13 @@ export default function EmergencyPage() {
       {/* Tabs */}
       <div className="px-4 flex border-b mb-4">
         <button
-          className={`py-2 px-4 ${activeTab === "todos" ? "border-b-2 border-[#FA6E5A] text-[#FA6E5A] font-medium" : ""}`}
+          className={`py-2 px-4 ${activeTab === "todos" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
           onClick={() => setActiveTab("todos")}
         >
           Todos
         </button>
         <button
-          className={`py-2 px-4 ${activeTab === "urgentes" ? "border-b-2 border-[#FA6E5A] text-[#FA6E5A] font-medium" : ""}`}
+          className={`py-2 px-4 ${activeTab === "urgentes" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
           onClick={() => setActiveTab("urgentes")}
         >
           Urgentes
@@ -201,11 +201,11 @@ export default function EmergencyPage() {
       {/* Emergency patients list - usando a lista filtrada */}
       <div className="flex-1 px-4 overflow-auto">
         {isLoading ? (
-          <div className="text-center p-4 text-gray-500">
+          <div className="text-center p-4 text-gray2">
             Carregando pacientes...
           </div>
         ) : fetchError ? (
-          <div className="text-center p-4 text-red-500">{error}</div>
+          <div className="text-center p-4 text-selection">{error}</div>
         ) : filteredPatients.length > 0 ? (
           filteredPatients.map((patient, index) => (
             <PatientButton
@@ -219,7 +219,7 @@ export default function EmergencyPage() {
             />
           ))
         ) : (
-          <div className="text-center p-4 text-gray-500">
+          <div className="text-center p-4 text-gray2">
             Nenhum paciente encontrado com este nome.
           </div>
         )}

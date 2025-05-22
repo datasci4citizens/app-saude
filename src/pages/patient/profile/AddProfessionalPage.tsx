@@ -75,7 +75,7 @@ const AddProfessionalPage = () => {
   };
 
   return (
-    <div className="p-[24px] pb-28 bg-white min-h-screen font-inter relative">
+    <div className="p-[24px] pb-28 bg-primary min-h-screen font-inter relative">
       <Header
         title="Adicionar profissional"
         subtitle="Peça para o profissional de saúde ou ACS te fornecer o ID dele"

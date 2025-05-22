@@ -17,10 +17,11 @@ import OnboardingSlider from "./pages/landing/OnboardingSlider";
 import { SWRConfig } from "swr";
 import AddProfessionalPage from "./pages/patient/profile/AddProfessionalPage";
 import ModifyHabits from "./pages/patient/diary/modify-habits";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { ThemeToggle } from "./components/ui/ThemeToggle";
 import ViewDiaryUser from "./pages/patient/diary/ViewDiaryUser";
 import ViewPatientDiaries from "./pages/patient/diary/ViewDiaryProvider";
 import ViewDiaryEntry from "./pages/patient/diary/ViewDiary";
-
 
 
 const NotFound = () => (
@@ -133,5 +134,14 @@ const router = createBrowserRouter([
 ]);
 
 export function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ThemeProvider>
+      <div className="min-h-screen bg-primary text-typography">
+        <RouterProvider router={router} />
+        <div className="fixed top-16 right-4">
+          <ThemeToggle />
+        </div>
+      </div>
+    </ThemeProvider>
+  );
 }

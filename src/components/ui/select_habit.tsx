@@ -142,7 +142,7 @@ const SelectTrigger = forwardRef<
         "flex items-center justify-between rounded-lg border bg-transparent font-inter text-[14px] ring-offset-background placeholder:text-gray2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 transition-colors",
         hasSelection
           ? "border-primary text-typography" // Selected state
-          : "border-input text-gray2", // Default state
+          : "border-selection text-gray2", // Default state
         size === "md"
           ? "h-[48px] w-[36%] min-w-[120px] px-4"
           : "h-[48px] w-[23%] min-w-[80px] px-3",

@@ -162,7 +162,7 @@ export default function DiaryInfoForm() {
     <form onSubmit={handleSubmit} className="max-w-3xl mx-auto px-4 space-y-6">
       {/* Time Range Section - Tightened */}
       <div className="space-y-3">
-        <h3 className="font-semibold text-lg text-neutral-700 mb-1">
+        <h3 className="font-semibold text-lg text-typography mb-1">
           A qual período de tempo esse diário se refere?
         </h3>
         <div className="flex flex-col gap-2">
@@ -186,11 +186,11 @@ export default function DiaryInfoForm() {
       {/* Habits Section */}
       <div className="space-y-4">
         <div className="flex flex-col gap-1">
-          <h3 className="font-semibold text-lg text-neutral-700 mb-1">
+          <h3 className="font-semibold text-lg text-typography mb-1">
             Seus Hábitos Personalizados
           </h3>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-typography">
               Compartilhar com profissionais da saúde
             </span>
             <Switch checked={shareHabits} onCheckedChange={setShareHabits} />
@@ -239,13 +239,13 @@ export default function DiaryInfoForm() {
             onClick={handleAddHabit}
           >
             <div className="flex-1 min-w-[200px]">
-              <div className="bg-gray-100 hover:bg-gray-200 transition-colors rounded-full w-14 h-14 flex items-center justify-center">
-                <span className="text-2xl text-gray-600">+</span>
+              <div className="bg-gray1 hover:bg-gray1 transition-colors rounded-full w-14 h-14 flex items-center justify-center">
+                <span className="text-2xl text-typography">+</span>
               </div>
             </div>
-            <div className="w-full md:w-[200px] flex items-center justify-center">
-              <span className="text-sm text-gray-500">Adicionar hábito</span>
-            </div>
+            <Button variant={"orange"} size="lg" className="w-full md:w-[200px]">
+              Adicionar novo hábito
+            </Button>
           </div>
         </div>
       </div>
@@ -253,11 +253,11 @@ export default function DiaryInfoForm() {
       {/* Well-being Section */}
       <div className="space-y-4">
         <div className="flex flex-col gap-1">
-          <h3 className="font-semibold text-lg text-neutral-700 mb-1">
+          <h3 className="font-semibold text-lg text-typography mb-1">
             Bem-estar geral:
           </h3>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-typography">
               Compartilhar com profissionais da saúde
             </span>
             <Switch
@@ -317,9 +317,9 @@ export default function DiaryInfoForm() {
       {/* Text Section */}
       <div className="space-y-3">
         <div className="flex flex-col gap-1">
-          <h3 className="font-semibold text-lg text-neutral-700 mb-1">Texto</h3>
+          <h3 className="font-semibold text-lg text-typography mb-1">Texto</h3>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-typography">
               Compartilhar com profissionais da saúde
             </span>
             <Switch checked={shareText} onCheckedChange={setShareText} />
@@ -343,7 +343,7 @@ export default function DiaryInfoForm() {
           size="lg"
           type="submit"
           disabled={isSubmitting}
-          className="w-full max-w-[280px] mx-auto py-3 text-base"
+          className="w-full max-w-[280px] mx-auto py-3 text-typography"
         >
           {isSubmitting ? "Salvando..." : "SALVAR DIÁRIO"}
         </Button>

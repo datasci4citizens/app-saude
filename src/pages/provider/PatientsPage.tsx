@@ -123,7 +123,7 @@ export default function PatientsPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 pb-24">
+    <div className="flex flex-col min-h-screen bg-primary pb-24">
       {/* Header component */}
       <div className="p-4">
         <Header title="Painel de pacientes" />
@@ -131,11 +131,11 @@ export default function PatientsPage() {
 
       {/* Link code generator */}
       <div className="px-4 mb-4">
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+        <div className="bg-primary p-4 rounded-lg shadow-sm border border-gray1">
           <h2 className="text-lg font-semibold mb-2 font-['Work Sans']">
             Conectar com paciente
           </h2>
-          <p className="text-sm text-gray-600 mb-3">
+          <p className="text-sm text-gray2 mb-3">
             Gere um código para compartilhar com um paciente que deseja se
             conectar com você.
           </p>
@@ -143,7 +143,7 @@ export default function PatientsPage() {
           {linkCode ? (
             <div className="mb-3">
               <div className="flex items-center">
-                <div className="bg-orange bg-opacity-10 p-3 rounded-lg flex-1 mr-2">
+                <div className="bg-selection bg-opacity-10 p-3 rounded-lg flex-1 mr-2">
                   <p className="text-center font-bold text-xl text-orange">
                     {linkCode}
                   </p>

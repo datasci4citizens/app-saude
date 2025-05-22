@@ -6,18 +6,70 @@
 @tailwind utilities;
 
 @layer base {
-  * {
-    @apply border-border;
+  :root {
+    /* Tema claro (padrão) */
+    --selection: #fa6e5a;
+    --selection-background: #fa6e5a;
+    --homebg: #5a96fa;
+    --homebg-background: #5a96fa;
+    --selected: #cefa5a;
+    --selected-background: #cefa5a;
+    --typography: #141b36;
+    --typography-foreground: #141b36;
+    --offwhite: #f9f9ff;
+    --offwhite-foreground: #f9f9ff;
+    --gray1: #e6e6e6;
+    --gray1-foreground: #e6e6e6;
+    --gray2: #a0a3b1;
+    --gray2-foreground: #a0a3b1;
+    --gray2-border: #a0a3b1;
+    --gray2-input: #a0a3b1;
+    --accent1: #ffc97e;
+    --accent1-background: #ffc97e;
+    --accent2: #464646;
+    --accent2-foreground: #464646;
+    --primary: #ffffff;
+    --primary-foreground: #ffffff;
+    --homeblob1: #4288feff;
+    --homeblob1-background: #4288feff;
+    --homeblob2: #2c78f9ff;
+    --homeblob2-background: #2c78f9ff;
   }
 
-  body {
-    @apply font-sans overflow-hidden bg-background text-foreground;
-    font-feature-settings:
-      "rlig" 1,
-      "calt" 1;
-    height: 100%;
-    overflow: auto;
+  .theme-dark {
+    /* Tema escuro */
+    --selection: #fa6e5a;
+    --selection-background: #fa6e5a;
+    --homebg: #25406d;
+    --homebg-background: #25406d;
+    --selected: #97ce00;
+    --selected-background: #97ce00;
+    --typography: #f9f9ff;
+    --typography-foreground: #f9f9ff;
+    --offwhite: #737373;
+    --offwhite-foreground: #737373;
+    --gray1: #a0a3b1;
+    --gray1-foreground: #a0a3b1;
+    --gray2: #e6e6e6;
+    --gray2-foreground: #e6e6e6;
+    --gray2-border: #e6e6e6;
+    --gray2-input: #e6e6e6;
+    --accent1: #082e91;
+    --accent1-background: #082e91;
+    --accent2: #e6e6e6;
+    --accent2-foreground: #e6e6e6;
+    --card: #1a1f2d;
+    --card-foreground: #f9f9ff;
+    --primary: #212637;
+    --primary-foreground: #ffffff;
+    --homeblob1: #1b4182ff;
+    --homeblob1-background: #1b4182ff;
+    --homeblob2: #1f478cff;
+    --homeblob2-background: #1f478cff;
   }
+
+
+
 
   [class^="mgc_"]::before,
   [class*=" mgc_"]::before {

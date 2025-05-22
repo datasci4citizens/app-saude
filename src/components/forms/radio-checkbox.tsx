@@ -20,7 +20,7 @@ export function RadioCheckbox({
         id={id}
         checked={checked}
         onCheckedChange={onCheckedChange}
-        className="h-5 w-5 flex-shrink-0 rounded-[4px] border-input bg-background data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+        className="h-5 w-5 flex-shrink-0 rounded-[4px] border-typography bg-background data-[state=checked]:bg-primary data-[state=checked]:border-selection"
       />
       <Label
         htmlFor={id}

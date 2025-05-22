@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "@/components/ui/header";
-import { FaTrash } from "react-icons/fa"; // FontAwesome trash icon for delete
+import { FaTrash } from "react-icons/fa";
 
 interface Reminder {
   title: string;
@@ -15,77 +15,31 @@ interface ViewReminderProps {
 
 const ViewReminder: React.FC<ViewReminderProps> = ({ reminder, onDelete }) => {
   return (
-    <div style={styles.page}>
+    <div className="p-4 bg-primary min-h-screen font-inter">
       {/* Header */}
-      <Header title="View Reminder" />
+      <Header title="Visualizar Lembrete" />
 
       {/* Reminder Details */}
-      <div style={styles.reminderContainer}>
-        <h2 style={styles.title}>{reminder.title}</h2>
-        <p style={styles.observation}>
-          <strong>Observation:</strong> {reminder.observation}
+      <div className="p-4 rounded-lg bg-offwhite mb-6 shadow-sm">
+        <h2 className="text-2xl font-bold mb-3 text-typography">{reminder.title}</h2>
+        <p className="text-base mb-3 text-typography">
+          <strong>Observação:</strong> {reminder.observation}
         </p>
-        <p style={styles.time}>
-          <strong>Time:</strong> {reminder.time}
+        <p className="text-base mb-3 text-typography">
+          <strong>Horário:</strong> {reminder.time}
         </p>
       </div>
 
       {/* Delete Button */}
-      <button onClick={onDelete} style={styles.deleteButton}>
-        <FaTrash style={styles.trashIcon} />
-        Delete Reminder
+      <button 
+        onClick={onDelete} 
+        className="flex items-center justify-center gap-2 w-full py-3 text-base font-bold text-primary bg-selection border-none rounded cursor-pointer"
+      >
+        <FaTrash className="text-lg text-typography" />
+        Excluir Lembrete
       </button>
     </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  page: {
-    padding: "16px",
-    backgroundColor: "#FFFFFF",
-    minHeight: "100vh",
-    fontFamily: '"Inter", sans-serif',
-  },
-  reminderContainer: {
-    padding: "16px",
-    borderRadius: "8px",
-    backgroundColor: "#F9F9F9",
-    marginBottom: "24px",
-    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-  },
-  title: {
-    fontSize: "24px",
-    fontWeight: "bold",
-    marginBottom: "12px",
-  },
-  observation: {
-    fontSize: "16px",
-    marginBottom: "12px",
-    color: "#555",
-  },
-  time: {
-    fontSize: "16px",
-    marginBottom: "12px",
-    color: "#555",
-  },
-  deleteButton: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "8px",
-    width: "100%",
-    padding: "12px",
-    fontSize: "16px",
-    fontWeight: "bold",
-    color: "#FFFFFF",
-    backgroundColor: "#FF4D4D",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-  },
-  trashIcon: {
-    fontSize: "18px",
-  },
 };
 
 export default ViewReminder;

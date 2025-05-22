@@ -230,7 +230,7 @@ export default function AcsMainPage() {
   };
 
   return (
-    <div className="bg-gray-50 h-full pb-24" style={{ minHeight: "100vh" }}>
+    <div className="bg-primary h-full pb-24" style={{ minHeight: "100vh" }}>
       {/* Banner superior */}
       <HomeBanner
         title="Registro diário"
