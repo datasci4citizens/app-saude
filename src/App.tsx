@@ -120,9 +120,9 @@ const router = createBrowserRouter([
 export function App() {
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-background text-foreground">
+      <div className="min-h-screen bg-primary text-typography">
         <RouterProvider router={router} />
-        <div className="fixed top-4 right-4">
+        <div className="fixed top-16 right-4">
           <ThemeToggle />
         </div>
       </div>
