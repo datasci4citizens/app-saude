@@ -1,13 +1,4 @@
 import type { Config } from 'tailwindcss';
-import {
-    blue,
-    green,
-    orange,
-    red,
-    stone,
-    white,
-    yellow,
-} from 'tailwindcss/colors';
 
 export default {
   content: [

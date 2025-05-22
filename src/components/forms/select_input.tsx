@@ -63,20 +63,21 @@ export function SelectField({
         <SelectTrigger
           id={id}
           disabled={isLoading}
-          className={`text-typography font-['Inter'] font-normal ring-offset-0 ${
+          className={`bg-white h-14 text-typography font-['Inter'] font-normal focus:border-selection ${
             error ? "border-selection" : "border-gray1"
-          } focus:ring-primary focus:ring-2 focus:border-none`}
+          }`}
         >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="bg-white">
           {isLoading ? (
             <option value="" disabled>
               Carregando...
             </option>
           ) : (
             options.map((option) => (
-              <SelectItem key={option.value} value={String(option.value)}>
+              <SelectItem key={option.value} value={String(option.value)}
+              className="text-typography hover:bg-gray1 hover:bg-opacity-20">
                 {option.label}
               </SelectItem>
             ))

@@ -42,18 +42,18 @@ export function TextField({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`text-typography bg-primary font-inter font-normal focus:ring-primary focus:border-none ${
-          error ? "border-selection" : "border-gray2"
+        className={`text-typography bg-primary font-inter font-normal focus:border-selection ${
+          error ? "border-destructive" : "border-gray2"
         }`}
       />
 
       {helperText && (
-        <span className="text-xs font-inter font-light text-gray2-foreground">
+        <span className="text-xs font-inter font-light text-gray2">
           {helperText}
         </span>
       )}
       {error && (
-        <p className="text-selection text-xs font-inter font-light mt-1">
+        <p className="text-destructive text-xs font-inter font-light mt-1">
           {error}
         </p>
       )}

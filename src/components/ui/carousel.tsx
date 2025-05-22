@@ -209,8 +209,8 @@ const CarouselPrevious = forwardRef<
   return (
     <Button
       ref={ref}
-      variant={variant}
-      size={size}
+      variant={"outlineWhite"}
+      size={"sm"}
       className={cn(
         "absolute h-8 w-8 rounded-full border-input bg-background text-typography",
         orientation === "horizontal"
@@ -233,7 +233,7 @@ CarouselPrevious.displayName = "CarouselPrevious";
 const CarouselNext = forwardRef<
   HTMLButtonElement,
   ComponentProps<typeof Button>
->(({ className, variant = "outline", size = "icon", ...props }, ref) => {
+>(({ className, variant = "outlineWhite", size = "sm", ...props }, ref) => {
   const { orientation, scrollNext, canScrollNext } = useCarousel();
 
   return (

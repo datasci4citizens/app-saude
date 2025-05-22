@@ -122,7 +122,7 @@ const AlertDialogCancel = forwardRef<
   <AlertDialogPrimitive.Cancel
     ref={ref}
     className={cn(
-      buttonVariants({ variant: "outline" }),
+      buttonVariants({ variant: "outlineWhite" }),
       "mt-2 sm:mt-0",
       className,
     )}
