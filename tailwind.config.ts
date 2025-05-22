@@ -80,5 +80,9 @@ export default {
       },
     },
   },
+  destructive: {
+    DEFAULT: 'var(--destructive)',
+    foreground: 'var(--destructive-foreground)',
+  },
   plugins: [require('tailwindcss-animate')],
 } satisfies Config;

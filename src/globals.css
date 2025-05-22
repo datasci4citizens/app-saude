@@ -34,6 +34,7 @@
     --homeblob1-background: #4288feff;
     --homeblob2: #2c78f9ff;
     --homeblob2-background: #2c78f9ff;
+    --destructive: #ff4d4f;
   }
 
   .theme-dark {
@@ -66,6 +67,7 @@
     --homeblob1-background: #1b4182ff;
     --homeblob2: #1f478cff;
     --homeblob2-background: #1f478cff;
+    --destructive: #ff4d4f;
   }
 
 
@@ -75,4 +77,14 @@
   [class*=" mgc_"]::before {
     color: inherit !important;
   }
+
+  /* Overriding browser autofill styling */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--primary) inset !important;
+  -webkit-text-fill-color: var(--typography) !important;
+  transition: background-color 5000s ease-in-out 0s, color 5000s ease-in-out 0s;
+}
 }

@@ -45,6 +45,13 @@ export function TextField({
         className={`text-typography bg-primary font-inter font-normal focus:border-selection ${
           error ? "border-destructive" : "border-gray2"
         }`}
+        style={{ caretColor: 'var(--typography)', color: 'var(--typography)' }}
+        onAnimationStart={(e) => {
+        // Chrome/Safari trigger this animation when autofilling
+        if (e.animationName.includes('onAutoFillStart')) {
+          e.currentTarget.classList.add('autofilled');
+        }
+        }}
       />
 
       {helperText && (
