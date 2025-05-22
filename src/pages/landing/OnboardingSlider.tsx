@@ -27,7 +27,7 @@ const OnboardingSlider = () => {
   };
 
   return (
-    <div className="onboarding-slider">
+    <div className="onboarding-slider bg-homeblob2">
       <div className="slider-background" />
 
       <div
