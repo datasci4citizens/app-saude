@@ -104,7 +104,7 @@ export function DateField({
         maxLength={10}
         className={`w-full h-14 px-4 py-2 bg-white border ${
           error ? "border-destructive" : "border-gray2"
-        } rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-inter`}
+        } rounded-lg focus:outline-none focus:border-selection focus:ring-1 focus:ring-primary font-inter`}
         ref={inputRef}
       />
       {error && <p className="text-destructive text-xs mt-1">{error}</p>}

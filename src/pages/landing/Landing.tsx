@@ -78,7 +78,7 @@ const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
             className="landing-illustration"
           />
         </div>
-        <div className="button-bottom">
+        <div className="button-bottom bg-offwhite">
           <GoogleSignin onClick={login} />
         </div>
 

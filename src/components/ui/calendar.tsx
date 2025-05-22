@@ -25,7 +25,7 @@ function Calendar({
         nav: "space-x-1 flex items-center",
         // biome-ignore lint/style/useNamingConvention: external
         nav_button: cn(
-          buttonVariants({ variant: "outline" }),
+          buttonVariants({ variant: "outlineWhite" }),
           "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
         ),
         // biome-ignore lint/style/useNamingConvention: external

@@ -6,28 +6,6 @@ import type { DrugExposureCreate } from "@/api/models/DrugExposureCreate";
 import { useHealthConcepts } from "@/utils/conceptLoader";
 import { MultiSelectCustom } from "@/components/forms/multi_select_custom";
 
-// later create a theme file with css values with methods for getting colors and use them  here
-// for easily changing color theme
-const customSelectStyles: StylesConfig = {
-  control: (provided, state) => ({
-    ...provided,
-    borderColor: state.isFocused ? "#FA6E5A" : "#A0A3B1", // orange when focused, gray_buttons otherwise
-    boxShadow: state.isFocused ? "0 0 0 1px #FA6E5A" : provided.boxShadow,
-    "&:hover": {
-      borderColor: state.isFocused ? "#FA6E5A" : "#A0A3B1",
-    },
-  }),
-  option: (provided, state) => ({
-    ...provided,
-    backgroundColor: state.isSelected
-      ? "#FA6E5A"
-      : state.isFocused
-        ? "rgba(255, 115, 32, 0.1)"
-        : null,
-    color: state.isSelected ? "white" : provided.color,
-  }),
-};
-
 // Define form data interface (user-friendly structure)
 // Todos sao conceptIds como String
 interface FormData {

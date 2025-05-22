@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 
 interface Option {
-  value: string;
+  value: string | number;
   label: string;
 }
 
@@ -88,7 +88,7 @@ export function MultiSelectCustom({
 
       <div
         className={`relative rounded-lg border ${error ? "border-destructive" : "border-gray2"} 
-          ${isOpen ? "ring-2 ring-primary border-none" : ""} bg-white`}
+          ${isOpen ? "border-selection" : ""} bg-white`}
       >
         {/* Selected items and input container */}
         <div
