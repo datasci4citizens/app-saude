@@ -63,8 +63,8 @@ export function SelectField({
         <SelectTrigger
           id={id}
           disabled={isLoading}
-          className={`text-[#141B36] font-['Inter'] font-normal ring-offset-0 ${
-            error ? "border-destructive" : "border-gray1"
+          className={`text-typography font-['Inter'] font-normal ring-offset-0 ${
+            error ? "border-selection" : "border-gray1"
           } focus:ring-primary focus:ring-2 focus:border-none`}
         >
           <SelectValue placeholder={placeholder} />
@@ -85,7 +85,7 @@ export function SelectField({
       </Select>
 
       {error && (
-        <p className="text-destructive text-xs font-inter font-light mt-1">
+        <p className="text-typography text-xs font-inter font-light mt-1">
           {error}
         </p>
       )}

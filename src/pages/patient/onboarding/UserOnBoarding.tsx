@@ -111,7 +111,7 @@ export default function UserOnboarding() {
 
   return (
     <div
-      className="h-full bg-white overflow-y-auto"
+      className="h-full bg-primary overflow-y-auto"
       style={{ height: "100vh" }}
     >
       <div className="max-w-md mx-auto">
