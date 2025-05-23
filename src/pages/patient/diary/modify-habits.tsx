@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/forms/button";
 import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select_habit";
-import { TextField } from "@/components/ui/text_input_diary";
-import BackArrow from "@/components/ui/back_arrow";
+  SelectField
+  //SelectTrigger,
+  //SelectContent,
+  //SelectItem,
+  //SelectValue,
+} from "@/components/forms/select_input";
+import { TextField } from "@/components/forms/text_input";
+import Header from "@/components/ui/header";
 
 const ModifyHabits = () => {
   const navigate = useNavigate();
@@ -31,12 +31,27 @@ const ModifyHabits = () => {
     });
   };
 
+  // Define measurement type options
+  const measurementTypeOptions = [
+    { value: "scale", label: "Escala (1-10)" },
+    { value: "hours", label: "Horas" },
+    { value: "times", label: "Vezes" },
+    { value: "yesno", label: "Sim/Não" }
+  ];
+
+  // Handle change from SelectField
+  const handleMeasurementTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setMeasurementType(e.target.value as "scale" | "hours" | "times" | "yesno");
+  };
+
   return (
     <div className="max-w-md mx-auto p-4">
-      {/* Back Arrow with proper navigation */}
-      <div className="mb-6 cursor-pointer" onClick={() => navigate(-1)}>
-        <BackArrow />
-      </div>
+     
+       {/* header */}
+      <Header 
+        title="Criar Novo Hábito" 
+        onBackClick={() => navigate(-1)} 
+      />
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <h2 className="text-2xl font-bold mb-6">Criar Novo Hábito</h2>
@@ -48,24 +63,16 @@ const ModifyHabits = () => {
           required
         />
 
-        <div className="space-y-2">
-          <label className="block text-sm font-medium">Tipo de Medição</label>
-          <Select
-            value={measurementType}
-            onValueChange={(value) => setMeasurementType(value as any)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione o tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="scale">Escala (1-10)</SelectItem>
-              <SelectItem value="hours">Horas</SelectItem>
-              <SelectItem value="times">Vezes</SelectItem>
-              <SelectItem value="yesno">Sim/Não</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
+        <SelectField
+          id="measurementType"
+          name="measurementType"
+          label="Tipo de Medição"
+          value={measurementType}
+          options={measurementTypeOptions}
+          onChange={handleMeasurementTypeChange}
+          isLoading={false}
+          placeholder="Selecione o tipo"
+        />
         <Button variant="orange" type="submit" className="w-full">
           Criar Hábito
         </Button>
