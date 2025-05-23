@@ -16,7 +16,10 @@ export default {
       },
     },
     extend: {
-      // Outras extensões...
+      fontFamily: {
+        'work-sans': ['Work Sans', 'sans-serif'],
+        'inter': ['Inter', 'sans-serif'],
+      },
       colors: {
         selection: {
           DEFAULT: 'var(--selection)',
