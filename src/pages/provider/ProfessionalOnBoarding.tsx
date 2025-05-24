@@ -3,8 +3,6 @@ import { ProfessionalInfoForm } from "@/pages/provider/ProfessionalInfoForm";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
 import useSWRMutation from "swr/mutation";
-
-// Import the service (this will be created)
 import type { FullProviderCreate } from "@/api/models/FullProviderCreate";
 import { ApiService, type ProviderCreate } from "@/api";
 import { FullProviderService } from "@/api/services/FullProviderService";

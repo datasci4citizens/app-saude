@@ -3,13 +3,11 @@ import { useState } from "react";
 import { Button } from "@/components/forms/button";
 import { TextField } from "@/components/forms/text_input";
 import { DateField } from "@/components/forms/date_input";
-import { FileUploader } from "@/components/ui/file-uploader";
 import type { ProviderCreate } from "@/api/models/ProviderCreate";
 
 // Define types for form data - extends Provider with additional UI fields
 interface ProviderFormData extends Partial<ProviderCreate> {
-  // Additional form fields not in Provider model
-  document?: File | null; // Document upload
+  //
 }
 
 interface FormErrors {
@@ -17,7 +15,6 @@ interface FormErrors {
   professional_registration?: string;
   birth_datetime?: string;
   specialty_concept?: string;
-  document?: string;
   [key: string]: string | undefined;
 }
 
@@ -35,10 +32,30 @@ export function ProfessionalInfoForm({
     birth_datetime: "",
     specialty_concept: ACS_CONCEPT_ID,
     care_site: null,
-    document: null,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
+
+  // Validate CNES format (7 digits)
+  const validateCNES = (cnes: string): boolean => {
+    // Remove any non-digit characters
+    const cleanCNES = cnes.replace(/\D/g, '');
+    
+    // CNES should have exactly 7 digits
+    return cleanCNES.length === 7 && /^\d{7}$/.test(cleanCNES);
+  };
+
+  // Format CNES display (optional - adds visual separation)
+  const formatCNES = (value: string): string => {
+    // Remove any non-digit characters
+    const cleanValue = value.replace(/\D/g, '');
+    
+    // Limit to 7 digits
+    if (cleanValue.length <= 7) {
+      return cleanValue;
+    }
+    return cleanValue.slice(0, 7);
+  };
 
   // Handle input change
   const handleChange: React.ChangeEventHandler<
@@ -46,11 +63,12 @@ export function ProfessionalInfoForm({
   > = (e) => {
     const { name, value } = e.target;
 
-    // Handle numeric fields properly
+    // Handle CNES registration number
     if (name === "professional_registration") {
+      const formattedCNES = formatCNES(value);
       setFormData({
         ...formData,
-        [name]: value ? Number(value) : null,
+        [name]: formattedCNES ? Number(formattedCNES) : null,
       });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -81,23 +99,18 @@ export function ProfessionalInfoForm({
     }
   };
 
-  // Handle file upload
-  const handleFileChange = (file: File | null) => {
-    setFormData({ ...formData, document: file });
-
-    if (errors.document) {
-      setErrors({ ...errors, document: undefined });
-    }
-  };
-
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
 
-    // Required fields
-    if (!formData.professional_registration)
-      newErrors.professional_registration = "Número de matrícula é obrigatório";
-    if (!formData.document)
-      newErrors.document = "Documento comprobatório é obrigatório";
+    // Required CNES validation
+    if (!formData.professional_registration) {
+      newErrors.professional_registration = "CNES é obrigatório";
+    } else {
+      const cnesString = formData.professional_registration.toString();
+      if (!validateCNES(cnesString)) {
+        newErrors.professional_registration = "CNES deve ter exatamente 7 dígitos";
+      }
+    }
 
     // Optional validation for date if provided
     if (formData.birth_datetime) {
@@ -140,14 +153,12 @@ export function ProfessionalInfoForm({
     setErrors({});
 
     // Create a ProviderCreate-compatible object
-    // Only include fields that are part of the ProviderCreate model
     const finalData: ProviderFormData = {
       social_name: formData.social_name,
       birth_datetime: formData.birth_datetime,
       professional_registration: formData.professional_registration,
       specialty_concept: ACS_CONCEPT_ID,
       care_site: formData.care_site,
-      document: formData.document, // Keep this for the form handler
     };
 
     // Submit form data
@@ -170,7 +181,7 @@ export function ProfessionalInfoForm({
         id="birth_datetime"
         name="birth_datetime"
         label="Data de nascimento"
-        value={formData.birth_datetime || ""} // Use this direct approach
+        value={getDisplayDate()}
         onChange={handleDateChange}
         error={errors.birth_datetime}
       />
@@ -178,27 +189,24 @@ export function ProfessionalInfoForm({
       <TextField
         id="professional_registration"
         name="professional_registration"
-        label="Número de matrícula ou identificação funcional"
+        label="Número CNES"
         value={formData.professional_registration?.toString() || ""}
         onChange={handleChange}
-        placeholder="Número de matrícula ACS"
+        placeholder="1234567"
         error={errors.professional_registration}
-        type="number"
+        type="text"
+        helperText="Cadastro Nacional de Estabelecimentos de Saúde (7 dígitos)"
       />
 
-      {/* Informative text about role instead of dropdown */}
-      <div className="mb-4 p-3 bg-info/10 border border-info/20 rounded-md">
-        <p className="text-info">
-          Você está se cadastrando como{" "}
-          <strong>Agente Comunitário de Saúde (ACS)</strong>.
+      {/* Informative text about CNES and ACS role */}
+      <div className="mb-4 p-3 bg-gray1 bg-opacity-20 border border-gray2 rounded-md">
+        <p className="text-typography text-sm">
+          <strong>CNES</strong> é o registro oficial do Sistema Único de Saúde (SUS). 
+          Você está se cadastrando como <strong>Agente Comunitário de Saúde (ACS)</strong>.
         </p>
-      </div>
-
-      <div className="mb-4">
-        <label className="block text-gray2 text-sm mb-2">
-          Documento comprobatório (crachá, contracheque ou declaração da UBS)
-        </label>
-        <FileUploader onChange={handleFileChange} error={errors.document} />
+        <p className="text-gray2 text-xs mt-1">
+          Se você não possui CNES, consulte sua coordenação ou unidade de saúde.
+        </p>
       </div>
 
       <Button
