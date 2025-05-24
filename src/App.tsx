@@ -22,6 +22,7 @@ import { ThemeToggle } from "./components/ui/ThemeToggle";
 import ViewDiaryUser from "./pages/patient/diary/ViewDiaryUser";
 import ViewPatientDiaries from "./pages/patient/diary/ViewDiaryProvider";
 import ViewDiaryEntry from "./pages/patient/diary/ViewDiary";
+import ProfilePage from "./pages/patient/profile/ProfilePage";
 
 
 const NotFound = () => (
@@ -126,6 +127,10 @@ const router = createBrowserRouter([
   {
     path: "/modify-habits",
     element: <ModifyHabits />,
+  },
+  {
+    path: "/profile",
+    element: <ProfilePage />,
   },
   {
     path: "*",
