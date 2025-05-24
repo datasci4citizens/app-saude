@@ -73,3 +73,28 @@ A API estará disponível em:
 ### 3. Atualizando a api para comunicação com o back end (rodar sempre que houver alteração na API do server)
 
 Rodar ./generate-api.sh
+
+## Capacitor
+
+1. Gerar nova build
+```
+npm run build
+```
+
+2. Copiar para o android
+```
+npx cap copy android
+```
+
+3. Abrir no Andoid Studio
+```
+npx cap open android
+```
+
+4. Testar no Android Studio
+- Clique no botão verde
+- Escolha um dispositivo (real ou emulador)
+- Aguarde instalar e abrir
+
+5. (Opcional) Gerar o bundle para a Play Store
+- Build > Generate Signed Bundle / APK > Android App Bundle (.aab)

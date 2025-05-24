@@ -37,7 +37,14 @@ const NotFound = () => (
 </SWRConfig>;
 
 const router = createBrowserRouter([
-  { path: "/", element: <h1>Home!</h1> },
+  { 
+    path: "/", 
+    element: <OnboardingSlider />,
+  },
+  { 
+    path: "/login", 
+    element: <OnboardingSlider />,
+  },
   {
     path: "/welcome",
     element: <OnboardingSlider />,
