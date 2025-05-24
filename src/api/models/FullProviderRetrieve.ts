@@ -2,7 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ProviderRetrieve } from "./ProviderRetrieve";
+import type { ProviderRetrieve } from './ProviderRetrieve';
 export type FullProviderRetrieve = {
-  provider: ProviderRetrieve;
+    provider: ProviderRetrieve;
 };
+

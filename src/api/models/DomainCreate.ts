@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type DomainCreate = {
-  domain_name?: string | null;
-  domain_concept?: number | null;
+    domain_name?: string | null;
+    domain_concept?: number | null;
 };
+

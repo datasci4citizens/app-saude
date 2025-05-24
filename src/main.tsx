@@ -6,6 +6,15 @@ import "mingcute_icon/font/Mingcute.css";
 import { App } from "./App";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+
+GoogleAuth.initialize({
+  // Client ID for the MOBILE login
+  clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+  scopes: ['profile', 'email'],
+  grantOfflineAccess: true,
+});
+
 const root = document.getElementById("root");
 
 if (!root) {

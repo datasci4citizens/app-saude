@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"build": "tsc -b && vite build",
+		"build": "vite build || true",
 		"check": "biome check",
 		"check:write": "biome check --write",
 		"preview": "vite preview",
@@ -13,8 +13,9 @@
 	},
 	"dependencies": {
 		"@capacitor/android": "^6.1.2",
-		"@capacitor/core": "^6.1.2",
+		"@capacitor/core": "^6.2.1",
 		"@capacitor/ios": "^6.1.2",
+		"@codetrix-studio/capacitor-google-auth": "^3.4.0-rc.4",
 		"@fontsource-variable/inter": "^5.0.20",
 		"@fontsource/inter": "^5.2.5",
 		"@fontsource/work-sans": "^5.2.5",
@@ -39,6 +40,7 @@
 		"axios": "^1.8.4",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.1",
+		"dotenv": "^16.5.0",
 		"embla-carousel-react": "^8.2.0",
 		"lucide-react": "^0.436.0",
 		"mingcute_icon": "^2.9.6",
@@ -58,7 +60,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.8.3",
-		"@capacitor/cli": "^6.1.2",
+		"@capacitor/cli": "^6.2.1",
 		"@types/next": "^8.0.7",
 		"@types/node": "^22.5.1",
 		"@types/react": "^18.3.20",

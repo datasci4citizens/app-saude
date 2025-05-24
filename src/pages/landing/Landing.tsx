@@ -1,62 +1,79 @@
 import React from "react";
 import GoogleSignin from "@/components/ui/google-signin";
 import landingImage from "@/lib/images/landing.png";
+import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
+import { AuthService } from "@/api/services/AuthService";
+import { Capacitor } from "@capacitor/core";
 import { useGoogleLogin } from "@react-oauth/google";
-import useSWRMutation from "swr/mutation";
+
+const isMobile = Capacitor.isNativePlatform();
+alert("Is mobile: " + isMobile);
 
 interface LandingScreenProps {
   onNext: () => void;
 }
 
-const loginWithGoogle = async (
-  url: string,
-  { arg }: { arg: { code: string } },
-) => {
-  const response = await fetch(url, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ code: arg.code }),
-  });
+export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
+  const loginMobile = async () => {
+    try {
+      alert("Iniciando login...");
+      const googleUser = await GoogleAuth.signIn();
+      alert("Login OK: " + JSON.stringify(googleUser));
+      const idToken = googleUser.authentication.idToken;
+      const { access, refresh, role } = await AuthService.authLoginGoogleCreate({
+        token: idToken,
+      });
 
-  if (!response.ok) {
-    throw new Error("Erro ao fazer login");
-  }
+      handleLoginSuccess(access, refresh, role);
+    } catch (err: any) {
+      const message = err?.message || err;
+      const full = JSON.stringify(err, Object.getOwnPropertyNames(err));
 
-  return response.json(); // retorna { access, refresh, role }
-};
+      alert("Erro ao logar:\n" + message + "\n\nDetalhes:\n" + full);
+      console.error("Erro ao logar (mobile):", err);
+    }
+  };
 
-const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
-  const { trigger } = useSWRMutation(
-    "http://localhost:8000/auth/login/google/",
-    loginWithGoogle,
-  );
-
-  const login = useGoogleLogin({
+  const loginWeb = useGoogleLogin({
+    flow: "auth-code",
     onSuccess: async ({ code }) => {
       try {
-        const tokens = await trigger({ code });
-        const { access, refresh, role } = tokens;
+        const { access, refresh, role } = await AuthService.authLoginGoogleCreate({
+          code: code,
+        });
 
-        localStorage.setItem("accessToken", access);
-        localStorage.setItem("refreshToken", refresh);
-        localStorage.setItem("role", role);
-
-        if (role === "provider") {
-          window.location.href = "/acs-main-page";
-        } else if (role === "person") {
-          window.location.href = "/user-main-page";
-        } else {
-          onNext();
-        }
+        handleLoginSuccess(access, refresh, role);
       } catch (err) {
-        console.error("Erro ao logar:", err);
+        console.error("Erro ao logar (web):", err);
       }
     },
-    flow: "auth-code",
   });
+
+  const handleLogin = () => {
+    if (isMobile) {
+      loginMobile();
+    } else {
+      loginWeb();
+    }
+  };
+
+  const handleLoginSuccess = (
+    access: string,
+    refresh: string,
+    role: string
+  ) => {
+    localStorage.setItem("accessToken", access);
+    localStorage.setItem("refreshToken", refresh);
+    localStorage.setItem("role", role);
+
+    if (role === "provider") {
+      window.location.href = "/acs-main-page";
+    } else if (role === "person") {
+      window.location.href = "/user-main-page";
+    } else {
+      onNext();
+    }
+  };
 
   return (
     <div className="onboarding-screen landing-screen">
@@ -78,8 +95,9 @@ const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
             className="landing-illustration"
           />
         </div>
+
         <div className="button-bottom">
-          <GoogleSignin onClick={login} />
+          <GoogleSignin onClick={handleLogin} />
         </div>
 
         <div className="progress-indicator">

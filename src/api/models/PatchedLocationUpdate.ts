@@ -3,11 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 export type PatchedLocationUpdate = {
-  readonly location_id?: number;
-  address_1?: string | null;
-  address_2?: string | null;
-  city?: string | null;
-  state?: string | null;
-  zip?: string | null;
-  country_concept?: number | null;
+    readonly location_id?: number;
+    address_1?: string | null;
+    address_2?: string | null;
+    city?: string | null;
+    state?: string | null;
+    zip?: string | null;
+    country_concept?: number | null;
 };
+
