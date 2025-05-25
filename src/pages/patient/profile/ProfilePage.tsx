@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import ProfileBanner from "../../../components/ui/profile-banner";
+import ProfileBanner from "@/components/ui/profile-banner";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 interface ProfileMenuItem {
@@ -24,12 +24,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
 
   const menuItems: ProfileMenuItem[] = [
     {
-      title: "Histórico de diários",
-      onClick: () => navigate("/my-diaries"),
-      hasArrow: true,
-    },
-    {
-      title: "Adicionar profissional da saúde",
+      title: "Gerar meu token de profissional",
       onClick: () => navigate("/add-professional"),
       hasArrow: true,
     },
@@ -102,7 +97,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       </div>
       <BottomNavigationBar
         variant="user"
-        initialActiveId="home"
+        initialActiveId="profile"
         onItemClick={handleNavigationClick}
       />
     </div>
