@@ -24,7 +24,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
 
   const menuItems: ProfileMenuItem[] = [
     {
-      title: "Gerar meu token de profissional",
+      title: "Histórico de diários",
+      onClick: () => navigate("/my-diaries"),
+      hasArrow: true,
+    },
+    {
+      title: "Adicionar profissional da saúde",
       onClick: () => navigate("/add-professional"),
       hasArrow: true,
     },

@@ -24,16 +24,6 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
 
     const menuItems: AcsProfileMenuItem[] = [
         {
-            title: "Histórico de diários",
-            onClick: () => navigate("/my-diaries"),
-            hasArrow: true,
-        },
-        {
-            title: "Adicionar profissional da saúde",
-            onClick: () => navigate("/add-professional"),
-            hasArrow: true,
-        },
-        {
             title: "Termos e condições",
             onClick: () => navigate("/terms"),
             hasArrow: true,
