@@ -15,7 +15,7 @@ const ProfileBanner: React.FC<ProfileBannerProps> = ({
 }) => {
   return (
     <div
-      className="relative bg-homeblob2 p-6 text-primary-foreground overflow-hidden h-48 w-full cursor-pointer shadow-md"
+      className="relative bg-homeblob2 p-6 text-primary-foreground overflow-hidden h-48 w-full shadow-md"
       onClick={onClick}
     >
       {/* Shapes decorativos - same as HomeBanner */}
