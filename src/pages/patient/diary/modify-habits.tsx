@@ -73,7 +73,7 @@ const ModifyHabits = () => {
           isLoading={false}
           placeholder="Selecione o tipo"
         />
-        <Button variant="orange" type="submit" className="w-full">
+        <Button variant="orange" type="submit" className="w-full text-offwhite">
           Criar Hábito
         </Button>
       </form>
