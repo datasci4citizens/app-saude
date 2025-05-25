@@ -16,7 +16,7 @@ const ViewReminder: React.FC<ViewEmergencyProps> = ({ emergency }) => {
   return (
     <div style={styles.page}>
       {/* Header */}
-      <Header title="Ver emergência" />
+      <Header title="Ver pedidos de ajuda" />
 
       {/* Reminder Details */}
       <div style={styles.reminderContainer}>

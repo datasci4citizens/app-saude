@@ -63,7 +63,7 @@ export default function EmergencyScreen() {
         (providerId) => ({
           person: user.person_id,
           provider: providerId,
-          value_as_string: freeText || "Emergência",
+          value_as_string: freeText || "Pedido de ajuda",
           observation_date: new Date().toISOString(),
           shared_with_provider: true,
         }),
@@ -74,7 +74,7 @@ export default function EmergencyScreen() {
 
       navigate("/user-main-page");
     } catch (error) {
-      console.error("Erro ao enviar emergência:", error);
+      console.error("Erro ao enviar pedido de ajuda:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -92,7 +92,7 @@ export default function EmergencyScreen() {
   if (isUserLoading || isProvidersLoading) {
     return (
       <div className="flex flex-col h-screen max-w-md mx-auto p-4">
-        <Header title="Emergência" />
+        <Header title="Pedido de ajuda" />
         <div className="flex-1 flex items-center justify-center">
           <p className="text-gray2">Carregando profissionais...</p>
         </div>
@@ -104,7 +104,7 @@ export default function EmergencyScreen() {
   if (providersError) {
     return (
       <div className="flex flex-col h-screen max-w-md mx-auto p-4">
-        <Header title="Emergência" />
+        <Header title="Pedido de ajuda" />
         <div className="flex-1 flex flex-col items-center justify-center">
           <p className="text-destructive">
             Erro ao carregar seus profissionais
@@ -125,13 +125,13 @@ export default function EmergencyScreen() {
   if (providers && providers.length === 0) {
     return (
       <div className="flex flex-col h-screen max-w-md mx-auto p-4">
-        <Header title="Emergência" />
+        <Header title="Pedido de ajuda" />
         <div className="flex-1 flex flex-col items-center justify-center">
           <p className="text-gray2 mb-2">
             Você não possui profissionais vinculados
           </p>
           <p className="text-gray2 mb-4">
-            Para enviar alertas de emergência, você precisa adicionar um
+            Para enviar pedidos de ajuda, você precisa adicionar um
             profissional ao seu perfil.
           </p>
           <Button
@@ -145,57 +145,67 @@ export default function EmergencyScreen() {
     );
   }
 
-  return (
-    <div className="flex flex-col h-screen max-w-md mx-auto p-4 bg-primary">
-      <Header title="Emergência" />
+return (
+  <div className="flex flex-col h-screen max-w-md mx-auto p-4 bg-primary">
+    <Header title="Pedido de ajuda" />
 
-      <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-6">
-        <div className="space-y-2 ml-8">
-          <h3 className="font-semibold text-[16px] font-inter text-typography">
-            Quais profissionais você deseja alertar?
-          </h3>
-          <div className="flex flex-col gap-4">
-            {providers &&
-              providers.map((provider: ProviderRetrieve) => (
-                <RadioCheckbox
-                  key={provider.provider_id}
-                  id={`provider-${provider.provider_id}`}
-                  label={
-                    provider.social_name ||
-                    provider.name ||
-                    "Profissional sem nome"
-                  }
-                  checked={selectedProviders.includes(provider.provider_id)}
-                  onCheckedChange={() =>
-                    handleProviderSelect(provider.provider_id)
-                  }
-                />
-              ))}
-          </div>
-        </div>
-
-        <div className="space-y-2 ml-8">
-          <TextField
-            size="large"
-            multiline
-            label="Mensagem"
-            placeholder="Descreva sua emergência..."
-            value={freeText}
-            onChange={(e) => setFreeText(e.target.value)}
-          />
-        </div>
-
-        <div className="px-8 mt-auto pb-4">
-          <Button
-            variant="orange"
-            size="responsive"
-            type="submit"
-            disabled={isSubmitting || !selectedProviders.length}
-          >
-            {isSubmitting ? "Enviando..." : "ENVIAR ALERTA"}
-          </Button>
-        </div>
-      </form>
+    <div className="flex items-center gap-3 mb-6"> {/* Added margin-bottom */}
+      <span className="text-sm text-gray-500">
+        Caso esteja passando por uma emergência ligue para 192. Esse pedido de ajuda não será atendido imediatamente.
+      </span>
     </div>
-  );
+
+    <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-6">
+      {/* Removed ml-8 from this div */}
+      <div className="space-y-2">
+        <h3 className="font-semibold text-[16px] font-inter text-typography"> {/* Added px-4 */}
+          Quais profissionais você deseja alertar?
+        </h3>
+        <div className="flex flex-col gap-4">
+          {providers &&
+            providers.map((provider: ProviderRetrieve) => (
+              <RadioCheckbox
+                key={provider.provider_id}
+                id={`provider-${provider.provider_id}`}
+                label={
+                  provider.social_name ||
+                  provider.name ||
+                  "Profissional sem nome"
+                }
+                checked={selectedProviders.includes(provider.provider_id)}
+                onCheckedChange={() =>
+                  handleProviderSelect(provider.provider_id)
+                }
+                className="px-4" // Added horizontal padding
+              />
+            ))}
+        </div>
+      </div>
+
+      {/* Removed ml-8 and added px-4 */}
+      <div className="space-y-2 px-4">
+        <TextField
+          size="large"
+          multiline
+          label="Mensagem"
+          placeholder="Descreva seu pedido de ajuda..."
+          value={freeText}
+          onChange={(e) => setFreeText(e.target.value)}
+        />
+      </div>
+
+      {/* Changed px-8 to px-4 */}
+      <div className="px-4 mt-auto pb-4">
+        <Button
+          variant="orange"
+          size="responsive"
+          type="submit"
+          disabled={isSubmitting || !selectedProviders.length}
+        >
+          {isSubmitting ? "Enviando..." : "ENVIAR ALERTA"}
+        </Button>
+      </div>
+    </form>
+  </div>
+);
 }

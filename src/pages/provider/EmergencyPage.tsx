@@ -70,9 +70,9 @@ export default function EmergencyPage() {
 
         return formattedPatients;
       } catch (err) {
-        console.error("Erro ao buscar pacientes em emergência:", err);
+        console.error("Erro ao buscar pacientes em necessidade de ajuda:", err);
         setError(
-          "Não foi possível carregar a lista de pacientes em emergência.",
+          "Não foi possível carregar a lista de pacientes em necessidade de ajuda.",
         );
         return [];
       }
@@ -110,7 +110,7 @@ export default function EmergencyPage() {
 
   // Aplica ordenação por data se estiver na aba urgentes
   const filteredPatients =
-    activeTab === "urgentes"
+    activeTab === "Requerem ajuda"
       ? [...filteredBySearch].sort((a, b) => {
           // Ordena por data menos recente (mais antigas primeiro)
           return (
@@ -165,7 +165,7 @@ export default function EmergencyPage() {
             className="font-bold"
             style={{ fontFamily: "'Work Sans', sans-serif", fontSize: "34px" }}
           >
-            Emergências
+            Pedidos de ajuda
           </h1>
         </div>
       </header>
@@ -191,10 +191,10 @@ export default function EmergencyPage() {
           Todos
         </button>
         <button
-          className={`py-2 px-4 ${activeTab === "urgentes" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
-          onClick={() => setActiveTab("urgentes")}
+          className={`py-2 px-4 ${activeTab === "Requerem ajuda" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
+          onClick={() => setActiveTab("Requerem ajuda")}
         >
-          Urgentes
+          Requerem ajuda
         </button>
       </div>
 

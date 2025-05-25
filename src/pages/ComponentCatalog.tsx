@@ -65,7 +65,7 @@ export default function ComponentCatalog() {
           />
           <PatientsPage
             variant="emergency"
-            name="Paciente de Emergência"
+            name="Paciente precisando de ajuda"
             age={30}
             lastConsult="15/05/2023"
             lastRegistry="15/05/2023"
@@ -84,7 +84,7 @@ export default function ComponentCatalog() {
           <InfoCard
             variant="emergency"
             count={5}
-            onClick={() => alert("Ver Emergências")}
+            onClick={() => alert("Ver pedidos de ajuda")}
           />
           <InfoCard
             variant="appointment"

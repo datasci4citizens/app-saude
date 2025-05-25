@@ -72,7 +72,7 @@ export default function PatientsPage() {
 
   // Aplica ordenação por urgência se estiver na aba urgentes
   const filteredPatients =
-    activeTab === "urgentes"
+    activeTab === "Requerem ajuda"
       ? filteredBySearch.filter((patient) => patient.urgent)
       : filteredBySearch;
 
@@ -208,10 +208,10 @@ export default function PatientsPage() {
           Todos
         </button>
         <button
-          className={`py-2 px-4 ${activeTab === "urgentes" ? "border-b-2 border-[#FA6E5A] text-[#FA6E5A] font-medium" : ""}`}
-          onClick={() => setActiveTab("urgentes")}
+          className={`py-2 px-4 ${activeTab === "Requerem ajuda" ? "border-b-2 border-[#FA6E5A] text-[#FA6E5A] font-medium" : ""}`}
+          onClick={() => setActiveTab("Requrem ajuda")}
         >
-          Urgentes
+          Requerem ajuda
         </button>
       </div>
 
@@ -230,7 +230,7 @@ export default function PatientsPage() {
               variant={getPatientVariant(patient)}
               name={patient.name}
               age={patient.age || 0}
-              lastEmergency={patient.lastEmergency || "Sem emergência"}
+              lastEmergency={patient.lastEmergency || "Sem pedidos de ajuda"}
               lastVisit={patient.lastVisit || "-"}
               onClick={() => handlePatientClick(patient)}
             />

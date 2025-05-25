@@ -31,7 +31,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    label: "Emergências",
+    label: "Ajuda",
     icon: (
       <span
         role="img"

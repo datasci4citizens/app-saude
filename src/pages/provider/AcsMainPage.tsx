@@ -25,8 +25,8 @@ export default function AcsMainPage() {
           setError("Não foi possível obter o número de emergências.");
         }
       } catch (err) {
-        console.error("Erro ao buscar contagem de emergências:", err);
-        setError("Erro ao carregar contagem de emergências.");
+        console.error("Erro ao buscar contagem de pedidos de ajuda:", err);
+        setError("Erro ao carregar contagem de pedidos de ajuda.");
       } finally {
         setLoading(false);
       }

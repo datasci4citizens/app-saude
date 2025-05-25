@@ -64,7 +64,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
               <div className="text-4xl text-typography font-bold mb-1">{count}</div>
 
               {/* Texto fixo de emergências */}
-              <div className="text-xs font-bold mb-4 text-typography">EMERGÊNCIA(S)</div>
+              <div className="text-xs font-bold mb-4 text-typography">PEDIDOS(S) DE AJUDA</div>
             </div>
 
             {/* Container do botão alinhado à direita inferior */}
