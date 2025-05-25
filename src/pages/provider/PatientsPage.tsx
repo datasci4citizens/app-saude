@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { TextField } from "@/components/forms/text_input";
 import PatientButton from "@/components/ui/patient-button";
+import { useNavigate } from "react-router-dom";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderService";
 import { Button } from "@/components/forms/button";
@@ -46,9 +47,9 @@ export default function PatientsPage() {
             // Marcar como urgente se tiver emergência nos últimos 30 dias
             urgent: patient.last_emergency_date
               ? (new Date().getTime() -
-                  new Date(patient.last_emergency_date).getTime()) /
-                  (1000 * 3600 * 24) <
-                30
+                new Date(patient.last_emergency_date).getTime()) /
+              (1000 * 3600 * 24) <
+              30
               : false,
           }),
         );
@@ -76,13 +77,23 @@ export default function PatientsPage() {
       ? filteredBySearch.filter((patient) => patient.urgent)
       : filteredBySearch;
 
+  const navigate = useNavigate();
+
   const handleNavigation = (itemId: string) => {
     console.log(`Navigated to ${itemId}`);
-    if (itemId === "home") {
-      window.location.href = "/acs-main-page";
-    }
-    if (itemId === "emergency") {
-      window.location.href = "/emergencies";
+    switch (itemId) {
+      case "home":
+        navigate("/acs-main-page");
+        break;
+      case "patients":
+        navigate("/patients");
+        break;
+      case "emergency":
+        navigate("/emergencies");
+        break;
+      case "profile":
+        navigate("/acs-profile");
+        break;
     }
   };
 
