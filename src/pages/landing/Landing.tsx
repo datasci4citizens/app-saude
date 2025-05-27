@@ -7,7 +7,6 @@ import { Capacitor } from "@capacitor/core";
 import { useGoogleLogin } from "@react-oauth/google";
 
 const isMobile = Capacitor.isNativePlatform();
-alert("Is mobile: " + isMobile);
 
 interface LandingScreenProps {
   onNext: () => void;
@@ -20,6 +19,9 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
       const googleUser = await GoogleAuth.signIn();
       alert("Login OK: " + JSON.stringify(googleUser));
       const idToken = googleUser.authentication.idToken;
+      console.log("ID Token:", idToken);
+      console.log("Local Storage:", localStorage.getItem("accessToken"));
+      localStorage.removeItem("accessToken");
       const { access, refresh, role } = await AuthService.authLoginGoogleCreate({
         token: idToken,
       });

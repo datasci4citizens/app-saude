@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ApiRequestOptions } from './ApiRequestOptions';
+import { Capacitor } from '@capacitor/core';
 
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 type Headers = Record<string, string>;
@@ -19,8 +20,16 @@ export type OpenAPIConfig = {
     ENCODE_PATH?: ((path: string) => string) | undefined;
 };
 
+const isMobile = Capacitor.isNativePlatform();
+const apiBaseUrl = isMobile
+  ? import.meta.env.VITE_SERVER_PROD_URL
+  : import.meta.env.VITE_SERVER_LOCAL_URL;
+
+console.log("isMobile:", isMobile);
+console.log("Usando API base:", apiBaseUrl);
+
 export const OpenAPI: OpenAPIConfig = {
-  BASE: "https://https://server-saude.paas.ic.unicamp.br",
+  BASE: apiBaseUrl,
   VERSION: "0.0.0",
   WITH_CREDENTIALS: true,
   CREDENTIALS: "include",
