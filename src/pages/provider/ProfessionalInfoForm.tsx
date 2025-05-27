@@ -123,20 +123,6 @@ export function ProfessionalInfoForm({
     return newErrors;
   };
 
-  // Get display date format DD/MM/YYYY
-  const getDisplayDate = () => {
-    if (!formData.birth_datetime) return "";
-
-    // Check if already in DD/MM/YYYY format
-    if (/^\d{2}\/\d{2}\/\d{4}$/.test(formData.birth_datetime)) {
-      return formData.birth_datetime;
-    }
-
-    // Convert from YYYY-MM-DD to DD/MM/YYYY
-    const [year, month, day] = formData.birth_datetime.split("-");
-    return day && month && year ? `${day}/${month}/${year}` : "";
-  };
-
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -181,7 +167,7 @@ export function ProfessionalInfoForm({
         id="birth_datetime"
         name="birth_datetime"
         label="Data de nascimento"
-        value={getDisplayDate()}
+        value={formData.birth_datetime || ""}
         onChange={handleDateChange}
         error={errors.birth_datetime}
       />

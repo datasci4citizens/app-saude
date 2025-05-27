@@ -152,18 +152,18 @@ export default function EmergencyScreen() {
       {/* Emergency Disclaimer */}
       <div className="mb-6 p-4 bg-destructive bg-opacity-10 border border-destructive rounded-lg">
         <div className="flex items-start gap-2">
-          <div className="text-destructive text-xl font-bold">⚠️</div>
+          <div className="text-white text-xl font-bold">⚠️</div>
           <div>
-            <p className="text-destructive font-semibold text-sm mb-2">
+            <p className="text-white font-semibold text-sm mb-2">
               ATENÇÃO: você pode não ser respondido imediatamente ou nem sequer respondido!
             </p>
-            <p className="text-destructive text-xs">
+            <p className="text-white text-xs">
               Em caso de necessidade, ligue{" "}
                 <a 
                   href="https://www.gov.br/saude/pt-br/composicao/saes/samu-192"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-bold underline hover:text-destructive hover:opacity-80 transition-opacity"
+                  className="font-bold underline hover:text-white hover:opacity-80 transition-opacity"
                 >
                   192
                 </a>{" "}
@@ -172,7 +172,7 @@ export default function EmergencyScreen() {
                 href="https://cvv.org.br/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-bold underline hover:text-destructive hover:opacity-80 transition-opacity"
+                className="font-bold underline hover:text-white hover:opacity-80 transition-opacity"
               >
                 188
               </a>
