@@ -149,6 +149,38 @@ export default function EmergencyScreen() {
     <div className="flex flex-col h-screen max-w-md mx-auto p-4 bg-primary">
       <Header title="Pedido de Ajuda" />
 
+      {/* Emergency Disclaimer */}
+      <div className="mb-6 p-4 bg-destructive bg-opacity-10 border border-destructive rounded-lg">
+        <div className="flex items-start gap-2">
+          <div className="text-destructive text-xl font-bold">⚠️</div>
+          <div>
+            <p className="text-destructive font-semibold text-sm mb-2">
+              ATENÇÃO: você pode não ser respondido imediatamente ou nem sequer respondido!
+            </p>
+            <p className="text-destructive text-xs">
+              Em caso de necessidade, ligue{" "}
+                <a 
+                  href="https://www.gov.br/saude/pt-br/composicao/saes/samu-192"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold underline hover:text-destructive hover:opacity-80 transition-opacity"
+                >
+                  192
+                </a>{" "}
+              ou{" "}
+              <a 
+                href="https://cvv.org.br/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold underline hover:text-destructive hover:opacity-80 transition-opacity"
+              >
+                188
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+
       <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-6">
         <div className="space-y-2 ml-8">
           <h3 className="font-semibold text-[16px] font-inter text-typography">
