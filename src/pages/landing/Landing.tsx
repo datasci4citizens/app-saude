@@ -15,12 +15,8 @@ interface LandingScreenProps {
 export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
   const loginMobile = async () => {
     try {
-      alert("Iniciando login...");
       const googleUser = await GoogleAuth.signIn();
-      alert("Login OK: " + JSON.stringify(googleUser));
       const idToken = googleUser.authentication.idToken;
-      console.log("ID Token:", idToken);
-      console.log("Local Storage:", localStorage.getItem("accessToken"));
       localStorage.removeItem("accessToken");
       const { access, refresh, role } = await AuthService.authLoginGoogleCreate({
         token: idToken,
@@ -40,6 +36,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
     flow: "auth-code",
     onSuccess: async ({ code }) => {
       try {
+        localStorage.removeItem("accessToken");
         const { access, refresh, role } = await AuthService.authLoginGoogleCreate({
           code: code,
         });
