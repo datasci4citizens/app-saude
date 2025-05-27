@@ -48,7 +48,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
     >
       <CardContent className="p-0 h-full">
         {isEmergency ? (
-          /* Card de Emergência */
+          /* Card de Pedido de Ajuda */
           <div className="flex flex-col h-full">
             {/* Conteúdo principal centralizado */}
             <div className="flex flex-col items-center pt-4 flex-grow">
@@ -60,11 +60,11 @@ const InfoCard: React.FC<InfoCardProps> = ({
                 ></span>
               </div>
 
-              {/* Número de emergências */}
+              {/* Número de pedidos de ajuda */}
               <div className="text-4xl text-typography font-bold mb-1">{count}</div>
 
-              {/* Texto fixo de emergências */}
-              <div className="text-xs font-bold mb-4 text-typography">EMERGÊNCIA(S)</div>
+              {/* Texto fixo de pedidos de ajuda */}
+              <div className="text-xs font-bold mb-4 text-typography">PEDIDOS DE AJUDA</div>
             </div>
 
             {/* Container do botão alinhado à direita inferior */}

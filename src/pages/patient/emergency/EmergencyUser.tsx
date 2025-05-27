@@ -63,7 +63,7 @@ export default function EmergencyScreen() {
         (providerId) => ({
           person: user.person_id,
           provider: providerId,
-          value_as_string: freeText || "Emergência",
+          value_as_string: freeText || "Pedidos de Ajuda",
           observation_date: new Date().toISOString(),
           shared_with_provider: true,
         }),
@@ -74,7 +74,7 @@ export default function EmergencyScreen() {
 
       navigate("/user-main-page");
     } catch (error) {
-      console.error("Erro ao enviar emergência:", error);
+      console.error("Erro ao enviar pedido de ajuda:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -92,7 +92,7 @@ export default function EmergencyScreen() {
   if (isUserLoading || isProvidersLoading) {
     return (
       <div className="flex flex-col h-screen max-w-md mx-auto p-4">
-        <Header title="Emergência" />
+        <Header title="Pedido de Ajuda" />
         <div className="flex-1 flex items-center justify-center">
           <p className="text-gray2">Carregando profissionais...</p>
         </div>
@@ -104,7 +104,7 @@ export default function EmergencyScreen() {
   if (providersError) {
     return (
       <div className="flex flex-col h-screen max-w-md mx-auto p-4">
-        <Header title="Emergência" />
+        <Header title="Pedido de Ajuda" />
         <div className="flex-1 flex flex-col items-center justify-center">
           <p className="text-destructive">
             Erro ao carregar seus profissionais
@@ -125,13 +125,13 @@ export default function EmergencyScreen() {
   if (providers && providers.length === 0) {
     return (
       <div className="flex flex-col h-screen max-w-md mx-auto p-4">
-        <Header title="Emergência" />
+        <Header title="Pedido de Ajuda" />
         <div className="flex-1 flex flex-col items-center justify-center">
           <p className="text-gray2 mb-2">
             Você não possui profissionais vinculados
           </p>
           <p className="text-gray2 mb-4">
-            Para enviar alertas de emergência, você precisa adicionar um
+            Para enviar alertas de pedidos de ajuda, você precisa adicionar um
             profissional ao seu perfil.
           </p>
           <Button
@@ -147,7 +147,7 @@ export default function EmergencyScreen() {
 
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto p-4 bg-primary">
-      <Header title="Emergência" />
+      <Header title="Pedido de Ajuda" />
 
       <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-6">
         <div className="space-y-2 ml-8">
@@ -179,7 +179,7 @@ export default function EmergencyScreen() {
             size="large"
             multiline
             label="Mensagem"
-            placeholder="Descreva sua emergência..."
+            placeholder="Descreva seu pedido de ajuda..."
             value={freeText}
             onChange={(e) => setFreeText(e.target.value)}
           />

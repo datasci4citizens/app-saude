@@ -150,7 +150,7 @@ export class ProviderService {
    * - age: Idade calculada com base na data de nascimento ou ano de nascimento
    * - last_visit_date: Data da última consulta com este provider
    * - last_visit_notes: Notas da última consulta com este provider
-   * - last_emergency_date: Data da última emergência registrada
+   * - last_emergency_date: Data do ultimo pedido de ajuda registrado
    * @param providerId
    * @returns any No response body
    * @throws ApiError
@@ -167,11 +167,11 @@ export class ProviderService {
     });
   }
   /**
-   * Função para obter o número de emergências ativas para os pacientes vinculados ao provider autenticado
+   * Função para obter o número de pedidos de ajuda ativas para os pacientes vinculados ao provider autenticado
    *
    * Returns:
-   * objeto com a contagem de emergências ativas:
-   * - emergency_count: número de emergências ativas
+   * objeto com a contagem de pedidos de ajuda ativas:
+   * - emergency_count: número de pedidos de ajuda ativas
    * @returns any No response body
    * @throws ApiError
    */
@@ -242,7 +242,7 @@ export class ProviderService {
    * - age: Idade calculada com base na data de nascimento ou ano de nascimento
    * - last_visit_date: Data da última consulta com este provider
    * - last_visit_notes: Notas da última consulta com este provider
-   * - last_emergency_date: Data da última emergência registrada
+   * - last_emergency_date: Data da última pedido de ajuda registrada
    * @returns any No response body
    * @throws ApiError
    */

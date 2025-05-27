@@ -74,7 +74,7 @@ const PatientButton: React.FC<PatientButtonProps> = ({
               if (onClickEmergency) onClickEmergency();
             }}
           >
-            EMERGÊNCIA ATIVA DESDE {lastEmergency}
+            PEDIDO DE AJUDA ATIVO DESDE {lastEmergency}
           </div>
         ) : (
           <div
@@ -86,7 +86,7 @@ const PatientButton: React.FC<PatientButtonProps> = ({
                         ${isEmergency ? "text-primary-foreground" : "text-typography"}
                     `}
           >
-            Última emergência: {lastEmergency || "Nenhuma"}
+            Último pedido de ajuda: {lastEmergency || "Nenhum"}
           </div>
         )}
       </div>

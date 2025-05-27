@@ -43,8 +43,8 @@ export default function PatientsPage() {
             age: patient.age || 0,
             lastVisit: patient.last_visit_date || "",
             lastEmergency: patient.last_emergency_date || "",
-            // Marcar como urgente se tiver emergência nos últimos 30 dias
-            urgent: patient.last_emergency_date
+            // Marcar como alerta se tiver pedido de ajuda nos últimos 30 dias
+            alert: patient.last_emergency_date
               ? (new Date().getTime() -
                   new Date(patient.last_emergency_date).getTime()) /
                   (1000 * 3600 * 24) <
@@ -230,7 +230,7 @@ export default function PatientsPage() {
               variant={getPatientVariant(patient)}
               name={patient.name}
               age={patient.age || 0}
-              lastEmergency={patient.lastEmergency || "Sem emergência"}
+              lastEmergency={patient.lastEmergency || "Sem pedidos de ajuda"}
               lastVisit={patient.lastVisit || "-"}
               onClick={() => handlePatientClick(patient)}
             />
