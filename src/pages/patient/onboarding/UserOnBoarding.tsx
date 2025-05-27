@@ -6,8 +6,6 @@ import Header from "@/components/ui/header";
 import useSWRMutation from "swr/mutation";
 import type { PersonCreate } from "@/api/models/PersonCreate";
 import type { LocationCreate } from "@/api/models/LocationCreate";
-import type { ObservationCreate } from "@/api/models/ObservationCreate";
-import type { DrugExposureCreate } from "@/api/models/DrugExposureCreate";
 import { ProgressIndicator } from "@/components/forms/progress_indicator";
 
 // Empty placeholder for future service implementation
@@ -15,8 +13,6 @@ import { ProgressIndicator } from "@/components/forms/progress_indicator";
 import { FullPersonService } from "@/api/services/FullPersonService";
 import type { FullPersonCreate } from "@/api/models/FullPersonCreate";
 import type { AddressFormData } from "@/pages/patient/onboarding/UserInfoForm2";
-import type { SubmissionData } from "@/pages/patient/onboarding/UserInfoForm3";
-
 // Define types for the incoming data from each form
 interface PersonData {
   social_name?: string | null;
@@ -43,6 +39,8 @@ export default function UserOnboarding() {
       const fullData: FullPersonCreate = {
         person,
         location,
+        observations: [], // we don't gather this data
+        drug_exposures: [], // we don't gather this data
       };
       return await FullPersonService.apiFullPersonCreate(fullData);
     },

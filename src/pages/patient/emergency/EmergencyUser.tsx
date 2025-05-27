@@ -208,12 +208,13 @@ export default function EmergencyScreen() {
 
         <div className="space-y-2 ml-8">
           <TextField
-            size="large"
-            multiline
+            id="help-message"
+            name="helpMessage"
             label="Mensagem"
             placeholder="Descreva seu pedido de ajuda..."
             value={freeText}
             onChange={(e) => setFreeText(e.target.value)}
+            type="text"
           />
         </div>
 
