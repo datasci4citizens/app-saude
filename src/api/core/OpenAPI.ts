@@ -20,7 +20,7 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-  BASE: "https://server-saude.onrender.com",
+  BASE: "https://https://server-saude.paas.ic.unicamp.br",
   VERSION: "0.0.0",
   WITH_CREDENTIALS: true,
   CREDENTIALS: "include",
