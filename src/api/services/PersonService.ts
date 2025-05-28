@@ -61,12 +61,12 @@ export class PersonService {
     }
     /**
      * @param requestBody
-     * @returns PersonCreate
+     * @returns PersonRetrieve
      * @throws ApiError
      */
     public static apiPersonCreate(
         requestBody?: PersonCreate,
-    ): CancelablePromise<PersonCreate> {
+    ): CancelablePromise<PersonRetrieve> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/person/',

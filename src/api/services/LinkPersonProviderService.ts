@@ -5,6 +5,7 @@
 import type { PersonLinkProviderRequest } from '../models/PersonLinkProviderRequest';
 import type { PersonLinkProviderResponse } from '../models/PersonLinkProviderResponse';
 import type { ProviderLinkCodeResponse } from '../models/ProviderLinkCodeResponse';
+import type { ProviderPersonSummary } from '../models/ProviderPersonSummary';
 import type { ProviderRetrieve } from '../models/ProviderRetrieve';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -58,6 +59,17 @@ export class LinkPersonProviderService {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/provider/link-code/',
+        });
+    }
+    /**
+     * View to retrieve all patients linked to the authenticated provider additional information
+     * @returns ProviderPersonSummary
+     * @throws ApiError
+     */
+    public static providerPersonsList(): CancelablePromise<Array<ProviderPersonSummary>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/provider/persons/',
         });
     }
 }

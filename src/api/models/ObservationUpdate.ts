@@ -6,6 +6,7 @@ export type ObservationUpdate = {
     readonly observation_id: number;
     value_as_string?: string | null;
     observation_date?: string | null;
+    observation_source_value?: string | null;
     shared_with_provider?: boolean | null;
     person?: number | null;
     provider?: number | null;

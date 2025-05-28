@@ -1,0 +1,36 @@
+/* generated using openapi-typescript-codegen -- do not edit */
+/* istanbul ignore file */
+/* tslint:disable */
+/* eslint-disable */
+import type { InterestArea } from '../models/InterestArea';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
+export class InterestAreasService {
+    /**
+     * @returns InterestArea
+     * @throws ApiError
+     */
+    public static personInterestAreasList(): CancelablePromise<Array<InterestArea>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/person/interest-areas/',
+        });
+    }
+    /**
+     * Cria uma nova área de interesse para o usuário autenticado
+     * @param requestBody
+     * @returns InterestArea
+     * @throws ApiError
+     */
+    public static personInterestAreasCreate(
+        requestBody?: InterestArea,
+    ): CancelablePromise<InterestArea> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/person/interest-areas/',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+}
