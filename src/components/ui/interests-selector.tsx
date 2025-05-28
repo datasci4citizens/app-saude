@@ -44,19 +44,37 @@ const InterestsSelector: React.FC<InterestsSelectorProps> = ({ items }) => {
     };
   }, []);
   
+  // Distribute items among columns
+  const getColumnsData = () => {
+    const columns: ItemType[][] = Array.from({ length: columnCount }, () => []);
+    
+    items.forEach((item, index) => {
+      const columnIndex:number = index % columnCount;
+      columns[columnIndex].push(item);
+    });
+    
+    return columns;
+  };
+  
+  const columns = getColumnsData();
+  
   return (
     <div className="w-full overflow-x-auto p-2.5">
-      <div className={`grid gap-3 w-full grid-cols-${columnCount}`}>
-        {items.map((item) => (
-          <div 
-            key={item.id} 
-            className="bg-red-500 rounded-lg p-4 flex flex-col text-white relative"
-            style={{ height: `${itemHeights[item.id]}px` }}
-          >
-            <span className={`text-2xl mb-2 icon-${item.icon}`} aria-hidden="true"></span>
-            <span className="text-base font-bold absolute bottom-4">
-              {item.title}
-            </span>
+      <div className="flex w-full gap-3">
+        {columns.map((column, columnIndex) => (
+          <div key={columnIndex} className="flex flex-col gap-3 flex-1">
+            {column.map((item) => (
+              <div 
+                key={item.id} 
+                className="bg-red-500 rounded-lg p-4 flex flex-col text-white relative"
+                style={{ height: `${itemHeights[item.id]}px` }}
+              >
+                <span className={`text-2xl mb-2 icon-${item.icon}`} aria-hidden="true"></span>
+                <span className="text-base font-bold absolute bottom-4">
+                  {item.title}
+                </span>
+              </div>
+            ))}
           </div>
         ))}
       </div>

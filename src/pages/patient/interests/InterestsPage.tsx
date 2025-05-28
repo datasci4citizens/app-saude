@@ -20,7 +20,7 @@ export default function InterestPage() {
     };
 
     return (
-        <div className="flex flex-col h-screen max-w-md mx-auto p-4 bg-primary">
+        <div className="flex flex-col h-screen mx-auto p-4 bg-primary">
             <Header title="Pedido de ajuda" subtitle="barbariza mona" />
 
             {/* Properly using the TextIconButton with text, icon and onClick handler */}
