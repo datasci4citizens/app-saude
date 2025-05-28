@@ -21,12 +21,18 @@ export type OpenAPIConfig = {
 };
 
 const isMobile = Capacitor.isNativePlatform();
-const apiBaseUrl = isMobile
-  ? import.meta.env.VITE_SERVER_PROD_URL
-  : import.meta.env.VITE_SERVER_LOCAL_URL;
+const apiBaseUrl = (() => {
+  if (isMobile) {
+    return import.meta.env.VITE_USE_STAGING
+      ? import.meta.env.VITE_SERVER_STAGING_URL
+      : import.meta.env.VITE_SERVER_PROD_URL;
+  } else {
+    return import.meta.env.VITE_SERVER_LOCAL_URL;
+  }
+})();
 
-console.log("isMobile:", isMobile);
-console.log("Usando API base:", apiBaseUrl);
+alert("isMobile: " + isMobile);
+alert("Usando API base: " + apiBaseUrl);
 
 export const OpenAPI: OpenAPIConfig = {
   BASE: apiBaseUrl,

@@ -6,14 +6,17 @@ import "mingcute_icon/font/Mingcute.css";
 import { App } from "./App";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
+import { Capacitor } from '@capacitor/core';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
-GoogleAuth.initialize({
-  // Client ID for the MOBILE login
-  clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-  scopes: ['profile', 'email'],
-  grantOfflineAccess: true,
-});
+// Initialize the Google Auth plugin for mobile platforms
+if (Capacitor.isNativePlatform()) {
+  GoogleAuth.initialize({
+    clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+    scopes: ['profile', 'email'],
+    grantOfflineAccess: true,
+  });
+}
 
 const root = document.getElementById("root");
 
@@ -21,6 +24,7 @@ if (!root) {
   throw new Error("Falha ao encontrar raiz do projeto.");
 }
 
+// Initialize the Google OAuth provider for web platforms
 createRoot(root).render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>

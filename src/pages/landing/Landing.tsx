@@ -15,6 +15,7 @@ interface LandingScreenProps {
 export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
   const loginMobile = async () => {
     try {
+      await GoogleAuth.signOut(); // força novo login completo
       const googleUser = await GoogleAuth.signIn();
       const idToken = googleUser.authentication.idToken;
       localStorage.removeItem("accessToken");
