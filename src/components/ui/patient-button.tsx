@@ -75,6 +75,7 @@ const PatientButton: React.FC<PatientButtonProps> = ({
             }}
           >
             PEDIDO DE AJUDA ATIVO DESDE {lastEmergency}
+            PEDIDO DE AJUDA ATIVO DESDE {lastEmergency}
           </div>
         ) : (
           <div
@@ -86,7 +87,7 @@ const PatientButton: React.FC<PatientButtonProps> = ({
                         ${isEmergency ? "text-primary-foreground" : "text-typography"}
                     `}
           >
-            Último pedido de ajuda: {lastEmergency || "Nenhuma"}
+            Último pedido de ajuda: {lastEmergency || "Nenhum"}
           </div>
         )}
       </div>

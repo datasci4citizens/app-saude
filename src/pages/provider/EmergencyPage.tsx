@@ -5,8 +5,9 @@ import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { ProviderService } from "@/api/services/ProviderService";
 import { useNavigate } from "react-router-dom";
 import useSWR from "swr";
+import Header from "@/components/ui/header";
 
-// Interface para os dados dos pacientes em emergência conforme API
+// Interface para os dados dos pacientes em pedido de ajuda conforme API
 interface EmergencyPatient {
   id: number | string;
   name: string;
@@ -30,7 +31,7 @@ export default function EmergencyPage() {
   const [activeTab, setActiveTab] = useState("todos");
   const [error, setError] = useState<string | null>(null);
 
-  // Usando SWR para buscar os dados dos pacientes em emergência
+  // Usando SWR para buscar os dados dos pacientes em pedidos de ajuda
   const {
     data: emergencyPatients,
     error: fetchError,
@@ -44,7 +45,7 @@ export default function EmergencyPage() {
 
         // Convertendo e formatando os dados da API para o formato esperado pelo componente
         const formattedPatients: FormattedEmergencyPatient[] = patientData
-          // Filtrando apenas pacientes com emergências registradas
+          // Filtrando apenas pacientes com pedidos de ajuda registradas
           .filter((patient: EmergencyPatient) => patient.last_emergency_date)
           .map((patient: EmergencyPatient) => ({
             id: patient.id,
@@ -62,7 +63,7 @@ export default function EmergencyPage() {
               return true;
             }
 
-            // Ou pacientes cuja última visita foi após a emergência
+            // Ou pacientes cuja última visita foi após o pedido de ajuda
             const visitDate = parseDate(patient.lastVisit);
             const emergencyDate = parseDate(patient.lastEmergency);
             return visitDate > emergencyDate;
@@ -70,9 +71,9 @@ export default function EmergencyPage() {
 
         return formattedPatients;
       } catch (err) {
-        console.error("Erro ao buscar pacientes em necessidade de ajuda:", err);
+        console.error("Erro ao buscar pacientes em pedidos de ajuda:", err);
         setError(
-          "Não foi possível carregar a lista de pacientes em necessidade de ajuda.",
+          "Não foi possível carregar a lista de pacientes em pedidos de ajuda.",
         );
         return [];
       }
@@ -144,38 +145,12 @@ export default function EmergencyPage() {
   return (
     <div className="flex flex-col min-h-screen bg-primary pb-24">
       {/* Header with back button and title */}
-      <header className="p-4">
-        {/* Back button at the top */}
-        <div className="mb-2">
-          <button onClick={() => navigate(-1)}>
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M15 18L9 12L15 6"
-                stroke="#000000"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-        </div>
-
-        {/* Title centered below */}
-        <div className="flex justify-center text-typography">
-          <h1
-            className="font-bold"
-            style={{ fontFamily: "'Work Sans', sans-serif", fontSize: "34px" }}
-          >
-            Pedidos de ajuda
-          </h1>
-        </div>
-      </header>
+      <div className="p-4">
+        <Header
+          title="Pedidos de Ajuda"
+          onBackClick={() => navigate(-1)}
+          />
+      </div>
 
       {/* Search input */}
       <div className="px-4 mb-4">

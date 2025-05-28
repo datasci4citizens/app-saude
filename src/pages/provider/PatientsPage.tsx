@@ -44,8 +44,8 @@ export default function PatientsPage() {
             age: patient.age || 0,
             lastVisit: patient.last_visit_date || "",
             lastEmergency: patient.last_emergency_date || "",
-            // Marcar como urgente se tiver emergência nos últimos 30 dias
-            urgent: patient.last_emergency_date
+            // Marcar como alerta se tiver pedido de ajuda nos últimos 30 dias
+            alert: patient.last_emergency_date
               ? (new Date().getTime() -
                 new Date(patient.last_emergency_date).getTime()) /
               (1000 * 3600 * 24) <
@@ -167,7 +167,7 @@ export default function PatientsPage() {
                   Copiar
                 </Button>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray2 mt-1">
                 Este código expira em 10 minutos.
               </p>
             </div>
@@ -183,14 +183,14 @@ export default function PatientsPage() {
           )}
 
           {codeError && (
-            <p className="text-red-500 text-sm mt-1">{codeError}</p>
+            <p className="text-destructive text-sm mt-1">{codeError}</p>
           )}
 
           {linkCode && (
             <Button
               onClick={() => setLinkCode(null)}
               variant="orange"
-              className="w-full mt-2 text-gray_buttons"
+              className="w-full mt-2 text-gray2"
             >
               Gerar novo código
             </Button>
@@ -213,14 +213,14 @@ export default function PatientsPage() {
       {/* Tabs */}
       <div className="px-4 flex border-b mb-4">
         <button
-          className={`py-2 px-4 ${activeTab === "todos" ? "border-b-2 border-[#FA6E5A] text-[#FA6E5A] font-medium" : ""}`}
+          className={`py-2 px-4 ${activeTab === "todos" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
           onClick={() => setActiveTab("todos")}
         >
           Todos
         </button>
         <button
-          className={`py-2 px-4 ${activeTab === "Requerem ajuda" ? "border-b-2 border-[#FA6E5A] text-[#FA6E5A] font-medium" : ""}`}
-          onClick={() => setActiveTab("Requrem ajuda")}
+          className={`py-2 px-4 ${activeTab === "urgentes" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
+          onClick={() => setActiveTab("urgentes")}
         >
           Requerem ajuda
         </button>
@@ -229,11 +229,11 @@ export default function PatientsPage() {
       {/* Patients list */}
       <div className="flex-1 px-4 overflow-auto">
         {loading ? (
-          <div className="text-center p-4 text-gray-500">
+          <div className="text-center p-4 text-gray2">
             Carregando pacientes...
           </div>
         ) : error ? (
-          <div className="text-center p-4 text-red-500">{error}</div>
+          <div className="text-center p-4 text-destructive">{error}</div>
         ) : filteredPatients.length > 0 ? (
           filteredPatients.map((patient, index) => (
             <PatientButton
@@ -247,7 +247,7 @@ export default function PatientsPage() {
             />
           ))
         ) : (
-          <div className="text-center p-4 text-gray-500">
+          <div className="text-center p-4 text-gray2">
             Nenhum paciente encontrado com este nome.
           </div>
         )}

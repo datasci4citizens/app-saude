@@ -63,7 +63,7 @@ export default function EmergencyScreen() {
         (providerId) => ({
           person: user.person_id,
           provider: providerId,
-          value_as_string: freeText || "Pedido de ajuda",
+          value_as_string: freeText || "Pedidos de Ajuda",
           observation_date: new Date().toISOString(),
           shared_with_provider: true,
         }),
@@ -74,6 +74,7 @@ export default function EmergencyScreen() {
 
       navigate("/user-main-page");
     } catch (error) {
+      console.error("Erro ao enviar pedido de ajuda:", error);
       console.error("Erro ao enviar pedido de ajuda:", error);
     } finally {
       setIsSubmitting(false);
@@ -92,7 +93,7 @@ export default function EmergencyScreen() {
   if (isUserLoading || isProvidersLoading) {
     return (
       <div className="flex flex-col h-screen max-w-md mx-auto p-4">
-        <Header title="Pedido de ajuda" />
+        <Header title="Pedido de Ajuda" />
         <div className="flex-1 flex items-center justify-center">
           <p className="text-gray2">Carregando profissionais...</p>
         </div>
@@ -104,7 +105,7 @@ export default function EmergencyScreen() {
   if (providersError) {
     return (
       <div className="flex flex-col h-screen max-w-md mx-auto p-4">
-        <Header title="Pedido de ajuda" />
+        <Header title="Pedido de Ajuda" />
         <div className="flex-1 flex flex-col items-center justify-center">
           <p className="text-destructive">
             Erro ao carregar seus profissionais
@@ -125,13 +126,13 @@ export default function EmergencyScreen() {
   if (providers && providers.length === 0) {
     return (
       <div className="flex flex-col h-screen max-w-md mx-auto p-4">
-        <Header title="Pedido de ajuda" />
+        <Header title="Pedido de Ajuda" />
         <div className="flex-1 flex flex-col items-center justify-center">
           <p className="text-gray2 mb-2">
             Você não possui profissionais vinculados
           </p>
           <p className="text-gray2 mb-4">
-            Para enviar pedidos de ajuda, você precisa adicionar um
+            Para enviar alertas de pedidos de ajuda, você precisa adicionar um
             profissional ao seu perfil.
           </p>
           <Button
@@ -145,15 +146,41 @@ export default function EmergencyScreen() {
     );
   }
 
-return (
-  <div className="flex flex-col h-screen max-w-md mx-auto p-4 bg-primary">
-    <Header title="Pedido de ajuda" />
+  return (
+    <div className="flex flex-col h-screen max-w-md mx-auto p-4 bg-primary">
+      <Header title="Pedido de Ajuda" />
 
-    <div className="flex items-center gap-3 mb-6"> {/* Added margin-bottom */}
-      <span className="text-sm text-gray-500">
-        Caso esteja passando por uma emergência ligue para 192. Esse pedido de ajuda não será atendido imediatamente.
-      </span>
-    </div>
+      {/* Emergency Disclaimer */}
+      <div className="mb-6 p-4 bg-destructive bg-opacity-10 border border-destructive rounded-lg">
+        <div className="flex items-start gap-2">
+          <div className="text-white text-xl font-bold">⚠️</div>
+          <div>
+            <p className="text-white font-semibold text-sm mb-2">
+              ATENÇÃO: você pode não ser respondido imediatamente ou nem sequer respondido!
+            </p>
+            <p className="text-white text-xs">
+              Em caso de necessidade, ligue{" "}
+                <a 
+                  href="https://www.gov.br/saude/pt-br/composicao/saes/samu-192"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold underline hover:text-white hover:opacity-80 transition-opacity"
+                >
+                  192
+                </a>{" "}
+              ou{" "}
+              <a 
+                href="https://cvv.org.br/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold underline hover:text-white hover:opacity-80 transition-opacity"
+              >
+                188
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
 
     <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-6">
       {/* Removed ml-8 from this div */}
@@ -182,17 +209,17 @@ return (
         </div>
       </div>
 
-      {/* Removed ml-8 and added px-4 */}
-      <div className="space-y-2 px-4">
-        <TextField
-          size="large"
-          multiline
-          label="Mensagem"
-          placeholder="Descreva seu pedido de ajuda..."
-          value={freeText}
-          onChange={(e) => setFreeText(e.target.value)}
-        />
-      </div>
+        <div className="space-y-2 ml-8">
+          <TextField
+            id="help-message"
+            name="helpMessage"
+            label="Mensagem"
+            placeholder="Descreva seu pedido de ajuda..."
+            value={freeText}
+            onChange={(e) => setFreeText(e.target.value)}
+            type="text"
+          />
+        </div>
 
       {/* Changed px-8 to px-4 */}
       <div className="px-4 mt-auto pb-4">
