@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { ApiRequestOptions } from './ApiRequestOptions';
+import { Capacitor } from '@capacitor/core';
 
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 type Headers = Record<string, string>;
@@ -19,14 +20,30 @@ export type OpenAPIConfig = {
     ENCODE_PATH?: ((path: string) => string) | undefined;
 };
 
+const isMobile = Capacitor.isNativePlatform();
+let apiBaseUrl: string;
+
+if (import.meta.env.VITE_USE_STAGING === "true") {
+  apiBaseUrl = import.meta.env.VITE_SERVER_STAGING_URL || '';
+} else if (isMobile) {
+  apiBaseUrl = import.meta.env.VITE_SERVER_PROD_URL || '';
+} else {
+  apiBaseUrl = import.meta.env.VITE_SERVER_LOCAL_URL || '';
+}
+
+// alert("Usando API base: " + apiBaseUrl);
+
 export const OpenAPI: OpenAPIConfig = {
-    BASE: '',
-    VERSION: '0.0.0',
-    WITH_CREDENTIALS: false,
-    CREDENTIALS: 'include',
-    TOKEN: undefined,
-    USERNAME: undefined,
-    PASSWORD: undefined,
-    HEADERS: undefined,
-    ENCODE_PATH: undefined,
+  BASE: apiBaseUrl,
+  VERSION: "0.0.0",
+  WITH_CREDENTIALS: true,
+  CREDENTIALS: "include",
+  TOKEN: async () => {
+    const token = localStorage.getItem("accessToken");
+    return `${token || ""}`;
+  },
+  USERNAME: undefined,
+  PASSWORD: undefined,
+  HEADERS: undefined,
+  ENCODE_PATH: undefined,
 };
