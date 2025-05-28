@@ -24,6 +24,7 @@ import ViewPatientDiaries from "./pages/patient/diary/ViewDiaryProvider";
 import ViewDiaryEntry from "./pages/patient/diary/ViewDiary";
 import ProfilePage from "./pages/patient/profile/ProfilePage";
 import AcsProfilePage from "./pages/provider/profile/AcsProfilePage";
+import InterestPage from "./pages/patient/interests/InterestsPage";
 
 
 const NotFound = () => (
@@ -136,6 +137,10 @@ const router = createBrowserRouter([
   {
     path: "/acs-profile",
     element: <AcsProfilePage />,
+  },
+  {
+    path: "/interests",
+    element: <InterestPage />
   },
   {
     path: "*",
