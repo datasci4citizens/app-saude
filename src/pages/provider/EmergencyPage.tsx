@@ -105,28 +105,35 @@ export default function EmergencyPage() {
   // Filtra pacientes com base na busca
   const filteredBySearch = emergencyPatients
     ? emergencyPatients.filter((patient) =>
-        patient.name.toLowerCase().includes(searchValue.toLowerCase()),
-      )
+      patient.name.toLowerCase().includes(searchValue.toLowerCase()),
+    )
     : [];
 
   // Aplica ordenação por data se estiver na aba urgentes
   const filteredPatients =
-    activeTab === "urgentes"
+    activeTab === "Requerem ajuda"
       ? [...filteredBySearch].sort((a, b) => {
-          // Ordena por data menos recente (mais antigas primeiro)
-          return (
-            parseDate(a.lastEmergency).getTime() -
-            parseDate(b.lastEmergency).getTime()
-          );
-        })
+        // Ordena por data menos recente (mais antigas primeiro)
+        return (
+          parseDate(a.lastEmergency).getTime() -
+          parseDate(b.lastEmergency).getTime()
+        );
+      })
       : filteredBySearch;
 
   const handleNavigation = (itemId: string) => {
-    if (itemId === "home") {
-      navigate("/acs-main-page");
-    }
-    if (itemId === "patients") {
-      navigate("/patients");
+    switch (itemId) {
+      case "home":
+        navigate("/acs-main-page");
+        break;
+      case "patients":
+        navigate("/patients");
+        break;
+      case "emergency":
+        break;
+      case "profile":
+        navigate("/acs-profile");
+        break;
     }
   };
 
@@ -166,10 +173,10 @@ export default function EmergencyPage() {
           Todos
         </button>
         <button
-          className={`py-2 px-4 ${activeTab === "urgentes" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
-          onClick={() => setActiveTab("urgentes")}
+          className={`py-2 px-4 ${activeTab === "Requerem ajuda" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
+          onClick={() => setActiveTab("Requerem ajuda")}
         >
-          Urgentes
+          Requerem ajuda
         </button>
       </div>
 

@@ -63,9 +63,9 @@ export default function AcsMainPage() {
       case "emergency":
         navigate("/emergencies");
         break;
-      //case 'profile':
-      //    navigate('/profile');
-      //    break;
+      case 'profile':
+        navigate('/acs-profile');
+        break;
     }
   };
 

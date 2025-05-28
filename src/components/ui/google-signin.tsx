@@ -12,7 +12,7 @@ export default function GoogleSignin({ onClick }: GoogleSigninProps) {
     <div className="flex justify-center mt-6">
       <button
         onClick={handleGoogleRegister}
-        className="w-[85%] h-[54px] bg-background text-typography rounded-md px-4 py-4 flex items-center justify-center gap-3 shadow-md hover:shadow-lg transition-all duration-200"
+        className="bg-offwhite w-[85%] h-[54px] bg-background text-typography rounded-md px-4 py-4 flex items-center justify-center gap-3 shadow-md hover:shadow-lg transition-all duration-200"
       >
         <svg width="20" height="20" viewBox="0 0 24 24">
           <path

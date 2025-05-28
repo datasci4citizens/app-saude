@@ -75,6 +75,7 @@ export default function EmergencyScreen() {
       navigate("/user-main-page");
     } catch (error) {
       console.error("Erro ao enviar pedido de ajuda:", error);
+      console.error("Erro ao enviar pedido de ajuda:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -181,30 +182,32 @@ export default function EmergencyScreen() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-6">
-        <div className="space-y-2 ml-8">
-          <h3 className="font-semibold text-[16px] font-inter text-typography">
-            Quais profissionais você deseja alertar?
-          </h3>
-          <div className="flex flex-col gap-4">
-            {providers &&
-              providers.map((provider: ProviderRetrieve) => (
-                <RadioCheckbox
-                  key={provider.provider_id}
-                  id={`provider-${provider.provider_id}`}
-                  label={
-                    provider.social_name ||
-                    provider.name ||
-                    "Profissional sem nome"
-                  }
-                  checked={selectedProviders.includes(provider.provider_id)}
-                  onCheckedChange={() =>
-                    handleProviderSelect(provider.provider_id)
-                  }
-                />
-              ))}
-          </div>
+    <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-6">
+      {/* Removed ml-8 from this div */}
+      <div className="space-y-2">
+        <h3 className="font-semibold text-[16px] font-inter text-typography"> {/* Added px-4 */}
+          Quais profissionais você deseja alertar?
+        </h3>
+        <div className="flex flex-col gap-4">
+          {providers &&
+            providers.map((provider: ProviderRetrieve) => (
+              <RadioCheckbox
+                key={provider.provider_id}
+                id={`provider-${provider.provider_id}`}
+                label={
+                  provider.social_name ||
+                  provider.name ||
+                  "Profissional sem nome"
+                }
+                checked={selectedProviders.includes(provider.provider_id)}
+                onCheckedChange={() =>
+                  handleProviderSelect(provider.provider_id)
+                }
+                className="px-4" // Added horizontal padding
+              />
+            ))}
         </div>
+      </div>
 
         <div className="space-y-2 ml-8">
           <TextField
@@ -218,17 +221,18 @@ export default function EmergencyScreen() {
           />
         </div>
 
-        <div className="px-8 mt-auto pb-4">
-          <Button
-            variant="orange"
-            size="responsive"
-            type="submit"
-            disabled={isSubmitting || !selectedProviders.length}
-          >
-            {isSubmitting ? "Enviando..." : "ENVIAR ALERTA"}
-          </Button>
-        </div>
-      </form>
-    </div>
-  );
+      {/* Changed px-8 to px-4 */}
+      <div className="px-4 mt-auto pb-4">
+        <Button
+          variant="orange"
+          size="responsive"
+          type="submit"
+          disabled={isSubmitting || !selectedProviders.length}
+        >
+          {isSubmitting ? "Enviando..." : "ENVIAR ALERTA"}
+        </Button>
+      </div>
+    </form>
+  </div>
+);
 }

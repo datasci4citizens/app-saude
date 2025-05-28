@@ -54,6 +54,7 @@
   margin-bottom: 16px;
   font-weight: bold;
   color: white;
+  margin-bottom: 4px;
 }
 
 .onboarding-slider .subtitle {
@@ -65,7 +66,7 @@
 
 .onboarding-slider .illustration-container {
   position: absolute;
-  bottom: 250px;
+  bottom: 27vh;
   width: 100%;
   max-width: 500px;
   height: auto;

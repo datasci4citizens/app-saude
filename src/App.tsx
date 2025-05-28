@@ -22,6 +22,8 @@ import { ThemeToggle } from "./components/ui/ThemeToggle";
 import ViewDiaryUser from "./pages/patient/diary/ViewDiaryUser";
 import ViewPatientDiaries from "./pages/patient/diary/ViewDiaryProvider";
 import ViewDiaryEntry from "./pages/patient/diary/ViewDiary";
+import ProfilePage from "./pages/patient/profile/ProfilePage";
+import AcsProfilePage from "./pages/provider/profile/AcsProfilePage";
 
 
 const NotFound = () => (
@@ -37,7 +39,14 @@ const NotFound = () => (
 </SWRConfig>;
 
 const router = createBrowserRouter([
-  { path: "/", element: <h1>Home!</h1> },
+  { 
+    path: "/", 
+    element: <OnboardingSlider />,
+  },
+  { 
+    path: "/login", 
+    element: <OnboardingSlider />,
+  },
   {
     path: "/welcome",
     element: <OnboardingSlider />,
@@ -126,6 +135,14 @@ const router = createBrowserRouter([
   {
     path: "/modify-habits",
     element: <ModifyHabits />,
+  },
+  {
+    path: "/profile",
+    element: <ProfilePage />,
+  },
+  {
+    path: "/acs-profile",
+    element: <AcsProfilePage />,
   },
   {
     path: "*",

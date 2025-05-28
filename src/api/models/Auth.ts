@@ -3,5 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Auth = {
-  code: string;
+    token?: string;
+    code?: string;
 };
+
