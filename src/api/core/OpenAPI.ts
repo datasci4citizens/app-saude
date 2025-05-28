@@ -21,13 +21,17 @@ export type OpenAPIConfig = {
 };
 
 const isMobile = Capacitor.isNativePlatform();
-const apiBaseUrl = import.meta.env.VITE_USE_STAGING
-  ? import.meta.env.VITE_SERVER_STAGING_URL
-  : isMobile
-    ? import.meta.env.VITE_SERVER_PROD_URL
-    : import.meta.env.VITE_SERVER_LOCAL_URL;
 
-alert("isMobile: " + isMobile);
+let apiBaseUrl: string;
+
+if (import.meta.env.VITE_USE_STAGING === "true") {
+  apiBaseUrl = import.meta.env.VITE_SERVER_STAGING_URL || '';
+} else if (isMobile) {
+  apiBaseUrl = import.meta.env.VITE_SERVER_PROD_URL || '';
+} else {
+  apiBaseUrl = import.meta.env.VITE_SERVER_LOCAL_URL || '';
+}
+
 alert("Usando API base: " + apiBaseUrl);
 
 export const OpenAPI: OpenAPIConfig = {
