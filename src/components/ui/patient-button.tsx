@@ -75,7 +75,6 @@ const PatientButton: React.FC<PatientButtonProps> = ({
             }}
           >
             PEDIDO DE AJUDA ATIVO DESDE {lastEmergency}
-            PEDIDO DE AJUDA ATIVO DESDE {lastEmergency}
           </div>
         ) : (
           <div
