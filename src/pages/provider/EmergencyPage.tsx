@@ -196,7 +196,7 @@ export default function EmergencyPage() {
       case "patients":
         navigate("/patients");
         break;
-      case "emergency":
+      case "emergencies":
         break;
       case "profile":
         navigate("/acs-profile");

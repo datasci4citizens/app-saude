@@ -6,6 +6,7 @@ import { PersonService } from '@/api/services/PersonService';
 import { ProviderService } from '@/api/services/ProviderService'; // Import ProviderService
 import type { PersonRetrieve } from '@/api/models/PersonRetrieve';
 import ViewButton from '@/components/ui/ViewButton'; // Import ViewButton
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 // Define a basic interface for Diary Entries
 interface DiaryEntry {
@@ -171,7 +172,7 @@ export default function ViewPatient() {
           )}
         </div>
       </div>
-      {/* Você pode adicionar uma barra de navegação inferior se necessário */}
+      
     </div>
   );
 }
