@@ -152,6 +152,10 @@ export default function UserMainPage() {
     navigate("/diary");
   };
 
+  const handleSelectedInterests = () => {
+    navigate("/user-selected-interests");
+  };
+
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
       case "home":
@@ -236,6 +240,16 @@ export default function UserMainPage() {
           </div>
         )}
       </div>
+
+      {/* Custom interest button */}
+        <div className="fixed bottom-48 left-0 right-0 px-4 mb-2 flex justify-center">
+          <Button 
+            onClick={handleSelectedInterests}
+            className="bg-selection hover:bg-secondary/90 text-typography flex items-center gap-2 px-6"
+          >
+            Ver Interesses Selecionados
+          </Button>
+        </div>
 
       {/* Custom interest button */}
         <div className="fixed bottom-32 left-0 right-0 px-4 mb-2 flex justify-center">

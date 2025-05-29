@@ -5,62 +5,74 @@ import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
+import type { InterestAreaTrigger } from "@/api/models/InterestAreaTrigger";
+import { MultiSelectCustom } from "@/components/forms/multi_select_custom";
+import { SelectOption } from "@/utils/conceptLoader";
 
-interface FormData {
-  custom_interest_name: string;
-  value_as_string: string;
-}
-
-interface FormErrors {
-  custom_interest_name?: string;
-  value_as_string?: string;
+interface Question {
+  id: string;
+  text: string;
 }
 
 export default function CreateNewInterest() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<FormData>({
-    custom_interest_name: "",
-    value_as_string: "",
-  });
-  const [errors, setErrors] = useState<FormErrors>({});
+  
+  // Interest name state
+  const [interestName, setInterestName] = useState("");
+  const [nameError, setNameError] = useState<string | undefined>();
+  
+  // Questions management
+  const [newQuestion, setNewQuestion] = useState("");
+  const [questionError, setQuestionError] = useState<string | undefined>();
+  const [questions, setQuestions] = useState<Question[]>([]);
+  
+  // Selected questions (to become triggers)
+  const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
+  
+  // Form submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-    
-    // Clear error when user starts typing
-    if (errors[name as keyof FormErrors]) {
-      setErrors({ ...errors, [name]: undefined });
-    }
+  // Handle interest name change
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInterestName(e.target.value);
+    if (nameError) setNameError(undefined);
   };
 
-  const validateForm = (): FormErrors => {
-    const newErrors: FormErrors = {};
-
-    if (!formData.custom_interest_name.trim()) {
-      newErrors.custom_interest_name = "Nome do interesse é obrigatório";
-    } else if (formData.custom_interest_name.trim().length < 3) {
-      newErrors.custom_interest_name = "Nome deve ter pelo menos 3 caracteres";
-    }
-
-    if (!formData.value_as_string.trim()) {
-      newErrors.value_as_string = "Descrição é obrigatória";
-    } else if (formData.value_as_string.trim().length < 10) {
-      newErrors.value_as_string = "Descrição deve ter pelo menos 10 caracteres";
-    }
-
-    return newErrors;
+  // Handle question input change
+  const handleQuestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewQuestion(e.target.value);
+    if (questionError) setQuestionError(undefined);
   };
 
+  // Add a new question to the list
+  const handleAddQuestion = () => {
+    if (!newQuestion.trim()) {
+      setQuestionError("Digite uma pergunta");
+      return;
+    }
+
+    const newQuestionObj = {
+      id: Date.now().toString(), // Unique ID
+      text: newQuestion.trim()
+    };
+
+    setQuestions(prev => [...prev, newQuestionObj]);
+    setNewQuestion(""); // Clear input after adding
+  };
+
+  // Handle multi-select change
+  const handleSelectedQuestionsChange = (selectedValues: string[]) => {
+    setSelectedQuestions(selectedValues);
+  };
+
+  // Submit the new interest with selected questions as triggers
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate form
-    const formErrors = validateForm();
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
+    // Validate interest name
+    if (!interestName.trim()) {
+      setNameError("Nome do interesse é obrigatório");
       return;
     }
 
@@ -68,12 +80,22 @@ export default function CreateNewInterest() {
     setSubmitError(null);
 
     try {
+      // Create triggers from selected questions
+      const triggers: InterestAreaTrigger[] = selectedQuestions.map(questionId => {
+        const questionObj = questions.find(q => q.id === questionId);
+        return {
+          observation_concept_id: 2000301, // Specific concept ID for custom triggers
+          custom_trigger_name: questionObj?.text || "",
+          value_as_string: questionObj?.text || ""
+        };
+      });
+
       // Create custom interest area
       const newInterestArea: InterestArea = {
         observation_concept_id: null, // Custom interests don't have a predefined concept ID
-        custom_interest_name: formData.custom_interest_name.trim(),
-        value_as_string: formData.value_as_string.trim(),
-        triggers: []
+        custom_interest_name: interestName.trim(),
+        value_as_string: interestName.trim(),
+        triggers: triggers
       };
 
       await InterestAreasService.personInterestAreasCreate(newInterestArea);
@@ -92,68 +114,96 @@ export default function CreateNewInterest() {
     navigate("/user-main-page");
   };
 
+  // Convert questions to options format for MultiSelect
+  const questionOptions: SelectOption[] = questions.map(q => ({
+    value: q.id,
+    label: q.text
+  }));
+
   return (
-    <div className="bg-primary h-full" style={{ minHeight: "100vh" }}>
-      {/* Header */}
-      <Header
-        title="Criar Interesse Personalizado"
-        showBackButton={true}
-        onBackClick={handleBack}
-      />
-
-      <div className="px-4 py-6">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          {/* Error message */}
-          {submitError && (
-            <div className="p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
-              <p>{submitError}</p>
-            </div>
-          )}
-
-          {/* Custom Interest Name */}
-          <TextField
-            id="custom_interest_name"
-            name="custom_interest_name"
-            label="Nome do Interesse"
-            value={formData.custom_interest_name}
-            onChange={handleChange}
-            placeholder="Ex: Saúde Mental, Nutrição Esportiva"
-            error={errors.custom_interest_name}
-            helperText="Dê um nome claro e conciso para seu interesse"
+    <div className="p-4 h-full bg-primary overflow-y-auto"
+         style={{ height: "100vh" }}>
+      
+      
+        {/* Header */}
+        
+          <Header
+            title="Novo interesse"
+            onBackClick={handleBack}
           />
+        
 
-          {/* Description */}
-          <TextField
-            id="value_as_string"
-            name="value_as_string"
-            label="Descrição"
-            value={formData.value_as_string}
-            onChange={handleChange}
-            placeholder="Descreva detalhadamente seu interesse..."
-            error={errors.value_as_string}
-            helperText="Explique o que você gostaria de acompanhar ou aprender"
-          />
-
-          {/* Information box */}
-          <div className="p-4 bg-gray1 bg-opacity-20 border border-gray2 rounded-md">
-            <p className="text-typography text-sm">
-              <strong>Dica:</strong> Interesses personalizados permitem que você 
-              acompanhe tópicos específicos que não estão nas opções padrão. 
-              Seu profissional de saúde poderá ver este interesse e fornecer 
-              informações relevantes.
-            </p>
+      <div className="px-4 py-5 flex flex-col gap-6">
+        {/* Error message */}
+        {submitError && (
+          <div className="p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
+            <p>{submitError}</p>
           </div>
+        )}
 
-          {/* Submit button */}
+        {/* Interest Name */}
+        <TextField
+          id="interest-name"
+          name="interest-name"
+          label=""
+          value={interestName}
+          onChange={handleNameChange}
+          placeholder="Nome do novo interesse"
+          error={nameError}
+        />
+
+        {/* Selected Questions Section */}
+        <div>
+          <h3 className="text-sm font-medium text-typography mb-2">Perguntas selecionadas</h3>
+          
+          <MultiSelectCustom
+            id="selected-questions"
+            name="selected-questions"
+            options={questionOptions}
+            value={selectedQuestions}
+            onChange={handleSelectedQuestionsChange}
+            placeholder="Selecione perguntas"
+            isLoading={false}
+          />
+        </div>
+
+        {/* Add New Question Section */}
+        <div className="mt-2">
+          <h3 className="text-sm font-medium text-typography mb-2">Criar nova pergunta</h3>
+          
+          <TextField
+            id="new-question"
+            name="new-question"
+            label=""
+            value={newQuestion}
+            onChange={handleQuestionChange}
+            placeholder="Nova pergunta"
+            error={questionError}
+          />
+          
+          {/* Add Question Button */}
+          <div className="flex justify-center mt-4">
+            <Button 
+              onClick={handleAddQuestion}
+              className="bg-primary border border-2 border-selection hover:bg-primary/90 text-white font-bold py-3 px-6 uppercase"
+              type="button"
+            >
+              Adicionar pergunta
+            </Button>
+          </div>
+        </div>
+
+        {/* Create Interest Button - Fixed at bottom */}
+        <div className="fixed bottom-8 left-0 right-0 px-4">
           <Button
-            type="submit"
-            variant="white"
-            className="w-full mt-4 font-inter font-bold"
+            onClick={handleSubmit}
+            className="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 font-bold"
             disabled={isSubmitting}
+            type="button"
           >
-            {isSubmitting ? "CRIANDO..." : "CRIAR INTERESSE"}
+            {isSubmitting ? "CRIANDO..." : "CRIAR NOVO INTERESSE"}
           </Button>
-        </form>
+        </div>
       </div>
     </div>
   );
