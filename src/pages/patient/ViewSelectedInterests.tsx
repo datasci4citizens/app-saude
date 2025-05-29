@@ -105,7 +105,7 @@ export default function ViewSelectedInterests() {
       <div className="px-4 py-2">
         {/* Error display */}
         {error && (
-          <div className="p-3 mb-4 bg-destructive bg-opacity-10 border border-destructive text-destructive rounded-md">
+          <div className="p-3 mb-4 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
             <p>{error}</p>
           </div>
         )}
