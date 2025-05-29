@@ -3,46 +3,98 @@ import HomeBanner from "@/components/ui/home-banner";
 import { MultiSelectCustom } from "@/components/forms/multi_select_custom";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import useSWR from "swr";
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import { useInterestAreasConcepts } from "@/utils/conceptLoader";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
-
-// Fetcher function for interest areas
-const interestAreasFetcher = async (): Promise<InterestArea[]> => {
-  return await InterestAreasService.personInterestAreasList();
-};
 
 export default function UserMainPage() {
   const navigate = useNavigate();
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   // Fetch interest areas from API
   const { 
-    data: interestAreas, 
+    interestAreasOptions,
     error: interestAreasError, 
     isLoading: isLoadingInterests 
-  } = useSWR('interest-areas', interestAreasFetcher);
+  } = useInterestAreasConcepts();
 
-  // Transform API data to options format for MultiSelectCustom
-  const interestOptions = interestAreas?.map((area) => ({
-    value: area.id?.toString() || '',
-    label: area.name || 'Área sem nome'
-  })) || [];
+  // Load user's existing interests on component mount
+  useEffect(() => {
+    const loadExistingInterests = async () => {
+      try {
+        const userInterests = await InterestAreasService.personInterestAreasList();
+        const interestIds = userInterests.map(interest => interest.id?.toString() || '');
+        setSelectedInterests(interestIds);
+      } catch (error) {
+        console.error("Error loading user interests:", error);
+        // Don't show error for loading existing interests, just start with empty array
+      }
+    };
 
-  // Handle interest selection change
-  const handleInterestChange = (selectedValues: string[]) => {
+    if (!isLoadingInterests && interestAreasOptions.length > 0) {
+      loadExistingInterests();
+    }
+  }, [isLoadingInterests, interestAreasOptions]);
+
+  // Handle interest selection change with automatic saving
+  // at each select we save the changes
+  const handleInterestChange = async (selectedValues: string[]) => {
+    const previousValues = selectedInterests;
     setSelectedInterests(selectedValues);
-    console.log('Selected interests:', selectedValues);
-    
-    // Here you could make API calls to save the selected interests
-    // For example:
-    // selectedValues.forEach(async (interestId) => {
-    //   await InterestAreasService.personInterestAreasCreate({
-    //     id: parseInt(interestId),
-    //     name: interestOptions.find(opt => opt.value === interestId)?.label
-    //   });
-    // });
+    setSaveError(null);
+    setIsSaving(true);
+
+    try {
+      // Find which interests were added and removed
+      console.log('Selected values:', selectedValues);
+      console.log('Available options:', interestAreasOptions);
+
+      // Find which interests were added and removed
+      const addedInterests = selectedValues.filter(id => !previousValues.includes(id));
+      const removedInterests = previousValues.filter(id => !selectedValues.includes(id));
+
+      for (const interestId of addedInterests) {
+        console.log(`Looking for interest with ID: ${interestId}`);
+        const interestOption = interestAreasOptions.find(opt => 
+        // Try multiple ways of comparing
+        opt.value === interestId
+        );
+
+        console.log('Found option:', interestOption);
+
+        if (interestOption) {
+          console.log("entering interestOption if")
+          // Create InterestArea object with correct structure
+          const newInterestArea: InterestArea = {
+            observation_concept_id: parseInt(interestId), // Use the concept ID from the selected interest
+            custom_interest_name: interestOption.label,   // Store the label as custom name
+            value_as_string: interestOption.label,        // Optional: store the value as string
+            triggers: []                                  // Empty triggers array
+          };
+
+          await InterestAreasService.personInterestAreasCreate(newInterestArea);
+          console.log(`New interest linked: ${interestOption.label} (ID: ${interestId})`);
+        }
+      }
+
+      // removing interests
+      if (removedInterests.length > 0) {
+        // we don't have interests deletion logic for now
+      }
+
+      console.log('Successfully saved interest changes');
+    } catch (error) {
+      console.error("Error saving interests:", error);
+      setSaveError("Erro ao salvar interesses. Tente novamente.");
+      
+      // Revert to previous state on error
+      setSelectedInterests(previousValues);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Navigation functions
@@ -94,7 +146,7 @@ export default function UserMainPage() {
           id="interests"
           name="interests"
           label="Meus Interesses"
-          options={interestOptions}
+          options={interestAreasOptions}
           value={selectedInterests}
           onChange={handleInterestChange}
           isLoading={isLoadingInterests}
