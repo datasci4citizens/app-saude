@@ -162,7 +162,7 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
             </div>
             <div
               className={`
-                flex justify-center items-center h-7 text-center text-[10px] leading-3
+                flex justify-center items-center h-7 text-center text-[13px] leading-3
                 font-inter font-medium transition-colors duration-200
                 text-gray2
               `}

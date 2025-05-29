@@ -8,7 +8,7 @@ import {
 } from "react";
 
 const labelVariants = cva(
-  "text-sm font-medium text-typography leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+  "text-desc-titulo text-typography leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70", // Updated to use text-desc-titulo
 );
 
 const Label = forwardRef<
