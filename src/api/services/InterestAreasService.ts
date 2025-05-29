@@ -33,4 +33,38 @@ export class InterestAreasService {
             mediaType: 'application/json',
         });
     }
+    /**
+     * Retorna uma área de interesse específica do usuário autenticado
+     * @param interestAreaId
+     * @returns InterestArea
+     * @throws ApiError
+     */
+    public static personInterestAreasRetrieve(
+        interestAreaId: number,
+    ): CancelablePromise<InterestArea> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/person/interest-areas/{interest_area_id}/',
+            path: {
+                'interest_area_id': interestAreaId,
+            },
+        });
+    }
+    /**
+     * Deleta uma área de interesse específica do usuário autenticado
+     * @param interestAreaId
+     * @returns void
+     * @throws ApiError
+     */
+    public static personInterestAreasDestroy(
+        interestAreaId: number,
+    ): CancelablePromise<void> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/person/interest-areas/{interest_area_id}/',
+            path: {
+                'interest_area_id': interestAreaId,
+            },
+        });
+    }
 }

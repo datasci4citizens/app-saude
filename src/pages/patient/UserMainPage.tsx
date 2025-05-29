@@ -49,40 +49,48 @@ export default function UserMainPage() {
 
     try {
       // Find which interests were added and removed
-      console.log('Selected values:', selectedValues);
-      console.log('Available options:', interestAreasOptions);
+      //  console.log('Selected values:', selectedValues);
+      //  console.log('Available options:', interestAreasOptions);
 
       // Find which interests were added and removed
       const addedInterests = selectedValues.filter(id => !previousValues.includes(id));
       const removedInterests = previousValues.filter(id => !selectedValues.includes(id));
 
       for (const interestId of addedInterests) {
-        console.log(`Looking for interest with ID: ${interestId}`);
+        // console.log(`Looking for interest with ID: ${interestId}`);
         const interestOption = interestAreasOptions.find(opt => 
-        // Try multiple ways of comparing
-        opt.value === interestId
+          opt.value === interestId
         );
 
-        console.log('Found option:', interestOption);
+        // console.log('Found option:', interestOption);
 
         if (interestOption) {
-          console.log("entering interestOption if")
-          // Create InterestArea object with correct structure
+          //console.log("entering interestOption if")
+          //Create InterestArea object with correct structure
           const newInterestArea: InterestArea = {
             observation_concept_id: parseInt(interestId), // Use the concept ID from the selected interest
             custom_interest_name: interestOption.label,   // Store the label as custom name
             value_as_string: interestOption.label,        // Optional: store the value as string
             triggers: []                                  // Empty triggers array
           };
-
-          await InterestAreasService.personInterestAreasCreate(newInterestArea);
-          console.log(`New interest linked: ${interestOption.label} (ID: ${interestId})`);
+          
+          const result = await InterestAreasService.personInterestAreasCreate(newInterestArea);
+          // console.log(result);
         }
       }
 
       // removing interests
       if (removedInterests.length > 0) {
-        // we don't have interests deletion logic for now
+        for (const interestId of removedInterests) {
+          // console.log(`Removing interest with ID: ${interestId}`);
+          const interestOption = interestAreasOptions.find(opt =>
+             opt.value === interestId);
+          
+          if (interestOption) {
+            // console.log("entering interestOption if")
+            await InterestAreasService.personInterestAreasDestroy(parseInt(interestId));
+          }
+        }
       }
 
       console.log('Successfully saved interest changes');
