@@ -20,6 +20,16 @@ export default {
         'work-sans': ['Work Sans', 'sans-serif'],
         'inter': ['Inter', 'sans-serif'],
       },
+      fontSize: {
+        'titulo': ['28px', { lineHeight: '33.6px', letterSpacing: '0px', fontWeight: '700' }],
+        'desc-titulo': ['14px', { lineHeight: '16.8px', letterSpacing: '0px', fontWeight: '400' }],
+        'topicos': ['14px', { lineHeight: '16.8px', letterSpacing: '0px', fontWeight: '700' }],
+        'campos-preenchimento': ['16px', { lineHeight: '19.2px', letterSpacing: '0px', fontWeight: '300' }],
+        'desc-campos': ['10px', { lineHeight: '12px', letterSpacing: '0px', fontWeight: '300' }],
+        'campos-preenchimento2': ['13px', { lineHeight: '15.6px', letterSpacing: '0px', fontWeight: '300' }],
+        'topicos2': ['16px', { lineHeight: '17.6px', letterSpacing: '0px', fontWeight: '600' }],
+        'titulowindow': ['18px', { lineHeight: '19.458px', letterSpacing: '0px', fontWeight: '700' }],
+      },
       colors: {
         selection: {
           DEFAULT: 'var(--selection)',
