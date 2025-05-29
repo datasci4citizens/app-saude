@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/forms/button";
 import Header from "@/components/ui/header";
 import TextIconButton from "@/components/ui/icon-button";
@@ -15,8 +16,28 @@ const defaultItemsList = [
 
 export default function InterestPage() {
     const navigate = useNavigate();
+    const [selectedInterests, setSelectedInterests] = useState<(string | number)[]>([]);
+
     const handleNavigateToCreateInterest = () => {
         navigate('/create-interest');
+    };
+
+    const handleSelectionChange = (selectedItems: (string | number)[]) => {
+        setSelectedInterests(selectedItems);
+    };
+
+    const handleContinue = () => {
+        // Get the selected items details from defaultItemsList
+        const selectedItems = defaultItemsList.filter(item => 
+            selectedInterests.includes(item.id)
+        );
+
+        console.log("Selected items:", selectedItems);
+        
+        // You can navigate to next page with selected items
+        // navigate('/next-page', { state: { selectedItems } });
+        
+        // Or you can handle the selected items in any way you need
     };
 
     return (
@@ -31,16 +52,21 @@ export default function InterestPage() {
                 className="mb-4"
             />
 
-            {/* InterestsSelector component */}
-            <InterestsSelector items={defaultItemsList} />
+            {/* InterestsSelector component with selection change handler */}
+            <InterestsSelector 
+                items={defaultItemsList}
+                onSelectionChange={handleSelectionChange}
+            />
 
-            <div className="px-4 mt-auto pb-4">
+            <div className="px-4 mt-auto pt-4">
                 <Button
                     variant="orange"
                     size="responsive"
-                    type="submit"
+                    type="button"
+                    onClick={handleContinue}
+                    disabled={selectedInterests.length === 0}
                 >
-                    Continuar
+                    Continuar ({selectedInterests.length} selecionado{selectedInterests.length !== 1 ? 's' : ''})
                 </Button>
             </div>
         </div>

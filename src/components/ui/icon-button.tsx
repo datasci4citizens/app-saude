@@ -1,11 +1,25 @@
-const TextIconButton = ({ onClick, className = '', text = '', icon = '' }) => {
+import React from 'react';
+
+interface TextIconButtonProps {
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  className?: string;
+  text?: string;
+  icon?: string;
+}
+
+const TextIconButton: React.FC<TextIconButtonProps> = ({ 
+  onClick, 
+  className = '', 
+  text = '', 
+  icon = '' 
+}) => {
   return (
     <button
       onClick={onClick}
       className={`
         flex items-center justify-between
-        w-full bg-red-400 hover:bg-red-500
-        text-gray-800 font-medium
+        w-full bg-selection hover:bg-selected
+        text-typography font-medium
         py-3 px-4
         rounded-xl
         transition-colors duration-200
