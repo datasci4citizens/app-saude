@@ -199,10 +199,10 @@ export default function UserMainPage() {
         />
 
         {/* Sync button */}
-        <div className="mt-4 flex justify-center">
+        <div className="mt-4 flex justify-end">
           <Button 
             onClick={syncInterestsWithServer}
-            className="bg-primary hover:bg-secondary/90 text-secondary-foreground w-full py-3 font-bold uppercase tracking-wide border-selection"
+            className="bg-primary border-selection border-2 hover:bg-secondary/90 text-secondary-foreground px-6 py-3 font-bold uppercase tracking-wide"
             disabled={!hasUnsavedChanges() || isSyncing}
           >
             {isSyncing ? "Enviando..." : "Enviar Interesses"}
@@ -221,7 +221,7 @@ export default function UserMainPage() {
         {/* Error handling for interest areas */}
         {interestAreasError && (
           <div className="flex justify-center mt-4">
-            <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-destructive rounded-md">
+            <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
               <p className="whitespace-nowrap">Erro ao carregar áreas de interesse</p>
             </div>
           </div>
@@ -230,7 +230,7 @@ export default function UserMainPage() {
         {/* Error handling for syncing */}
         {syncError && (
           <div className="flex justify-center mt-4">
-            <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-destructive rounded-md">
+            <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
               <p className="whitespace-nowrap">{syncError}</p>
             </div>
           </div>
