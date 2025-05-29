@@ -16,7 +16,7 @@ export function LabeledSwitch({
 }: LabeledSwitchProps) {
   return (
     <div className="flex items-center justify-between">
-      <div className="text-gray2 text-sm font-normal font-inter">{label}</div>
+      <div className="text-desc-titulo text-gray2 font-inter">{label}</div>
       <Switch id={id} checked={checked} onCheckedChange={onCheckedChange} />
     </div>
   );

@@ -45,8 +45,7 @@ const PatientButton: React.FC<PatientButtonProps> = ({
       <div className="flex flex-col gap-1">
         <div
           className={`
-                    text-lg
-                    font-bold
+                    text-titulowindow // Changed from text-lg font-bold
                     mb-1.5
                     font-inter
                     ${isEmergency ? "text-primary-foreground" : "text-typography"}
@@ -57,10 +56,9 @@ const PatientButton: React.FC<PatientButtonProps> = ({
         </div>
         <div
           className={`
-                    text-xs
+                    text-desc-titulo // Changed from text-xs font-normal
                     mb-0.5
                     font-inter
-                    font-normal
                     ${isEmergency ? "text-primary-foreground" : "text-typography"}
                 `}
         >
@@ -68,7 +66,7 @@ const PatientButton: React.FC<PatientButtonProps> = ({
         </div>
         {isEmergency ? (
           <div
-            className="font-bold text-primary-foreground mt-1.5 text-xs font-inter"
+            className={`text-topicos text-primary-foreground mt-1.5 font-inter`} // Changed from font-bold text-xs
             onClick={(e) => {
               e.stopPropagation();
               if (onClickEmergency) onClickEmergency();
@@ -79,10 +77,9 @@ const PatientButton: React.FC<PatientButtonProps> = ({
         ) : (
           <div
             className={`
-                        text-xs
+                        text-desc-titulo // Changed from text-xs font-normal
                         mb-0.5
                         font-inter
-                        font-normal
                         ${isEmergency ? "text-primary-foreground" : "text-typography"}
                     `}
           >

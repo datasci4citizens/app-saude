@@ -66,11 +66,8 @@ export default function ViewPatient() {
       const fetchDiaries = async () => {
         try {
           setDiariesLoading(true);
-          // Assuming ProviderService.providerPatientsDiariesRetrieve returns an array of DiaryEntry-like objects
           const diariesData = await ProviderService.providerPatientsDiariesRetrieve(Number(id));
-          // Since the return type is 'any', we might need to adapt the data
-          // For now, let\'s assume it\'s an array of objects matching DiaryEntry or can be mapped to it.
-          setDiaries(diariesData as DiaryEntry[]); // Adjust this cast based on actual API response
+          setDiaries(diariesData as DiaryEntry[]); 
           setDiariesError(null);
         } catch (err) {
           console.error("Error fetching diaries:", err);
@@ -83,7 +80,6 @@ export default function ViewPatient() {
     }
   }, [id]);
 
-  // Determina o título com base no contexto (se é emergência ou não)
   const headerTitle = "Histórico";
   const headerSubtitle = patient?.social_name
     ? `${context === 'emergency' ? 'Emergência: ' : ''}${patient.social_name} - ${calculateAge(patient.birth_datetime)}`
@@ -106,52 +102,43 @@ export default function ViewPatient() {
         <Header
           title={headerTitle}
           subtitle={headerSubtitle}
-          subtitleClassName="text-selection text-[18px] font-bold font-inter"
-          onBackClick={() => navigate(-1)} // Permite voltar para a página anterior
+          subtitleClassName="text-selection text-titulowindow font-inter" // Use text-titulowindow and remove font-bold
+          onBackClick={() => navigate(-1)} 
         />
       </div>
       <div className="flex-1 px-4 overflow-auto">
         <div className="bg-offwhite p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold mb-4 text-typography">
+          <h2 className="text-titulo mb-4 text-typography"> {/* Use text-titulo and remove font-semibold */} 
             Informações do Paciente
           </h2>
-          {loading && <p className="text-gray2">Carregando...</p>}
-          {error && <p className="text-destructive">{error}</p>}
+          {loading && <p className="text-campos-preenchimento2 text-gray2">Carregando...</p>} {/* Use text-campos-preenchimento2 */}
+          {error && <p className="text-campos-preenchimento2 text-destructive">{error}</p>} {/* Use text-campos-preenchimento2 */}
           {patient && !loading && !error && (
             <div className="space-y-3">
-              <p className="text-typography">
-                <span className="font-medium text-typography-foreground">ID do Paciente:</span> {patient.person_id}
+              <p className="text-campos-preenchimento2 text-typography">
+                <span className="text-topicos2 text-typography-foreground">ID do Paciente:</span> {patient.person_id} {/* Use text-topicos2 for span */}
               </p>
-              <p className="text-typography">
-                <span className="font-medium text-typography-foreground">Nome:</span> {patient.social_name || "Não informado"}
+              <p className="text-campos-preenchimento2 text-typography">
+                <span className="text-topicos2 text-typography-foreground">Nome:</span> {patient.social_name || "Não informado"} {/* Use text-topicos2 for span */}
               </p>
-              {/* Adicione mais campos conforme necessário, por exemplo, idade, data de nascimento, etc. */}
-              {/* Exemplo:
-              <p className="text-typography">
-                <span className="font-medium text-typography-foreground">Data de Nascimento:</span> {patient.birth_datetime ? new Date(patient.birth_datetime).toLocaleDateString() : "Não informada"}
-              </p>
-              */}
               {context === 'emergency' && (
-                <p className="text-destructive font-semibold">
-                  Contexto: Emergência
+                <p className="text-topicos text-destructive">
+                  Contexto: Emergência {/* Use text-topicos and remove font-semibold */}
                 </p>
               )}
-              {/* <p className="text-gray2 mt-4">
-                Mais detalhes do paciente podem ser carregados aqui.
-              </p> */}
             </div>
           )}
         </div>
 
         {/* Seção de Diários */}
         <div className="mt-6 bg-offwhite p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold mb-4 text-typography">
-            Diários do Paciente
+          <h2 className="text-titulo mb-4 text-typography">
+            Diários do Paciente {/* Use text-titulo and remove font-semibold */}
           </h2>
-          {diariesLoading && <p className="text-gray2">Carregando diários...</p>}
-          {diariesError && <p className="text-destructive">{diariesError}</p>}
+          {diariesLoading && <p className="text-campos-preenchimento2 text-gray2">Carregando diários...</p>} {/* Use text-campos-preenchimento2 */}
+          {diariesError && <p className="text-campos-preenchimento2 text-destructive">{diariesError}</p>} {/* Use text-campos-preenchimento2 */}
           {!diariesLoading && !diariesError && diaries.length === 0 && (
-            <p className="text-gray2">Nenhum diário encontrado para este paciente.</p>
+            <p className="text-campos-preenchimento2 text-gray2">Nenhum diário encontrado para este paciente.</p> // Use text-campos-preenchimento2
           )}
           {!diariesLoading && !diariesError && diaries.length > 0 && (
             <div className="space-y-4">
@@ -162,8 +149,6 @@ export default function ViewPatient() {
                   mainText={diary.title || "Diário"}
                   subText={diary.text_content.substring(0, 100) + (diary.text_content.length > 100 ? '...' : '')}
                   onClick={() => {
-                    // Navigate to a detailed diary view if needed, e.g.:
-                    // navigate(`/provider/patient/${id}/diary/${diary.id}`);
                     console.log("Clicked diary:", diary.id);
                   }}
                 />

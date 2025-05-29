@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import tailwindcssAnimate from 'tailwindcss-animate';
 
 export default {
   content: [
@@ -97,5 +98,5 @@ export default {
     DEFAULT: 'var(--destructive)',
     foreground: 'var(--destructive-foreground)',
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [tailwindcssAnimate],
 } satisfies Config;
