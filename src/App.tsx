@@ -25,7 +25,7 @@ import ViewDiaryEntry from "./pages/patient/diary/ViewDiary";
 import ProfilePage from "./pages/patient/profile/ProfilePage";
 import AcsProfilePage from "./pages/provider/profile/AcsProfilePage";
 import CreateNewInterest from "./pages/patient/CreateNewInterest";
-
+import ViewSelectedInterests from "./pages/patient/ViewSelectedInterests";
 
 const NotFound = () => (
   <div>
@@ -120,6 +120,10 @@ const router = createBrowserRouter([
   {
     path: "/user-create-interest",
     element: <CreateNewInterest />,
+  },
+  {
+    path: "/user-selected-interests",
+    element: <ViewSelectedInterests />,
   },
   {
     path: "/emergencies",
