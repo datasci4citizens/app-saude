@@ -92,7 +92,7 @@ export default function CreateNewInterest() {
 
       // Create custom interest area
       const newInterestArea: InterestArea = {
-        observation_concept_id: null, // Custom interests don't have a predefined concept ID
+        observation_concept_id: null,
         custom_interest_name: interestName.trim(),
         value_as_string: interestName.trim(),
         triggers: triggers
@@ -185,7 +185,7 @@ export default function CreateNewInterest() {
           <div className="flex justify-center mt-4">
             <Button 
               onClick={handleAddQuestion}
-              className="bg-primary border border-2 border-selection hover:bg-primary/90 text-white font-bold py-3 px-6 uppercase"
+              className="bg-primary border border-2 border-selection hover:bg-primary/90 text-typography font-bold py-3 px-6 uppercase"
               type="button"
             >
               Adicionar pergunta

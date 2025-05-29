@@ -89,7 +89,7 @@ export default function ViewSelectedInterests() {
 
   // Check if an interest is custom or default
   const isCustomInterest = (interest: InterestAreaResponse) => {
-    return !interest.concept_id && interest.custom_interest_name;
+    return interest.concept_id === 2000201
   };
 
   return (
@@ -126,7 +126,7 @@ export default function ViewSelectedInterests() {
               userInterests.map((interest) => (
                 <Card 
                   key={interest.interest_area_id} 
-                  className="bg-gray-600 border-none text-typography"
+                  className="bg-offwhite border-none text-typography"
                 >
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg flex justify-between items-center">
@@ -138,7 +138,7 @@ export default function ViewSelectedInterests() {
                         </span>
                       </span>
                       <Button 
-                        variant="default" 
+                        variant="orange" 
                         size="sm"
                         className="bg-transparent hover:bg-destructive p-1 h-8 w-8 rounded-full"
                         onClick={() => handleUnlinkInterest(
