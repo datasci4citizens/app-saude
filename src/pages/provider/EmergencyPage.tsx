@@ -206,7 +206,7 @@ export default function EmergencyPage() {
 
   // Função para lidar com o clique no paciente e navegar para a página individual
   const handlePatientClick = (patient: FormattedEmergencyPatient) => {
-    navigate(`/patient/${patient.id}/emergency`);
+    navigate(`/provider/patient/${patient.id}/emergency`);
   };
 
   return (

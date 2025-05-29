@@ -5,6 +5,7 @@ interface HeaderProps {
   subtitle?: string;
   onBackClick?: () => void;
   rightIcon?: React.ReactNode;
+  subtitleClassName?: string; // Added subtitleClassName
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -12,6 +13,7 @@ const Header: React.FC<HeaderProps> = ({
   subtitle,
   onBackClick,
   rightIcon,
+  subtitleClassName, // Added subtitleClassName
 }) => {
   const handleBackClick = () => {
     if (onBackClick) {
@@ -37,7 +39,7 @@ const Header: React.FC<HeaderProps> = ({
             {title}
           </h1>
           {subtitle && (
-            <p className="text-sm m-0 font-inter text-gray2">{subtitle}</p>
+            <p className={`text-sm m-0 font-inter ${subtitleClassName || 'text-gray2'}`}>{subtitle}</p> // Used subtitleClassName
           )}
         </div>
 

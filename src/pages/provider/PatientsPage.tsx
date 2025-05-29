@@ -121,7 +121,7 @@ export default function PatientsPage() {
   // Função para lidar com o clique no paciente e navegar para a página individual
   const handlePatientClick = (patient: any) => {
     console.log(`Navegando para página do paciente: ${patient.name}`);
-    window.location.href = `/patient/${patient.id}`;
+    navigate(`/provider/patient/${patient.id}`);
   };
 
   // Determina a variante do botão do paciente baseado nos atributos
