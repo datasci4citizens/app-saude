@@ -124,8 +124,13 @@ export default function ViewSelectedInterests() {
               </div>
             ) : (
               userInterests.map((interest) => (
-                <Card 
-                  key={interest.interest_area_id} 
+                <div
+                    key={interest.interest_area_id}
+                    className="cursor-pointer"
+                    onClick={() => navigate(`/user-edit-interest/${interest.interest_area_id}`)}
+  >
+                
+                <Card  
                   className="bg-offwhite border-none text-typography"
                 >
                   <CardHeader className="pb-2">
@@ -137,15 +142,20 @@ export default function ViewSelectedInterests() {
                           {isCustomInterest(interest) ? "(Personalizado)" : "(Padrão)"}
                         </span>
                       </span>
+                      
                       <Button 
-                        variant="orange" 
-                        size="sm"
-                        className="bg-transparent hover:bg-destructive p-1 h-8 w-8 rounded-full"
-                        onClick={() => handleUnlinkInterest(
-                          interest.interest_area_id, 
-                          isCustomInterest(interest)
-                        )}
-                      >
+                          variant="orange" 
+                          size="sm"
+                          className="bg-transparent hover:bg-destructive p-1 h-8 w-8 rounded-full"
+                          onClick={(e) => {
+                            e.stopPropagation(); // This prevents the click from bubbling up to the parent div
+                            handleUnlinkInterest(
+                              interest.interest_area_id, 
+                              isCustomInterest(interest)
+                            );
+                          }}
+                        >
+
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M18 6L6 18"></path>
                           <path d="M6 6l12 12"></path>
@@ -171,6 +181,7 @@ export default function ViewSelectedInterests() {
                     )}
                   </CardContent>
                 </Card>
+                </div>
               ))
             )}
           </div>

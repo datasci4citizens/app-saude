@@ -26,6 +26,7 @@ import ProfilePage from "./pages/patient/profile/ProfilePage";
 import AcsProfilePage from "./pages/provider/profile/AcsProfilePage";
 import CreateNewInterest from "./pages/patient/CreateNewInterest";
 import ViewSelectedInterests from "./pages/patient/ViewSelectedInterests";
+import EditInterest from "./pages/patient/EditInterest";
 
 const NotFound = () => (
   <div>
@@ -124,6 +125,10 @@ const router = createBrowserRouter([
   {
     path: "/user-selected-interests",
     element: <ViewSelectedInterests />,
+  },
+  {
+    path: "/user-edit-interest/:interestId",
+    element: <EditInterest />,
   },
   {
     path: "/emergencies",
