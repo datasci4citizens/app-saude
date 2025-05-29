@@ -2,15 +2,30 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import { useNavigate } from 'react-router-dom';
-import { PersonService } from '@/api/services/PersonService'; // Import PersonService
-import type { PersonRetrieve } from '@/api/models/PersonRetrieve'; // Import PersonRetrieve as type
+import { PersonService } from '@/api/services/PersonService';
+import { ProviderService } from '@/api/services/ProviderService'; // Import ProviderService
+import type { PersonRetrieve } from '@/api/models/PersonRetrieve';
+import ViewButton from '@/components/ui/ViewButton'; // Import ViewButton
+
+// Define a basic interface for Diary Entries
+interface DiaryEntry {
+  id: string | number;
+  created_at: string; // Assuming a date string
+  title?: string;
+  text_content: string;
+  // Add other fields if known, e.g., type: 'diary' | 'help_request'
+}
 
 export default function ViewPatient() {
   const { id, context } = useParams<{ id: string; context?: string }>();
   const navigate = useNavigate();
-  const [patient, setPatient] = useState<PersonRetrieve | null>(null); // State for patient data
+  const [patient, setPatient] = useState<PersonRetrieve | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
+  const [diariesLoading, setDiariesLoading] = useState(true);
+  const [diariesError, setDiariesError] = useState<string | null>(null);
 
   const calculateAge = (birthDateString?: string | null): string => {
     if (!birthDateString) return "idade não informada";
@@ -46,6 +61,24 @@ export default function ViewPatient() {
         }
       };
       fetchPatientData();
+
+      const fetchDiaries = async () => {
+        try {
+          setDiariesLoading(true);
+          // Assuming ProviderService.providerPatientsDiariesRetrieve returns an array of DiaryEntry-like objects
+          const diariesData = await ProviderService.providerPatientsDiariesRetrieve(Number(id));
+          // Since the return type is 'any', we might need to adapt the data
+          // For now, let\'s assume it\'s an array of objects matching DiaryEntry or can be mapped to it.
+          setDiaries(diariesData as DiaryEntry[]); // Adjust this cast based on actual API response
+          setDiariesError(null);
+        } catch (err) {
+          console.error("Error fetching diaries:", err);
+          setDiariesError("Não foi possível carregar os diários do paciente.");
+        } finally {
+          setDiariesLoading(false);
+        }
+      };
+      fetchDiaries();
     }
   }, [id]);
 
@@ -56,6 +89,15 @@ export default function ViewPatient() {
     : context === 'emergency'
       ? `Detalhes da Emergência Paciente: ${id}`
       : `Detalhes do Paciente: ${id}`;
+  
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return `Dia ${date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}`;
+    } catch (e) {
+      return "Data inválida";
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-primary pb-24">
@@ -93,9 +135,38 @@ export default function ViewPatient() {
                   Contexto: Emergência
                 </p>
               )}
-              <p className="text-gray2 mt-4">
+              {/* <p className="text-gray2 mt-4">
                 Mais detalhes do paciente podem ser carregados aqui.
-              </p>
+              </p> */}
+            </div>
+          )}
+        </div>
+
+        {/* Seção de Diários */}
+        <div className="mt-6 bg-offwhite p-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-semibold mb-4 text-typography">
+            Diários do Paciente
+          </h2>
+          {diariesLoading && <p className="text-gray2">Carregando diários...</p>}
+          {diariesError && <p className="text-destructive">{diariesError}</p>}
+          {!diariesLoading && !diariesError && diaries.length === 0 && (
+            <p className="text-gray2">Nenhum diário encontrado para este paciente.</p>
+          )}
+          {!diariesLoading && !diariesError && diaries.length > 0 && (
+            <div className="space-y-4">
+              {diaries.map((diary) => (
+                <ViewButton
+                  key={diary.id}
+                  dateText={formatDate(diary.created_at)}
+                  mainText={diary.title || "Diário"}
+                  subText={diary.text_content.substring(0, 100) + (diary.text_content.length > 100 ? '...' : '')}
+                  onClick={() => {
+                    // Navigate to a detailed diary view if needed, e.g.:
+                    // navigate(`/provider/patient/${id}/diary/${diary.id}`);
+                    console.log("Clicked diary:", diary.id);
+                  }}
+                />
+              ))}
             </div>
           )}
         </div>
