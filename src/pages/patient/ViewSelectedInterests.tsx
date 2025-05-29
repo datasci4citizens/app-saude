@@ -161,7 +161,7 @@ export default function ViewSelectedInterests() {
                           <li key={index} className="flex items-start">
                             <span className="mr-2">•</span>
                             <span>
-                              {trigger.custom_trigger_name || trigger.value_as_string || "Sem descrição"}
+                              {trigger.concept_name|| "Sem descrição"}
                             </span>
                           </li>
                         ))}

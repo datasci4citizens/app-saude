@@ -92,7 +92,7 @@ export default function CreateNewInterest() {
 
       // Create custom interest area
       const newInterestArea: InterestArea = {
-        observation_concept_id: null,
+        observation_concept_id: 2000201,
         custom_interest_name: interestName.trim(),
         value_as_string: interestName.trim(),
         triggers: triggers
