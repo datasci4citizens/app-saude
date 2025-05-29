@@ -2,17 +2,26 @@ import { useNavigate } from "react-router-dom";
 import HomeBanner from "@/components/ui/home-banner";
 import { MultiSelectCustom } from "@/components/forms/multi_select_custom";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
-import useSWR from "swr";
 import { useState, useEffect } from "react";
 import { useInterestAreasConcepts } from "@/utils/conceptLoader";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
+import { Button } from "@/components/forms/button";
+
+// Extended interface for API response that includes the ID
+interface InterestAreaResponse extends InterestArea {
+  interest_area_id: number;
+  concept_id?: number;
+}
 
 export default function UserMainPage() {
   const navigate = useNavigate();
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
+  const [originalInterests, setOriginalInterests] = useState<string[]>([]);
+  const [userInterestObjects, setUserInterestObjects] = useState<InterestAreaResponse[]>([]);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const [syncSuccess, setSyncSuccess] = useState(false);
 
   // Fetch interest areas from API
   const { 
@@ -25,12 +34,20 @@ export default function UserMainPage() {
   useEffect(() => {
     const loadExistingInterests = async () => {
       try {
-        const userInterests = await InterestAreasService.personInterestAreasList();
-        const interestIds = userInterests.map(interest => interest.id?.toString() || '');
-        setSelectedInterests(interestIds);
+        const userInterests = await InterestAreasService.personInterestAreasList() as InterestAreaResponse[];
+        
+        // Store the full objects for deletion purposes
+        setUserInterestObjects(userInterests);
+        
+        // Extract concept IDs for the UI
+        const conceptIds = userInterests
+          .map(interest => interest.concept_id?.toString() || '')
+          .filter(id => id !== '');
+        
+        setSelectedInterests(conceptIds);
+        setOriginalInterests(conceptIds); // Store original interests for comparison
       } catch (error) {
         console.error("Error loading user interests:", error);
-        // Don't show error for loading existing interests, just start with empty array
       }
     };
 
@@ -39,69 +56,86 @@ export default function UserMainPage() {
     }
   }, [isLoadingInterests, interestAreasOptions]);
 
-  // Handle interest selection change with automatic saving
-  // at each select we save the changes
-  const handleInterestChange = async (selectedValues: string[]) => {
-    const previousValues = selectedInterests;
+  // Handle interest selection change (just updates local state)
+  const handleInterestChange = (selectedValues: string[]) => {
     setSelectedInterests(selectedValues);
-    setSaveError(null);
-    setIsSaving(true);
+    setSyncSuccess(false);
+  };
 
+  // Check if there are unsaved changes
+  const hasUnsavedChanges = () => {
+    const addedInterests = selectedInterests.filter(id => !originalInterests.includes(id));
+    const removedInterests = originalInterests.filter(id => !selectedInterests.includes(id));
+    return addedInterests.length > 0 || removedInterests.length > 0;
+  };
+
+  // Sync changes to server
+  const syncInterestsWithServer = async () => {
+    setSyncError(null);
+    setIsSyncing(true);
+    
     try {
       // Find which interests were added and removed
-      //  console.log('Selected values:', selectedValues);
-      //  console.log('Available options:', interestAreasOptions);
+      const addedInterests = selectedInterests.filter(id => !originalInterests.includes(id));
+      const removedInterests = originalInterests.filter(id => !selectedInterests.includes(id));
 
-      // Find which interests were added and removed
-      const addedInterests = selectedValues.filter(id => !previousValues.includes(id));
-      const removedInterests = previousValues.filter(id => !selectedValues.includes(id));
-
+      // Create new interests
       for (const interestId of addedInterests) {
-        // console.log(`Looking for interest with ID: ${interestId}`);
         const interestOption = interestAreasOptions.find(opt => 
           opt.value === interestId
         );
 
-        // console.log('Found option:', interestOption);
-
         if (interestOption) {
-          //console.log("entering interestOption if")
-          //Create InterestArea object with correct structure
           const newInterestArea: InterestArea = {
-            observation_concept_id: parseInt(interestId), // Use the concept ID from the selected interest
-            custom_interest_name: interestOption.label,   // Store the label as custom name
-            value_as_string: interestOption.label,        // Optional: store the value as string
-            triggers: []                                  // Empty triggers array
+            observation_concept_id: parseInt(interestId),
+            custom_interest_name: interestOption.label,
+            value_as_string: interestOption.label,
+            triggers: []
           };
           
           const result = await InterestAreasService.personInterestAreasCreate(newInterestArea);
-          // console.log(result);
-        }
-      }
-
-      // removing interests
-      if (removedInterests.length > 0) {
-        for (const interestId of removedInterests) {
-          // console.log(`Removing interest with ID: ${interestId}`);
-          const interestOption = interestAreasOptions.find(opt =>
-             opt.value === interestId);
           
-          if (interestOption) {
-            // console.log("entering interestOption if")
-            await InterestAreasService.personInterestAreasDestroy(parseInt(interestId));
+          // Update our local state with the new interest object
+          if (result && 'interest_area_id' in result) {
+            const newInterestWithId = result as InterestAreaResponse;
+            setUserInterestObjects(prev => [...prev, newInterestWithId]);
           }
         }
       }
 
-      console.log('Successfully saved interest changes');
-    } catch (error) {
-      console.error("Error saving interests:", error);
-      setSaveError("Erro ao salvar interesses. Tente novamente.");
+      // Remove interests
+      for (const conceptId of removedInterests) {
+        const interestToDelete = userInterestObjects.find(interest => {
+          const interestConceptId = interest.concept_id?.toString().trim();
+          const searchConceptId = conceptId.toString().trim();
+          
+          return interestConceptId === searchConceptId;
+        });
+
+        if (interestToDelete && interestToDelete.interest_area_id) {
+          await InterestAreasService.personInterestAreasDestroy(interestToDelete.interest_area_id);
+          
+          // Update our local state
+          setUserInterestObjects(prev => 
+            prev.filter(interest => interest.interest_area_id !== interestToDelete.interest_area_id)
+          );
+        }
+      }
+
+      // Update originalInterests to reflect the current state
+      setOriginalInterests([...selectedInterests]);
+      setSyncSuccess(true);
       
-      // Revert to previous state on error
-      setSelectedInterests(previousValues);
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setSyncSuccess(false);
+      }, 3000);
+      
+    } catch (error) {
+      console.error("Error syncing interests:", error);
+      setSyncError("Erro ao salvar interesses. Tente novamente.");
     } finally {
-      setIsSaving(false);
+      setIsSyncing(false);
     }
   };
 
@@ -138,6 +172,10 @@ export default function UserMainPage() {
     }
   };
 
+  const handleCreateCustomInterest = () => {
+    navigate("/user-create-interest");
+  };
+
   return (
     <div className="bg-primary h-full pb-24" style={{ minHeight: "100vh" }}>
       {/* Top banner */}
@@ -148,7 +186,6 @@ export default function UserMainPage() {
       />
 
       <div className="px-4 py-5 justify-center gap-4">
-
         {/* Multiselect - using API data */}
         <MultiSelectCustom
           id="interests"
@@ -161,17 +198,54 @@ export default function UserMainPage() {
           placeholder={isLoadingInterests ? "Carregando..." : "Selecione suas áreas de interesse"}
         />
 
+        {/* Sync button */}
+        <div className="mt-4 flex justify-center">
+          <Button 
+            onClick={syncInterestsWithServer}
+            className="bg-primary hover:bg-secondary/90 text-secondary-foreground w-full py-3 font-bold uppercase tracking-wide border-selection"
+            disabled={!hasUnsavedChanges() || isSyncing}
+          >
+            {isSyncing ? "Enviando..." : "Enviar Interesses"}
+          </Button>
+        </div>
+
+        {/* Success message */}
+        {syncSuccess && (
+          <div className="flex justify-center mt-4">
+            <div className="inline-block p-3 bg-green-100 border border-green-500 text-green-700 rounded-md">
+              <p className="whitespace-nowrap">Interesses salvos com sucesso!</p>
+            </div>
+          </div>
+        )}
+
         {/* Error handling for interest areas */}
         {interestAreasError && (
           <div className="flex justify-center mt-4">
-            <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
+            <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-destructive rounded-md">
               <p className="whitespace-nowrap">Erro ao carregar áreas de interesse</p>
             </div>
           </div>
         )}
 
-
+        {/* Error handling for syncing */}
+        {syncError && (
+          <div className="flex justify-center mt-4">
+            <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-destructive rounded-md">
+              <p className="whitespace-nowrap">{syncError}</p>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Custom interest button */}
+        <div className="fixed bottom-32 left-0 right-0 px-4 mb-2 flex justify-center">
+          <Button 
+            onClick={handleCreateCustomInterest}
+            className="bg-selection hover:bg-secondary/90 text-typography flex items-center gap-2 px-6"
+          >
+            Criar Interesse Personalizado
+          </Button>
+        </div>
 
       {/* Navigation bar */}
       <BottomNavigationBar
