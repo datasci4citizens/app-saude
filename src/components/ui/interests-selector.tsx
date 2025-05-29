@@ -66,15 +66,26 @@ const InterestsSelector: React.FC<InterestsSelectorProps> = ({ items, onSelectio
 
   // Distribute items among columns
   const getColumnsData = () => {
-    const columns: ItemType[][] = Array.from({ length: columnCount }, () => []);
+  if (columnCount <= 0) {
+    return [items]; // Return all items in one column if columnCount is invalid
+  }
+  
+  const columns: ItemType[][] = [];
+  for (let i = 0; i < columnCount; i++) {
+    columns.push([]);
+  }
 
-    items.forEach((item, index) => {
-      const columnIndex: number = index % columnCount;
-      columns[columnIndex].push(item);
-    });
+  items.forEach((item, index) => {
+    if (columnCount > 0) {
+      const columnIndex = index % columnCount;
+      if (columns[columnIndex]) {
+        columns[columnIndex].push(item);
+      }
+    }
+  });
 
-    return columns;
-  };
+  return columns;
+};
 
   const columns = getColumnsData();
 

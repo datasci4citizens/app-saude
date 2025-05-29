@@ -3,6 +3,8 @@ import { Button } from "@/components/forms/button";
 import Header from "@/components/ui/header";
 import TextIconButton from "@/components/ui/icon-button";
 import InterestsSelector from "@/components/ui/interests-selector";
+import BottomSheet from "@/components/ui/bottom-sheet";
+import CustomInterestPage from "./CustomInterestPage";
 import { useNavigate } from "react-router-dom";
 
 // Define the default items list
@@ -17,48 +19,70 @@ const defaultItemsList = [
 export default function InterestPage() {
     const navigate = useNavigate();
     const [selectedInterests, setSelectedInterests] = useState<(string | number)[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [itemsList, setItemsList] = useState(defaultItemsList);
 
-    const handleNavigateToCreateInterest = () => {
-        navigate('/create-interest');
+    const handleOpenCustomModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
     };
 
     const handleSelectionChange = (selectedItems: (string | number)[]) => {
         setSelectedInterests(selectedItems);
     };
 
+    const handleAddCustomInterest = (interest: { title: string; category: string; impact: string }) => {
+        // Generate an icon based on category
+        let icon = 'custom';
+        if (interest.category === 'health') icon = 'health';
+        if (interest.category === 'mental') icon = 'brain';
+        if (interest.category === 'productivity') icon = 'clock';
+
+        // Create a new item with a numeric ID
+        const newItem = {
+            id: Date.now(), // This will be a number
+            title: interest.title,
+            icon: icon
+        };
+
+        // Add the new item to the list
+        setItemsList(prevItems => [...prevItems, newItem]);
+
+        // Close the modal
+        setIsModalOpen(false);
+    };
+
     const handleContinue = () => {
-        // Get the selected items details from defaultItemsList
-        const selectedItems = defaultItemsList.filter(item => 
+        const selectedItems = itemsList.filter(item =>
             selectedInterests.includes(item.id)
         );
 
         console.log("Selected items:", selectedItems);
-        
-        // You can navigate to next page with selected items
-        // navigate('/next-page', { state: { selectedItems } });
-        
-        // Or you can handle the selected items in any way you need
+        // You can navigate to the next page or handle the selected items here
     };
 
     return (
         <div className="flex flex-col h-screen mx-auto p-4 bg-primary">
-            <Header title="Pedido de ajuda" subtitle="barbariza mona" />
+            <Header title="O que te faz mal?" subtitle="Escreva ou escolha hábitos que pioram seu dia:" />
 
-            {/* Properly using the TextIconButton with text, icon and onClick handler */}
-            <TextIconButton
-                text="Personalizar"
-                icon="pencil"
-                onClick={handleNavigateToCreateInterest}
-                className="mb-4"
-            />
+            <div className="pt-4">
+                <TextIconButton
+                    text="Personalizar"
+                    icon="pencil"
+                    onClick={handleOpenCustomModal}
+                    className="mb-4"
+                />
+            </div>
 
-            {/* InterestsSelector component with selection change handler */}
-            <InterestsSelector 
-                items={defaultItemsList}
+            <InterestsSelector
+                items={itemsList}
                 onSelectionChange={handleSelectionChange}
             />
 
-            <div className="px-4 mt-auto pt-4">
+            <div className="px-4 mt-auto pt-4 flex items-center">
                 <Button
                     variant="orange"
                     size="responsive"
@@ -69,6 +93,17 @@ export default function InterestPage() {
                     Continuar ({selectedInterests.length} selecionado{selectedInterests.length !== 1 ? 's' : ''})
                 </Button>
             </div>
+
+            {/* Bottom Sheet Modal */}
+            <BottomSheet
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+            >
+                <CustomInterestPage
+                    onSubmit={handleAddCustomInterest}
+                    onCancel={handleCloseModal}
+                />
+            </BottomSheet>
         </div>
     );
 }
