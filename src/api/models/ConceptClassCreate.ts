@@ -3,7 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export type ConceptClassCreate = {
-    concept_class_name?: string | null;
-    concept_class_concept?: number | null;
+  concept_class_name?: string | null;
+  concept_class_concept?: number | null;
 };
-
