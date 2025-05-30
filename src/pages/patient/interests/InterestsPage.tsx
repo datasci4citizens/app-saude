@@ -5,9 +5,8 @@ import TextIconButton from "@/components/ui/icon-button";
 import InterestsSelector from "@/components/ui/interests-selector";
 import BottomSheet from "@/components/ui/bottom-sheet";
 import CustomInterestPage from "./CustomInterestPage";
-import { useNavigate } from "react-router-dom";
 
-// Define the default items list
+// Define the default items list -- testing only
 const defaultItemsList = [
     { id: 1, title: 'Comer pouco/mal', icon: 'burger' },
     { id: 2, title: 'Dormir mal', icon: 'sleep' },
@@ -17,7 +16,6 @@ const defaultItemsList = [
 ];
 
 export default function InterestPage() {
-    const navigate = useNavigate();
     const [selectedInterests, setSelectedInterests] = useState<(string | number)[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [itemsList, setItemsList] = useState(defaultItemsList);
@@ -43,7 +41,7 @@ export default function InterestPage() {
 
         // Create a new item with a numeric ID
         const newItem = {
-            id: Date.now(), // This will be a number
+            id: Date.now(),
             title: interest.title,
             icon: icon
         };
@@ -82,7 +80,7 @@ export default function InterestPage() {
                 onSelectionChange={handleSelectionChange}
             />
 
-            <div className="px-4 mt-auto pt-4 flex items-center">
+            <div className="px-4 mt-auto pt-4 flex content-center">
                 <Button
                     variant="orange"
                     size="responsive"

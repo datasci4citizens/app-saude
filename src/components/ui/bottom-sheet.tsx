@@ -37,10 +37,10 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end justify-center transition-opacity duration-300">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end w-full justify-center transition-opacity duration-300">
       <div 
         ref={sheetRef}
-        className="bg-primary rounded-t-2xl w-full max-w-md max-h-[90vh] overflow-y-auto transform transition-transform duration-300 ease-out"
+        className="bg-primary rounded-t-2xl w-full max-h-[90vh] overflow-y-auto transform transition-transform duration-300 ease-out"
         style={{
           boxShadow: '0px -4px 20px rgba(0, 0, 0, 0.25)'
         }}

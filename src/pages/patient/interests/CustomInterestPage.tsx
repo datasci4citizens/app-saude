@@ -27,7 +27,7 @@ const CustomInterestForm: React.FC<CustomInterestFormProps> = ({ onSubmit, onCan
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5 p-4 pt-2">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-7 p-4 pt-2">
             <div className="flex flex-col gap-2">
                 <TextField
                     id="habit-text"
