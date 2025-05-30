@@ -3,9 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 export type ProviderCreate = {
-  social_name?: string | null;
-  birth_datetime?: string | null;
-  professional_registration?: number | null;
-  specialty_concept?: number | null;
-  care_site?: number | null;
+    social_name?: string | null;
+    birth_datetime?: string | null;
+    professional_registration?: number;
+    specialty_concept?: number | null;
+    care_site?: number | null;
 };
+

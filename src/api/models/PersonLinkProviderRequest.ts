@@ -3,8 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type PersonLinkProviderRequest = {
-  /**
-   * Código de vínculo fornecido pelo provider
-   */
-  code: string;
+    /**
+     * Link code provided by the provider
+     */
+    code: string;
 };
+

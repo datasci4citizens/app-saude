@@ -2,16 +2,17 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { StatusEnum } from "./StatusEnum";
+import type { PersonLinkProviderResponseStatusEnum } from './PersonLinkProviderResponseStatusEnum';
 export type PersonLinkProviderResponse = {
-  /**
-   * Resultado do vínculo
-   *
-   * * `linked` - linked
-   */
-  status: StatusEnum;
-  /**
-   * Indica se o relacionamento já existia antes
-   */
-  already_existed: boolean;
+    /**
+     * Linking result
+     *
+     * * `linked` - linked
+     */
+    status: PersonLinkProviderResponseStatusEnum;
+    /**
+     * Indicates if the relationship already existed
+     */
+    already_existed: boolean;
 };
+

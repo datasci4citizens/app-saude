@@ -2,6 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type EmergencyCount = {
-  emergency_count: number;
-};
+/**
+ * * `unlinked` - unlinked
+ */
+export enum PersonProviderUnlinkResponseStatusEnum {
+    UNLINKED = 'unlinked',
+}
