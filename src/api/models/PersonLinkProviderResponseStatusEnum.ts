@@ -2,8 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ProviderRetrieve } from './ProviderRetrieve';
-export type FullProviderRetrieve = {
-    provider: ProviderRetrieve;
-};
-
+/**
+ * * `linked` - linked
+ */
+export enum PersonLinkProviderResponseStatusEnum {
+    LINKED = 'linked',
+}

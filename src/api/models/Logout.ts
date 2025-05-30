@@ -2,9 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-/**
- * * `linked` - linked
- */
-export enum StatusEnum {
-  LINKED = "linked",
-}
+export type Logout = {
+    /**
+     * Refresh token for logout
+     */
+    refresh: string;
+};
+
