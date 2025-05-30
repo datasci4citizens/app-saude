@@ -293,6 +293,7 @@ export default function DiaryInfoForm() {
             <Switch checked={shareHabits} onCheckedChange={setShareHabits} />
           </div>
         </div>
+      </div>
 
         <div className="space-y-6">
           {habits.map((habit) => renderTrackableItem(habit, habits, setHabits))}
@@ -306,8 +307,10 @@ export default function DiaryInfoForm() {
             </div>
             <span className="text-sm text-gray-500">Adicionar hábito</span>
           </div>
+          <span className="text-sm text-gray-500">Adicionar hábito</span>
         </div>
       </div>
+    </div>
 
       {/* Well-being Section */}
       <div className="space-y-4">
@@ -325,6 +328,7 @@ export default function DiaryInfoForm() {
             />
           </div>
         </div>
+      </div>
 
         <div className="space-y-6">
           {isLoadingWellBeing ? (
@@ -346,6 +350,7 @@ export default function DiaryInfoForm() {
           )}
         </div>
       </div>
+    </div>
 
       {/* Text Section */}
       <div className="space-y-3">

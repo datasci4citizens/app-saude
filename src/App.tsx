@@ -89,6 +89,10 @@ const router = createBrowserRouter([
     element: <NewReminder />,
   },
   {
+    path: "/view-diary-user",
+    element: <ViewDiaryUser />,
+  },
+  {
     path: "/reminder",
     element: (
       <ViewReminder
