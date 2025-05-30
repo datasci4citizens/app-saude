@@ -4,6 +4,7 @@ import PatientButton from "@/components/ui/patient-button";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { ProviderService } from "@/api/services/ProviderService";
 import { useNavigate } from "react-router-dom";
+import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderService";
 import useSWR from "swr";
 import Header from "@/components/ui/header";
 
@@ -76,14 +77,14 @@ export default function EmergencyPage() {
     async () => {
       try {
         // Buscando dados dos pacientes vinculados ao provider
-        const patientData = await ProviderService.providerPersonsRetrieve();
+        const patientData = await LinkPersonProviderService.providerPersonsList();
 
         // Convertendo e formatando os dados da API para o formato esperado pelo componente
         const formattedPatients: FormattedEmergencyPatient[] = patientData
           // Filtrando apenas pacientes com pedidos de ajuda registradas
-          .filter((patient: EmergencyPatient) => patient.last_emergency_date)
-          .map((patient: EmergencyPatient) => ({
-            id: patient.id,
+          .filter((patient) => patient.last_emergency_date)
+          .map((patient) => ({
+            id: patient.person_id,
             name: patient.name,
             age: patient.age || 0,
             lastVisit: formatDisplayDate(patient.last_visit_date), // Formata a data
@@ -262,8 +263,8 @@ export default function EmergencyPage() {
               variant="emergency"
               name={patient.name}
               age={patient.age || 0}
-              lastVisit={patient.lastVisit || "-"} // Mantém fallback se formatDisplayDate retornar ""
-              lastEmergency={patient.lastEmergency || "Sem pedidos de ajuda"} // Mantém fallback
+              //lastVisit={patient.lastVisit}
+              lastEmergency={patient.lastEmergency}
               onClick={() => handlePatientClick(patient)}
             />
           ))

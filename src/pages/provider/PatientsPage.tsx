@@ -55,7 +55,7 @@ export default function PatientsPage() {
     const fetchPatients = async () => {
       try {
         setLoading(true);
-        const apiPatients = await ProviderService.providerPersonsRetrieve();
+        const apiPatients = await LinkPersonProviderService.providerPersonsList();
 
         // Converter os dados da API para o formato esperado pelo componente
         const formattedPatients: Patient[] = apiPatients.map(

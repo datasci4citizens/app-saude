@@ -51,7 +51,7 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
       },
       {
         id: "emergency",
-        label: "Pedidos de Ajuda",
+        label: "Ajuda",
         icon: (
           <span
             role="img"

@@ -42,6 +42,10 @@ interface LocationConceptsResult extends BaseConceptLoaderResult {
   stateOptions: SelectOption[];
 }
 
+interface InterestAreasConceptsResult extends BaseConceptLoaderResult {
+  interestAreasOptions: SelectOption[];
+}
+
 /**
  * Hook to load health concepts for UserInfoForm3
  */
@@ -332,6 +336,71 @@ export function useLocationConcepts(): LocationConceptsResult {
 
   return {
     stateOptions,
+    isLoading,
+    error,
+  };
+}
+
+/**
+ * Hook to load interest areas concepts for UserMainPage
+ */
+export function useInterestAreasConcepts(): InterestAreasConceptsResult {
+  const [interestAreasOptions, setInterestAreasOptions] = useState<SelectOption[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchConcepts = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        // Fetch interest areas concepts
+        const concepts = await ConceptService.apiConceptList(
+          "Interest",
+          "pt",
+        );
+
+        // Process interest areas options
+        setInterestAreasOptions(
+          concepts
+            .filter((concept) => concept.concept_class === "Interest")
+            .filter((concept) => concept.concept_name != null)
+            .map((concept) => ({
+              value: concept.concept_id,
+              label: concept.translated_name || concept.concept_name || "",
+            })).filter((option) =>
+              option.label !== "Área de Interesse" && 
+              option.label !== "Interesse Personalizado"
+            )
+        );
+      } catch (error) {
+        console.error("Error fetching interest areas concepts:", error);
+        setError(
+          "Erro ao carregar áreas de interesse. Tente novamente mais tarde.",
+        );
+
+        // Fallback options
+        setInterestAreasOptions([
+          { value: 1001, label: "Saúde Mental" },
+          { value: 1002, label: "Nutrição" },
+          { value: 1003, label: "Exercício Físico" },
+          { value: 1004, label: "Saúde da Mulher" },
+          { value: 1005, label: "Saúde do Idoso" },
+          { value: 1006, label: "Saúde Infantil" },
+          { value: 1007, label: "Doenças Crônicas" },
+          { value: 1008, label: "Prevenção" },
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchConcepts();
+  }, []);
+
+  return {
+    interestAreasOptions,
     isLoading,
     error,
   };
