@@ -14,7 +14,7 @@ const NewReminder: React.FC = () => {
     i.toString().padStart(2, "0"),
   );
 
-  const [selectedDate, setSelectedDate] = useState<string>(""); // String format for DateField
+  const [selectedDate, setSelectedDate] = useState<string>(""); 
   const [selectedHour, setSelectedHour] = useState<string>("00");
   const [selectedMinute, setSelectedMinute] = useState<string>("00");
   const [title, setTitle] = useState("");
@@ -41,7 +41,7 @@ const NewReminder: React.FC = () => {
   const [observation, setObservation] = useState("");
 
   const handleDateChange = (formattedValue: string) => {
-    setSelectedDate(formattedValue); // Update date in string format
+    setSelectedDate(formattedValue); 
   };
 
   const handleCheckboxChange = (day: keyof typeof repeatDays) => {
@@ -65,12 +65,12 @@ const NewReminder: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={styles.page}>
+    <form onSubmit={handleSubmit} className="p-4 bg-primary min-h-screen font-inter">
       {/* Header */}
       <Header title="Configurar lembrete" />
 
       {/* Title Field */}
-      <div style={styles.section}>
+      <div className="mb-4 relative">
         <TextField
           id="title"
           name="title"
@@ -83,7 +83,7 @@ const NewReminder: React.FC = () => {
       </div>
 
       {/* Date Field */}
-      <div style={styles.section}>
+      <div className="mb-4 relative">
         <DateField
           id="date"
           name="date"
@@ -95,11 +95,11 @@ const NewReminder: React.FC = () => {
       </div>
 
       {/* Time Picker */}
-      <div style={styles.section}>
-        <label className="block text-sm font-['Inter'] font-light text-[#A0A3B1] mb-1">
+      <div className="mb-4 relative">
+        <label className="block text-sm font-inter font-light text-gray2 mb-1">
           Horário:
         </label>
-        <div style={styles.wheelPickerContainer}>
+        <div className="flex justify-center w-full bg-offwhite p-3 rounded-3xl">
           <WheelPicker
             data={hours}
             selected={selectedHour}
@@ -107,25 +107,10 @@ const NewReminder: React.FC = () => {
             height={150}
             width={80}
           >
-            <div
-              style={{
-                backgroundColor: "rgba(0, 0, 0, 0.05)",
-                height: "100%",
-                width: "100%",
-                padding: "10px",
-                borderRadius: "12px 0 0 12px",
-                borderLeft: "2px solid #FA6E5A",
-                borderTop: "2px solid #FA6E5A",
-                borderBottom: "2px solid #FA6E5A",
-              }}
-            />
+            <div className="bg-black bg-opacity-5 h-full w-full p-2.5 rounded-l-xl border-l-2 border-t-2 border-b-2 border-selection">
+            </div>
           </WheelPicker>
-          <span
-            style={{
-              position: "absolute",
-              top: "50%",
-            }}
-          >
+          <span className="absolute top-1/2">
             :
           </span>
           <WheelPicker
@@ -135,28 +120,18 @@ const NewReminder: React.FC = () => {
             height={150}
             width={80}
           >
-            <div
-              style={{
-                backgroundColor: "rgba(0, 0, 0, 0.05)",
-                height: "100%",
-                width: "100%",
-                padding: "10px",
-                borderRadius: "0 12px 12px 0",
-                borderRight: "2px solid #FA6E5A",
-                borderTop: "2px solid #FA6E5A",
-                borderBottom: "2px solid #FA6E5A",
-              }}
-            />
+            <div className="bg-black bg-opacity-5 h-full w-full p-2.5 rounded-r-xl border-r-2 border-t-2 border-b-2 border-selection">
+            </div>
           </WheelPicker>
         </div>
       </div>
 
       {/* Repeat Pattern */}
-      <div style={{ ...styles.section, ...styles.repeatToggleSection }}>
-        <label className="block text-sm font-['Inter'] font-light text-[#A0A3B1] mb-1">
+      <div className="mb-4 relative flex flex-col w-full">
+        <label className="block text-sm font-inter font-light text-gray2 mb-1">
           Repetição:
         </label>
-        <div style={styles.repeatToggleContainer}>
+        <div className="flex justify-between w-full rounded-3xl border-1.5 border-typography overflow-hidden h-8">
           {["Hour", "Day", "Week", "Month", "Year"].map(
             (type, index, array) => (
               <React.Fragment key={type}>
@@ -167,24 +142,15 @@ const NewReminder: React.FC = () => {
                       type as "Hour" | "Day" | "Week" | "Month" | "Year",
                     )
                   }
-                  style={{
-                    ...styles.repeatToggleButton,
-                    backgroundColor:
-                      repeatType === type ? "#DDFC8E" : "transparent",
-                    color: "#141B36",
-                    position: "relative",
-                  }}
+                  className={`flex-1 border-none outline-none cursor-pointer text-xs font-medium transition-colors duration-300 p-0 px-2 h-full flex items-center justify-center text-typography relative ${
+                    repeatType === type ? "bg-selected" : "bg-transparent"
+                  }`}
                 >
                   {type}
                 </button>
                 {index < array.length - 1 && (
                   <span
-                    style={{
-                      width: "1px",
-                      height: "20px",
-                      backgroundColor: "#141B36",
-                      alignSelf: "center",
-                    }}
+                    className="w-px h-5 bg-typography self-center"
                   />
                 )}
               </React.Fragment>
@@ -195,21 +161,21 @@ const NewReminder: React.FC = () => {
 
       {/* Weekday Checkboxes (Conditional Rendering) */}
       {repeatType === "Week" && (
-        <div style={styles.section}>
-          <div style={styles.checkboxContainer}>
+        <div className="mb-4 relative">
+          <div className="flex justify-between">
             {Object.keys(repeatDays).map((day) => (
-              <label key={day} style={styles.checkboxLabel}>
+              <label key={day} className="cursor-pointer">
                 <Checkbox
                   checked={repeatDays[day as keyof typeof repeatDays]}
                   onCheckedChange={() =>
                     handleCheckboxChange(day as keyof typeof repeatDays)
                   }
-                  color="#DDFC8E"
+                  
                   height="h-7"
                   width="w-7"
                   radius="rounded-md"
                 >
-                  <span style={styles.weekday}>{day[0]}</span>
+                  <span className="text-xs font-medium text-typography">{day[0]}</span>
                 </Checkbox>
               </label>
             ))}
@@ -218,7 +184,7 @@ const NewReminder: React.FC = () => {
       )}
 
       {/* Observation Field */}
-      <div style={styles.section}>
+      <div className="mb-4 relative">
         <TextField
           id="observation"
           name="observation"
@@ -234,70 +200,12 @@ const NewReminder: React.FC = () => {
       <Button
         type="submit"
         variant="orange"
-        className="w-full mt-4 font-['Inter'] font-bold"
+        className="w-full mt-4 font-inter font-bold"
       >
         CONTINUAR
       </Button>
     </form>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  page: {
-    padding: "16px",
-    backgroundColor: "#FFFFFF",
-    minHeight: "100vh",
-    fontFamily: '"Inter", sans-serif',
-  },
-  section: {
-    marginBottom: "16px",
-    position: "relative",
-  },
-  repeatToggleSection: {
-    display: "flex",
-    flexDirection: "column",
-    width: "100%",
-  },
-  repeatToggleContainer: {
-    display: "flex",
-    justifyContent: "space-between",
-    width: "100%",
-    borderRadius: "24px",
-    border: "1.5px solid #141B36",
-    overflow: "hidden",
-    height: "32px",
-  },
-  repeatToggleButton: {
-    flex: 1,
-    border: "none",
-    outline: "none",
-    cursor: "pointer",
-    fontSize: "13px",
-    fontWeight: "500",
-    transition: "background-color 0.3s ease",
-    padding: "0 8px",
-    height: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  checkboxContainer: {
-    display: "flex",
-    justifyContent: "space-between",
-  },
-  wheelPickerContainer: {
-    display: "flex",
-    justifyContent: "center",
-    width: "100%",
-    backgroundColor: "#F9F9FF",
-    padding: "12px",
-    borderRadius: "24px",
-  },
-  weekday: {
-    fontSize: "12px",
-    fontWeight: "500",
-    color: "#141B36",
-  },
 };
 
 export default NewReminder;

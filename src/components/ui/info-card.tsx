@@ -43,12 +43,12 @@ const InfoCard: React.FC<InfoCardProps> = ({
         rounded-xl 
         h-[250px] 
         overflow-hidden
-        ${isEmergency ? "bg-accent  " : "bg-background"}
+        ${isEmergency ? "bg-accent1  " : "bg-offwhite"}
       `}
     >
       <CardContent className="p-0 h-full">
         {isEmergency ? (
-          /* Card de Emergência */
+          /* Card de Pedido de Ajuda */
           <div className="flex flex-col h-full">
             {/* Conteúdo principal centralizado */}
             <div className="flex flex-col items-center pt-4 flex-grow">
@@ -56,21 +56,21 @@ const InfoCard: React.FC<InfoCardProps> = ({
               <div className="mb-3">
                 <span
                   role="img"
-                  className="mgc_alert_diamond_line text-[60px] w-[60px] h-[60px] inline-block"
+                  className="mgc_alert_diamond_line text-[60px] w-[60px] h-[60px] inline-block text-selection" // Kept text-[60px]
                 ></span>
               </div>
 
-              {/* Número de emergências */}
-              <div className="text-4xl font-bold mb-1">{count}</div>
+              {/* Número de pedidos de ajuda */}
+              <div className="text-titulo text-typography mb-1">{count}</div> {/* Changed from text-4xl font-bold */}
 
-              {/* Texto fixo de emergências */}
-              <div className="text-xs font-bold mb-4">EMERGÊNCIA(S)</div>
+              {/* Texto fixo de pedidos de ajuda */}
+              <div className="text-topicos mb-4 text-typography">PEDIDOS DE AJUDA</div> {/* Changed from text-xs font-bold */}
             </div>
 
             {/* Container do botão alinhado à direita inferior */}
             <div className="mt-auto p-4 flex justify-end">
               <Button
-                className="rounded-full px-6 py-2 text-sm bg-typography text-primary-foreground hover:bg-success/90"
+                className="rounded-full px-6 py-2 text-sm bg-typography text-offwhite-foreground hover:bg-primary/90"
                 onClick={onClick}
               >
                 VER
@@ -82,7 +82,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
           <div className="flex flex-col h-full, bg-offwhite">
             {/* Cabeçalho */}
             <div className="p-4 pb-2">
-              <h3 className="text-lg font-bold font-inter text-typography mb-1">
+              <h3 className="text-titulowindow text-typography mb-1"> {/* Changed from text-lg font-bold font-inter */}
                 {title}
               </h3>
 
@@ -90,10 +90,10 @@ const InfoCard: React.FC<InfoCardProps> = ({
               <div className="mt-3">
                 {consultations.map((consultation, index) => (
                   <div key={index} className="mb-2">
-                    <div className="text-xs font-inter text-typography mb-0.5">
+                    <div className="text-campos-preenchimento2 text-typography mb-0.5"> {/* Changed from text-xs font-inter */}
                       {consultation.doctor}
                     </div>
-                    <div className="text-xs text-black font-inter mb-3">
+                    <div className="text-campos-preenchimento2 text-black font-inter mb-3"> {/* Changed from text-xs */}
                       {consultation.time}
                     </div>
                   </div>
@@ -105,7 +105,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
             <div className="mt-auto p-4 pt-2 flex justify-center">
               <Button
                 onClick={onClick}
-                className="rounded-full px-6 py-2 text-sm bg-primary text-primary-foreground hover:bg-primary/90"
+                className="rounded-full px-6 py-2 text-sm bg-selection text-primary hover:bg-primary/90"
               >
                 VER
               </Button>
@@ -116,13 +116,13 @@ const InfoCard: React.FC<InfoCardProps> = ({
           <div className="flex flex-col h-full">
             {/* Cabeçalho */}
             <div className="flex flex-col items-center pt-4 flex-grow">
-              <h3 className="text-lg font-bold font-inter text-typography mb-1">
+              <h3 className="text-titulowindow text-typography mb-1"> {/* Changed from text-lg font-bold font-inter */}
                 {title}:
               </h3>
-              <p className="font-bold text-lg leading-tight font-inter text-typography">
+              <p className="text-titulowindow leading-tight text-typography"> {/* Changed from font-bold text-lg font-inter */}
                 {name}
               </p>
-              <div className="text-xs font-medium font-inter text-gray2">
+              <div className="text-campos-preenchimento2 text-gray2"> {/* Changed from text-xs font-medium font-inter */}
                 {date} - {time}
               </div>
             </div>
@@ -131,7 +131,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
             <div className="mt-auto p-4 flex justify-end">
               <Button
                 onClick={onClick}
-                className="rounded-full px-6 py-2 text-sm bg-primary text-primary-foreground hover:bg-primary/90"
+                className="rounded-full px-6 py-2 text-sm bg-selection text-primary hover:bg-primary/90"
               >
                 VER
               </Button>

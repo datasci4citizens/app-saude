@@ -63,7 +63,7 @@ export default function EmergencyScreen() {
         (providerId) => ({
           person: user.person_id,
           provider: providerId,
-          value_as_string: freeText || "Emergência",
+          value_as_string: freeText || "Pedidos de Ajuda",
           observation_date: new Date().toISOString(),
           shared_with_provider: true,
         }),
@@ -74,7 +74,8 @@ export default function EmergencyScreen() {
 
       navigate("/user-main-page");
     } catch (error) {
-      console.error("Erro ao enviar emergência:", error);
+      console.error("Erro ao enviar pedido de ajuda:", error);
+      console.error("Erro ao enviar pedido de ajuda:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -91,9 +92,9 @@ export default function EmergencyScreen() {
   // Handle loading state
   if (isUserLoading || isProvidersLoading) {
     return (
-      <div className="max-w-md mx-auto p-4">
-        <Header title="Emergência" />
-        <div className="mt-8 text-center">
+      <div className="flex flex-col h-screen max-w-md mx-auto p-4">
+        <Header title="Pedido de Ajuda" />
+        <div className="flex-1 flex items-center justify-center">
           <p className="text-gray2">Carregando profissionais...</p>
         </div>
       </div>
@@ -103,9 +104,9 @@ export default function EmergencyScreen() {
   // Handle error state
   if (providersError) {
     return (
-      <div className="max-w-md mx-auto p-4">
-        <Header title="Emergência" />
-        <div className="mt-8 text-center">
+      <div className="flex flex-col h-screen max-w-md mx-auto p-4">
+        <Header title="Pedido de Ajuda" />
+        <div className="flex-1 flex flex-col items-center justify-center">
           <p className="text-destructive">
             Erro ao carregar seus profissionais
           </p>
@@ -124,14 +125,14 @@ export default function EmergencyScreen() {
   // Handle no linked providers
   if (providers && providers.length === 0) {
     return (
-      <div className="max-w-md mx-auto p-4">
-        <Header title="Emergência" />
-        <div className="mt-8 text-center">
+      <div className="p-4 flex flex-col bg-primary min-h-screen font-inter relative">
+        <Header title="Pedido de Ajuda" />
+        <div className="flex-1 flex flex-col items-center justify-center">
           <p className="text-gray2 mb-2">
             Você não possui profissionais vinculados
           </p>
           <p className="text-gray2 mb-4">
-            Para enviar alertas de emergência, você precisa adicionar um
+            Para enviar alertas de pedidos de ajuda, você precisa adicionar um
             profissional ao seu perfil.
           </p>
           <Button
@@ -146,56 +147,92 @@ export default function EmergencyScreen() {
   }
 
   return (
-    <div className="max-w-md mx-auto p-4">
-      <Header title="Emergência" />
+    <div className="p-4 flex flex-col bg-primary min-h-screen font-inter relativ">
+      <Header title="Pedido de Ajuda" />
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-2 ml-8">
-          <h3 className="font-semibold text-[16px] font-inter text-typography">
-            Quais profissionais você deseja alertar?
-          </h3>
-          <div className="flex flex-col gap-4">
-            {providers &&
-              providers.map((provider: ProviderRetrieve) => (
-                <RadioCheckbox
-                  key={provider.provider_id}
-                  id={`provider-${provider.provider_id}`}
-                  label={
-                    provider.social_name ||
-                    provider.name ||
-                    "Profissional sem nome"
-                  }
-                  checked={selectedProviders.includes(provider.provider_id)}
-                  onCheckedChange={() =>
-                    handleProviderSelect(provider.provider_id)
-                  }
-                />
-              ))}
+      {/* Emergency Disclaimer */}
+      <div className="mb-6 p-4 bg-destructive bg-opacity-10 border border-destructive rounded-lg">
+        <div className="flex items-start gap-2">
+          <div className="text-white text-xl font-bold">⚠️</div>
+          <div>
+            <p className="text-white font-semibold text-sm mb-2">
+              ATENÇÃO: você pode não ser respondido imediatamente ou nem sequer respondido!
+            </p>
+            <p className="text-white text-xs">
+              Em caso de necessidade, ligue{" "}
+                <a 
+                  href="https://www.gov.br/saude/pt-br/composicao/saes/samu-192"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold underline hover:text-white hover:opacity-80 transition-opacity"
+                >
+                  192
+                </a>{" "}
+              ou{" "}
+              <a 
+                href="https://cvv.org.br/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold underline hover:text-white hover:opacity-80 transition-opacity"
+              >
+                188
+              </a>
+            </p>
           </div>
         </div>
+      </div>
+
+    <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-6">
+      {/* Removed ml-8 from this div */}
+      <div className="space-y-2">
+        <h3 className="font-semibold text-[16px] font-inter text-typography"> {/* Added px-4 */}
+          Quais profissionais você deseja enviar pedido de ajuda?
+        </h3>
+        <div className="flex flex-col gap-4">
+          {providers &&
+            providers.map((provider: ProviderRetrieve) => (
+              <RadioCheckbox
+                key={provider.provider_id}
+                id={`provider-${provider.provider_id}`}
+                label={
+                  provider.social_name ||
+                  provider.name ||
+                  "Profissional sem nome"
+                }
+                checked={selectedProviders.includes(provider.provider_id)}
+                onCheckedChange={() =>
+                  handleProviderSelect(provider.provider_id)
+                }
+                className="px-4" // Added horizontal padding
+              />
+            ))}
+        </div>
+      </div>
 
         <div className="space-y-2 ml-8">
           <TextField
-            size="large"
-            multiline
+            id="help-message"
+            name="helpMessage"
             label="Mensagem"
-            placeholder="Descreva sua emergência..."
+            placeholder="Descreva seu pedido de ajuda..."
             value={freeText}
             onChange={(e) => setFreeText(e.target.value)}
+            type="text"
           />
         </div>
 
-        <div className="px-8">
-          <Button
-            variant="orange"
-            size="responsive"
-            type="submit"
-            disabled={isSubmitting || !selectedProviders.length}
-          >
-            {isSubmitting ? "Enviando..." : "ENVIAR ALERTA"}
-          </Button>
-        </div>
-      </form>
-    </div>
-  );
+      {/* Changed px-8 to px-4 */}
+      <div className="px-4 mt-auto pb-4">
+        <Button
+          variant="orange"
+          size="responsive"
+          type="submit"
+          disabled={isSubmitting || !selectedProviders.length}
+        >
+          {isSubmitting ? "Enviando..." : "ENVIAR PEDIDO DE AJUDA"}
+        </Button>
+      </div>
+    </form>
+  </div>
+);
 }

@@ -17,9 +17,18 @@ import OnboardingSlider from "./pages/landing/OnboardingSlider";
 import { SWRConfig } from "swr";
 import AddProfessionalPage from "./pages/patient/profile/AddProfessionalPage";
 import ModifyHabits from "./pages/patient/diary/modify-habits";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { ThemeToggle } from "./components/ui/ThemeToggle";
 import ViewDiaryUser from "./pages/patient/diary/ViewDiaryUser";
 import ViewPatientDiaries from "./pages/patient/diary/ViewDiaryProvider";
 import ViewDiaryEntry from "./pages/patient/diary/ViewDiary";
+import ProfilePage from "./pages/patient/profile/ProfilePage";
+import AcsProfilePage from "./pages/provider/profile/AcsProfilePage";
+import InterestPage from "./pages/patient/interests/InterestsPage";
+import CreateNewInterest from "./pages/patient/CreateNewInterest";
+import ViewSelectedInterests from "./pages/patient/ViewSelectedInterests";
+import EditInterest from "./pages/patient/EditInterest";
+import ViewPatient from "./pages/provider/ViewPatient"; // Import ViewPatient
 
 
 
@@ -36,7 +45,14 @@ const NotFound = () => (
 </SWRConfig>;
 
 const router = createBrowserRouter([
-  { path: "/", element: <h1>Home!</h1> },
+  { 
+    path: "/", 
+    element: <OnboardingSlider />,
+  },
+  { 
+    path: "/login", 
+    element: <OnboardingSlider />,
+  },
   {
     path: "/welcome",
     element: <OnboardingSlider />,
@@ -111,6 +127,18 @@ const router = createBrowserRouter([
     element: <UsermainPage />,
   },
   {
+    path: "/user-create-interest",
+    element: <CreateNewInterest />,
+  },
+  {
+    path: "/user-selected-interests",
+    element: <ViewSelectedInterests />,
+  },
+  {
+    path: "/user-edit-interest/:interestId",
+    element: <EditInterest />,
+  },
+  {
     path: "/emergencies",
     element: <EmergencyPage />,
   },
@@ -131,11 +159,40 @@ const router = createBrowserRouter([
     element: <ModifyHabits />,
   },
   {
+    path: "/profile",
+    element: <ProfilePage />,
+  },
+  {
+    path: "/acs-profile",
+    element: <AcsProfilePage />,
+  },
+  {
+    path: "/interests",
+    element: <InterestPage />
+  },
+  {
+    path: "/provider/patient/:id", // Route for viewing a patient
+    element: <ViewPatient />,
+  },
+  {
+    path: "/provider/patient/:id/:context", // Route for viewing a patient with context (e.g., emergency)
+    element: <ViewPatient />,
+  },
+  {
     path: "*",
     element: <NotFound />,
   },
 ]);
 
 export function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ThemeProvider>
+      <div className="min-h-screen bg-primary text-typography">
+        <RouterProvider router={router} />
+        <div className="fixed top-20 right-4">
+          <ThemeToggle />
+        </div>
+      </div>
+    </ThemeProvider>
+  );
 }

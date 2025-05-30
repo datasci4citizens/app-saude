@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 
 interface Option {
-  value: string;
+  value: string | number;
   label: string;
 }
 
@@ -88,7 +88,7 @@ export function MultiSelectCustom({
 
       <div
         className={`relative rounded-lg border ${error ? "border-destructive" : "border-gray2"} 
-          ${isOpen ? "ring-2 ring-primary border-none" : ""} bg-white`}
+          ${isOpen ? "border-selection" : ""} bg-primary`}
       >
         {/* Selected items and input container */}
         <div
@@ -102,13 +102,13 @@ export function MultiSelectCustom({
             selectedItems.map((item) => (
               <div
                 key={item.value}
-                className="bg-primary bg-opacity-10 text-typography px-2 py-1 rounded-md flex items-center text-sm"
+                className="bg-selection bg-opacity-20 text-typography px-2 py-1 rounded-md flex items-center text-sm"
               >
                 {item.label}
                 <button
                   type="button"
                   onClick={(e) => removeItem(e, item.value)}
-                  className="ml-1 text-primary hover:bg-primary hover:bg-opacity-20 rounded-full h-5 w-5 flex items-center justify-center"
+                  className="ml-1 text-primary hover:bg-gray1  hover:bg-opacity-20 rounded-full h-5 w-5 flex items-center justify-center"
                 >
                   &times;
                 </button>
@@ -118,7 +118,7 @@ export function MultiSelectCustom({
           <input
             ref={inputRef}
             type="text"
-            className="flex-1 outline-none min-w-[80px] text-typography placeholder:text-gray2"
+            className="bg-transparent flex-1 outline-none min-w-[80px] text-typography placeholder:text-gray2"
             placeholder={selectedItems.length === 0 ? placeholder : ""}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -129,7 +129,7 @@ export function MultiSelectCustom({
 
         {/* Dropdown */}
         {isOpen && (
-          <div className="absolute z-10 w-full mt-1 bg-white border border-gray1 rounded-lg shadow-lg max-h-60 overflow-auto">
+          <div className="absolute z-10 w-full mt-1 bg-primary border-gray2 rounded-lg shadow-lg max-h-60 overflow-auto">
             {isLoading ? (
               <div className="p-2 text-center text-gray2">Carregando...</div>
             ) : filteredOptions.length === 0 ? (
@@ -140,8 +140,8 @@ export function MultiSelectCustom({
               filteredOptions.map((option) => (
                 <div
                   key={option.value}
-                  className={`px-3 py-2 cursor-pointer hover:bg-primary hover:bg-opacity-10 
-                    ${value.includes(option.value) ? "bg-primary bg-opacity-10" : ""}`}
+                  className={`px-3 py-2 cursor-pointer hover:bg-gray1 hover:bg-opacity-10 
+                    ${value.includes(option.value) ? "bg-selection bg-opacity-20" : ""}`}
                   onClick={() => toggleOption(option.value)}
                 >
                   <div className="flex items-center">

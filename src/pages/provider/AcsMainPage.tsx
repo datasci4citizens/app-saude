@@ -11,7 +11,7 @@ export default function AcsMainPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Busca a contagem de emergências ao carregar a página
+  // Busca a contagem de pedidos de ajuda ao carregar a página
   useEffect(() => {
     const fetchEmergencyCount = async () => {
       try {
@@ -22,11 +22,11 @@ export default function AcsMainPage() {
           setEmergencyCount(response.emergency_count);
         } else {
           console.error("Formato de resposta inválido:", response);
-          setError("Não foi possível obter o número de emergências.");
+          setError("Não foi possível obter o número de pedidos de ajuda.");
         }
       } catch (err) {
-        console.error("Erro ao buscar contagem de emergências:", err);
-        setError("Erro ao carregar contagem de emergências.");
+        console.error("Erro ao buscar contagem de pedidos de ajuda:", err);
+        setError("Erro ao carregar contagem de pedidos de ajuda.");
       } finally {
         setLoading(false);
       }
@@ -63,14 +63,14 @@ export default function AcsMainPage() {
       case "emergency":
         navigate("/emergencies");
         break;
-      //case 'profile':
-      //    navigate('/profile');
-      //    break;
+      case 'profile':
+        navigate('/acs-profile');
+        break;
     }
   };
 
   return (
-    <div className="bg-gray-50 h-full pb-24" style={{ minHeight: "100vh" }}>
+    <div className="bg-primary h-full pb-24" style={{ minHeight: "100vh" }}>
       {/* Banner superior */}
       <HomeBanner
         title="Registro diário"
@@ -80,7 +80,7 @@ export default function AcsMainPage() {
 
       {/* Container para os cards */}
       <div className="px-4 py-5 flex justify-center gap-4">
-        {/* Card de Emergência */}
+        {/* Card de Pedido de Ajuda */}
         <InfoCard
           variant="emergency"
           count={emergencyCount}

@@ -1,4 +1,5 @@
 import React from "react";
+import header from "@/lib/images/header.png"
 
 interface HomeBannerProps {
   title?: string;
@@ -15,13 +16,15 @@ const HomeBanner: React.FC<HomeBannerProps> = ({
 }) => {
   return (
     <div
-      className="relative bg-success p-6 text-primary-foreground overflow-hidden h-40 w-full cursor-pointer shadow-md"
+      className="relative bg-homebg p-6 text-primary-foreground overflow-hidden h-40 w-full cursor-pointer shadow-md"
       onClick={onClick}
     >
       {/* Shapes decorativos */}
-      <div className="absolute -top-[50px] right-5 w-[120px] h-[120px] rounded-full bg-white bg-opacity-10 z-[1]"></div>
-      <div className="absolute top-10 -right-5 w-[100px] h-[100px] rounded-full bg-white bg-opacity-10 z-[1]"></div>
-      <div className="absolute -bottom-10 left-[30%] w-[180px] h-[180px] rounded-full bg-white bg-opacity-10 z-[1]"></div>
+      <img
+        src={header}
+        alt="Decorative Shape"
+        className="absolute top-0 right-0 left-0 w-full h-auto z-1 pointer-events-none select-none"
+      />
 
       {/* Conteúdo */}
       <div className="relative flex justify-between items-start h-full z-10">

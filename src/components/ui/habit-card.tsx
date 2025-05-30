@@ -15,7 +15,7 @@ const HabitCard: React.FC<HabitCardProps> = ({ title, className = "" }) => {
   return (
     <div
       className={`
-        bg-primary
+        bg-selection
         text-primary-foreground
         font-inter
         font-bold
