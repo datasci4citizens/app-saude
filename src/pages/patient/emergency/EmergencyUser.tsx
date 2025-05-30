@@ -7,7 +7,7 @@ import { TextField } from "@/components/forms/text_input"; // deixar este text_i
 import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderService";
 import { ApiService } from "@/api/services/ApiService";
 import type { ProviderRetrieve } from "@/api/models/ProviderRetrieve";
-import { EmergencyService } from "@/api/services/EmergencyService";
+import { HelpService } from "@/api/services/HelpService";
 import Header from "@/components/ui/header";
 import type { ObservationCreate } from "@/api/models/ObservationCreate";
 
@@ -70,7 +70,7 @@ export default function EmergencyScreen() {
       );
 
       // Send the emergency request
-      await EmergencyService.emergencySendCreate(emergencyRequests);
+      await HelpService.helpSendCreate(emergencyRequests);
 
       navigate("/user-main-page");
     } catch (error) {

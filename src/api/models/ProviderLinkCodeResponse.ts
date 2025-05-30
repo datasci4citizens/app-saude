@@ -4,7 +4,7 @@
 /* eslint-disable */
 export type ProviderLinkCodeResponse = {
   /**
-   * Código gerado para vincular uma pessoa a este provider (ex: 'A1B2C3')
+   * Code generated to link a person to this provider (ex: 'A1B2C3')
    */
   code: string;
 };

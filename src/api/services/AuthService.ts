@@ -41,16 +41,6 @@ export class AuthService {
     });
   }
   /**
-   * @returns any No response body
-   * @throws ApiError
-   */
-  public static authMeRetrieve(): CancelablePromise<any> {
-    return __request(OpenAPI, {
-      method: "GET",
-      url: "/auth/me/",
-    });
-  }
-  /**
    * Takes a refresh type JSON web token and returns an access type JSON web
    * token if the refresh token is valid.
    * @param requestBody

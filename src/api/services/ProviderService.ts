@@ -141,37 +141,37 @@ export class ProviderService {
     });
   }
   /**
-   * @param patientId
+   * @param personId
    * @returns any No response body
    * @throws ApiError
    */
   public static providerPatientsDiariesRetrieve(
-    patientId: number,
+    personId: number,
   ): CancelablePromise<any> {
     return __request(OpenAPI, {
       method: "GET",
-      url: "/provider/patients/{patient_id}/diaries/",
+      url: "/provider/patients/{person_id}/diaries/",
       path: {
-        patient_id: patientId,
+        person_id: personId,
       },
     });
   }
   /**
    * @param diaryId
-   * @param patientId
+   * @param personId
    * @returns any No response body
    * @throws ApiError
    */
   public static providerPatientsDiariesRetrieve2(
     diaryId: string,
-    patientId: number,
+    personId: number,
   ): CancelablePromise<any> {
     return __request(OpenAPI, {
       method: "GET",
-      url: "/provider/patients/{patient_id}/diaries/{diary_id}/",
+      url: "/provider/patients/{person_id}/diaries/{diary_id}/",
       path: {
         diary_id: diaryId,
-        patient_id: patientId,
+        person_id: personId,
       },
     });
   }

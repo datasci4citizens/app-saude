@@ -2,8 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type EmergencyCreate = {
-  provider?: number | null;
-  value_as_string?: string | null;
-  shared_with_provider?: boolean | null;
+export type Logout = {
+  /**
+   * Refresh token for logout
+   */
+  refresh: string;
 };

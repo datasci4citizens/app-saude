@@ -18,7 +18,7 @@ export class DiariesService {
     });
   }
   /**
-   * Cria um novo diário para o usuário logado
+   * Create a new diary for the logged-in user
    * @param requestBody
    * @returns any
    * @throws ApiError
