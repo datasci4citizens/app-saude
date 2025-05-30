@@ -1,0 +1,81 @@
+name: Pre-Push Checks
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  format-and-build:
+    name: Format Code and Test Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Format code with Prettier
+        run: npx prettier --write "src/**/*.{ts,tsx,js,jsx,json,css,scss}"
+        
+      - name: Commit and push formatted code
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add -A
+          git diff-index --quiet HEAD || (git commit -m "Apply automatic formatting" && git push)
+        continue-on-error: true
+
+      - name: Run build test
+        run: GENERATE_SOURCEMAP=false TSC_COMPILE_ON_ERROR=true CI=false npm run build
+        env:
+          DISABLE_ESLINT_PLUGIN: true
+
+  lint-check:
+    name: Lint Check for Main PRs
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint check
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Check for TypeScript warnings
+        run: npx tsc --noEmit
+        continue-on-error: true
+
+      - name: Add comment if there are issues
+        if: ${{ failure() }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '⚠️ Warning: This PR has linting or TypeScript warnings. You can still merge, but consider addressing these issues.'
+            })

@@ -1,132 +1,183 @@
 import { useNavigate } from "react-router-dom";
 import HomeBanner from "@/components/ui/home-banner";
-import InfoCard from "@/components/ui/info-card";
+import { MultiSelectCustom } from "@/components/forms/multi_select_custom";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
-import useSWR from "swr";
+import { useState, useEffect } from "react";
+import { useInterestAreasConcepts } from "@/utils/conceptLoader";
+import { InterestAreasService } from "@/api/services/InterestAreasService";
+import type { InterestArea } from "@/api/models/InterestArea";
+import { Button } from "@/components/forms/button";
 
-import { DrugExposureService } from "@/api/services/DrugExposureService";
-import { ConceptService } from "@/api/services/ConceptService";
-import { VisitOccurrenceService } from "@/api/services/VisitOccurrenceService";
-import { ApiService } from "@/api/services/ApiService";
-import { PersonService } from "@/api/services/PersonService";
-import { ProviderService } from "@/api/services/ProviderService";
+// Extended interface for API response that includes the ID
+interface InterestAreaResponse extends InterestArea {
+  interest_area_id: number;
+  concept_id?: number;
+}
 
-import type { ConceptRetrieve } from "@/api/models/ConceptRetrieve";
-import type { DrugExposureRetrieve } from "@/api";
-import type { VisitOccurrenceRetrieve } from "@/api/models/VisitOccurrenceRetrieve";
-
-// Fetch medications for a specific person
-const medicationsFetcher = async (keys: [string, number]) => {
-  const [_keyName, person_id] = keys;
-
-  const allDrugExposures = await DrugExposureService.apiDrugExposureList();
-
-  // Filter for the specific person and type concept
-  return allDrugExposures.filter(
-    (exposure) =>
-      exposure.person === person_id && exposure.drug_type_concept === 9000028,
-  );
-};
-
-// Fetch medication names using concept IDs
-const medicationsNameFetcher = async (
-  key: string,
-  drugExposures: DrugExposureRetrieve[],
-) => {
-  if (!drugExposures || drugExposures.length === 0) return [];
-
-  const drugNames: ConceptRetrieve[] = [];
-  for (const exposure of drugExposures) {
-    if (exposure.drug_concept) {
-      try {
-        const conceptData = await ConceptService.apiConceptRetrieve(
-          Number(exposure.drug_concept),
-        );
-        drugNames.push(conceptData);
-      } catch (error) {
-        console.error(
-          `Failed to fetch concept for drug_concept ${exposure.drug_concept}:`,
-          error,
-        );
-      }
-    }
-  }
-  return drugNames;
-};
-
-const idFetcher = async () => {
-  const id = await ApiService.apiUserEntityRetrieve();
-  return id.person_id;
-};
-
-// Fetch consultations for a specific person and provider
-const consultationsFetcher = async (keys: [string, number, number]) => {
-  const [_keyName, person_id, provider_id] = keys;
-
-  const allVisitOccurrences =
-    await VisitOccurrenceService.apiVisitOccurrenceList();
-
-  // Filter for the specific person and provider
-  return allVisitOccurrences.filter(
-    (visit) => visit.person === person_id && visit.provider === provider_id,
-  );
-};
-
-// Fetch provider names using provider IDs
-const providerNameFetcher = async (key: string, providerId: number) => {
-  try {
-    const providerData = await ProviderService.apiProviderRetrieve(providerId);
-    return providerData.social_name || `Provider ${providerId}`;
-  } catch (error) {
-    console.error(
-      `Failed to fetch provider for provider_id ${providerId}:`,
-      error,
-    );
-    return `Provider ${providerId}`;
-  }
-};
-
-// Fetch consultations with provider names
-const consultationsWithProviderNamesFetcher = async (
-  keys: [string, number, number],
-) => {
-  const consultations = await consultationsFetcher(keys);
-
-  const consultationsWithNames = await Promise.all(
-    consultations.map(async (visit) => {
-      const providerName = visit.provider
-        ? await providerNameFetcher("providerName", visit.provider)
-        : "Unknown Provider";
-
-      return {
-        doctor: providerName, // Nome do provider
-        time: visit.visit_start_date
-          ? new Date(visit.visit_start_date).toLocaleString("pt-BR", {
-              dateStyle: "short",
-              timeStyle: "short",
-            }) // Data e hora formatadas
-          : "Horário não definido",
-      };
-    }),
-  );
-
-  return consultationsWithNames;
-};
-
-export default function AcsMainPage() {
+export default function UserMainPage() {
   const navigate = useNavigate();
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const [originalInterests, setOriginalInterests] = useState<string[]>([]);
+  const [userInterestObjects, setUserInterestObjects] = useState<
+    InterestAreaResponse[]
+  >([]);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const [syncSuccess, setSyncSuccess] = useState(false);
 
-  // Fetch person_id using SWR
+  // Fetch interest areas from API
   const {
-    data: person_id,
-    error: personIdError,
-    isLoading: isPersonIdLoading,
-  } = useSWR("userId", idFetcher);
-  const provider_id = 1; // Definir o provider_id que queremos usar
+    interestAreasOptions,
+    error: interestAreasError,
+    isLoading: isLoadingInterests,
+  } = useInterestAreasConcepts();
 
-  // Funções de navegação
+  // Load user's existing interests on component mount
+  useEffect(() => {
+    const loadExistingInterests = async () => {
+      try {
+        const userInterests =
+          (await InterestAreasService.personInterestAreasList()) as InterestAreaResponse[];
+
+        // Store the full objects for deletion purposes
+        setUserInterestObjects(userInterests);
+
+        // Extract concept IDs for the UI
+        const conceptIds = userInterests
+          .map((interest) => interest.concept_id?.toString() || "")
+          .filter((id) => id !== "");
+
+        setSelectedInterests(conceptIds);
+        setOriginalInterests(conceptIds); // Store original interests for comparison
+      } catch (error) {
+        console.error("Error loading user interests:", error);
+      }
+    };
+
+    if (!isLoadingInterests && interestAreasOptions.length > 0) {
+      loadExistingInterests();
+    }
+  }, [isLoadingInterests, interestAreasOptions]);
+
+  // Handle interest selection change (just updates local state)
+  const handleInterestChange = (selectedValues: string[]) => {
+    setSelectedInterests(selectedValues);
+    setSyncSuccess(false);
+  };
+
+  // Check if there are unsaved changes
+  const hasUnsavedChanges = () => {
+    const addedInterests = selectedInterests.filter(
+      (id) => !originalInterests.includes(id)
+    );
+    const removedInterests = originalInterests.filter(
+      (id) => !selectedInterests.includes(id)
+    );
+    return addedInterests.length > 0 || removedInterests.length > 0;
+  };
+
+  // Sync changes to server
+  const syncInterestsWithServer = async () => {
+    const all_interests = await InterestAreasService.personInterestAreasList();
+    console.log("All interests from server:", all_interests);
+
+    setSyncError(null);
+    setIsSyncing(true);
+
+    try {
+      // Find which interests were added and removed
+      const addedInterests = selectedInterests.filter(
+        (id) => !originalInterests.includes(id)
+      );
+      const removedInterests = originalInterests.filter(
+        (id) => !selectedInterests.includes(id)
+      );
+
+      // Create new interests
+      for (const interestId of addedInterests) {
+        const interestOption = interestAreasOptions.find(
+          (opt) => opt.value === interestId
+        );
+
+        if (interestOption) {
+          const newInterestArea: InterestArea = {
+            observation_concept_id: parseInt(interestId),
+          };
+
+          console.log(interestId);
+          console.log("new", newInterestArea);
+
+          // Verificar se o interesse já existe
+          let interestExists = false;
+          for (const interest_area of all_interests) {
+            if (interest_area.observation_concept_id === parseInt(interestId)) {
+              alert(`Interesse já existe: ${interest_area.concept_name}`);
+              interestExists = true;
+              break;
+            }
+          }
+
+          // Se o interesse já existe, pula para o próximo usando continue
+          if (interestExists) {
+            continue;
+          }
+
+          // Cria o interesse se não existir
+          const result = await InterestAreasService.personInterestAreasCreate(
+            newInterestArea
+          );
+
+          // Update our local state with the new interest object
+          if (result && "interest_area_id" in result) {
+            const newInterestWithId = result as InterestAreaResponse;
+            setUserInterestObjects((prev) => [...prev, newInterestWithId]);
+          }
+        }
+      }
+
+      // Remove interests
+      for (const conceptId of removedInterests) {
+        const interestToDelete = userInterestObjects.find((interest) => {
+          const interestConceptId = interest.concept_id?.toString().trim();
+          const searchConceptId = conceptId.toString().trim();
+
+          return interestConceptId === searchConceptId;
+        });
+
+        if (interestToDelete && interestToDelete.interest_area_id) {
+          await InterestAreasService.personInterestAreasDestroy(
+            interestToDelete.interest_area_id
+          );
+
+          // Update our local state
+          setUserInterestObjects((prev) =>
+            prev.filter(
+              (interest) =>
+                interest.interest_area_id !== interestToDelete.interest_area_id
+            )
+          );
+        }
+      }
+
+      // Update originalInterests to reflect the current state
+      setOriginalInterests([...selectedInterests]);
+      setSyncSuccess(true);
+
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setSyncSuccess(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Error syncing interests:", error);
+      setSyncError("Erro ao salvar interesses. Tente novamente.");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  // Navigation functions
   const handleEmergencyClick = () => {
-    navigate("/emegency-user");
+    navigate("/emergency-user");
   };
 
   const handleAppointmentClick = () => {
@@ -137,82 +188,14 @@ export default function AcsMainPage() {
     navigate("/diary");
   };
 
-  // Fetch medication exposures
-  const {
-    data: drugExposures,
-    error: drugExposuresError,
-    isLoading: isDrugExposuresLoading,
-  } = useSWR(["drugExposureFiltered", person_id], medicationsFetcher);
+  const handleSelectedInterests = () => {
+    navigate("/user-selected-interests");
+  };
 
-  // Fetch medication names only if we have drugExposures
-  const {
-    data: medicationNames,
-    error: medicationNamesError,
-    isLoading: isMedicationNamesLoading,
-  } = useSWR(drugExposures ? ["medicationNames", drugExposures] : null, (key) =>
-    medicationsNameFetcher(key, drugExposures),
-  );
-
-  // Fetch consultations with provider names
-  const {
-    data: consultationItems,
-    error: consultationsError,
-    isLoading: isConsultationsLoading,
-  } = useSWR(
-    ["consultations", person_id, provider_id],
-    consultationsWithProviderNamesFetcher,
-  );
-
-  // Handle loading state
-  if (
-    isDrugExposuresLoading ||
-    isMedicationNamesLoading ||
-    isConsultationsLoading
-  ) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        Loading data...
-      </div>
-    );
-  }
-
-  // Handle error states
-  if (drugExposuresError) {
-    return (
-      <div className="text-selection p-4">
-        Error fetching drug exposures: {drugExposuresError.message}
-      </div>
-    );
-  }
-
-  if (medicationNamesError) {
-    return (
-      <div className="text-selection p-4">
-        Error fetching medication names: {medicationNamesError.message}
-      </div>
-    );
-  }
-
-  if (consultationsError) {
-    return (
-      <div className="text-selection p-4">
-        Error fetching consultations: {consultationsError.message}
-      </div>
-    );
-  }
-
-  // Prepare medication data for display - use translated_name as fallback if concept_name is null
-  const medicationItems =
-    medicationNames?.map((concept) => ({
-      doctor:
-        concept.concept_name || concept.translated_name || "Unknown Medication",
-      time: "Daily", // You might want to fetch actual dosage information
-    })) || [];
-
-  const handleNavigationClick = (itemId) => {
+  const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
       case "home":
-        // Já estamos na home
+        // Already on home
         break;
       case "meds":
         navigate("/reminders");
@@ -229,43 +212,100 @@ export default function AcsMainPage() {
     }
   };
 
+  const handleCreateCustomInterest = () => {
+    navigate("/user-create-interest");
+  };
+
   return (
     <div className="bg-primary h-full pb-24" style={{ minHeight: "100vh" }}>
-      {/* Banner superior */}
+      {/* Top banner */}
       <HomeBanner
         title="Registro diário"
         subtitle="Cheque registro dos seus pacientes"
         onIconClick={handleBannerIconClick}
       />
 
-      {/* Container para os cards */}
-      <div className="px-4 py-5 flex justify-center gap-4">
-        {/* Card de Medicamentos - usando dados da API */}
-        <InfoCard
-          variant="consultations"
-          title="Remédios"
-          consultations={
-            medicationItems.length > 0
-              ? medicationItems
-              : [{ doctor: "Nenhum medicamento encontrado", time: "" }]
+      <div className="px-4 py-5 justify-center gap-4">
+        {/* Multiselect - using API data */}
+        <MultiSelectCustom
+          id="interests"
+          name="interests"
+          label="Meus Interesses"
+          options={interestAreasOptions}
+          value={selectedInterests}
+          onChange={handleInterestChange}
+          isLoading={isLoadingInterests}
+          placeholder={
+            isLoadingInterests
+              ? "Carregando..."
+              : "Selecione suas áreas de interesse"
           }
-          onClick={handleAppointmentClick}
         />
 
-        {/* Card de Próxima Consulta */}
-        <InfoCard
-          variant="consultations"
-          title="Consultas"
-          consultations={
-            consultationItems.length > 0
-              ? consultationItems
-              : [{ doctor: "Nenhuma consulta encontrada", time: "" }]
-          }
-          onClick={handleAppointmentClick}
-        />
+        {/* Sync button */}
+        <div className="mt-4 flex justify-end">
+          <Button
+            onClick={syncInterestsWithServer}
+            className="bg-primary border-selection border-2 hover:bg-secondary/90 text-secondary-foreground px-6 py-3 font-bold uppercase tracking-wide"
+            disabled={!hasUnsavedChanges() || isSyncing}
+          >
+            {isSyncing ? "Enviando..." : "Enviar Interesses"}
+          </Button>
+        </div>
+
+        {/* Success message */}
+        {syncSuccess && (
+          <div className="flex justify-center mt-4">
+            <div className="inline-block p-3 bg-green-100 border border-green-500 text-green-700 rounded-md">
+              <p className="whitespace-nowrap">
+                Interesses salvos com sucesso!
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Error handling for interest areas */}
+        {interestAreasError && (
+          <div className="flex justify-center mt-4">
+            <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
+              <p className="whitespace-nowrap">
+                Erro ao carregar áreas de interesse
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Error handling for syncing */}
+        {syncError && (
+          <div className="flex justify-center mt-4">
+            <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
+              <p className="whitespace-nowrap">{syncError}</p>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Barra de navegação */}
+      {/* Custom interest button */}
+      <div className="fixed bottom-48 left-0 right-0 px-4 mb-2 flex justify-center">
+        <Button
+          onClick={handleSelectedInterests}
+          className="bg-selection hover:bg-secondary/90 text-typography flex items-center gap-2 px-6"
+        >
+          Ver Interesses Selecionados
+        </Button>
+      </div>
+
+      {/* Custom interest button */}
+      <div className="fixed bottom-32 left-0 right-0 px-4 mb-2 flex justify-center">
+        <Button
+          onClick={handleCreateCustomInterest}
+          className="bg-selection hover:bg-secondary/90 text-typography flex items-center gap-2 px-6"
+        >
+          Criar Interesse Personalizado
+        </Button>
+      </div>
+
+      {/* Navigation bar */}
       <BottomNavigationBar
         variant="user"
         initialActiveId="home"

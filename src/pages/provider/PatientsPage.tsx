@@ -19,6 +19,27 @@ interface Patient {
   highlight?: boolean;
 }
 
+// Função para formatar a data para DD/MM/AAAA
+const formatDisplayDate = (dateString: string | undefined | null): string => {
+  if (!dateString) {
+    return ""; // Retorna string vazia se não houver data
+  }
+  try {
+    const date = new Date(dateString);
+    // Verifica se a data é válida após o parsing
+    if (isNaN(date.getTime())) {
+      return ""; // Data inválida
+    }
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses são 0-indexados
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  } catch (error) {
+    console.error("Error formatting date:", dateString, error);
+    return ""; // Retorna string vazia em caso de erro
+  }
+};
+
 export default function PatientsPage() {
   const [searchValue, setSearchValue] = useState("");
   const [activeTab, setActiveTab] = useState("todos");
@@ -34,7 +55,7 @@ export default function PatientsPage() {
     const fetchPatients = async () => {
       try {
         setLoading(true);
-        const apiPatients = await ProviderService.providerPersonsRetrieve();
+        const apiPatients = await LinkPersonProviderService.providerPersonsList();
 
         // Converter os dados da API para o formato esperado pelo componente
         const formattedPatients: Patient[] = apiPatients.map(
@@ -42,9 +63,9 @@ export default function PatientsPage() {
             id: patient.person_id,
             name: patient.name,
             age: patient.age || 0,
-            lastVisit: patient.last_visit_date || "",
-            lastEmergency: patient.last_emergency_date || "",
-            // Marcar como urgente se tiver emergência nos últimos 30 dias
+            lastVisit: formatDisplayDate(patient.last_visit_date), // Formata a data
+            lastEmergency: formatDisplayDate(patient.last_emergency_date), // Formata a data
+            // Definir a propriedade urgent com base na data do último pedido de ajuda
             urgent: patient.last_emergency_date
               ? (new Date().getTime() -
                 new Date(patient.last_emergency_date).getTime()) /
@@ -73,7 +94,7 @@ export default function PatientsPage() {
 
   // Aplica ordenação por urgência se estiver na aba urgentes
   const filteredPatients =
-    activeTab === "Requerem ajuda"
+    activeTab === "urgentes" // Corrigido para "urgentes"
       ? filteredBySearch.filter((patient) => patient.urgent)
       : filteredBySearch;
 
@@ -100,7 +121,7 @@ export default function PatientsPage() {
   // Função para lidar com o clique no paciente e navegar para a página individual
   const handlePatientClick = (patient: any) => {
     console.log(`Navegando para página do paciente: ${patient.name}`);
-    window.location.href = `/patient/${patient.id}`;
+    navigate(`/provider/patient/${patient.id}`);
   };
 
   // Determina a variante do botão do paciente baseado nos atributos
@@ -167,7 +188,7 @@ export default function PatientsPage() {
                   Copiar
                 </Button>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray2 mt-1">
                 Este código expira em 10 minutos.
               </p>
             </div>
@@ -183,14 +204,14 @@ export default function PatientsPage() {
           )}
 
           {codeError && (
-            <p className="text-red-500 text-sm mt-1">{codeError}</p>
+            <p className="text-destructive text-sm mt-1">{codeError}</p>
           )}
 
           {linkCode && (
             <Button
               onClick={() => setLinkCode(null)}
               variant="orange"
-              className="w-full mt-2 text-gray_buttons"
+              className="w-full mt-2 text-gray2"
             >
               Gerar novo código
             </Button>
@@ -213,14 +234,14 @@ export default function PatientsPage() {
       {/* Tabs */}
       <div className="px-4 flex border-b mb-4">
         <button
-          className={`py-2 px-4 ${activeTab === "todos" ? "border-b-2 border-[#FA6E5A] text-[#FA6E5A] font-medium" : ""}`}
+          className={`py-2 px-4 ${activeTab === "todos" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
           onClick={() => setActiveTab("todos")}
         >
           Todos
         </button>
         <button
-          className={`py-2 px-4 ${activeTab === "Requerem ajuda" ? "border-b-2 border-[#FA6E5A] text-[#FA6E5A] font-medium" : ""}`}
-          onClick={() => setActiveTab("Requrem ajuda")}
+          className={`py-2 px-4 ${activeTab === "urgentes" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
+          onClick={() => setActiveTab("urgentes")}
         >
           Requerem ajuda
         </button>
@@ -229,11 +250,11 @@ export default function PatientsPage() {
       {/* Patients list */}
       <div className="flex-1 px-4 overflow-auto">
         {loading ? (
-          <div className="text-center p-4 text-gray-500">
+          <div className="text-center p-4 text-gray2">
             Carregando pacientes...
           </div>
         ) : error ? (
-          <div className="text-center p-4 text-red-500">{error}</div>
+          <div className="text-center p-4 text-destructive">{error}</div>
         ) : filteredPatients.length > 0 ? (
           filteredPatients.map((patient, index) => (
             <PatientButton
@@ -241,13 +262,13 @@ export default function PatientsPage() {
               variant={getPatientVariant(patient)}
               name={patient.name}
               age={patient.age || 0}
-              lastEmergency={patient.lastEmergency || "Sem pedidos de ajuda"}
-              lastVisit={patient.lastVisit || "-"}
+              lastEmergency={patient.lastEmergency || "Sem pedidos de ajuda"} // Mantém o fallback aqui caso a data formatada seja ""
+              lastVisit={patient.lastVisit || "-"} // Mantém o fallback aqui
               onClick={() => handlePatientClick(patient)}
             />
           ))
         ) : (
-          <div className="text-center p-4 text-gray-500">
+          <div className="text-center p-4 text-gray2">
             Nenhum paciente encontrado com este nome.
           </div>
         )}

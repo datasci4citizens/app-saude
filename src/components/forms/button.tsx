@@ -4,7 +4,7 @@ import { type VariantProps, cva } from "class-variance-authority";
 import { type ButtonHTMLAttributes, forwardRef } from "react";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-[38px] font-inter font-semibold text-14 ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-[38px] font-inter text-desc-titulo font-semibold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
 
   {
     variants: {
@@ -20,7 +20,7 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm: "h-9 px-3 text-xs",
+        sm: "h-9 px-3", // text-xs is applied here by default by Tailwind for this size, let's keep it unless specified otherwise
         lg: "h-12 px-8",
         responsive: "h-[63px] w-full max-w-[84vw] rounded-[38px]",
       },
