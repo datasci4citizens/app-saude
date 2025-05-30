@@ -1,5 +1,5 @@
 import React from "react";
-import header from "@/lib/images/header.png"
+import header from "@/lib/images/header.png";
 
 interface ProfileBannerProps {
   name?: string;
@@ -59,7 +59,6 @@ const ProfileBanner: React.FC<ProfileBannerProps> = ({
           </div>
         )}
       </div>
-
     </div>
   );
 };

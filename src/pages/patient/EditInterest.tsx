@@ -39,7 +39,7 @@ export default function EditInterest() {
       try {
         const response =
           (await InterestAreasService.personInterestAreasRetrieve(
-            parseInt(interestId)
+            parseInt(interestId),
           )) as InterestAreaResponse;
 
         setInterest(response);
@@ -97,7 +97,7 @@ export default function EditInterest() {
               ...prev,
               triggers: updatedTriggers,
             }
-          : null
+          : null,
       );
 
       // Clear input and show success
@@ -139,7 +139,7 @@ export default function EditInterest() {
               ...prev,
               triggers: updatedTriggers,
             }
-          : null
+          : null,
       );
 
       setSuccess("Pergunta removida com sucesso!");

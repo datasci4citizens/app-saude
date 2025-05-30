@@ -21,7 +21,9 @@ const ViewReminder: React.FC<ViewReminderProps> = ({ reminder, onDelete }) => {
 
       {/* Reminder Details */}
       <div className="p-4 rounded-lg bg-offwhite mb-6 shadow-sm">
-        <h2 className="text-2xl font-bold mb-3 text-typography">{reminder.title}</h2>
+        <h2 className="text-2xl font-bold mb-3 text-typography">
+          {reminder.title}
+        </h2>
         <p className="text-base mb-3 text-typography">
           <strong>Observação:</strong> {reminder.observation}
         </p>
@@ -31,8 +33,8 @@ const ViewReminder: React.FC<ViewReminderProps> = ({ reminder, onDelete }) => {
       </div>
 
       {/* Delete Button */}
-      <button 
-        onClick={onDelete} 
+      <button
+        onClick={onDelete}
         className="flex items-center justify-center gap-2 w-full py-3 text-base font-bold text-primary bg-selection border-none rounded cursor-pointer"
       >
         <FaTrash className="text-lg text-typography" />

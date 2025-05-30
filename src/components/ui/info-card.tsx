@@ -59,12 +59,16 @@ const InfoCard: React.FC<InfoCardProps> = ({
                   className="mgc_alert_diamond_line text-[60px] w-[60px] h-[60px] inline-block text-selection" // Kept text-[60px]
                 ></span>
               </div>
-
               {/* Número de pedidos de ajuda */}
-              <div className="text-titulo text-typography mb-1">{count}</div> {/* Changed from text-4xl font-bold */}
-
+              <div className="text-titulo text-typography mb-1">
+                {count}
+              </div>{" "}
+              {/* Changed from text-4xl font-bold */}
               {/* Texto fixo de pedidos de ajuda */}
-              <div className="text-topicos mb-4 text-typography">PEDIDOS DE AJUDA</div> {/* Changed from text-xs font-bold */}
+              <div className="text-topicos mb-4 text-typography">
+                PEDIDOS DE AJUDA
+              </div>{" "}
+              {/* Changed from text-xs font-bold */}
             </div>
 
             {/* Container do botão alinhado à direita inferior */}
@@ -82,7 +86,9 @@ const InfoCard: React.FC<InfoCardProps> = ({
           <div className="flex flex-col h-full, bg-offwhite">
             {/* Cabeçalho */}
             <div className="p-4 pb-2">
-              <h3 className="text-titulowindow text-typography mb-1"> {/* Changed from text-lg font-bold font-inter */}
+              <h3 className="text-titulowindow text-typography mb-1">
+                {" "}
+                {/* Changed from text-lg font-bold font-inter */}
                 {title}
               </h3>
 
@@ -90,10 +96,14 @@ const InfoCard: React.FC<InfoCardProps> = ({
               <div className="mt-3">
                 {consultations.map((consultation, index) => (
                   <div key={index} className="mb-2">
-                    <div className="text-campos-preenchimento2 text-typography mb-0.5"> {/* Changed from text-xs font-inter */}
+                    <div className="text-campos-preenchimento2 text-typography mb-0.5">
+                      {" "}
+                      {/* Changed from text-xs font-inter */}
                       {consultation.doctor}
                     </div>
-                    <div className="text-campos-preenchimento2 text-black font-inter mb-3"> {/* Changed from text-xs */}
+                    <div className="text-campos-preenchimento2 text-black font-inter mb-3">
+                      {" "}
+                      {/* Changed from text-xs */}
                       {consultation.time}
                     </div>
                   </div>
@@ -116,13 +126,19 @@ const InfoCard: React.FC<InfoCardProps> = ({
           <div className="flex flex-col h-full">
             {/* Cabeçalho */}
             <div className="flex flex-col items-center pt-4 flex-grow">
-              <h3 className="text-titulowindow text-typography mb-1"> {/* Changed from text-lg font-bold font-inter */}
+              <h3 className="text-titulowindow text-typography mb-1">
+                {" "}
+                {/* Changed from text-lg font-bold font-inter */}
                 {title}:
               </h3>
-              <p className="text-titulowindow leading-tight text-typography"> {/* Changed from font-bold text-lg font-inter */}
+              <p className="text-titulowindow leading-tight text-typography">
+                {" "}
+                {/* Changed from font-bold text-lg font-inter */}
                 {name}
               </p>
-              <div className="text-campos-preenchimento2 text-gray2"> {/* Changed from text-xs font-medium font-inter */}
+              <div className="text-campos-preenchimento2 text-gray2">
+                {" "}
+                {/* Changed from text-xs font-medium font-inter */}
                 {date} - {time}
               </div>
             </div>

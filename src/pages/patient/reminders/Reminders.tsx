@@ -115,7 +115,9 @@ const Reminders: React.FC = () => {
       {/* Header */}
       <Header
         title="Hoje, dia 19/04"
-        rightIcon={<span className="mgc-pencil-line text-lg text-typography cursor-pointer" />}
+        rightIcon={
+          <span className="mgc-pencil-line text-lg text-typography cursor-pointer" />
+        }
       />
 
       {/* Horizontal Scrollable Date List */}
@@ -146,7 +148,9 @@ const Reminders: React.FC = () => {
       {relevantConsultations.length > 0 ? (
         <div className="mt-6">
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-base font-semibold m-0 text-typography">Consultas</h2>
+            <h2 className="text-base font-semibold m-0 text-typography">
+              Consultas
+            </h2>
             <span
               className="mgc-sort-line text-lg text-typography cursor-pointer ml-2"
               onClick={() =>
@@ -176,7 +180,9 @@ const Reminders: React.FC = () => {
       {relevantMedicines.length > 0 ? (
         <div className="mt-6">
           <div className="flex items-center justify-between mb-2">
-            <h2 className="text-base font-semibold m-0 text-typography">Medicamentos</h2>
+            <h2 className="text-base font-semibold m-0 text-typography">
+              Medicamentos
+            </h2>
             <span
               className="mgc-sort-line text-lg text-typography cursor-pointer ml-2"
               onClick={() =>
@@ -210,7 +216,7 @@ const Reminders: React.FC = () => {
       ) : null}
 
       {/* Floating Action Button - mudando o ícone para usar text-typography */}
-      <button 
+      <button
         className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-selection flex items-center justify-center shadow-md border-none cursor-pointer"
         onClick={() => navigate("/new-reminder")}
       >

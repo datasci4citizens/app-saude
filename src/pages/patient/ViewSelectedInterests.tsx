@@ -19,7 +19,7 @@ interface InterestAreaResponse {
 export default function ViewSelectedInterests() {
   const navigate = useNavigate();
   const [userInterests, setUserInterests] = useState<InterestAreaResponse[]>(
-    []
+    [],
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +49,7 @@ export default function ViewSelectedInterests() {
   // Handle unlinking/deleting an interest
   const handleUnlinkInterest = async (
     interestId: number,
-    isCustom: boolean
+    isCustom: boolean,
   ) => {
     try {
       // For both custom and default interests, we call the same delete endpoint
@@ -57,7 +57,7 @@ export default function ViewSelectedInterests() {
 
       // Remove from local state after successful delete
       setUserInterests((prev) =>
-        prev.filter((interest) => interest.interest_area_id !== interestId)
+        prev.filter((interest) => interest.interest_area_id !== interestId),
       );
 
       // No need for different handling between custom/default at the UI level
@@ -158,7 +158,7 @@ export default function ViewSelectedInterests() {
                             e.stopPropagation(); // This prevents the click from bubbling up to the parent div
                             handleUnlinkInterest(
                               interest.interest_area_id,
-                              isCustomInterest(interest)
+                              isCustomInterest(interest),
                             );
                           }}
                         >

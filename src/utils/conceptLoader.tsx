@@ -345,7 +345,9 @@ export function useLocationConcepts(): LocationConceptsResult {
  * Hook to load interest areas concepts for UserMainPage
  */
 export function useInterestAreasConcepts(): InterestAreasConceptsResult {
-  const [interestAreasOptions, setInterestAreasOptions] = useState<SelectOption[]>([]);
+  const [interestAreasOptions, setInterestAreasOptions] = useState<
+    SelectOption[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -356,10 +358,7 @@ export function useInterestAreasConcepts(): InterestAreasConceptsResult {
 
       try {
         // Fetch interest areas concepts
-        const concepts = await ConceptService.apiConceptList(
-          "Interest",
-          "pt",
-        );
+        const concepts = await ConceptService.apiConceptList("Interest", "pt");
 
         // Process interest areas options
         setInterestAreasOptions(
@@ -369,10 +368,12 @@ export function useInterestAreasConcepts(): InterestAreasConceptsResult {
             .map((concept) => ({
               value: concept.concept_id,
               label: concept.translated_name || concept.concept_name || "",
-            })).filter((option) =>
-              option.label !== "Área de Interesse" && 
-              option.label !== "Interesse Personalizado"
-            )
+            }))
+            .filter(
+              (option) =>
+                option.label !== "Área de Interesse" &&
+                option.label !== "Interesse Personalizado",
+            ),
         );
       } catch (error) {
         console.error("Error fetching interest areas concepts:", error);

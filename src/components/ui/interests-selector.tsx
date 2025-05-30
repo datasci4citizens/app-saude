@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
 // TypeScript interface for props
 interface ItemType {
@@ -12,15 +12,20 @@ interface InterestsSelectorProps {
   onSelectionChange?: (selectedItems: (string | number)[]) => void;
 }
 
-const InterestsSelector: React.FC<InterestsSelectorProps> = ({ items, onSelectionChange }) => {
+const InterestsSelector: React.FC<InterestsSelectorProps> = ({
+  items,
+  onSelectionChange,
+}) => {
   const [columnCount, setColumnCount] = useState(4);
-  const [itemHeights, setItemHeights] = useState<Record<string | number, number>>({});
+  const [itemHeights, setItemHeights] = useState<
+    Record<string | number, number>
+  >({});
   const [selectedItems, setSelectedItems] = useState<(string | number)[]>([]);
 
   // Generate random heights for each item (between 150px and 300px)
   useEffect(() => {
     const heights: Record<string | number, number> = {};
-    items.forEach(item => {
+    items.forEach((item) => {
       heights[item.id] = Math.floor(Math.random() * (300 - 150 + 1)) + 150;
     });
     setItemHeights(heights);
@@ -40,9 +45,9 @@ const InterestsSelector: React.FC<InterestsSelectorProps> = ({ items, onSelectio
     };
 
     handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -55,9 +60,9 @@ const InterestsSelector: React.FC<InterestsSelectorProps> = ({ items, onSelectio
 
   // Handle item selection/deselection
   const toggleItem = (id: string | number) => {
-    setSelectedItems(prev => {
+    setSelectedItems((prev) => {
       if (prev.includes(id)) {
-        return prev.filter(itemId => itemId !== id);
+        return prev.filter((itemId) => itemId !== id);
       } else {
         return [...prev, id];
       }
@@ -66,26 +71,26 @@ const InterestsSelector: React.FC<InterestsSelectorProps> = ({ items, onSelectio
 
   // Distribute items among columns
   const getColumnsData = () => {
-  if (columnCount <= 0) {
-    return [items]; // Return all items in one column if columnCount is invalid
-  }
-  
-  const columns: ItemType[][] = [];
-  for (let i = 0; i < columnCount; i++) {
-    columns.push([]);
-  }
-
-  items.forEach((item, index) => {
-    if (columnCount > 0) {
-      const columnIndex = index % columnCount;
-      if (columns[columnIndex]) {
-        columns[columnIndex].push(item);
-      }
+    if (columnCount <= 0) {
+      return [items]; // Return all items in one column if columnCount is invalid
     }
-  });
 
-  return columns;
-};
+    const columns: ItemType[][] = [];
+    for (let i = 0; i < columnCount; i++) {
+      columns.push([]);
+    }
+
+    items.forEach((item, index) => {
+      if (columnCount > 0) {
+        const columnIndex = index % columnCount;
+        if (columns[columnIndex]) {
+          columns[columnIndex].push(item);
+        }
+      }
+    });
+
+    return columns;
+  };
 
   const columns = getColumnsData();
 
@@ -101,14 +106,17 @@ const InterestsSelector: React.FC<InterestsSelectorProps> = ({ items, onSelectio
                 <div
                   key={item.id}
                   className={`
-                    ${isSelected ? 'bg-selected' : 'bg-selection hover:bg-selected/70'} 
+                    ${isSelected ? "bg-selected" : "bg-selection hover:bg-selected/70"} 
                     rounded-lg p-4 flex flex-col text-white relative cursor-pointer
                     transition-colors duration-200
                   `}
                   style={{ height: `${itemHeights[item.id]}px` }}
                   onClick={() => toggleItem(item.id)}
                 >
-                  <span className={`text-2xl mb-2 icon-${item.icon}`} aria-hidden="true"></span>
+                  <span
+                    className={`text-2xl mb-2 icon-${item.icon}`}
+                    aria-hidden="true"
+                  ></span>
                   <span className="text-typography font-bold absolute bottom-4">
                     {item.title}
                   </span>

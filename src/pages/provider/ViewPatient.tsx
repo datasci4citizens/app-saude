@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import Header from '@/components/ui/header';
-import { useNavigate } from 'react-router-dom';
-import { PersonService } from '@/api/services/PersonService';
-import { ProviderService } from '@/api/services/ProviderService'; // Import ProviderService
-import type { PersonRetrieve } from '@/api/models/PersonRetrieve';
-import ViewButton from '@/components/ui/ViewButton'; // Import ViewButton
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import Header from "@/components/ui/header";
+import { useNavigate } from "react-router-dom";
+import { PersonService } from "@/api/services/PersonService";
+import { ProviderService } from "@/api/services/ProviderService"; // Import ProviderService
+import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
+import ViewButton from "@/components/ui/ViewButton"; // Import ViewButton
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 // Define a basic interface for Diary Entries
@@ -36,7 +36,10 @@ export default function ViewPatient() {
       const today = new Date();
       let age = today.getFullYear() - birthDate.getFullYear();
       const monthDiff = today.getMonth() - birthDate.getMonth();
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < birthDate.getDate())
+      ) {
         age--;
       }
       return `${age} anos`;
@@ -66,8 +69,9 @@ export default function ViewPatient() {
       const fetchDiaries = async () => {
         try {
           setDiariesLoading(true);
-          const diariesData = await ProviderService.providerPatientsDiariesRetrieve(Number(id));
-          setDiaries(diariesData as DiaryEntry[]); 
+          const diariesData =
+            await ProviderService.providerPatientsDiariesRetrieve(Number(id));
+          setDiaries(diariesData as DiaryEntry[]);
           setDiariesError(null);
         } catch (err) {
           console.error("Error fetching diaries:", err);
@@ -82,15 +86,15 @@ export default function ViewPatient() {
 
   const headerTitle = "Histórico";
   const headerSubtitle = patient?.social_name
-    ? `${context === 'emergency' ? 'Emergência: ' : ''}${patient.social_name} - ${calculateAge(patient.birth_datetime)}`
-    : context === 'emergency'
+    ? `${context === "emergency" ? "Emergência: " : ""}${patient.social_name} - ${calculateAge(patient.birth_datetime)}`
+    : context === "emergency"
       ? `Detalhes da Emergência Paciente: ${id}`
       : `Detalhes do Paciente: ${id}`;
-  
+
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return `Dia ${date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}`;
+      return `Dia ${date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}`;
     } catch (e) {
       return "Data inválida";
     }
@@ -103,27 +107,47 @@ export default function ViewPatient() {
           title={headerTitle}
           subtitle={headerSubtitle}
           subtitleClassName="text-selection text-titulowindow font-inter" // Use text-titulowindow and remove font-bold
-          onBackClick={() => navigate(-1)} 
+          onBackClick={() => navigate(-1)}
         />
       </div>
       <div className="flex-1 px-4 overflow-auto">
         <div className="bg-offwhite p-6 rounded-lg shadow-md">
-          <h2 className="text-titulo mb-4 text-typography"> {/* Use text-titulo and remove font-semibold */} 
+          <h2 className="text-titulo mb-4 text-typography">
+            {" "}
+            {/* Use text-titulo and remove font-semibold */}
             Informações do Paciente
           </h2>
-          {loading && <p className="text-campos-preenchimento2 text-gray2">Carregando...</p>} {/* Use text-campos-preenchimento2 */}
-          {error && <p className="text-campos-preenchimento2 text-destructive">{error}</p>} {/* Use text-campos-preenchimento2 */}
+          {loading && (
+            <p className="text-campos-preenchimento2 text-gray2">
+              Carregando...
+            </p>
+          )}{" "}
+          {/* Use text-campos-preenchimento2 */}
+          {error && (
+            <p className="text-campos-preenchimento2 text-destructive">
+              {error}
+            </p>
+          )}{" "}
+          {/* Use text-campos-preenchimento2 */}
           {patient && !loading && !error && (
             <div className="space-y-3">
               <p className="text-campos-preenchimento2 text-typography">
-                <span className="text-topicos2 text-typography-foreground">ID do Paciente:</span> {patient.person_id} {/* Use text-topicos2 for span */}
+                <span className="text-topicos2 text-typography-foreground">
+                  ID do Paciente:
+                </span>{" "}
+                {patient.person_id} {/* Use text-topicos2 for span */}
               </p>
               <p className="text-campos-preenchimento2 text-typography">
-                <span className="text-topicos2 text-typography-foreground">Nome:</span> {patient.social_name || "Não informado"} {/* Use text-topicos2 for span */}
+                <span className="text-topicos2 text-typography-foreground">
+                  Nome:
+                </span>{" "}
+                {patient.social_name || "Não informado"}{" "}
+                {/* Use text-topicos2 for span */}
               </p>
-              {context === 'emergency' && (
+              {context === "emergency" && (
                 <p className="text-topicos text-destructive">
-                  Contexto: Emergência {/* Use text-topicos and remove font-semibold */}
+                  Contexto: Emergência{" "}
+                  {/* Use text-topicos and remove font-semibold */}
                 </p>
               )}
             </div>
@@ -135,10 +159,22 @@ export default function ViewPatient() {
           <h2 className="text-titulo mb-4 text-typography">
             Diários do Paciente {/* Use text-titulo and remove font-semibold */}
           </h2>
-          {diariesLoading && <p className="text-campos-preenchimento2 text-gray2">Carregando diários...</p>} {/* Use text-campos-preenchimento2 */}
-          {diariesError && <p className="text-campos-preenchimento2 text-destructive">{diariesError}</p>} {/* Use text-campos-preenchimento2 */}
+          {diariesLoading && (
+            <p className="text-campos-preenchimento2 text-gray2">
+              Carregando diários...
+            </p>
+          )}{" "}
+          {/* Use text-campos-preenchimento2 */}
+          {diariesError && (
+            <p className="text-campos-preenchimento2 text-destructive">
+              {diariesError}
+            </p>
+          )}{" "}
+          {/* Use text-campos-preenchimento2 */}
           {!diariesLoading && !diariesError && diaries.length === 0 && (
-            <p className="text-campos-preenchimento2 text-gray2">Nenhum diário encontrado para este paciente.</p> // Use text-campos-preenchimento2
+            <p className="text-campos-preenchimento2 text-gray2">
+              Nenhum diário encontrado para este paciente.
+            </p> // Use text-campos-preenchimento2
           )}
           {!diariesLoading && !diariesError && diaries.length > 0 && (
             <div className="space-y-4">
@@ -147,7 +183,10 @@ export default function ViewPatient() {
                   key={diary.id}
                   dateText={formatDate(diary.created_at)}
                   mainText={diary.title || "Diário"}
-                  subText={diary.text_content.substring(0, 100) + (diary.text_content.length > 100 ? '...' : '')}
+                  subText={
+                    diary.text_content.substring(0, 100) +
+                    (diary.text_content.length > 100 ? "..." : "")
+                  }
                   onClick={() => {
                     console.log("Clicked diary:", diary.id);
                   }}
@@ -157,7 +196,6 @@ export default function ViewPatient() {
           )}
         </div>
       </div>
-      
     </div>
   );
 }

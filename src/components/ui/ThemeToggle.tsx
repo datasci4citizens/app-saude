@@ -1,5 +1,5 @@
-import React from 'react';
-import { useTheme } from '../../contexts/ThemeContext';
+import React from "react";
+import { useTheme } from "../../contexts/ThemeContext";
 
 export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
@@ -10,11 +10,7 @@ export function ThemeToggle() {
       className="p-2 rounded-full bg-gray1 text-typography"
       aria-label="Toggle theme"
     >
-      {theme === 'dark' ? (
-        <span>☀️</span>
-      ) : (
-        <span>🌙</span>
-      )}
+      {theme === "dark" ? <span>☀️</span> : <span>🌙</span>}
     </button>
   );
 }

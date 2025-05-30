@@ -30,8 +30,6 @@ import ViewSelectedInterests from "./pages/patient/ViewSelectedInterests";
 import EditInterest from "./pages/patient/EditInterest";
 import ViewPatient from "./pages/provider/ViewPatient"; // Import ViewPatient
 
-
-
 const NotFound = () => (
   <div>
     <h1>404</h1>
@@ -45,12 +43,12 @@ const NotFound = () => (
 </SWRConfig>;
 
 const router = createBrowserRouter([
-  { 
-    path: "/", 
+  {
+    path: "/",
     element: <OnboardingSlider />,
   },
-  { 
-    path: "/login", 
+  {
+    path: "/login",
     element: <OnboardingSlider />,
   },
   {
@@ -73,11 +71,11 @@ const router = createBrowserRouter([
     path: "/view-diary-user",
     element: <ViewDiaryUser />,
   },
-    {
+  {
     path: "/view-diary-provider",
     element: <ViewPatientDiaries />,
   },
-    {
+  {
     path: "/diary/:diaryId",
     element: <ViewDiaryEntry />,
   },
@@ -168,7 +166,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/interests",
-    element: <InterestPage />
+    element: <InterestPage />,
   },
   {
     path: "/provider/patient/:id", // Route for viewing a patient
