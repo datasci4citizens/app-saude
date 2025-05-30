@@ -19,6 +19,27 @@ interface Patient {
   highlight?: boolean;
 }
 
+// Função para formatar a data para DD/MM/AAAA
+const formatDisplayDate = (dateString: string | undefined | null): string => {
+  if (!dateString) {
+    return ""; // Retorna string vazia se não houver data
+  }
+  try {
+    const date = new Date(dateString);
+    // Verifica se a data é válida após o parsing
+    if (isNaN(date.getTime())) {
+      return ""; // Data inválida
+    }
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses são 0-indexados
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  } catch (error) {
+    console.error("Error formatting date:", dateString, error);
+    return ""; // Retorna string vazia em caso de erro
+  }
+};
+
 export default function PatientsPage() {
   const [searchValue, setSearchValue] = useState("");
   const [activeTab, setActiveTab] = useState("todos");
@@ -42,10 +63,10 @@ export default function PatientsPage() {
             id: patient.person_id,
             name: patient.name,
             age: patient.age || 0,
-            lastVisit: patient.last_visit_date || "",
-            lastEmergency: patient.last_emergency_date || "",
-            // Marcar como alerta se tiver pedido de ajuda nos últimos 30 dias
-            alert: patient.last_emergency_date
+            lastVisit: formatDisplayDate(patient.last_visit_date), // Formata a data
+            lastEmergency: formatDisplayDate(patient.last_emergency_date), // Formata a data
+            // Definir a propriedade urgent com base na data do último pedido de ajuda
+            urgent: patient.last_emergency_date
               ? (new Date().getTime() -
                 new Date(patient.last_emergency_date).getTime()) /
               (1000 * 3600 * 24) <
@@ -73,7 +94,7 @@ export default function PatientsPage() {
 
   // Aplica ordenação por urgência se estiver na aba urgentes
   const filteredPatients =
-    activeTab === "Requerem ajuda"
+    activeTab === "urgentes" // Corrigido para "urgentes"
       ? filteredBySearch.filter((patient) => patient.urgent)
       : filteredBySearch;
 
@@ -100,7 +121,7 @@ export default function PatientsPage() {
   // Função para lidar com o clique no paciente e navegar para a página individual
   const handlePatientClick = (patient: any) => {
     console.log(`Navegando para página do paciente: ${patient.name}`);
-    window.location.href = `/patient/${patient.id}`;
+    navigate(`/provider/patient/${patient.id}`);
   };
 
   // Determina a variante do botão do paciente baseado nos atributos
@@ -241,8 +262,8 @@ export default function PatientsPage() {
               variant={getPatientVariant(patient)}
               name={patient.name}
               age={patient.age || 0}
-              lastEmergency={patient.lastEmergency || "Sem pedidos de ajuda"}
-              lastVisit={patient.lastVisit || "-"}
+              lastEmergency={patient.lastEmergency || "Sem pedidos de ajuda"} // Mantém o fallback aqui caso a data formatada seja ""
+              lastVisit={patient.lastVisit || "-"} // Mantém o fallback aqui
               onClick={() => handlePatientClick(patient)}
             />
           ))

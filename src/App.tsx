@@ -27,6 +27,9 @@ import AcsProfilePage from "./pages/provider/profile/AcsProfilePage";
 import CreateNewInterest from "./pages/patient/CreateNewInterest";
 import ViewSelectedInterests from "./pages/patient/ViewSelectedInterests";
 import EditInterest from "./pages/patient/EditInterest";
+import ViewPatient from "./pages/provider/ViewPatient"; // Import ViewPatient
+
+
 
 const NotFound = () => (
   <div>
@@ -157,6 +160,14 @@ const router = createBrowserRouter([
   {
     path: "/acs-profile",
     element: <AcsProfilePage />,
+  },
+  {
+    path: "/provider/patient/:id", // Route for viewing a patient
+    element: <ViewPatient />,
+  },
+  {
+    path: "/provider/patient/:id/:context", // Route for viewing a patient with context (e.g., emergency)
+    element: <ViewPatient />,
   },
   {
     path: "*",
