@@ -10,7 +10,7 @@ import type { InterestAreaTrigger } from "@/api/models/InterestAreaTrigger";
 // Extended interface for API response that includes the ID
 interface InterestAreaResponse {
   interest_area_id: number;
-  concept_id?: number | null;
+  observation_concept_id?: number | null;
   custom_interest_name?: string | null;
   value_as_string?: string | null;
   triggers?: InterestAreaTrigger[];
@@ -96,8 +96,8 @@ export default function ViewSelectedInterests() {
 
   // Check if an interest is custom or default
   const isCustomInterest = (interest: InterestAreaResponse) => {
-    console.log("Checking if interest is custom:", interest);
-    return interest.concept_id === 2000201;
+    //console.log("Checking if interest is custom:", interest);
+    return !(interest.observation_concept_id === 2000201);
   };
 
   return (
