@@ -18,7 +18,6 @@ export class InterestAreasService {
         });
     }
     /**
-     * Cria uma nova área de interesse para o usuário autenticado
      * @param requestBody
      * @returns InterestArea
      * @throws ApiError
@@ -34,7 +33,6 @@ export class InterestAreasService {
         });
     }
     /**
-     * Retorna uma área de interesse específica do usuário autenticado
      * @param interestAreaId
      * @returns InterestArea
      * @throws ApiError
@@ -51,7 +49,6 @@ export class InterestAreasService {
         });
     }
     /**
-     * Deleta uma área de interesse específica do usuário autenticado
      * @param interestAreaId
      * @returns void
      * @throws ApiError

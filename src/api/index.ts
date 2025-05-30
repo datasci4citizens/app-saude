@@ -41,7 +41,6 @@ export type { FullPersonRetrieve } from './models/FullPersonRetrieve';
 export type { FullProviderCreate } from './models/FullProviderCreate';
 export type { FullProviderRetrieve } from './models/FullProviderRetrieve';
 export type { InterestArea } from './models/InterestArea';
-export type { InterestAreaTrigger } from './models/InterestAreaTrigger';
 export type { LocationCreate } from './models/LocationCreate';
 export type { LocationRetrieve } from './models/LocationRetrieve';
 export type { LocationUpdate } from './models/LocationUpdate';

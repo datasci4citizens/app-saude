@@ -16,19 +16,19 @@ interface Question {
 
 export default function CreateNewInterest() {
   const navigate = useNavigate();
-  
+
   // Interest name state
   const [interestName, setInterestName] = useState("");
   const [nameError, setNameError] = useState<string | undefined>();
-  
+
   // Questions management
   const [newQuestion, setNewQuestion] = useState("");
   const [questionError, setQuestionError] = useState<string | undefined>();
   const [questions, setQuestions] = useState<Question[]>([]);
-  
+
   // Selected questions (to become triggers)
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
-  
+
   // Form submission state
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -54,10 +54,10 @@ export default function CreateNewInterest() {
 
     const newQuestionObj = {
       id: Date.now().toString(), // Unique ID
-      text: newQuestion.trim()
+      text: newQuestion.trim(),
     };
 
-    setQuestions(prev => [...prev, newQuestionObj]);
+    setQuestions((prev) => [...prev, newQuestionObj]);
     setNewQuestion(""); // Clear input after adding
   };
 
@@ -69,7 +69,7 @@ export default function CreateNewInterest() {
   // Submit the new interest with selected questions as triggers
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate interest name
     if (!interestName.trim()) {
       setNameError("Nome do interesse é obrigatório");
@@ -80,26 +80,16 @@ export default function CreateNewInterest() {
     setSubmitError(null);
 
     try {
-      // Create triggers from selected questions
-      const triggers: InterestAreaTrigger[] = selectedQuestions.map(questionId => {
-        const questionObj = questions.find(q => q.id === questionId);
-        return {
-          observation_concept_id: 2000301, // Specific concept ID for custom triggers
-          custom_trigger_name: questionObj?.text || "",
-          value_as_string: questionObj?.text || ""
-        };
-      });
-
       // Create custom interest area
       const newInterestArea: InterestArea = {
         observation_concept_id: 2000201,
         custom_interest_name: interestName.trim(),
-        value_as_string: interestName.trim(),
-        triggers: triggers
+        value_as_string: "",
+        triggers: [],
       };
 
       await InterestAreasService.personInterestAreasCreate(newInterestArea);
-      
+
       // Navigate back to main page on success
       navigate("/user-main-page");
     } catch (error) {
@@ -115,23 +105,19 @@ export default function CreateNewInterest() {
   };
 
   // Convert questions to options format for MultiSelect
-  const questionOptions: SelectOption[] = questions.map(q => ({
+  const questionOptions: SelectOption[] = questions.map((q) => ({
     value: q.id,
-    label: q.text
+    label: q.text,
   }));
 
   return (
-    <div className="p-4 h-full bg-primary overflow-y-auto"
-         style={{ height: "100vh" }}>
-      
-      
-        {/* Header */}
-        
-          <Header
-            title="Novo interesse"
-            onBackClick={handleBack}
-          />
-        
+    <div
+      className="p-4 h-full bg-primary overflow-y-auto"
+      style={{ height: "100vh" }}
+    >
+      {/* Header */}
+
+      <Header title="Novo interesse" onBackClick={handleBack} />
 
       <div className="px-4 py-5 flex flex-col gap-6">
         {/* Error message */}
@@ -154,8 +140,10 @@ export default function CreateNewInterest() {
 
         {/* Selected Questions Section */}
         <div>
-          <h3 className="text-sm font-medium text-typography mb-2">Perguntas selecionadas</h3>
-          
+          <h3 className="text-sm font-medium text-typography mb-2">
+            Perguntas selecionadas
+          </h3>
+
           <MultiSelectCustom
             id="selected-questions"
             name="selected-questions"
@@ -169,8 +157,10 @@ export default function CreateNewInterest() {
 
         {/* Add New Question Section */}
         <div className="mt-2">
-          <h3 className="text-sm font-medium text-typography mb-2">Criar nova pergunta</h3>
-          
+          <h3 className="text-sm font-medium text-typography mb-2">
+            Criar nova pergunta
+          </h3>
+
           <TextField
             id="new-question"
             name="new-question"
@@ -180,10 +170,10 @@ export default function CreateNewInterest() {
             placeholder="Nova pergunta"
             error={questionError}
           />
-          
+
           {/* Add Question Button */}
           <div className="flex justify-center mt-4">
-            <Button 
+            <Button
               onClick={handleAddQuestion}
               className="bg-primary border border-2 border-selection hover:bg-primary/90 text-typography font-bold py-3 px-6 uppercase"
               type="button"

@@ -18,7 +18,9 @@ interface InterestAreaResponse {
 
 export default function ViewSelectedInterests() {
   const navigate = useNavigate();
-  const [userInterests, setUserInterests] = useState<InterestAreaResponse[]>([]);
+  const [userInterests, setUserInterests] = useState<InterestAreaResponse[]>(
+    []
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,9 +29,11 @@ export default function ViewSelectedInterests() {
     const loadUserInterests = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
-        const interests = await InterestAreasService.personInterestAreasList() as InterestAreaResponse[];
+        const interests =
+          (await InterestAreasService.personInterestAreasList()) as InterestAreaResponse[];
+        console.log("Loaded interests:", interests);
         setUserInterests(interests);
       } catch (err) {
         console.error("Error loading interests:", err);
@@ -43,15 +47,18 @@ export default function ViewSelectedInterests() {
   }, []);
 
   // Handle unlinking/deleting an interest
-  const handleUnlinkInterest = async (interestId: number, isCustom: boolean) => {
+  const handleUnlinkInterest = async (
+    interestId: number,
+    isCustom: boolean
+  ) => {
     try {
       // For both custom and default interests, we call the same delete endpoint
       await InterestAreasService.personInterestAreasDestroy(interestId);
-      
+
       // Remove from local state after successful delete
-      setUserInterests(prev => prev.filter(interest => 
-        interest.interest_area_id !== interestId
-      ));
+      setUserInterests((prev) =>
+        prev.filter((interest) => interest.interest_area_id !== interestId)
+      );
 
       // No need for different handling between custom/default at the UI level
       // The server takes care of either deleting custom interests or just unlinking default ones
@@ -89,17 +96,14 @@ export default function ViewSelectedInterests() {
 
   // Check if an interest is custom or default
   const isCustomInterest = (interest: InterestAreaResponse) => {
-    return interest.concept_id === 2000201
+    return interest.concept_id === 2000201;
   };
 
   return (
     <div className="bg-primary min-h-screen pb-24">
       {/* Header */}
       <div className="p-4">
-        <Header 
-          title="Interesses Cadastrados"
-          onBackClick={handleBack}
-        />
+        <Header title="Interesses Cadastrados" onBackClick={handleBack} />
       </div>
 
       <div className="px-4 py-2">
@@ -120,67 +124,78 @@ export default function ViewSelectedInterests() {
           <div className="flex flex-col gap-4">
             {userInterests.length === 0 ? (
               <div className="flex justify-center py-8">
-                <p className="text-typography">Você ainda não tem interesses cadastrados.</p>
+                <p className="text-typography">
+                  Você ainda não tem interesses cadastrados.
+                </p>
               </div>
             ) : (
               userInterests.map((interest) => (
                 <div
-                    key={interest.interest_area_id}
-                    className="cursor-pointer"
-                    onClick={() => navigate(`/user-edit-interest/${interest.interest_area_id}`)}
-  >
-                
-                <Card  
-                  className="bg-offwhite border-none text-typography"
+                  key={interest.interest_area_id}
+                  className="cursor-pointer"
+                  onClick={() =>
+                    navigate(`/user-edit-interest/${interest.interest_area_id}`)
+                  }
                 >
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-lg flex justify-between items-center">
-                      <span>
-                        {interest.custom_interest_name || interest.value_as_string} 
-                        {" - "}
-                        <span className="text-sm font-normal">
-                          {isCustomInterest(interest) ? "(Personalizado)" : "(Padrão)"}
+                  <Card className="bg-offwhite border-none text-typography">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg flex justify-between items-center">
+                        <span>
+                          {interest.concept_name}
+                          <span className="text-sm font-normal">
+                            {isCustomInterest(interest)
+                              ? " (Personalizado)"
+                              : " (Padrão)"}
+                          </span>
                         </span>
-                      </span>
-                      
-                      <Button 
-                          variant="orange" 
+
+                        <Button
+                          variant="orange"
                           size="sm"
                           className="bg-transparent hover:bg-destructive p-1 h-8 w-8 rounded-full"
                           onClick={(e) => {
                             e.stopPropagation(); // This prevents the click from bubbling up to the parent div
                             handleUnlinkInterest(
-                              interest.interest_area_id, 
+                              interest.interest_area_id,
                               isCustomInterest(interest)
                             );
                           }}
                         >
-
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M18 6L6 18"></path>
-                          <path d="M6 6l12 12"></path>
-                        </svg>
-                      </Button>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    {/* Show triggers if any */}
-                    {interest.triggers && interest.triggers.length > 0 ? (
-                      <ul className="text-sm pl-1 space-y-1">
-                        {interest.triggers.map((trigger, index) => (
-                          <li key={index} className="flex items-start">
-                            <span className="mr-2">•</span>
-                            <span>
-                              {trigger.concept_name|| "Sem descrição"}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="text-sm italic">Sem gatilhos</p>
-                    )}
-                  </CardContent>
-                </Card>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M18 6L6 18"></path>
+                            <path d="M6 6l12 12"></path>
+                          </svg>
+                        </Button>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      {/* Show triggers if any */}
+                      {interest.triggers && interest.triggers.length > 0 ? (
+                        <ul className="text-sm pl-1 space-y-1">
+                          {interest.triggers.map((trigger, index) => (
+                            <li key={index} className="flex items-start">
+                              <span className="mr-2">•</span>
+                              <span>
+                                {trigger.concept_name || "Sem descrição"}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-sm italic">Sem gatilhos</p>
+                      )}
+                    </CardContent>
+                  </Card>
                 </div>
               ))
             )}

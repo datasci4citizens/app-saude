@@ -18,32 +18,35 @@ export default function UserMainPage() {
   const navigate = useNavigate();
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [originalInterests, setOriginalInterests] = useState<string[]>([]);
-  const [userInterestObjects, setUserInterestObjects] = useState<InterestAreaResponse[]>([]);
+  const [userInterestObjects, setUserInterestObjects] = useState<
+    InterestAreaResponse[]
+  >([]);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
   const [syncSuccess, setSyncSuccess] = useState(false);
 
   // Fetch interest areas from API
-  const { 
+  const {
     interestAreasOptions,
-    error: interestAreasError, 
-    isLoading: isLoadingInterests 
+    error: interestAreasError,
+    isLoading: isLoadingInterests,
   } = useInterestAreasConcepts();
 
   // Load user's existing interests on component mount
   useEffect(() => {
     const loadExistingInterests = async () => {
       try {
-        const userInterests = await InterestAreasService.personInterestAreasList() as InterestAreaResponse[];
-        
+        const userInterests =
+          (await InterestAreasService.personInterestAreasList()) as InterestAreaResponse[];
+
         // Store the full objects for deletion purposes
         setUserInterestObjects(userInterests);
-        
+
         // Extract concept IDs for the UI
         const conceptIds = userInterests
-          .map(interest => interest.concept_id?.toString() || '')
-          .filter(id => id !== '');
-        
+          .map((interest) => interest.concept_id?.toString() || "")
+          .filter((id) => id !== "");
+
         setSelectedInterests(conceptIds);
         setOriginalInterests(conceptIds); // Store original interests for comparison
       } catch (error) {
@@ -64,60 +67,94 @@ export default function UserMainPage() {
 
   // Check if there are unsaved changes
   const hasUnsavedChanges = () => {
-    const addedInterests = selectedInterests.filter(id => !originalInterests.includes(id));
-    const removedInterests = originalInterests.filter(id => !selectedInterests.includes(id));
+    const addedInterests = selectedInterests.filter(
+      (id) => !originalInterests.includes(id)
+    );
+    const removedInterests = originalInterests.filter(
+      (id) => !selectedInterests.includes(id)
+    );
     return addedInterests.length > 0 || removedInterests.length > 0;
   };
 
   // Sync changes to server
   const syncInterestsWithServer = async () => {
+    const all_interests = await InterestAreasService.personInterestAreasList();
+    console.log("All interests from server:", all_interests);
+
     setSyncError(null);
     setIsSyncing(true);
-    
+
     try {
       // Find which interests were added and removed
-      const addedInterests = selectedInterests.filter(id => !originalInterests.includes(id));
-      const removedInterests = originalInterests.filter(id => !selectedInterests.includes(id));
+      const addedInterests = selectedInterests.filter(
+        (id) => !originalInterests.includes(id)
+      );
+      const removedInterests = originalInterests.filter(
+        (id) => !selectedInterests.includes(id)
+      );
 
       // Create new interests
       for (const interestId of addedInterests) {
-        const interestOption = interestAreasOptions.find(opt => 
-          opt.value === interestId
+        const interestOption = interestAreasOptions.find(
+          (opt) => opt.value === interestId
         );
 
         if (interestOption) {
           const newInterestArea: InterestArea = {
             observation_concept_id: parseInt(interestId),
-            custom_interest_name: interestOption.label,
-            value_as_string: interestOption.label,
-            triggers: []
           };
-          
-          const result = await InterestAreasService.personInterestAreasCreate(newInterestArea);
-          
+
+          console.log(interestId);
+          console.log("new", newInterestArea);
+
+          // Verificar se o interesse já existe
+          let interestExists = false;
+          for (const interest_area of all_interests) {
+            if (interest_area.observation_concept_id === parseInt(interestId)) {
+              alert(`Interesse já existe: ${interest_area.concept_name}`);
+              interestExists = true;
+              break;
+            }
+          }
+
+          // Se o interesse já existe, pula para o próximo usando continue
+          if (interestExists) {
+            continue;
+          }
+
+          // Cria o interesse se não existir
+          const result = await InterestAreasService.personInterestAreasCreate(
+            newInterestArea
+          );
+
           // Update our local state with the new interest object
-          if (result && 'interest_area_id' in result) {
+          if (result && "interest_area_id" in result) {
             const newInterestWithId = result as InterestAreaResponse;
-            setUserInterestObjects(prev => [...prev, newInterestWithId]);
+            setUserInterestObjects((prev) => [...prev, newInterestWithId]);
           }
         }
       }
 
       // Remove interests
       for (const conceptId of removedInterests) {
-        const interestToDelete = userInterestObjects.find(interest => {
+        const interestToDelete = userInterestObjects.find((interest) => {
           const interestConceptId = interest.concept_id?.toString().trim();
           const searchConceptId = conceptId.toString().trim();
-          
+
           return interestConceptId === searchConceptId;
         });
 
         if (interestToDelete && interestToDelete.interest_area_id) {
-          await InterestAreasService.personInterestAreasDestroy(interestToDelete.interest_area_id);
-          
+          await InterestAreasService.personInterestAreasDestroy(
+            interestToDelete.interest_area_id
+          );
+
           // Update our local state
-          setUserInterestObjects(prev => 
-            prev.filter(interest => interest.interest_area_id !== interestToDelete.interest_area_id)
+          setUserInterestObjects((prev) =>
+            prev.filter(
+              (interest) =>
+                interest.interest_area_id !== interestToDelete.interest_area_id
+            )
           );
         }
       }
@@ -125,12 +162,11 @@ export default function UserMainPage() {
       // Update originalInterests to reflect the current state
       setOriginalInterests([...selectedInterests]);
       setSyncSuccess(true);
-      
+
       // Hide success message after 3 seconds
       setTimeout(() => {
         setSyncSuccess(false);
       }, 3000);
-      
     } catch (error) {
       console.error("Error syncing interests:", error);
       setSyncError("Erro ao salvar interesses. Tente novamente.");
@@ -199,12 +235,16 @@ export default function UserMainPage() {
           value={selectedInterests}
           onChange={handleInterestChange}
           isLoading={isLoadingInterests}
-          placeholder={isLoadingInterests ? "Carregando..." : "Selecione suas áreas de interesse"}
+          placeholder={
+            isLoadingInterests
+              ? "Carregando..."
+              : "Selecione suas áreas de interesse"
+          }
         />
 
         {/* Sync button */}
         <div className="mt-4 flex justify-end">
-          <Button 
+          <Button
             onClick={syncInterestsWithServer}
             className="bg-primary border-selection border-2 hover:bg-secondary/90 text-secondary-foreground px-6 py-3 font-bold uppercase tracking-wide"
             disabled={!hasUnsavedChanges() || isSyncing}
@@ -217,7 +257,9 @@ export default function UserMainPage() {
         {syncSuccess && (
           <div className="flex justify-center mt-4">
             <div className="inline-block p-3 bg-green-100 border border-green-500 text-green-700 rounded-md">
-              <p className="whitespace-nowrap">Interesses salvos com sucesso!</p>
+              <p className="whitespace-nowrap">
+                Interesses salvos com sucesso!
+              </p>
             </div>
           </div>
         )}
@@ -226,7 +268,9 @@ export default function UserMainPage() {
         {interestAreasError && (
           <div className="flex justify-center mt-4">
             <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
-              <p className="whitespace-nowrap">Erro ao carregar áreas de interesse</p>
+              <p className="whitespace-nowrap">
+                Erro ao carregar áreas de interesse
+              </p>
             </div>
           </div>
         )}
@@ -242,24 +286,24 @@ export default function UserMainPage() {
       </div>
 
       {/* Custom interest button */}
-        <div className="fixed bottom-48 left-0 right-0 px-4 mb-2 flex justify-center">
-          <Button 
-            onClick={handleSelectedInterests}
-            className="bg-selection hover:bg-secondary/90 text-typography flex items-center gap-2 px-6"
-          >
-            Ver Interesses Selecionados
-          </Button>
-        </div>
+      <div className="fixed bottom-48 left-0 right-0 px-4 mb-2 flex justify-center">
+        <Button
+          onClick={handleSelectedInterests}
+          className="bg-selection hover:bg-secondary/90 text-typography flex items-center gap-2 px-6"
+        >
+          Ver Interesses Selecionados
+        </Button>
+      </div>
 
       {/* Custom interest button */}
-        <div className="fixed bottom-32 left-0 right-0 px-4 mb-2 flex justify-center">
-          <Button 
-            onClick={handleCreateCustomInterest}
-            className="bg-selection hover:bg-secondary/90 text-typography flex items-center gap-2 px-6"
-          >
-            Criar Interesse Personalizado
-          </Button>
-        </div>
+      <div className="fixed bottom-32 left-0 right-0 px-4 mb-2 flex justify-center">
+        <Button
+          onClick={handleCreateCustomInterest}
+          className="bg-selection hover:bg-secondary/90 text-typography flex items-center gap-2 px-6"
+        >
+          Criar Interesse Personalizado
+        </Button>
+      </div>
 
       {/* Navigation bar */}
       <BottomNavigationBar

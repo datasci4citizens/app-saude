@@ -15,14 +15,14 @@ interface InterestAreaResponse extends InterestArea {
 export default function EditInterest() {
   const navigate = useNavigate();
   const { interestId } = useParams<{ interestId: string }>();
-  
+
   // Interest state
   const [interest, setInterest] = useState<InterestAreaResponse | null>(null);
-  
+
   // New trigger state
   const [newQuestion, setNewQuestion] = useState("");
   const [questionError, setQuestionError] = useState<string | null>(null);
-  
+
   // Form state
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,15 +32,16 @@ export default function EditInterest() {
   useEffect(() => {
     const fetchInterest = async () => {
       if (!interestId) return;
-      
+
       setIsLoading(true);
       setError(null);
-      
+
       try {
-        const response = await InterestAreasService.personInterestAreasRetrieve(
-          parseInt(interestId)
-        ) as InterestAreaResponse;
-        
+        const response =
+          (await InterestAreasService.personInterestAreasRetrieve(
+            parseInt(interestId)
+          )) as InterestAreaResponse;
+
         setInterest(response);
       } catch (err) {
         console.error("Error fetching interest:", err);
@@ -49,7 +50,7 @@ export default function EditInterest() {
         setIsLoading(false);
       }
     };
-    
+
     fetchInterest();
   }, [interestId]);
 
@@ -59,47 +60,52 @@ export default function EditInterest() {
       setQuestionError("Digite uma pergunta");
       return;
     }
-    
+
     if (!interest) return;
-    
+
     setError(null);
     setSuccess(null);
-    
+
+    console.log("interest before adding question:", interest);
+
     try {
       // Create new trigger
       const newTrigger: InterestAreaTrigger = {
         observation_concept_id: 2000301, // Specific concept ID for custom triggers
         custom_trigger_name: newQuestion.trim(),
-        value_as_string: newQuestion.trim()
+        value_as_string: null,
       };
-      
+
       // Add to existing triggers
       const updatedTriggers = [...(interest.triggers || []), newTrigger];
-      
+
       // Update interest with new triggers
       const updatedInterest: InterestArea = {
         ...interest,
-        triggers: updatedTriggers
+        triggers: updatedTriggers,
       };
-      
+
       // Update on the server
+      console.log("Updating interest with new trigger:");
       console.log(updatedInterest);
       await InterestAreasService.personInterestAreasCreate(updatedInterest);
-      
-      
+
       // Update local state
-      setInterest(prev => prev ? {
-        ...prev,
-        triggers: updatedTriggers
-      } : null);
-      
+      setInterest((prev) =>
+        prev
+          ? {
+              ...prev,
+              triggers: updatedTriggers,
+            }
+          : null
+      );
+
       // Clear input and show success
       setNewQuestion("");
       setSuccess("Pergunta adicionada com sucesso!");
-      
+
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(null), 3000);
-      
     } catch (err) {
       console.error("Error adding question:", err);
       setError("Erro ao adicionar pergunta. Tente novamente.");
@@ -109,34 +115,37 @@ export default function EditInterest() {
   // Handle removing a trigger/question
   const handleRemoveTrigger = async (index: number) => {
     if (!interest || !interest.triggers) return;
-    
+
     setError(null);
     setSuccess(null);
-    
+
     try {
       // Create a copy of triggers without the removed one
       const updatedTriggers = interest.triggers.filter((_, i) => i !== index);
-      
+
       // Update interest with filtered triggers
       const updatedInterest: InterestArea = {
         ...interest,
-        triggers: updatedTriggers
+        triggers: updatedTriggers,
       };
-      
+
       // Update on the server
       await InterestAreasService.personInterestAreasCreate(updatedInterest);
-      
+
       // Update local state
-      setInterest(prev => prev ? {
-        ...prev,
-        triggers: updatedTriggers
-      } : null);
-      
+      setInterest((prev) =>
+        prev
+          ? {
+              ...prev,
+              triggers: updatedTriggers,
+            }
+          : null
+      );
+
       setSuccess("Pergunta removida com sucesso!");
-      
+
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(null), 3000);
-      
     } catch (err) {
       console.error("Error removing trigger:", err);
       setError("Erro ao remover pergunta. Tente novamente.");
@@ -157,7 +166,11 @@ export default function EditInterest() {
     <div className="p-4 bg-primary min-h-screen pb-24">
       {/* Header */}
       <Header
-        title={interest?.custom_interest_name || interest?.value_as_string || "Editar Interesse"}
+        title={
+          interest?.custom_interest_name ||
+          interest?.value_as_string ||
+          "Editar Interesse"
+        }
         onBackClick={handleBack}
       />
 
@@ -182,25 +195,40 @@ export default function EditInterest() {
 
             {/* Current Triggers */}
             <div className="mb-8">
-              <h2 className="text-lg font-medium text-typography mb-4">Perguntas associadas</h2>
-              
+              <h2 className="text-lg font-medium text-typography mb-4">
+                Perguntas associadas
+              </h2>
+
               {interest.triggers && interest.triggers.length > 0 ? (
                 <div className="space-y-2">
                   {interest.triggers.map((trigger, index) => (
-                    <div 
+                    <div
                       key={index}
                       className="bg-offwhite p-3 rounded-md flex items-center justify-between"
                     >
                       <span className="text-typography">
-                        {trigger.custom_trigger_name || trigger.concept_name || trigger.value_as_string || "Sem descrição"}
+                        {trigger.custom_trigger_name ||
+                          trigger.concept_name ||
+                          trigger.value_as_string ||
+                          "Sem descrição"}
                       </span>
                       <Button
                         variant="default"
-                        size="sm" 
+                        size="sm"
                         className="p-1 h-8 w-8 rounded-full text-red-500"
                         onClick={() => handleRemoveTrigger(index)}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <path d="M18 6L6 18"></path>
                           <path d="M6 6l12 12"></path>
                         </svg>
@@ -217,8 +245,10 @@ export default function EditInterest() {
 
             {/* Add New Question */}
             <div className="mt-6">
-              <h2 className="text-lg font-medium text-typography mb-4">Criar nova pergunta</h2>
-              
+              <h2 className="text-lg font-medium text-typography mb-4">
+                Criar nova pergunta
+              </h2>
+
               <TextField
                 id="new-question"
                 name="new-question"
@@ -231,10 +261,10 @@ export default function EditInterest() {
                 placeholder="Nova pergunta"
                 error={questionError}
               />
-              
+
               {/* Add Question Button */}
               <div className="flex justify-center mt-4">
-                <Button 
+                <Button
                   onClick={handleAddQuestion}
                   className="bg-primary border border-2 border-selection hover:bg-primary/90 text-typography font-bold py-3 px-6 uppercase"
                   type="button"
