@@ -106,7 +106,7 @@ export function DateField({
         placeholder={placeholder}
         maxLength={10}
         className={cn(
-          "w-full h-14 px-4 py-2 rounded-md border bg-gray2-input text-campos-preenchimento text-typography focus:border-accent1 focus:outline-none", // Updated classes
+          "w-full h-14 px-4 py-2 rounded-md border bg-primary text-campos-preenchimento text-typography focus:border-accent1 focus:outline-none", // Updated classes
           error ? "border-destructive" : "border-gray2-border",
         )}
         ref={inputRef}
