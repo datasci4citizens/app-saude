@@ -125,7 +125,7 @@ export default function EmergencyScreen() {
   // Handle no linked providers
   if (providers && providers.length === 0) {
     return (
-      <div className="flex flex-col h-screen max-w-md mx-auto p-4">
+      <div className="p-4 flex flex-col bg-primary min-h-screen font-inter relative">
         <Header title="Pedido de Ajuda" />
         <div className="flex-1 flex flex-col items-center justify-center">
           <p className="text-gray2 mb-2">
@@ -147,7 +147,7 @@ export default function EmergencyScreen() {
   }
 
   return (
-    <div className="flex flex-col h-screen max-w-md mx-auto p-4 bg-primary">
+    <div className="p-4 flex flex-col bg-primary min-h-screen font-inter relativ">
       <Header title="Pedido de Ajuda" />
 
       {/* Emergency Disclaimer */}
@@ -186,7 +186,7 @@ export default function EmergencyScreen() {
       {/* Removed ml-8 from this div */}
       <div className="space-y-2">
         <h3 className="font-semibold text-[16px] font-inter text-typography"> {/* Added px-4 */}
-          Quais profissionais você deseja alertar?
+          Quais profissionais você deseja enviar pedido de ajuda?
         </h3>
         <div className="flex flex-col gap-4">
           {providers &&
@@ -229,7 +229,7 @@ export default function EmergencyScreen() {
           type="submit"
           disabled={isSubmitting || !selectedProviders.length}
         >
-          {isSubmitting ? "Enviando..." : "ENVIAR ALERTA"}
+          {isSubmitting ? "Enviando..." : "ENVIAR PEDIDO DE AJUDA"}
         </Button>
       </div>
     </form>

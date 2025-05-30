@@ -74,7 +74,7 @@ const PatientButton: React.FC<PatientButtonProps> = ({
               if (onClickEmergency) onClickEmergency();
             }}
           >
-            PEDIDO DE AJUDA ATIVO DESDE {lastEmergency}
+            
             PEDIDO DE AJUDA ATIVO DESDE {lastEmergency}
           </div>
         ) : (
