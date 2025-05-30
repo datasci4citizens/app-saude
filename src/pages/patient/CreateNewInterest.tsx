@@ -5,7 +5,6 @@ import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
-import type { InterestAreaTrigger } from "@/api/models/InterestAreaTrigger";
 import { MultiSelectCustom } from "@/components/forms/multi_select_custom";
 import { SelectOption } from "@/utils/conceptLoader";
 
@@ -52,11 +51,12 @@ export default function CreateNewInterest() {
       return;
     }
 
-    const newQuestionObj = {
-      id: Date.now().toString(), // Unique ID
-      text: newQuestion.trim(),
+    const newQuestionObj: Question = {
+      id: Date.now().toString(), // Gera um ID único
+      text: newQuestion.trim(), // Adiciona o texto do input
     };
 
+    console.log("New question object:", newQuestionObj);
     setQuestions((prev) => [...prev, newQuestionObj]);
     setNewQuestion(""); // Clear input after adding
   };
@@ -64,6 +64,7 @@ export default function CreateNewInterest() {
   // Handle multi-select change
   const handleSelectedQuestionsChange = (selectedValues: string[]) => {
     setSelectedQuestions(selectedValues);
+    console.log("Selected questions:", selectedValues);
   };
 
   // Submit the new interest with selected questions as triggers
@@ -80,13 +81,22 @@ export default function CreateNewInterest() {
     setSubmitError(null);
 
     try {
-      // Create custom interest area
+      // Create triggers from selected questions
+      const triggers = selectedQuestions.map((questionText) => ({
+        observation_concept_id: 2000301, // Specific concept ID for custom triggers
+        custom_trigger_name: questionText,
+        value_as_string: null,
+      }));
+
+      // Create custom interest area with triggers
       const newInterestArea: InterestArea = {
         observation_concept_id: 2000201,
         custom_interest_name: interestName.trim(),
-        value_as_string: "",
-        triggers: [],
+        value_as_string: interestName.trim(), // Using the interest name as value to avoid validation issues
+        triggers: triggers, // Add the created triggers
       };
+
+      console.log("Creating interest with triggers:", newInterestArea);
 
       await InterestAreasService.personInterestAreasCreate(newInterestArea);
 
@@ -106,7 +116,7 @@ export default function CreateNewInterest() {
 
   // Convert questions to options format for MultiSelect
   const questionOptions: SelectOption[] = questions.map((q) => ({
-    value: q.id,
+    value: q.text,
     label: q.text,
   }));
 

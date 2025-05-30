@@ -96,6 +96,7 @@ export default function ViewSelectedInterests() {
 
   // Check if an interest is custom or default
   const isCustomInterest = (interest: InterestAreaResponse) => {
+    console.log("Checking if interest is custom:", interest);
     return interest.concept_id === 2000201;
   };
 
@@ -144,8 +145,8 @@ export default function ViewSelectedInterests() {
                           {interest.concept_name}
                           <span className="text-sm font-normal">
                             {isCustomInterest(interest)
-                              ? " (Personalizado)"
-                              : " (Padrão)"}
+                              ? " (Padrão)"
+                              : " (Personalizado)"}
                           </span>
                         </span>
 
