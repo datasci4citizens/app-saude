@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/forms/button";
 import {
-  SelectField
+  SelectField,
   //SelectTrigger,
   //SelectContent,
   //SelectItem,
@@ -36,22 +36,20 @@ const ModifyHabits = () => {
     { value: "scale", label: "Escala (1-10)" },
     { value: "hours", label: "Horas" },
     { value: "times", label: "Vezes" },
-    { value: "yesno", label: "Sim/Não" }
+    { value: "yesno", label: "Sim/Não" },
   ];
 
   // Handle change from SelectField
-  const handleMeasurementTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleMeasurementTypeChange = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
     setMeasurementType(e.target.value as "scale" | "hours" | "times" | "yesno");
   };
 
   return (
     <div className="max-w-md mx-auto p-4">
-     
-       {/* header */}
-      <Header 
-        title="Criar Novo Hábito" 
-        onBackClick={() => navigate(-1)} 
-      />
+      {/* header */}
+      <Header title="Criar Novo Hábito" onBackClick={() => navigate(-1)} />
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <h2 className="text-2xl font-bold mb-6">Criar Novo Hábito</h2>

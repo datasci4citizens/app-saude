@@ -6,5 +6,5 @@
  * * `linked` - linked
  */
 export enum StatusEnum {
-    LINKED = 'linked',
+  LINKED = "linked",
 }

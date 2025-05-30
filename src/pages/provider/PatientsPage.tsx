@@ -30,8 +30,8 @@ const formatDisplayDate = (dateString: string | undefined | null): string => {
     if (isNaN(date.getTime())) {
       return ""; // Data inválida
     }
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses são 0-indexados
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Meses são 0-indexados
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   } catch (error) {
@@ -55,7 +55,8 @@ export default function PatientsPage() {
     const fetchPatients = async () => {
       try {
         setLoading(true);
-        const apiPatients = await LinkPersonProviderService.providerPersonsList();
+        const apiPatients =
+          await LinkPersonProviderService.providerPersonsList();
 
         // Converter os dados da API para o formato esperado pelo componente
         const formattedPatients: Patient[] = apiPatients.map(
@@ -68,9 +69,9 @@ export default function PatientsPage() {
             // Definir a propriedade urgent com base na data do último pedido de ajuda
             urgent: patient.last_emergency_date
               ? (new Date().getTime() -
-                new Date(patient.last_emergency_date).getTime()) /
-              (1000 * 3600 * 24) <
-              30
+                  new Date(patient.last_emergency_date).getTime()) /
+                  (1000 * 3600 * 24) <
+                30
               : false,
           }),
         );

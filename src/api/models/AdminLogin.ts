@@ -3,7 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export type AdminLogin = {
-    username: string;
-    password: string;
+  username: string;
+  password: string;
 };
-

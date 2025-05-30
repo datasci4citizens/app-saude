@@ -39,8 +39,8 @@ export function ProfessionalInfoForm({
   // Validate CNES format (7 digits)
   const validateCNES = (cnes: string): boolean => {
     // Remove any non-digit characters
-    const cleanCNES = cnes.replace(/\D/g, '');
-    
+    const cleanCNES = cnes.replace(/\D/g, "");
+
     // CNES should have exactly 7 digits
     return cleanCNES.length === 7 && /^\d{7}$/.test(cleanCNES);
   };
@@ -48,8 +48,8 @@ export function ProfessionalInfoForm({
   // Format CNES display (optional - adds visual separation)
   const formatCNES = (value: string): string => {
     // Remove any non-digit characters
-    const cleanValue = value.replace(/\D/g, '');
-    
+    const cleanValue = value.replace(/\D/g, "");
+
     // Limit to 7 digits
     if (cleanValue.length <= 7) {
       return cleanValue;
@@ -108,7 +108,8 @@ export function ProfessionalInfoForm({
     } else {
       const cnesString = formData.professional_registration.toString();
       if (!validateCNES(cnesString)) {
-        newErrors.professional_registration = "CNES deve ter exatamente 7 dígitos";
+        newErrors.professional_registration =
+          "CNES deve ter exatamente 7 dígitos";
       }
     }
 
@@ -187,8 +188,9 @@ export function ProfessionalInfoForm({
       {/* Informative text about CNES and ACS role */}
       <div className="mb-4 p-3 bg-gray1 bg-opacity-20 border border-gray2 rounded-md">
         <p className="text-typography text-sm">
-          <strong>CNES</strong> é o registro oficial do Sistema Único de Saúde (SUS). 
-          Você está se cadastrando como <strong>Agente Comunitário de Saúde (ACS)</strong>.
+          <strong>CNES</strong> é o registro oficial do Sistema Único de Saúde
+          (SUS). Você está se cadastrando como{" "}
+          <strong>Agente Comunitário de Saúde (ACS)</strong>.
         </p>
         <p className="text-gray2 text-xs mt-1">
           Se você não possui CNES, consulte sua coordenação ou unidade de saúde.

@@ -170,14 +170,13 @@ export default function ViewDiaryUser() {
 
 */
 
-
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BackArrow from "@/components/ui/back_arrow";
 import { ObservationService } from "@/api/services/ObservationService";
 import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
 import { useAuth } from "@/contexts/auth";
-import { ApiService } from "@/api/services/ApiService"; 
+import { ApiService } from "@/api/services/ApiService";
 import useSWR from "swr";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -198,7 +197,7 @@ const fetcher = async (url: string) => {
       }
       return userData;
     }
-    
+
     if (url === "diaries") {
       try {
         // Get the user data first
@@ -207,17 +206,21 @@ const fetcher = async (url: string) => {
           console.error("User not available when fetching diaries");
           throw new Error("User not available");
         }
-        
+
         const allObservations = await ObservationService.apiObservationList();
         console.log("Observations fetched:", allObservations?.length || 0);
-        
-        return allObservations.filter(obs => {
+
+        return allObservations.filter((obs) => {
           // Check if observation belongs to current user
-          const belongsToUser = obs.person === user.person_id || String(obs.person) === String(user.person_id);
-          
+          const belongsToUser =
+            obs.person === user.person_id ||
+            String(obs.person) === String(user.person_id);
+
           // Check if it's a diary-related concept (based on your processedDiaries function)
-          const isDiaryEntry = [101, 456, 789].includes(Number(obs.observation_concept));
-          
+          const isDiaryEntry = [101, 456, 789].includes(
+            Number(obs.observation_concept),
+          );
+
           return belongsToUser && isDiaryEntry;
         });
       } catch (error) {
@@ -235,7 +238,7 @@ const fetcher = async (url: string) => {
 export default function ViewDiaryUser() {
   const navigate = useNavigate();
   const { user } = useAuth(); // Match the actual return value of your useAuth hook
-  
+
   // Redirect if not authenticated
   useEffect(() => {
     if (!user) {
@@ -243,42 +246,42 @@ export default function ViewDiaryUser() {
       navigate("/login");
     }
   }, [user, navigate]);
-  
+
   // Fetch user data with proper SWR configuration
-  const { 
-    data: userData, 
-    error: userError, 
-    isLoading: isUserLoading 
+  const {
+    data: userData,
+    error: userError,
+    isLoading: isUserLoading,
   } = useSWR(user ? "user" : null, fetcher, {
     revalidateOnFocus: false,
     onError: (error) => {
       console.error("SWR user error:", error);
-    }
+    },
   });
 
   // Fetch diaries after user is loaded, with proper dependency chaining
-  const { 
-    data: diaries, 
-    error: diariesError, 
-    isLoading: isDiariesLoading 
+  const {
+    data: diaries,
+    error: diariesError,
+    isLoading: isDiariesLoading,
   } = useSWR(userData ? "diaries" : null, fetcher, {
     revalidateOnFocus: false,
     dedupingInterval: 60000, // Cache for 1 minute
     onError: (error) => {
       console.error("SWR diaries error:", error);
-    }
+    },
   });
 
   // Process diaries data
   const processedDiaries = React.useMemo(() => {
     if (!diaries) return [];
-    
+
     const diaryMap = new Map<string, any>();
-    
+
     // First, group all observations by date to find all unique diary entries
     diaries.forEach((obs: ObservationRetrieve) => {
       const diaryId = obs.observation_date || obs.created_at;
-      
+
       if (!diaryMap.has(diaryId)) {
         diaryMap.set(diaryId, {
           id: diaryId,
@@ -286,7 +289,7 @@ export default function ViewDiaryUser() {
           text: "",
           habitsCount: 0,
           wellnessCount: 0,
-          shared: obs.shared_with_provider || false
+          shared: obs.shared_with_provider || false,
         });
       }
     });
@@ -295,9 +298,9 @@ export default function ViewDiaryUser() {
     diaries.forEach((obs: ObservationRetrieve) => {
       const diaryId = obs.observation_date || obs.created_at;
       const entry = diaryMap.get(diaryId);
-      
+
       if (!entry) return; // Safety check
-      
+
       switch (Number(obs.observation_concept)) {
         case 456: // DIARY_HABITS
           // Increment habits count - just count one per observation of this type
@@ -313,8 +316,8 @@ export default function ViewDiaryUser() {
       }
     });
 
-    return Array.from(diaryMap.values()).sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
+    return Array.from(diaryMap.values()).sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
     );
   }, [diaries]);
 
@@ -360,7 +363,7 @@ export default function ViewDiaryUser() {
           Ocorreu um erro ao carregar seus diários. Por favor, tente novamente.
         </div>
         <div className="mt-6 text-center">
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="px-6 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700"
           >
@@ -381,18 +384,42 @@ export default function ViewDiaryUser() {
         </div>
         <div className="text-center py-12">
           <div className="mb-4 text-gray-500">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-16 w-16 mx-auto text-gray-300"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-700 mb-2">Nenhum diário encontrado</h3>
-          <p className="text-gray-500 mb-6">Você ainda não criou nenhum diário.</p>
-          <Link 
-            to="/create-diary" 
+          <h3 className="text-lg font-medium text-gray-700 mb-2">
+            Nenhum diário encontrado
+          </h3>
+          <p className="text-gray-500 mb-6">
+            Você ainda não criou nenhum diário.
+          </p>
+          <Link
+            to="/create-diary"
             className="inline-flex items-center px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-full"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mr-2"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                clipRule="evenodd"
+              />
             </svg>
             Criar Novo Diário
           </Link>
@@ -407,25 +434,30 @@ export default function ViewDiaryUser() {
         <BackArrow onClick={() => navigate(-1)} />
         <PageHeader title="Meus Diários" />
       </div>
-      
+
       <div className="space-y-4">
         {processedDiaries.map((diary) => (
-          <div 
+          <div
             key={diary.id}
             onClick={() => handleDiarySelect(diary.id)}
             className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
           >
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div className="mb-2 md:mb-0">
-                <h3 className="font-medium text-lg text-gray-800">{formatDate(diary.date)}</h3>
+                <h3 className="font-medium text-lg text-gray-800">
+                  {formatDate(diary.date)}
+                </h3>
                 {diary.text && (
-                  <p className="text-gray-600 mt-1 line-clamp-2">{diary.text}</p>
+                  <p className="text-gray-600 mt-1 line-clamp-2">
+                    {diary.text}
+                  </p>
                 )}
               </div>
               <div className="flex flex-wrap gap-2">
                 {diary.habitsCount > 0 && (
                   <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs rounded-full">
-                    {diary.habitsCount} hábito{diary.habitsCount !== 1 ? 's' : ''}
+                    {diary.habitsCount} hábito
+                    {diary.habitsCount !== 1 ? "s" : ""}
                   </span>
                 )}
                 {diary.wellnessCount > 0 && (
@@ -443,14 +475,23 @@ export default function ViewDiaryUser() {
           </div>
         ))}
       </div>
-      
+
       <div className="mt-8 text-center">
-        <Link 
-          to="/create-diary" 
+        <Link
+          to="/create-diary"
           className="inline-flex items-center px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white rounded-full"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5 mr-2"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+              clipRule="evenodd"
+            />
           </svg>
           Criar Novo Diário
         </Link>

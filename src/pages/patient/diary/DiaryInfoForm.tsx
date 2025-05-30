@@ -30,7 +30,9 @@ export default function DiaryInfoForm() {
   const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingWellBeing, setIsLoadingWellBeing] = useState(true);
-  const [timeRange, setTimeRange] = useState<"today" | "sinceLast">("sinceLast");
+  const [timeRange, setTimeRange] = useState<"today" | "sinceLast">(
+    "sinceLast",
+  );
   const [freeText, setFreeText] = useState("");
 
   const [shareHabits, setShareHabits] = useState(false);
@@ -38,7 +40,9 @@ export default function DiaryInfoForm() {
   const [shareText, setShareText] = useState(false);
 
   const [habits, setHabits] = useState<TrackableItem[]>([]);
-  const [wellBeingQuestions, setWellBeingQuestions] = useState<TrackableItem[]>([]);
+  const [wellBeingQuestions, setWellBeingQuestions] = useState<TrackableItem[]>(
+    [],
+  );
 
   // Debug logging
   useEffect(() => {
@@ -50,7 +54,7 @@ export default function DiaryInfoForm() {
     const fetchConcepts = async () => {
       console.log("Starting to fetch concepts...");
       setIsLoadingWellBeing(true);
-      
+
       try {
         const concepts = await ConceptService.apiConceptList(
           "Wellness",
@@ -91,11 +95,11 @@ export default function DiaryInfoForm() {
             value: undefined,
           },
           {
-            id: "test-2", 
+            id: "test-2",
             name: "Teste 2",
             measurementType: "yes_no",
             value: undefined,
-          }
+          },
         ]);
       } finally {
         setIsLoadingWellBeing(false);
@@ -133,20 +137,30 @@ export default function DiaryInfoForm() {
 
     try {
       const diary: DiaryCreate = {
-        date_range_type: timeRange === "today" ? DateRangeTypeEnum.TODAY : DateRangeTypeEnum.SINCE_LAST,
+        date_range_type:
+          timeRange === "today"
+            ? DateRangeTypeEnum.TODAY
+            : DateRangeTypeEnum.SINCE_LAST,
         text: freeText,
         text_shared: shareText,
         habits_shared: shareHabits,
         wellness_shared: shareWellBeing,
         habits: habits
-          .filter((habit) => habit.value !== undefined && habit.value !== null && habit.value !== "")
+          .filter(
+            (habit) =>
+              habit.value !== undefined &&
+              habit.value !== null &&
+              habit.value !== "",
+          )
           .map((habit) => ({
             concept_id: habit.id,
             value: habit.value,
             shared: shareHabits,
           })),
         wellness: wellBeingQuestions
-          .filter((q) => q.value !== undefined && q.value !== null && q.value !== "")
+          .filter(
+            (q) => q.value !== undefined && q.value !== null && q.value !== "",
+          )
           .map((q) => ({
             concept_id: q.id,
             value: q.value,
@@ -167,11 +181,15 @@ export default function DiaryInfoForm() {
     }
   };
 
-  const renderTrackableItem = (item: TrackableItem, items: TrackableItem[], setItems: React.Dispatch<React.SetStateAction<TrackableItem[]>>) => {
+  const renderTrackableItem = (
+    item: TrackableItem,
+    items: TrackableItem[],
+    setItems: React.Dispatch<React.SetStateAction<TrackableItem[]>>,
+  ) => {
     const measurementType = item.measurementType.toLowerCase();
     const isYesNoType = ["yes_no", "yesno"].includes(measurementType);
     const isScaleType = measurementType === "scale";
-    
+
     // Value parsing and conversion
     const rawValue = item.value ? parseInt(item.value) : null;
     const isValid = rawValue !== null && !isNaN(rawValue);
@@ -180,16 +198,24 @@ export default function DiaryInfoForm() {
     const getDisplayValue = () => {
       if (!isValid) {
         return {
-          text: isYesNoType ? "sim ou não" : 
-              isScaleType ? "-/5" :
-              measurementType === "hours" ? "- horas" :
-              measurementType === "times" ? "- vezes" : "-",
-          value: "-"
+          text: isYesNoType
+            ? "sim ou não"
+            : isScaleType
+              ? "-/5"
+              : measurementType === "hours"
+                ? "- horas"
+                : measurementType === "times"
+                  ? "- vezes"
+                  : "-",
+          value: "-",
         };
       }
 
       if (isYesNoType) {
-        return { text: rawValue === 1 ? "sim" : "não", value: rawValue.toString() };
+        return {
+          text: rawValue === 1 ? "sim" : "não",
+          value: rawValue.toString(),
+        };
       }
       if (isScaleType) {
         const frontendValue = Math.round(rawValue / 2);
@@ -197,7 +223,7 @@ export default function DiaryInfoForm() {
       }
       return {
         text: `${rawValue} ${measurementType === "hours" ? "horas" : "vezes"}`,
-        value: rawValue.toString()
+        value: rawValue.toString(),
       };
     };
 
@@ -213,10 +239,16 @@ export default function DiaryInfoForm() {
     return (
       <div key={item.id} className="space-y-4">
         <HabitCard title={item.name} />
-        
+
         <div className="flex flex-col gap-2">
           <Slider
-            value={[isValid ? (isScaleType ? parseInt(display.value) : rawValue) : sliderParams.min]}
+            value={[
+              isValid
+                ? isScaleType
+                  ? parseInt(display.value)
+                  : rawValue
+                : sliderParams.min,
+            ]}
             onValueChange={(value) => {
               console.log("Slider changed for", item.name, "to", value);
               let backendValue;
@@ -240,9 +272,7 @@ export default function DiaryInfoForm() {
               {measurementType === "hours" && " horas"}
               {measurementType === "times" && " vezes"}
             </span>
-            <span className="font-medium text-selection">
-              {display.text}
-            </span>
+            <span className="font-medium text-selection">{display.text}</span>
             <span>
               {sliderParams.max === 1 && isYesNoType ? "sim" : sliderParams.max}
               {isScaleType && "/5"}
@@ -329,19 +359,27 @@ export default function DiaryInfoForm() {
         <div className="space-y-6">
           {isLoadingWellBeing ? (
             <div className="flex items-center justify-center py-8">
-              <div className="text-sm text-gray-500">Carregando perguntas de bem-estar...</div>
+              <div className="text-sm text-gray-500">
+                Carregando perguntas de bem-estar...
+              </div>
             </div>
           ) : wellBeingQuestions.length === 0 ? (
             <div className="flex items-center justify-center py-8">
               <div className="text-sm text-gray-500">
                 Nenhuma pergunta de bem-estar encontrada.
                 <br />
-                <span className="text-xs">Verifique a conexão com o servidor.</span>
+                <span className="text-xs">
+                  Verifique a conexão com o servidor.
+                </span>
               </div>
             </div>
           ) : (
-            wellBeingQuestions.map((question) => 
-              renderTrackableItem(question, wellBeingQuestions, setWellBeingQuestions)
+            wellBeingQuestions.map((question) =>
+              renderTrackableItem(
+                question,
+                wellBeingQuestions,
+                setWellBeingQuestions,
+              ),
             )
           )}
         </div>
@@ -381,7 +419,6 @@ export default function DiaryInfoForm() {
           {isSubmitting ? "Salvando..." : "SALVAR"}
         </Button>
       </div>
-
     </form>
   );
 }

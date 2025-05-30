@@ -106,10 +106,7 @@ const SelectLabel = forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Label
     ref={ref}
-    className={cn(
-      "py-1.5 pr-2 pl-8 text-desc-campos font-inter",
-      className,
-    )}
+    className={cn("py-1.5 pr-2 pl-8 text-desc-campos font-inter", className)}
     {...props}
   />
 ));

@@ -156,20 +156,21 @@ export default function EmergencyScreen() {
           <div className="text-white text-xl font-bold">⚠️</div>
           <div>
             <p className="text-white font-semibold text-sm mb-2">
-              ATENÇÃO: você pode não ser respondido imediatamente ou nem sequer respondido!
+              ATENÇÃO: você pode não ser respondido imediatamente ou nem sequer
+              respondido!
             </p>
             <p className="text-white text-xs">
               Em caso de necessidade, ligue{" "}
-                <a 
-                  href="https://www.gov.br/saude/pt-br/composicao/saes/samu-192"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-bold underline hover:text-white hover:opacity-80 transition-opacity"
-                >
-                  192
-                </a>{" "}
+              <a
+                href="https://www.gov.br/saude/pt-br/composicao/saes/samu-192"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-bold underline hover:text-white hover:opacity-80 transition-opacity"
+              >
+                192
+              </a>{" "}
               ou{" "}
-              <a 
+              <a
                 href="https://cvv.org.br/"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -182,32 +183,34 @@ export default function EmergencyScreen() {
         </div>
       </div>
 
-    <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-6">
-      {/* Removed ml-8 from this div */}
-      <div className="space-y-2">
-        <h3 className="font-semibold text-[16px] font-inter text-typography"> {/* Added px-4 */}
-          Quais profissionais você deseja enviar pedido de ajuda?
-        </h3>
-        <div className="flex flex-col gap-4">
-          {providers &&
-            providers.map((provider: ProviderRetrieve) => (
-              <RadioCheckbox
-                key={provider.provider_id}
-                id={`provider-${provider.provider_id}`}
-                label={
-                  provider.social_name ||
-                  provider.name ||
-                  "Profissional sem nome"
-                }
-                checked={selectedProviders.includes(provider.provider_id)}
-                onCheckedChange={() =>
-                  handleProviderSelect(provider.provider_id)
-                }
-                className="px-4" // Added horizontal padding
-              />
-            ))}
+      <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-6">
+        {/* Removed ml-8 from this div */}
+        <div className="space-y-2">
+          <h3 className="font-semibold text-[16px] font-inter text-typography">
+            {" "}
+            {/* Added px-4 */}
+            Quais profissionais você deseja enviar pedido de ajuda?
+          </h3>
+          <div className="flex flex-col gap-4">
+            {providers &&
+              providers.map((provider: ProviderRetrieve) => (
+                <RadioCheckbox
+                  key={provider.provider_id}
+                  id={`provider-${provider.provider_id}`}
+                  label={
+                    provider.social_name ||
+                    provider.name ||
+                    "Profissional sem nome"
+                  }
+                  checked={selectedProviders.includes(provider.provider_id)}
+                  onCheckedChange={() =>
+                    handleProviderSelect(provider.provider_id)
+                  }
+                  className="px-4" // Added horizontal padding
+                />
+              ))}
+          </div>
         </div>
-      </div>
 
         <div className="space-y-2 ml-8">
           <TextField
@@ -221,18 +224,18 @@ export default function EmergencyScreen() {
           />
         </div>
 
-      {/* Changed px-8 to px-4 */}
-      <div className="px-4 mt-auto pb-4">
-        <Button
-          variant="orange"
-          size="responsive"
-          type="submit"
-          disabled={isSubmitting || !selectedProviders.length}
-        >
-          {isSubmitting ? "Enviando..." : "ENVIAR PEDIDO DE AJUDA"}
-        </Button>
-      </div>
-    </form>
-  </div>
-);
+        {/* Changed px-8 to px-4 */}
+        <div className="px-4 mt-auto pb-4">
+          <Button
+            variant="orange"
+            size="responsive"
+            type="submit"
+            disabled={isSubmitting || !selectedProviders.length}
+          >
+            {isSubmitting ? "Enviando..." : "ENVIAR PEDIDO DE AJUDA"}
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
 }

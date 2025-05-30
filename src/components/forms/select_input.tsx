@@ -76,8 +76,11 @@ export function SelectField({
             </option>
           ) : (
             options.map((option) => (
-              <SelectItem key={option.value} value={String(option.value)}
-              className="text-typography hover:bg-gray1 hover:bg-opacity-20">
+              <SelectItem
+                key={option.value}
+                value={String(option.value)}
+                className="text-typography hover:bg-gray1 hover:bg-opacity-20"
+              >
                 {option.label}
               </SelectItem>
             ))

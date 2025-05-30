@@ -3,6 +3,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export type EmergencyCount = {
-    emergency_count: number;
+  emergency_count: number;
 };
-

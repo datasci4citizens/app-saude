@@ -42,7 +42,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       title: "Logout",
       onClick: () => {
         localStorage.removeItem("token");
-        navigate("/welcome")
+        navigate("/welcome");
       },
       hasArrow: false,
     },
@@ -89,8 +89,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                   {item.title}
                 </span>
                 {item.hasArrow && (
-                  <span className="mgc_right_line text-md">
-                  </span>
+                  <span className="mgc_right_line text-md"></span>
                 )}
               </li>
               {index < menuItems.length - 1 && (

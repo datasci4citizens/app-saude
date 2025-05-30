@@ -15,20 +15,20 @@ const MOCK_PATIENTS = {
     id: "123",
     name: "João Silva",
     age: 42,
-    gender: "Male"
+    gender: "Male",
   },
   "456": {
     id: "456",
     name: "Maria Oliveira",
     age: 35,
-    gender: "Female"
+    gender: "Female",
   },
   "789": {
     id: "789",
     name: "Carlos Santos",
     age: 28,
-    gender: "Male"
-  }
+    gender: "Male",
+  },
 };
 
 // Mock diary entries - shared with provider
@@ -40,7 +40,7 @@ const MOCK_PATIENT_DIARIES = {
       text: "Tive dores nas costas durante a noite. Os exercícios de alongamento que o Dr. recomendou ajudaram bastante. A medicação para dor também está funcionando bem.",
       habitsCount: 3,
       wellnessCount: 5,
-      shared: true
+      shared: true,
     },
     {
       id: "2025-05-15",
@@ -48,7 +48,7 @@ const MOCK_PATIENT_DIARIES = {
       text: "Hoje foi um bom dia. Consegui andar por 20 minutos sem dor. Os exercícios estão fazendo efeito, mas ainda sinto um desconforto quando fico sentado por muito tempo.",
       habitsCount: 4,
       wellnessCount: 5,
-      shared: true
+      shared: true,
     },
     {
       id: "2025-05-10",
@@ -56,17 +56,17 @@ const MOCK_PATIENT_DIARIES = {
       text: "Dor nas costas piorou. Vou precisar remarcar a consulta para antes do previsto se continuar assim.",
       habitsCount: 2,
       wellnessCount: 3,
-      shared: true
-    }
+      shared: true,
+    },
   ],
   "456": [
     {
       id: "2025-05-19",
-      date: "2025-05-19T09:00:00.000Z", 
+      date: "2025-05-19T09:00:00.000Z",
       text: "Estou seguindo a dieta recomendada. Meu nível de açúcar no sangue está mais estável agora. Me sinto com mais energia.",
       habitsCount: 5,
       wellnessCount: 4,
-      shared: true
+      shared: true,
     },
     {
       id: "2025-05-12",
@@ -74,10 +74,10 @@ const MOCK_PATIENT_DIARIES = {
       text: "",
       habitsCount: 3,
       wellnessCount: 4,
-      shared: true
-    }
+      shared: true,
+    },
   ],
-  "789": []  // No shared diaries for this patient
+  "789": [], // No shared diaries for this patient
 };
 
 export default function ViewPatientDiaries() {
@@ -88,27 +88,31 @@ export default function ViewPatientDiaries() {
   const [patient, setPatient] = useState(null);
   const [diaries, setDiaries] = useState([]);
   const [user, setUser] = useState(null);
-  
+
   // Mock data loading and authentication check
   useEffect(() => {
     const loadData = async () => {
       try {
         // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
+        await new Promise((resolve) => setTimeout(resolve, 800));
+
         // Mock successful provider authentication
-        setUser({ id: "provider-001", name: "Dr. Ana Costa", is_provider: true });
-        
+        setUser({
+          id: "provider-001",
+          name: "Dr. Ana Costa",
+          is_provider: true,
+        });
+
         console.log("Patient ID from URL:", patientId);
-        
+
         // Get mock patient data - handle potentially undefined patientId
         if (patientId) {
           const mockPatient = MOCK_PATIENTS[patientId];
           console.log("Found patient:", mockPatient);
-          
+
           if (mockPatient) {
             setPatient(mockPatient);
-            
+
             // Get mock patient diaries
             const mockDiaries = MOCK_PATIENT_DIARIES[patientId] || [];
             setDiaries(mockDiaries);
@@ -129,7 +133,7 @@ export default function ViewPatientDiaries() {
         setIsLoading(false);
       }
     };
-    
+
     loadData();
   }, [patientId]);
 
@@ -145,19 +149,17 @@ export default function ViewPatientDiaries() {
       </div>
     );
   }
-  
+
   // Handle authentication error
   if (!user || !user.is_provider) {
     return (
       <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4">
         <PageHeader title="Diário do Paciente" />
-        <div className="text-center text-red-500">
-          Acesso não autorizado
-        </div>
+        <div className="text-center text-red-500">Acesso não autorizado</div>
       </div>
     );
   }
-  
+
   // Handle patient not found
   if (!patient) {
     return (
@@ -166,13 +168,11 @@ export default function ViewPatientDiaries() {
           <BackArrow />
         </div>
         <PageHeader title="Diário do Paciente" />
-        <div className="text-center text-red-500">
-          Paciente não encontrado
-        </div>
+        <div className="text-center text-red-500">Paciente não encontrado</div>
       </div>
     );
   }
-  
+
   // Handle no shared diary entries
   if (diaries.length === 0) {
     return (
@@ -184,11 +184,13 @@ export default function ViewPatientDiaries() {
         <h2 className="text-xl font-medium text-blue-600 mb-4">
           {patient.name}
         </h2>
-        <div className="text-center text-gray-500">Este paciente não compartilhou nenhum diário</div>
+        <div className="text-center text-gray-500">
+          Este paciente não compartilhou nenhum diário
+        </div>
       </div>
     );
   }
-  
+
   // Normal render with patient's shared diary entries
   return (
     <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4">
@@ -196,9 +198,7 @@ export default function ViewPatientDiaries() {
         <BackArrow />
       </div>
       <PageHeader title="Diário do Paciente" />
-      <h2 className="text-xl font-medium text-primary mb-4">
-        {patient.name}
-      </h2>
+      <h2 className="text-xl font-medium text-primary mb-4">{patient.name}</h2>
       <div className="space-y-4">
         {diaries.map((diary) => (
           <Link
@@ -209,10 +209,10 @@ export default function ViewPatientDiaries() {
             <div className="p-4 border rounded-lg hover:shadow-md transition-shadow border-offwhite bg-offwhite">
               <div className="flex justify-between items-start mb-2">
                 <h3 className="font-semibold text-lg text-neutral-700">
-                  {new Date(diary.date).toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: 'long',
-                    year: 'numeric'
+                  {new Date(diary.date).toLocaleDateString("pt-BR", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
                   })}
                 </h3>
               </div>
@@ -221,9 +221,7 @@ export default function ViewPatientDiaries() {
                 <span>{diary.wellnessCount} wellness questions</span>
               </div>
               {diary.text ? (
-                <p className="text-gray-600 line-clamp-2">
-                  {diary.text}
-                </p>
+                <p className="text-gray-600 line-clamp-2">{diary.text}</p>
               ) : (
                 <p className="text-gray-400 italic">No journal entry</p>
               )}
@@ -231,10 +229,9 @@ export default function ViewPatientDiaries() {
           </Link>
         ))}
       </div>
-    </div>  
+    </div>
   );
 }
-
 
 /*
 import React, { useEffect } from "react";

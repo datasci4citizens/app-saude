@@ -70,9 +70,6 @@
     --destructive: #ff4d4f;
   }
 
-
-
-
   [class^="mgc_"]::before,
   [class*=" mgc_"]::before {
     color: inherit !important;
@@ -83,8 +80,10 @@
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px var(--primary) inset !important;
-  -webkit-text-fill-color: var(--typography) !important;
-  transition: background-color 5000s ease-in-out 0s, color 5000s ease-in-out 0s;
-}
+    -webkit-box-shadow: 0 0 0 30px var(--primary) inset !important;
+    -webkit-text-fill-color: var(--typography) !important;
+    transition:
+      background-color 5000s ease-in-out 0s,
+      color 5000s ease-in-out 0s;
+  }
 }
