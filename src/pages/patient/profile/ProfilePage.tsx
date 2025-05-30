@@ -77,15 +77,15 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       />
 
       {/* Menu Items */}
-      <div className="z-10 h-[calc(100vh-12rem)] pt-2">
-        <ul className="px-4 bg-white rounded-xl shadow-sm overflow-hidden h-full">
+      <div className="z-10 h-[calc(100vh-12rem)] mt-[-15px]">
+        <ul className="px-4 bg-primary rounded-xl shadow-sm overflow-hidden h-full pt-4">
           {menuItems.map((item, index) => (
             <React.Fragment key={index}>
               <li
-                className="px-4 py-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 transition-colors"
+                className="px-4 py-4 flex justify-between items-center cursor-pointer hover:bg-gray1 transition-colors rounded-md"
                 onClick={item.onClick}
               >
-                <span className="text-gray-800 font-inter text-sm">
+                <span className="text-typography font-inter text-sm">
                   {item.title}
                 </span>
                 {item.hasArrow && (
@@ -94,7 +94,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                 )}
               </li>
               {index < menuItems.length - 1 && (
-                <div className="border-b border-gray-100 mx-4"></div>
+                <div className="border-b border-gray1 mx-4"></div>
               )}
             </React.Fragment>
           ))}

@@ -24,6 +24,7 @@ import ViewPatientDiaries from "./pages/patient/diary/ViewDiaryProvider";
 import ViewDiaryEntry from "./pages/patient/diary/ViewDiary";
 import ProfilePage from "./pages/patient/profile/ProfilePage";
 import AcsProfilePage from "./pages/provider/profile/AcsProfilePage";
+import InterestPage from "./pages/patient/interests/InterestsPage";
 import CreateNewInterest from "./pages/patient/CreateNewInterest";
 import ViewSelectedInterests from "./pages/patient/ViewSelectedInterests";
 import EditInterest from "./pages/patient/EditInterest";
@@ -164,6 +165,10 @@ const router = createBrowserRouter([
   {
     path: "/acs-profile",
     element: <AcsProfilePage />,
+  },
+  {
+    path: "/interests",
+    element: <InterestPage />
   },
   {
     path: "/provider/patient/:id", // Route for viewing a patient

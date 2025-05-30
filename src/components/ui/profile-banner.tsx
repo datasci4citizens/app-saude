@@ -16,7 +16,7 @@ const ProfileBanner: React.FC<ProfileBannerProps> = ({
 }) => {
   return (
     <div
-      className="relative bg-homebg p-6 text-primary-foreground overflow-hidden h-48 w-full shadow-md"
+      className="relative bg-homebg p-6 text-primary-foreground overflow-hidden h-48 w-full shadow-md flex items-center"
       onClick={onClick}
     >
       {/* Shapes decorativos - same as HomeBanner */}
@@ -27,7 +27,7 @@ const ProfileBanner: React.FC<ProfileBannerProps> = ({
       />
 
       {/* Conteúdo do perfil */}
-      <div className="relative flex flex-col items-center justify-center h-full z-10">
+      <div className="absolute z-10 w-[100px] left-[calc(50vw-50px)] top-10 flex flex-col items-center">
         {/* Profile image */}
         <div className="bg-white bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mb-2">
           {profileImage ? (
@@ -49,16 +49,17 @@ const ProfileBanner: React.FC<ProfileBannerProps> = ({
         {/* Edit button - optional */}
         {onEditClick && (
           <div
-            className="absolute top-6 right-6 bg-background w-10 h-10 rounded-full flex items-center justify-center"
+            className="absolute -top-2 -right-2 bg-background w-8 h-8 rounded-full flex items-center justify-center"
             onClick={(e) => {
               e.stopPropagation();
               onEditClick();
             }}
           >
-            <span className="mgc_pencil_line text-xl text-success"></span>
+            <span className="mgc_pencil_line text-base text-success"></span>
           </div>
         )}
       </div>
+
     </div>
   );
 };
