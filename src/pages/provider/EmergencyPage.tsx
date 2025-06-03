@@ -47,7 +47,7 @@ const formatDisplayDate = (dateString: string | undefined | null): string => {
             const manualDate = new Date(year, month, day);
             if (!isNaN(manualDate.getTime())) {
               return `${String(manualDate.getDate()).padStart(2, "0")}/${String(
-                manualDate.getMonth() + 1
+                manualDate.getMonth() + 1,
               ).padStart(2, "0")}/${manualDate.getFullYear()}`;
             }
           }
@@ -100,7 +100,7 @@ export default function EmergencyPage() {
       } catch (err) {
         console.error("Erro ao buscar pacientes em pedidos de ajuda:", err);
         setError(
-          "Não foi possível carregar a lista de pacientes em pedidos de ajuda."
+          "Não foi possível carregar a lista de pacientes em pedidos de ajuda.",
         );
         return [];
       }
@@ -108,7 +108,7 @@ export default function EmergencyPage() {
     {
       revalidateOnFocus: false,
       dedupingInterval: 60000, // Cache por 1 minuto
-    }
+    },
   );
 
   // Função auxiliar para converter data DD/MM/AAAA para objeto Date
@@ -157,7 +157,7 @@ export default function EmergencyPage() {
   // Filtra pacientes com base na busca
   const filteredBySearch = emergencyPatients
     ? emergencyPatients.filter((patient) =>
-        patient.name.toLowerCase().includes(searchValue.toLowerCase())
+        patient.name.toLowerCase().includes(searchValue.toLowerCase()),
       )
     : [];
 
