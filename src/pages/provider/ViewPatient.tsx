@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "@/components/ui/header";
-import { useNavigate } from "react-router-dom";
 import { PersonService } from "@/api/services/PersonService";
 import { ProviderService } from "@/api/services/ProviderService"; // Import ProviderService
 import { HelpService } from "@/api/services/HelpService"; // Import HelpService
@@ -29,7 +28,6 @@ interface HelpRequest {
 
 export default function ViewPatient() {
   const { id, context } = useParams<{ id: string; context?: string }>();
-  const navigate = useNavigate();
   const [patient, setPatient] = useState<PersonRetrieve | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,27 +43,6 @@ export default function ViewPatient() {
   );
 
   const [activeTab, setActiveTab] = useState("diarios");
-
-  const calculateAge = (birthDateString?: string | null): string => {
-    if (!birthDateString) return "idade não informada";
-    try {
-      const birthDate = new Date(birthDateString);
-      if (isNaN(birthDate.getTime())) return "idade inválida";
-      const today = new Date();
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDiff = today.getMonth() - birthDate.getMonth();
-      if (
-        monthDiff < 0 ||
-        (monthDiff === 0 && today.getDate() < birthDate.getDate())
-      ) {
-        age--;
-      }
-      return `${age} anos`;
-    } catch (e) {
-      console.error("Error calculating age:", e);
-      return "erro no cálculo da idade";
-    }
-  };
 
   useEffect(() => {
     if (id) {
@@ -148,13 +125,6 @@ export default function ViewPatient() {
     }
   }, [id]);
 
-  const headerTitle = "Histórico";
-  const headerSubtitle = patient?.social_name
-    ? `${context === "emergency" ? "Emergência: " : ""}${patient.social_name} - ${calculateAge(patient.birth_datetime)}`
-    : context === "emergency"
-      ? `Detalhes da Emergência Paciente: ${id}`
-      : `Detalhes do Paciente: ${id}`;
-
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -168,17 +138,11 @@ export default function ViewPatient() {
     <div className="flex flex-col min-h-screen bg-primary pb-24">
       <div className="p-4">
         <Header
-          title={headerTitle}
-          subtitle={headerSubtitle}
-          subtitleClassName="text-selection text-titulowindow font-inter" // Use text-titulowindow and remove font-bold
-          onBackClick={() => navigate(-1)}
+          title="Histórico do Paciente"
+          centered={true}
         />
       </div>
-      <div className="flex-1 px-4 overflow-auto">
-        <h2 className="text-titulo mb-4 text-typography">
-          Histórico do Paciente
-        </h2>
-
+      <div className="flex-1 px-4 overflow-auto m-4">
         {/* Informações do Paciente */}
         {loading && (
           <p className="text-campos-preenchimento2 text-gray2">Carregando...</p>
