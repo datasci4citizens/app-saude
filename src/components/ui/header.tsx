@@ -37,7 +37,9 @@ const Header: React.FC<HeaderProps> = ({
       </button>
 
       <div className="flex flex-nowrap items-between justify-between">
-        <div className={`flex-1 flex flex-col ${centered ? 'items-center' : 'items-start'} justify-center my-3`}>
+        <div
+          className={`flex-1 flex flex-col ${centered ? "items-center" : "items-start"} justify-center my-3`}
+        >
           <h1 className="text-titulo m-0 font-inter text-typography">
             {" "}
             {/* Use text-titulo */}
