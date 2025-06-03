@@ -6,7 +6,9 @@ interface TextFieldProps {
   name: string;
   label?: string;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void; // Update type
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void; // Update type
   placeholder?: string;
   helperText?: string;
   error?: string;
@@ -60,9 +62,9 @@ export function TextField({
           placeholder={placeholder}
           rows={rows}
           className={`${baseClasses} resize-y min-h-[80px]`}
-          style={{ 
-            caretColor: "var(--typography)", 
-            color: "var(--typography)" 
+          style={{
+            caretColor: "var(--typography)",
+            color: "var(--typography)",
           }}
         />
       ) : (
@@ -74,7 +76,10 @@ export function TextField({
           onChange={onChange}
           placeholder={placeholder}
           className={baseClasses}
-          style={{ caretColor: "var(--typography)", color: "var(--typography)" }}
+          style={{
+            caretColor: "var(--typography)",
+            color: "var(--typography)",
+          }}
           onAnimationStart={(e) => {
             // Chrome/Safari trigger this animation when autofilling
             if (e.animationName.includes("onAutoFillStart")) {
