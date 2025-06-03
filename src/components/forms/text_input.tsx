@@ -11,6 +11,7 @@ interface TextFieldProps {
   helperText?: string;
   error?: string;
   type?: string;
+  maxLength?: number;
 }
 
 export function TextField({
@@ -22,6 +23,7 @@ export function TextField({
   placeholder,
   helperText,
   error,
+  maxLength,
   type = "text",
 }: TextFieldProps) {
   return (
@@ -42,6 +44,7 @@ export function TextField({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
+        maxLength={maxLength}
         className={`text-typography bg-primary font-inter font-normal focus:border-selection ${
           error ? "border-destructive" : "border-gray2"
         }`}
