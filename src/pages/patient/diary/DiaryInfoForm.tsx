@@ -41,12 +41,14 @@ export default function DiaryInfoForm() {
   const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingInterests, setIsLoadingInterests] = useState(true);
-  const [timeRange, setTimeRange] = useState<"today" | "sinceLast">("sinceLast");
+  const [timeRange, setTimeRange] = useState<"today" | "sinceLast">(
+    "sinceLast",
+  );
   const [freeText, setFreeText] = useState("");
 
   // User interests state
   const [userInterests, setUserInterests] = useState<UserInterest[]>([]);
-  
+
   // Share switches for different sections
   const [shareHabits, setShareHabits] = useState(false);
   const [shareInterests, setShareInterests] = useState(false);
@@ -71,12 +73,15 @@ export default function DiaryInfoForm() {
         }
 
         // Convert to UserInterest format with response tracking
-        const formattedInterests: UserInterest[] = interests.map((interest) => ({
-          ...interest,
-          interest_area_id: (interest as any).interest_area_id || Math.random(),
-          response: "", // Initialize empty response
-          shared: false, // Initialize as not shared
-        }));
+        const formattedInterests: UserInterest[] = interests.map(
+          (interest) => ({
+            ...interest,
+            interest_area_id:
+              (interest as any).interest_area_id || Math.random(),
+            response: "", // Initialize empty response
+            shared: false, // Initialize as not shared
+          }),
+        );
 
         console.log("Formatted user interests:", formattedInterests);
         setUserInterests(formattedInterests);
@@ -91,17 +96,17 @@ export default function DiaryInfoForm() {
             value_as_string: "Teste Interesse 1",
             response: "",
             shared: false,
-            triggers: []
+            triggers: [],
           },
           {
             interest_area_id: 2,
             observation_concept_id: null,
-            custom_interest_name: "Teste Interesse 2", 
+            custom_interest_name: "Teste Interesse 2",
             value_as_string: "Teste Interesse 2",
             response: "",
             shared: false,
-            triggers: []
-          }
+            triggers: [],
+          },
         ]);
       } finally {
         setIsLoadingInterests(false);
@@ -172,26 +177,29 @@ const handleTriggerSharingToggle = (
   };
 
   // Handle interest response change
-  const handleInterestResponseChange = (interestId: number, response: string) => {
+  const handleInterestResponseChange = (
+    interestId: number,
+    response: string,
+  ) => {
     // console.log("Changing interest response:", interestId, "to:", response);
-    setUserInterests(prev => 
-      prev.map(interest => 
-        interest.interest_area_id === interestId 
+    setUserInterests((prev) =>
+      prev.map((interest) =>
+        interest.interest_area_id === interestId
           ? { ...interest, response }
-          : interest
-      )
+          : interest,
+      ),
     );
   };
 
   // Handle individual interest sharing toggle
   const handleInterestSharingToggle = (interestId: number, shared: boolean) => {
     console.log("Toggling interest sharing:", interestId, "to:", shared);
-    setUserInterests(prev => 
-      prev.map(interest => 
-        interest.interest_area_id === interestId 
+    setUserInterests((prev) =>
+      prev.map((interest) =>
+        interest.interest_area_id === interestId
           ? { ...interest, shared }
-          : interest
-      )
+          : interest,
+      ),
     );
   };
 
@@ -402,11 +410,10 @@ const handleTriggerSharingToggle = (
             Observações Gerais
           </h3>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-typography">Compartilhar com profissionais</span>
-            <Switch
-              checked={shareText}
-              onCheckedChange={setShareText}
-            />
+            <span className="text-sm text-typography">
+              Compartilhar com profissionais
+            </span>
+            <Switch checked={shareText} onCheckedChange={setShareText} />
           </div>
         </div>
         <TextField
