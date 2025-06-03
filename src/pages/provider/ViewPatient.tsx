@@ -137,10 +137,7 @@ export default function ViewPatient() {
   return (
     <div className="flex flex-col min-h-screen bg-primary pb-24">
       <div className="p-4">
-        <Header
-          title="Histórico do Paciente"
-          centered={true}
-        />
+        <Header title="Histórico do Paciente" centered={true} />
       </div>
       <div className="flex-1 px-4 overflow-auto m-4">
         {/* Informações do Paciente */}
