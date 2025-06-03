@@ -5,15 +5,15 @@ import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import { Button } from "@/components/forms/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { InterestAreaTrigger } from "@/api/models/InterestAreaTrigger";
+import type { InterestAreaTriggerCreate } from "@/api/models/InterestAreaTriggerCreate";
 
 // Extended interface for API response that includes the ID
 interface InterestAreaResponse {
   interest_area_id: number;
   observation_concept_id?: number | null;
-  custom_interest_name?: string | null;
+  interest_name?: string | null;
   value_as_string?: string | null;
-  triggers?: InterestAreaTrigger[];
+  triggers?: InterestAreaTriggerCreate[];
 }
 
 export default function ViewSelectedInterests() {
@@ -142,7 +142,7 @@ export default function ViewSelectedInterests() {
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg flex justify-between items-center">
                         <span>
-                          {interest.concept_name}
+                          {interest.interest_name}
                           <span className="text-sm font-normal">
                             {isCustomInterest(interest)
                               ? " (Padrão)"
@@ -187,7 +187,7 @@ export default function ViewSelectedInterests() {
                             <li key={index} className="flex items-start">
                               <span className="mr-2">•</span>
                               <span>
-                                {trigger.concept_name || "Sem descrição"}
+                                {trigger.trigger_name || "Sem descrição"}
                               </span>
                             </li>
                           ))}

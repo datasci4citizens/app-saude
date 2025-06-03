@@ -6,13 +6,13 @@ import { Switch } from "@/components/ui/switch";
 import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
 import type { DiaryCreate } from "@/api/models/DiaryCreate";
-import { DiariesService } from "@/api/services/DiariesService";
+import { DiariesService } from "@/api/services/DiariesService"; // diariesCreate method will be used to submit the diary
 import { DateRangeTypeEnum } from "@/api";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
 
 interface Trigger {
-  concept_name: string;
+  trigger_name: string;
   custom_trigger_name: string | null;
   observation_concept_id: number;
   trigger_id: number;
@@ -23,7 +23,7 @@ interface Trigger {
 
 interface UserInterest extends InterestArea {
   interest_area_id: number;
-  concept_name?: string;
+  interest_name?: string;
   response?: string;
   shared?: boolean;
   triggers?: Trigger[];
@@ -187,58 +187,51 @@ export default function DiaryInfoForm() {
   setIsSubmitting(true);
 
   try {
-    // Collect all wellness items (interests and their triggers)
-    const wellnessItems: Array<{ concept_id: string; value: string; shared: boolean }> = [];
-    
-    // Add interest responses
-    userInterests.forEach(interest => {
-      if (interest.response && interest.response.trim() !== "") {
-        wellnessItems.push({
-          concept_id: interest.interest_area_id.toString(),
-          value: interest.response,
-          shared: interest.shared || false,
-        });
-      }
+    // Format interest areas according to the expected API structure
+    const formattedInterestAreas = userInterests.map(interest => {
+      // Only include interests that have triggers with responses
+      const triggersWithResponses = interest.triggers?.filter(trigger => 
+        trigger.response && trigger.response.trim() !== ""
+      ) || [];
       
-      // Add trigger responses
-      interest.triggers.forEach(trigger => {
-        if (trigger.response && trigger.response.trim() !== "") {
-          wellnessItems.push({
-            concept_id: `${interest.interest_area_id}_${trigger.trigger_id}`,
-            value: trigger.response,
-            shared: trigger.shared || false,
-          });
-        }
-      });
-    });
+      return {
+        interest_area_id: interest.interest_area_id,
+        value_as_string: null, // No text directly associated with interest area
+        shared_with_provider: interest.shared || false,
+        triggers: triggersWithResponses.map(trigger => ({
+          trigger_id: trigger.trigger_id,
+          value_as_string: trigger.response || "",
+        }))
+      };
+    }).filter(interest => interest.triggers.length > 0); // Only include interests with answered triggers
 
-    const diary: DiaryCreate = {
-      date_range_type:
-        timeRange === "today"
-          ? DateRangeTypeEnum.TODAY
-          : DateRangeTypeEnum.SINCE_LAST,
+    const diary = {
+      date_range_type: timeRange === "today" 
+        ? DateRangeTypeEnum.TODAY 
+        : DateRangeTypeEnum.SINCE_LAST,
       text: freeText,
       text_shared: shareText,
-      habits_shared: shareHabits,
-      wellness_shared: shareInterests,
+      interest_areas: formattedInterestAreas,
+      // Include habits if needed
       habits: habits
-        .filter(
-          (habit) =>
-            habit.value !== undefined &&
-            habit.value !== null &&
-            habit.value !== "",
-        )
-        .map((habit) => ({
+        .filter(habit => habit.value !== undefined && habit.value !== null && habit.value !== "")
+        .map(habit => ({
           concept_id: habit.id,
           value: habit.value,
           shared: shareHabits,
         })),
-      wellness: wellnessItems,
     };
 
-    // Rest of the function remains the same
+    console.log("Submitting diary:", diary);
+
+    await DiariesService.diariesCreate(diary);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    navigate(-1);
   } catch (error) {
-    // Error handling remains the same 
+    console.error("Failed to submit diary", error);
+    alert("Ocorreu um erro ao salvar o diário. Por favor, tente novamente.");
+  } finally {
+    setIsSubmitting(false);
   }
 };
 
@@ -288,7 +281,7 @@ export default function DiaryInfoForm() {
         ) : (
           <div className="space-y-4">
             {userInterests.map((interest) => {
-  const interestName = interest.concept_name;
+  const interestName = interest.interest_name;
   
   return (
     <div key={interest.interest_area_id} className="space-y-3">
@@ -320,7 +313,7 @@ export default function DiaryInfoForm() {
               <div className="flex items-center justify-between">
                 <div className="flex">
                   <HabitCard 
-                    title={trigger.concept_name || trigger.custom_trigger_name || "Pergunta relacionada"} 
+                    title={trigger.trigger_name || trigger.custom_trigger_name || "Pergunta relacionada"} 
                     className="inline-block w-auto min-w-fit max-w-full text-sm bg-secondary/20"
                   />
                 </div>

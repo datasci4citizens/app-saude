@@ -5,7 +5,7 @@ import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
-import type { InterestAreaTrigger } from "@/api/models/InterestAreaTrigger";
+import type { InterestAreaTriggerCreate } from "@/api/models/InterestAreaTriggerCreate";
 
 // Extended interface for API response that includes the ID
 interface InterestAreaResponse extends InterestArea {
@@ -70,9 +70,9 @@ export default function EditInterest() {
 
     try {
       // Create new trigger
-      const newTrigger: InterestAreaTrigger = {
+      const newTrigger: InterestAreaTriggerCreate = {
         observation_concept_id: 2000301, // Specific concept ID for custom triggers
-        custom_trigger_name: newQuestion.trim(),
+        trigger_name: newQuestion.trim(),
         value_as_string: null,
       };
 
@@ -159,7 +159,7 @@ export default function EditInterest() {
 
   // Check if this is a custom interest
   const isCustomInterest = () => {
-    return !interest?.concept_id && Boolean(interest?.custom_interest_name);
+    return !interest?.concept_id && Boolean(interest?.interest_name);
   };
 
   return (
@@ -167,7 +167,7 @@ export default function EditInterest() {
       {/* Header */}
       <Header
         title={
-          interest?.custom_interest_name ||
+          interest?.interest_name ||
           interest?.value_as_string ||
           "Editar Interesse"
         }
@@ -207,9 +207,7 @@ export default function EditInterest() {
                       className="bg-offwhite p-3 rounded-md flex items-center justify-between"
                     >
                       <span className="text-typography">
-                        {trigger.custom_trigger_name ||
-                          trigger.concept_name ||
-                          trigger.value_as_string ||
+                        {trigger.trigger_name ||
                           "Sem descrição"}
                       </span>
                       <Button
