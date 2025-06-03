@@ -30,12 +30,14 @@ export default function DiaryInfoForm() {
   const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingInterests, setIsLoadingInterests] = useState(true);
-  const [timeRange, setTimeRange] = useState<"today" | "sinceLast">("sinceLast");
+  const [timeRange, setTimeRange] = useState<"today" | "sinceLast">(
+    "sinceLast",
+  );
   const [freeText, setFreeText] = useState("");
 
   // User interests state
   const [userInterests, setUserInterests] = useState<UserInterest[]>([]);
-  
+
   // Share switches for different sections
   const [shareHabits, setShareHabits] = useState(false);
   const [shareInterests, setShareInterests] = useState(false);
@@ -60,12 +62,15 @@ export default function DiaryInfoForm() {
         }
 
         // Convert to UserInterest format with response tracking
-        const formattedInterests: UserInterest[] = interests.map((interest) => ({
-          ...interest,
-          interest_area_id: (interest as any).interest_area_id || Math.random(),
-          response: "", // Initialize empty response
-          shared: false, // Initialize as not shared
-        }));
+        const formattedInterests: UserInterest[] = interests.map(
+          (interest) => ({
+            ...interest,
+            interest_area_id:
+              (interest as any).interest_area_id || Math.random(),
+            response: "", // Initialize empty response
+            shared: false, // Initialize as not shared
+          }),
+        );
 
         console.log("Formatted user interests:", formattedInterests);
         setUserInterests(formattedInterests);
@@ -80,17 +85,17 @@ export default function DiaryInfoForm() {
             value_as_string: "Teste Interesse 1",
             response: "",
             shared: false,
-            triggers: []
+            triggers: [],
           },
           {
             interest_area_id: 2,
             observation_concept_id: null,
-            custom_interest_name: "Teste Interesse 2", 
+            custom_interest_name: "Teste Interesse 2",
             value_as_string: "Teste Interesse 2",
             response: "",
             shared: false,
-            triggers: []
-          }
+            triggers: [],
+          },
         ]);
       } finally {
         setIsLoadingInterests(false);
@@ -119,26 +124,29 @@ export default function DiaryInfoForm() {
   };
 
   // Handle interest response change
-  const handleInterestResponseChange = (interestId: number, response: string) => {
+  const handleInterestResponseChange = (
+    interestId: number,
+    response: string,
+  ) => {
     // console.log("Changing interest response:", interestId, "to:", response);
-    setUserInterests(prev => 
-      prev.map(interest => 
-        interest.interest_area_id === interestId 
+    setUserInterests((prev) =>
+      prev.map((interest) =>
+        interest.interest_area_id === interestId
           ? { ...interest, response }
-          : interest
-      )
+          : interest,
+      ),
     );
   };
 
   // Handle individual interest sharing toggle
   const handleInterestSharingToggle = (interestId: number, shared: boolean) => {
     console.log("Toggling interest sharing:", interestId, "to:", shared);
-    setUserInterests(prev => 
-      prev.map(interest => 
-        interest.interest_area_id === interestId 
+    setUserInterests((prev) =>
+      prev.map((interest) =>
+        interest.interest_area_id === interestId
           ? { ...interest, shared }
-          : interest
-      )
+          : interest,
+      ),
     );
   };
 
@@ -170,12 +178,13 @@ export default function DiaryInfoForm() {
           })),
         // Include user interests responses in wellness section
         wellness: userInterests
-          .filter(interest => 
-            interest.response !== undefined && 
-            interest.response !== null && 
-            interest.response !== ""
+          .filter(
+            (interest) =>
+              interest.response !== undefined &&
+              interest.response !== null &&
+              interest.response !== "",
           )
-          .map(interest => ({
+          .map((interest) => ({
             concept_id: interest.interest_area_id.toString(),
             value: interest.response,
             shared: interest.shared || false,
@@ -255,43 +264,55 @@ export default function DiaryInfoForm() {
           <div className="space-y-4">
             {userInterests.map((interest) => {
               const interestName = interest.concept_name;
-              
+
               return (
-    <div key={interest.interest_area_id} className="space-y-3">
-      {/* Put card and switch on the same row */}
-      <div className="flex items-center justify-between">
-        <div className="flex">
-          <HabitCard 
-            title={interestName} 
-            className="inline-block w-auto min-w-fit max-w-full"
-          />
-        </div>
-        
-        {/* Individual sharing toggle aligned with the card */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-typography">Compartilhar</span>
-          <Switch
-            checked={interest.shared || false}
-            onCheckedChange={(checked) => handleInterestSharingToggle(interest.interest_area_id, checked)}
-            size="sm"
-          />
-        </div>
-      </div>
-      
-      {/* Text field below */}
-      <div className="space-y-2">
-        <TextField
-          id={`interest-${interest.interest_area_id}`}
-          name={`interest-${interest.interest_area_id}`}
-          value={interest.response || ""}
-          onChange={(e) => handleInterestResponseChange(interest.interest_area_id, e.target.value)}
-          placeholder={`Como você se sente em relação a ${interestName.toLowerCase()}?`}
-          className="border-gray2 border-2 focus:border-selection focus:ring-1 focus:ring-selection"
-        />
-      </div>
-    </div>
-  );
-})}
+                <div key={interest.interest_area_id} className="space-y-3">
+                  {/* Put card and switch on the same row */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex">
+                      <HabitCard
+                        title={interestName}
+                        className="inline-block w-auto min-w-fit max-w-full"
+                      />
+                    </div>
+
+                    {/* Individual sharing toggle aligned with the card */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-typography">
+                        Compartilhar
+                      </span>
+                      <Switch
+                        checked={interest.shared || false}
+                        onCheckedChange={(checked) =>
+                          handleInterestSharingToggle(
+                            interest.interest_area_id,
+                            checked,
+                          )
+                        }
+                        size="sm"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Text field below */}
+                  <div className="space-y-2">
+                    <TextField
+                      id={`interest-${interest.interest_area_id}`}
+                      name={`interest-${interest.interest_area_id}`}
+                      value={interest.response || ""}
+                      onChange={(e) =>
+                        handleInterestResponseChange(
+                          interest.interest_area_id,
+                          e.target.value,
+                        )
+                      }
+                      placeholder={`Como você se sente em relação a ${interestName.toLowerCase()}?`}
+                      className="border-gray2 border-2 focus:border-selection focus:ring-1 focus:ring-selection"
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
@@ -303,11 +324,10 @@ export default function DiaryInfoForm() {
             Observações Gerais
           </h3>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-typography">Compartilhar com profissionais</span>
-            <Switch
-              checked={shareText}
-              onCheckedChange={setShareText}
-            />
+            <span className="text-sm text-typography">
+              Compartilhar com profissionais
+            </span>
+            <Switch checked={shareText} onCheckedChange={setShareText} />
           </div>
         </div>
         <TextField
