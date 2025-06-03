@@ -7,6 +7,6 @@
  * * `since_last` - since_last
  */
 export enum DateRangeTypeEnum {
-    TODAY = 'today',
-    SINCE_LAST = 'since_last',
+  TODAY = "today",
+  SINCE_LAST = "since_last",
 }

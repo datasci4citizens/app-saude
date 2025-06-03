@@ -123,25 +123,25 @@ export default function DiaryInfoForm() {
   }, [location.state]);
 
   const handleTriggerResponseChange = (
-  interestId: number, 
-  triggerId: number, 
-  response: string
-) => {
-  setUserInterests(prev => 
-    prev.map(interest => 
-      interest.interest_area_id === interestId 
-        ? {
-            ...interest,
-            triggers: interest.triggers.map(trigger => 
-              trigger.trigger_id === triggerId 
-                ? { ...trigger, response }
-                : trigger
-            )
-          }
-        : interest
-    )
-  );
-};
+    interestId: number,
+    triggerId: number,
+    response: string,
+  ) => {
+    setUserInterests((prev) =>
+      prev.map((interest) =>
+        interest.interest_area_id === interestId
+          ? {
+              ...interest,
+              triggers: interest.triggers.map((trigger) =>
+                trigger.trigger_id === triggerId
+                  ? { ...trigger, response }
+                  : trigger,
+              ),
+            }
+          : interest,
+      ),
+    );
+  };
 
   const handleItemChange = (
     items: TrackableItem[],
@@ -183,57 +183,66 @@ export default function DiaryInfoForm() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsSubmitting(true);
+    e.preventDefault();
+    setIsSubmitting(true);
 
-  try {
-    // Format interest areas according to the expected API structure
-    const formattedInterestAreas = userInterests.map(interest => {
-      // Only include interests that have triggers with responses
-      const triggersWithResponses = interest.triggers?.filter(trigger => 
-        trigger.response && trigger.response.trim() !== ""
-      ) || [];
-      
-      return {
-        interest_area_id: interest.interest_area_id,
-        value_as_string: null, // No text directly associated with interest area
-        shared_with_provider: interest.shared || false,
-        triggers: triggersWithResponses.map(trigger => ({
-          trigger_id: trigger.trigger_id,
-          value_as_string: trigger.response || "",
-        }))
+    try {
+      // Format interest areas according to the expected API structure
+      const formattedInterestAreas = userInterests
+        .map((interest) => {
+          // Only include interests that have triggers with responses
+          const triggersWithResponses =
+            interest.triggers?.filter(
+              (trigger) => trigger.response && trigger.response.trim() !== "",
+            ) || [];
+
+          return {
+            interest_area_id: interest.interest_area_id,
+            value_as_string: null, // No text directly associated with interest area
+            shared_with_provider: interest.shared || false,
+            triggers: triggersWithResponses.map((trigger) => ({
+              trigger_id: trigger.trigger_id,
+              value_as_string: trigger.response || "",
+            })),
+          };
+        })
+        .filter((interest) => interest.triggers.length > 0); // Only include interests with answered triggers
+
+      const diary = {
+        date_range_type:
+          timeRange === "today"
+            ? DateRangeTypeEnum.TODAY
+            : DateRangeTypeEnum.SINCE_LAST,
+        text: freeText,
+        text_shared: shareText,
+        interest_areas: formattedInterestAreas,
+        // Include habits if needed
+        habits: habits
+          .filter(
+            (habit) =>
+              habit.value !== undefined &&
+              habit.value !== null &&
+              habit.value !== "",
+          )
+          .map((habit) => ({
+            concept_id: habit.id,
+            value: habit.value,
+            shared: shareHabits,
+          })),
       };
-    }).filter(interest => interest.triggers.length > 0); // Only include interests with answered triggers
 
-    const diary = {
-      date_range_type: timeRange === "today" 
-        ? DateRangeTypeEnum.TODAY 
-        : DateRangeTypeEnum.SINCE_LAST,
-      text: freeText,
-      text_shared: shareText,
-      interest_areas: formattedInterestAreas,
-      // Include habits if needed
-      habits: habits
-        .filter(habit => habit.value !== undefined && habit.value !== null && habit.value !== "")
-        .map(habit => ({
-          concept_id: habit.id,
-          value: habit.value,
-          shared: shareHabits,
-        })),
-    };
+      console.log("Submitting diary:", diary);
 
-    console.log("Submitting diary:", diary);
-
-    await DiariesService.diariesCreate(diary);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    navigate(-1);
-  } catch (error) {
-    console.error("Failed to submit diary", error);
-    alert("Ocorreu um erro ao salvar o diário. Por favor, tente novamente.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+      await DiariesService.diariesCreate(diary);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      navigate(-1);
+    } catch (error) {
+      console.error("Failed to submit diary", error);
+      alert("Ocorreu um erro ao salvar o diário. Por favor, tente novamente.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl mx-auto px-4 space-y-6">
@@ -281,68 +290,79 @@ export default function DiaryInfoForm() {
         ) : (
           <div className="space-y-4">
             {userInterests.map((interest) => {
-  const interestName = interest.interest_name;
-  
-  return (
-    <div key={interest.interest_area_id} className="space-y-3">
-      {/* Interest card and switch row */}
-      <div className="flex items-center justify-between">
-        <div className="flex">
-          <HabitCard 
-            title={interestName} 
-            className="inline-block w-auto min-w-fit max-w-full"
-          />
-        </div>
+              const interestName = interest.interest_name;
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-typography">Compartilhar com profissionais</span>
-          <Switch
-            checked={interest.shared || false}
-            onCheckedChange={(checked) => handleInterestSharingToggle(interest.interest_area_id, checked)}
-            size="sm"
-          />
-        </div>
-      </div>
+              return (
+                <div key={interest.interest_area_id} className="space-y-3">
+                  {/* Interest card and switch row */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex">
+                      <HabitCard
+                        title={interestName}
+                        className="inline-block w-auto min-w-fit max-w-full"
+                      />
+                    </div>
 
-      {/* Render triggers if available */}
-      {interest.triggers && interest.triggers.length > 0 && (
-        <div className="ml-4 space-y-4 border-l-2 border-gray2 pl-4 mt-4">
-          {interest.triggers.map((trigger) => (
-            <div key={trigger.trigger_id} className="space-y-2">
-              {/* Trigger title */}
-              <div className="flex items-center justify-between">
-                <div className="flex">
-                  <HabitCard 
-                    title={trigger.trigger_name || trigger.custom_trigger_name || "Pergunta relacionada"} 
-                    className="inline-block w-auto min-w-fit max-w-full text-sm bg-secondary/20"
-                  />
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-typography">
+                        Compartilhar com profissionais
+                      </span>
+                      <Switch
+                        checked={interest.shared || false}
+                        onCheckedChange={(checked) =>
+                          handleInterestSharingToggle(
+                            interest.interest_area_id,
+                            checked,
+                          )
+                        }
+                        size="sm"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Render triggers if available */}
+                  {interest.triggers && interest.triggers.length > 0 && (
+                    <div className="ml-4 space-y-4 border-l-2 border-gray2 pl-4 mt-4">
+                      {interest.triggers.map((trigger) => (
+                        <div key={trigger.trigger_id} className="space-y-2">
+                          {/* Trigger title */}
+                          <div className="flex items-center justify-between">
+                            <div className="flex">
+                              <HabitCard
+                                title={
+                                  trigger.trigger_name ||
+                                  trigger.custom_trigger_name ||
+                                  "Pergunta relacionada"
+                                }
+                                className="inline-block w-auto min-w-fit max-w-full text-sm bg-secondary/20"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Trigger text field */}
+                          <TextField
+                            id={`trigger-${interest.interest_area_id}-${trigger.trigger_id}`}
+                            name={`trigger-${interest.interest_area_id}-${trigger.trigger_id}`}
+                            value={trigger.response || ""}
+                            onChange={(e) =>
+                              handleTriggerResponseChange(
+                                interest.interest_area_id,
+                                trigger.trigger_id,
+                                e.target.value,
+                              )
+                            }
+                            placeholder=""
+                            className="border-grey2 border-2 focus:border-selection"
+                            multiline={true}
+                            rows={2}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
-              
-              {/* Trigger text field */}
-              <TextField
-                id={`trigger-${interest.interest_area_id}-${trigger.trigger_id}`}
-                name={`trigger-${interest.interest_area_id}-${trigger.trigger_id}`}
-                value={trigger.response || ""}
-                onChange={(e) => 
-                  handleTriggerResponseChange(
-                    interest.interest_area_id, 
-                    trigger.trigger_id, 
-                    e.target.value
-                  )
-                }
-                placeholder=""
-                className="border-grey2 border-2 focus:border-selection"
-                multiline={true}
-                rows={2}
-              />
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-})}
+              );
+            })}
           </div>
         )}
       </div>

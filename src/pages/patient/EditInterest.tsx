@@ -207,8 +207,7 @@ export default function EditInterest() {
                       className="bg-offwhite p-3 rounded-md flex items-center justify-between"
                     >
                       <span className="text-typography">
-                        {trigger.trigger_name ||
-                          "Sem descrição"}
+                        {trigger.trigger_name || "Sem descrição"}
                       </span>
                       <Button
                         variant="default"
