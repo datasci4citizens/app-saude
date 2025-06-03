@@ -2,6 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type EmergencyCount = {
-  emergency_count: number;
+export type HelpCreate = {
+  provider?: number | null;
+  value_as_string?: string | null;
+  shared_with_provider?: boolean | null;
 };

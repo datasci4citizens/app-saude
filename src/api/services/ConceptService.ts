@@ -11,9 +11,9 @@ import { OpenAPI } from "../core/OpenAPI";
 import { request as __request } from "../core/request";
 export class ConceptService {
   /**
-   * @param _class Lista de concept_class_id (ex: class=Gender,Ethnicity)
-   * @param lang Idioma da tradução (ex: pt)
-   * @param relationship relationship_id a buscar para cada concept (ex: has_value_type)
+   * @param _class concept_class_id list (ex: class=Gender,Ethnicity)
+   * @param lang Translation language (ex: pt)
+   * @param relationship relationship_id to search for each concept (ex: has_value_type)
    * @returns ConceptRetrieve
    * @throws ApiError
    */
@@ -33,9 +33,9 @@ export class ConceptService {
     });
   }
   /**
-   * @param _class Lista de concept_class_id (ex: class=Gender,Ethnicity)
-   * @param lang Idioma da tradução (ex: pt)
-   * @param relationship relationship_id a buscar para cada concept (ex: has_value_type)
+   * @param _class concept_class_id list (ex: class=Gender,Ethnicity)
+   * @param lang Translation language (ex: pt)
+   * @param relationship relationship_id to search for each concept (ex: has_value_type)
    * @param requestBody
    * @returns ConceptCreate
    * @throws ApiError
@@ -60,9 +60,9 @@ export class ConceptService {
   }
   /**
    * @param conceptId A unique integer value identifying this concept.
-   * @param _class Lista de concept_class_id (ex: class=Gender,Ethnicity)
-   * @param lang Idioma da tradução (ex: pt)
-   * @param relationship relationship_id a buscar para cada concept (ex: has_value_type)
+   * @param _class concept_class_id list (ex: class=Gender,Ethnicity)
+   * @param lang Translation language (ex: pt)
+   * @param relationship relationship_id to search for each concept (ex: has_value_type)
    * @returns ConceptRetrieve
    * @throws ApiError
    */
@@ -87,9 +87,9 @@ export class ConceptService {
   }
   /**
    * @param conceptId A unique integer value identifying this concept.
-   * @param _class Lista de concept_class_id (ex: class=Gender,Ethnicity)
-   * @param lang Idioma da tradução (ex: pt)
-   * @param relationship relationship_id a buscar para cada concept (ex: has_value_type)
+   * @param _class concept_class_id list (ex: class=Gender,Ethnicity)
+   * @param lang Translation language (ex: pt)
+   * @param relationship relationship_id to search for each concept (ex: has_value_type)
    * @param requestBody
    * @returns ConceptUpdate
    * @throws ApiError
@@ -118,9 +118,9 @@ export class ConceptService {
   }
   /**
    * @param conceptId A unique integer value identifying this concept.
-   * @param _class Lista de concept_class_id (ex: class=Gender,Ethnicity)
-   * @param lang Idioma da tradução (ex: pt)
-   * @param relationship relationship_id a buscar para cada concept (ex: has_value_type)
+   * @param _class concept_class_id list (ex: class=Gender,Ethnicity)
+   * @param lang Translation language (ex: pt)
+   * @param relationship relationship_id to search for each concept (ex: has_value_type)
    * @param requestBody
    * @returns ConceptUpdate
    * @throws ApiError
@@ -149,9 +149,9 @@ export class ConceptService {
   }
   /**
    * @param conceptId A unique integer value identifying this concept.
-   * @param _class Lista de concept_class_id (ex: class=Gender,Ethnicity)
-   * @param lang Idioma da tradução (ex: pt)
-   * @param relationship relationship_id a buscar para cada concept (ex: has_value_type)
+   * @param _class concept_class_id list (ex: class=Gender,Ethnicity)
+   * @param lang Translation language (ex: pt)
+   * @param relationship relationship_id to search for each concept (ex: has_value_type)
    * @returns void
    * @throws ApiError
    */

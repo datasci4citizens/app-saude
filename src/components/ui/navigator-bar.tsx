@@ -31,17 +31,17 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
           <span role="img" aria-label="home" className="mgc_home_4_line"></span>
         ),
       },
-      {
-        id: "meds",
-        label: "Remédios",
-        icon: (
-          <span
-            role="img"
-            aria-label="calendar"
-            className="mgc_calendar_line"
-          ></span>
-        ),
-      },
+      //{
+      //  id: "meds",
+      //  label: "Remédios",
+      //  icon: (
+      //    <span
+      //      role="img"
+      //      aria-label="calendar"
+      //      className="mgc_calendar_line"
+      //    ></span>
+      //  ),
+      //},
       {
         id: "diary",
         label: "Diário",
@@ -76,17 +76,17 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
           <span role="img" aria-label="home" className="mgc_home_4_line"></span>
         ),
       },
-      {
-        id: "consults",
-        label: "Próximas consultas",
-        icon: (
-          <span
-            role="img"
-            aria-label="consults"
-            className="mgc_alarm_2_line"
-          ></span>
-        ),
-      },
+      //{
+      //  id: "consults",
+      //  label: "Próximas consultas",
+      //  icon: (
+      //    <span
+      //      role="img"
+      //      aria-label="consults"
+      //      className="mgc_alarm_2_line"
+      //    ></span>
+      //  ),
+      //},
       {
         id: "patients",
         label: "Pacientes",
@@ -98,17 +98,17 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
           ></span>
         ),
       },
-      {
-        id: "emergency",
-        label: "Checar pedidos de ajuda",
-        icon: (
-          <span
-            role="img"
-            aria-label="warning"
-            className="mgc_report_line"
-          ></span>
-        ),
-      },
+      //{
+      //  id: "emergency",
+      //  label: "Checar pedidos de ajuda",
+      //  icon: (
+      //    <span
+      //      role="img"
+      //      aria-label="warning"
+      //      className="mgc_report_line"
+      //    ></span>
+      //  ),
+      //},
       {
         id: "profile",
         label: "Eu",

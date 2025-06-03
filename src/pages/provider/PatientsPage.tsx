@@ -7,14 +7,12 @@ import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderServ
 import { Button } from "@/components/forms/button";
 import Header from "@/components/ui/header";
 
-import { ProviderService } from "@/api/services/ProviderService";
-
 interface Patient {
   id: string | number;
   name: string;
   age: number;
   lastVisit?: string;
-  lastEmergency?: string;
+  lastHelp?: string;
   urgent?: boolean;
   highlight?: boolean;
 }
@@ -65,11 +63,11 @@ export default function PatientsPage() {
             name: patient.name,
             age: patient.age || 0,
             lastVisit: formatDisplayDate(patient.last_visit_date), // Formata a data
-            lastEmergency: formatDisplayDate(patient.last_emergency_date), // Formata a data
+            lastHelp: formatDisplayDate(patient.last_help_date), // Formata a data
             // Definir a propriedade urgent com base na data do último pedido de ajuda
-            urgent: patient.last_emergency_date
+            urgent: patient.last_help_date
               ? (new Date().getTime() -
-                  new Date(patient.last_emergency_date).getTime()) /
+                  new Date(patient.last_help_date).getTime()) /
                   (1000 * 3600 * 24) <
                 30
               : false,
@@ -110,9 +108,9 @@ export default function PatientsPage() {
       case "patients":
         navigate("/patients");
         break;
-      case "emergency":
-        navigate("/emergencies");
-        break;
+      //case "emergency":
+      //  navigate("/emergencies");
+      //  break;
       case "profile":
         navigate("/acs-profile");
         break;
@@ -263,7 +261,7 @@ export default function PatientsPage() {
               variant={getPatientVariant(patient)}
               name={patient.name}
               age={patient.age || 0}
-              lastEmergency={patient.lastEmergency || "Sem pedidos de ajuda"} // Mantém o fallback aqui caso a data formatada seja ""
+              lastEmergency={patient.lastHelp || "Sem pedidos de ajuda"} // Usando lastHelp mas mantendo o prop lastEmergency
               lastVisit={patient.lastVisit || "-"} // Mantém o fallback aqui
               onClick={() => handlePatientClick(patient)}
             />

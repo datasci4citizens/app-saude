@@ -3,8 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * * `linked` - linked
+ * * `unlinked` - unlinked
  */
-export enum StatusEnum {
-  LINKED = "linked",
+export enum PersonProviderUnlinkResponseStatusEnum {
+  UNLINKED = "unlinked",
 }

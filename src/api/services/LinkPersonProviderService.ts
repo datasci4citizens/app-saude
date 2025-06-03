@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { PersonLinkProviderRequest } from "../models/PersonLinkProviderRequest";
 import type { PersonLinkProviderResponse } from "../models/PersonLinkProviderResponse";
+import type { PersonProviderUnlinkResponse } from "../models/PersonProviderUnlinkResponse";
 import type { ProviderLinkCodeResponse } from "../models/ProviderLinkCodeResponse";
 import type { ProviderPersonSummary } from "../models/ProviderPersonSummary";
 import type { ProviderRetrieve } from "../models/ProviderRetrieve";
@@ -11,6 +12,25 @@ import type { CancelablePromise } from "../core/CancelablePromise";
 import { OpenAPI } from "../core/OpenAPI";
 import { request as __request } from "../core/request";
 export class LinkPersonProviderService {
+  /**
+   * @param personId
+   * @param providerId
+   * @returns PersonProviderUnlinkResponse
+   * @throws ApiError
+   */
+  public static personProviderUnlinkCreate(
+    personId: number,
+    providerId: number,
+  ): CancelablePromise<PersonProviderUnlinkResponse> {
+    return __request(OpenAPI, {
+      method: "POST",
+      url: "/person/{person_id}/provider/{provider_id}/unlink/",
+      path: {
+        person_id: personId,
+        provider_id: providerId,
+      },
+    });
+  }
   /**
    * @param requestBody
    * @returns PersonLinkProviderResponse

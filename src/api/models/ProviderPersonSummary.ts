@@ -8,5 +8,5 @@ export type ProviderPersonSummary = {
   age: number | null;
   last_visit_date: string | null;
   last_visit_notes?: string | null;
-  last_emergency_date: string | null;
+  last_help_date: string | null;
 };
