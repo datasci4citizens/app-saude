@@ -13,6 +13,7 @@ interface TextFieldProps {
   helperText?: string;
   error?: string;
   type?: string;
+  maxLength?: number;
   multiline?: boolean;
   rows?: number;
   className?: string;
@@ -27,6 +28,7 @@ export function TextField({
   placeholder,
   helperText,
   error,
+  maxLength,
   type = "text",
   multiline = false,
   rows = 3,
@@ -52,7 +54,6 @@ export function TextField({
           {label}
         </label>
       )}
-
       {multiline ? (
         <textarea
           id={id}
@@ -60,6 +61,7 @@ export function TextField({
           value={value}
           onChange={onChange}
           placeholder={placeholder}
+          maxLength={maxLength}
           rows={rows}
           className={`${baseClasses} resize-y min-h-[80px]`}
           style={{
@@ -75,6 +77,7 @@ export function TextField({
           value={value}
           onChange={onChange}
           placeholder={placeholder}
+          maxLength={maxLength}
           className={baseClasses}
           style={{
             caretColor: "var(--typography)",

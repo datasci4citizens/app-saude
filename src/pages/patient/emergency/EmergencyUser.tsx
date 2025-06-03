@@ -29,11 +29,7 @@ export default function EmergencyScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch user data
-  const {
-    data: user,
-    error: userError,
-    isLoading: isUserLoading,
-  } = useSWR("user", fetcher, {
+  const { data: user, isLoading: isUserLoading } = useSWR("user", fetcher, {
     revalidateOnFocus: false,
   });
 
@@ -197,16 +193,11 @@ export default function EmergencyScreen() {
                 <RadioCheckbox
                   key={provider.provider_id}
                   id={`provider-${provider.provider_id}`}
-                  label={
-                    provider.social_name ||
-                    provider.name ||
-                    "Profissional sem nome"
-                  }
+                  label={provider.social_name || "Profissional sem nome"}
                   checked={selectedProviders.includes(provider.provider_id)}
                   onCheckedChange={() =>
                     handleProviderSelect(provider.provider_id)
                   }
-                  className="px-4" // Added horizontal padding
                 />
               ))}
           </div>
@@ -219,9 +210,13 @@ export default function EmergencyScreen() {
             label="Mensagem"
             placeholder="Descreva seu pedido de ajuda..."
             value={freeText}
-            onChange={(e) => setFreeText(e.target.value)}
+            onChange={(e) => setFreeText(e.target.value.slice(0, 50))}
             type="text"
+            maxLength={50}
           />
+          <p className="text-xs text-gray2 ml-4">
+            {freeText.length}/50 caracteres
+          </p>
         </div>
 
         {/* Changed px-8 to px-4 */}
