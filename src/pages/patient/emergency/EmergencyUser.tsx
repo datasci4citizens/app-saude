@@ -29,10 +29,7 @@ export default function EmergencyScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch user data
-  const {
-    data: user,
-    isLoading: isUserLoading,
-  } = useSWR("user", fetcher, {
+  const { data: user, isLoading: isUserLoading } = useSWR("user", fetcher, {
     revalidateOnFocus: false,
   });
 
@@ -196,10 +193,7 @@ export default function EmergencyScreen() {
                 <RadioCheckbox
                   key={provider.provider_id}
                   id={`provider-${provider.provider_id}`}
-                  label={
-                    provider.social_name ||
-                    "Profissional sem nome"
-                  }
+                  label={provider.social_name || "Profissional sem nome"}
                   checked={selectedProviders.includes(provider.provider_id)}
                   onCheckedChange={() =>
                     handleProviderSelect(provider.provider_id)
