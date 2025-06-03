@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { HelpCount } from "../models/HelpCount";
 import type { HelpCreate } from "../models/HelpCreate";
 import type { ObservationRetrieve } from "../models/ObservationRetrieve";
 import type { CancelablePromise } from "../core/CancelablePromise";
@@ -27,9 +28,24 @@ export class HelpService {
    * @returns ObservationRetrieve
    * @throws ApiError
    */
-  public static providerHelpCountList(): CancelablePromise<
+  public static providerHelpList(): CancelablePromise<
     Array<ObservationRetrieve>
   > {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/provider/help/",
+    });
+  }
+  /**
+   * This endpoint counts the number of active helps (observations) for all patients linked to the provider.
+   *
+   * Returns:
+   * Object with the count of active helps:
+   * - help_count: number of active helps
+   * @returns HelpCount
+   * @throws ApiError
+   */
+  public static providerHelpCountRetrieve(): CancelablePromise<HelpCount> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/provider/help-count/",

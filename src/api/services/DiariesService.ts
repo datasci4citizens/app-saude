@@ -8,13 +8,17 @@ import { OpenAPI } from "../core/OpenAPI";
 import { request as __request } from "../core/request";
 export class DiariesService {
   /**
+   * @param limit Limit the number of returned diaries
    * @returns any No response body
    * @throws ApiError
    */
-  public static diariesRetrieve(): CancelablePromise<any> {
+  public static diariesRetrieve(limit?: number): CancelablePromise<any> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/diaries/",
+      query: {
+        limit: limit,
+      },
     });
   }
   /**
@@ -31,6 +35,20 @@ export class DiariesService {
       url: "/diaries/",
       body: requestBody,
       mediaType: "application/json",
+    });
+  }
+  /**
+   * @param diaryId ID of the diary to delete
+   * @returns void
+   * @throws ApiError
+   */
+  public static diariesDestroy(diaryId: number): CancelablePromise<void> {
+    return __request(OpenAPI, {
+      method: "DELETE",
+      url: "/diaries/",
+      path: {
+        diary_id: diaryId,
+      },
     });
   }
   /**
