@@ -3,10 +3,11 @@
 /* tslint:disable */
 /* eslint-disable */
 export type FactRelationshipCreate = {
-  readonly id: number;
-  fact_id_1: number;
-  fact_id_2: number;
-  domain_concept_1: number;
-  domain_concept_2: number;
-  relationship_concept: number;
+    readonly id: number;
+    fact_id_1: number;
+    fact_id_2: number;
+    domain_concept_1: number;
+    domain_concept_2: number;
+    relationship_concept: number;
 };
+

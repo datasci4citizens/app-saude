@@ -3,8 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type MeasurementCreate = {
-  measurement_date?: string | null;
-  person?: number | null;
-  measurement_concept?: number | null;
-  measurement_type_concept?: number | null;
+    measurement_date?: string | null;
+    person?: number | null;
+    measurement_concept?: number | null;
+    measurement_type_concept?: number | null;
 };
+

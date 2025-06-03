@@ -84,14 +84,14 @@ export default function CreateNewInterest() {
       // Create triggers from selected questions
       const triggers = selectedQuestions.map((questionText) => ({
         observation_concept_id: 2000301, // Specific concept ID for custom triggers
-        custom_trigger_name: questionText,
+        trigger_name: questionText,
         value_as_string: null,
       }));
 
       // Create custom interest area with triggers
       const newInterestArea: InterestArea = {
         observation_concept_id: 2000201,
-        custom_interest_name: interestName.trim(),
+        interest_name: interestName.trim(),
         value_as_string: interestName.trim(), // Using the interest name as value to avoid validation issues
         triggers: triggers, // Add the created triggers
       };

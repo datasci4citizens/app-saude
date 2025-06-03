@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type TokenRefresh = {
-  readonly access: string;
-  refresh: string;
+    readonly access: string;
+    refresh: string;
 };
+

@@ -6,5 +6,5 @@
  * * `unlinked` - unlinked
  */
 export enum PersonProviderUnlinkResponseStatusEnum {
-  UNLINKED = "unlinked",
+    UNLINKED = 'unlinked',
 }

@@ -2,11 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { InterestAreaTriggerCreate } from './InterestAreaTriggerCreate';
-export type InterestArea = {
+export type InterestAreaTriggerCreate = {
     observation_concept_id?: number | null;
-    interest_name?: string | null;
+    trigger_name?: string | null;
     value_as_string?: string | null;
-    triggers?: Array<InterestAreaTriggerCreate>;
+    concept_name?: string | null;
 };
 

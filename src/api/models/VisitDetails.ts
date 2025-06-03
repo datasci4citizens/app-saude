@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type VisitDetails = {
-  person_name: string;
-  visit_date: string;
+    person_name: string;
+    visit_date: string;
 };
+

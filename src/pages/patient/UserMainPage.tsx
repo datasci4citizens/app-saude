@@ -68,10 +68,10 @@ export default function UserMainPage() {
   // Check if there are unsaved changes
   const hasUnsavedChanges = () => {
     const addedInterests = selectedInterests.filter(
-      (id) => !originalInterests.includes(id),
+      (id) => !originalInterests.includes(id)
     );
     const removedInterests = originalInterests.filter(
-      (id) => !selectedInterests.includes(id),
+      (id) => !selectedInterests.includes(id)
     );
     return addedInterests.length > 0 || removedInterests.length > 0;
   };
@@ -87,16 +87,16 @@ export default function UserMainPage() {
     try {
       // Find which interests were added and removed
       const addedInterests = selectedInterests.filter(
-        (id) => !originalInterests.includes(id),
+        (id) => !originalInterests.includes(id)
       );
       const removedInterests = originalInterests.filter(
-        (id) => !selectedInterests.includes(id),
+        (id) => !selectedInterests.includes(id)
       );
 
       // Create new interests
       for (const interestId of addedInterests) {
         const interestOption = interestAreasOptions.find(
-          (opt) => opt.value === interestId,
+          (opt) => opt.value === interestId
         );
 
         if (interestOption) {
@@ -111,7 +111,7 @@ export default function UserMainPage() {
           let interestExists = false;
           for (const interest_area of all_interests) {
             if (interest_area.observation_concept_id === parseInt(interestId)) {
-              alert(`Interesse já existe: ${interest_area.concept_name}`);
+              alert(`Interesse já existe: ${interest_area.interest_name}`);
               interestExists = true;
               break;
             }
@@ -123,10 +123,9 @@ export default function UserMainPage() {
           }
 
           // Cria o interesse se não existir
-          const result =
-            await InterestAreasService.personInterestAreasCreate(
-              newInterestArea,
-            );
+          const result = await InterestAreasService.personInterestAreasCreate(
+            newInterestArea
+          );
 
           // Update our local state with the new interest object
           if (result && "interest_area_id" in result) {
@@ -147,15 +146,15 @@ export default function UserMainPage() {
 
         if (interestToDelete && interestToDelete.interest_area_id) {
           await InterestAreasService.personInterestAreasDestroy(
-            interestToDelete.interest_area_id,
+            interestToDelete.interest_area_id
           );
 
           // Update our local state
           setUserInterestObjects((prev) =>
             prev.filter(
               (interest) =>
-                interest.interest_area_id !== interestToDelete.interest_area_id,
-            ),
+                interest.interest_area_id !== interestToDelete.interest_area_id
+            )
           );
         }
       }

@@ -3,7 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export type ConceptSynonymCreate = {
-  concept_synonym_name?: string | null;
-  concept: number;
-  language_concept?: number | null;
+    concept_synonym_name?: string | null;
+    concept: number;
+    language_concept?: number | null;
 };
+
