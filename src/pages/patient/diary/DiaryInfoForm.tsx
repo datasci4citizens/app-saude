@@ -337,8 +337,6 @@ const handleTriggerSharingToggle = (
         </div>
       </div>
 
-      {/* Interest text field */}
-
       {/* Render triggers if available */}
       {interest.triggers && interest.triggers.length > 0 && (
         <div className="ml-4 space-y-4 border-l-2 border-gray2 pl-4 mt-4">
