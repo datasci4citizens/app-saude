@@ -143,27 +143,6 @@ export default function DiaryInfoForm() {
   );
 };
 
-const handleTriggerSharingToggle = (
-  interestId: number, 
-  triggerId: number, 
-  shared: boolean
-) => {
-  setUserInterests(prev => 
-    prev.map(interest => 
-      interest.interest_area_id === interestId 
-        ? {
-            ...interest,
-            triggers: interest.triggers.map(trigger => 
-              trigger.trigger_id === triggerId 
-                ? { ...trigger, shared }
-                : trigger
-            )
-          }
-        : interest
-    )
-  );
-};
-
   const handleItemChange = (
     items: TrackableItem[],
     setItems: React.Dispatch<React.SetStateAction<TrackableItem[]>>,
@@ -263,19 +242,6 @@ const handleTriggerSharingToggle = (
   }
 };
 
-  const renderTrackableItem = (
-    item: TrackableItem,
-    items: TrackableItem[],
-    setItems: React.Dispatch<React.SetStateAction<TrackableItem[]>>,
-  ) => {
-    // Keep your existing renderTrackableItem logic for habits
-    return (
-      <div key={item.id} className="space-y-4">
-        <HabitCard title={item.name} />
-      </div>
-    );
-  };
-
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl mx-auto px-4 space-y-6">
       {/* Time Range Section */}
@@ -336,7 +302,7 @@ const handleTriggerSharingToggle = (
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs text-typography">Compartilhar</span>
+          <span className="text-xs text-typography">Compartilhar com profissionais</span>
           <Switch
             checked={interest.shared || false}
             onCheckedChange={(checked) => handleInterestSharingToggle(interest.interest_area_id, checked)}
@@ -356,21 +322,6 @@ const handleTriggerSharingToggle = (
                   <HabitCard 
                     title={trigger.concept_name || trigger.custom_trigger_name || "Pergunta relacionada"} 
                     className="inline-block w-auto min-w-fit max-w-full text-sm bg-secondary/20"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-typography">Compartilhar</span>
-                  <Switch
-                    checked={trigger.shared || false}
-                    onCheckedChange={(checked) => 
-                      handleTriggerSharingToggle(
-                        interest.interest_area_id, 
-                        trigger.trigger_id, 
-                        checked
-                      )
-                    }
-                    size="sm"
                   />
                 </div>
               </div>
