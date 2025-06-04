@@ -208,7 +208,7 @@ export default function ViewDiary() {
                         <div className="mb-3">
                           <p className="text-campos-preenchimento2 text-typography">
                             <span className="text-topicos2 text-typography-foreground font-medium">
-                              Mensagem: 
+                              Mensagem:
                             </span>{" "}
                             {entry.value_as_string}
                           </p>
@@ -265,10 +265,10 @@ export default function ViewDiary() {
                               >
                                 <div className="flex justify-between items-start mb-2">
                                   <span className="text-topicos2 text-typography-foreground">
-                                    {response.trigger_name && response.value_as_string 
+                                    {response.trigger_name &&
+                                    response.value_as_string
                                       ? `${response.trigger_name} : ${response.value_as_string}`
-                                      : `Resposta ${responseIndex + 1}`
-                                    }
+                                      : `Resposta ${responseIndex + 1}`}
                                   </span>
                                   {response.created_at && (
                                     <span className="text-desc-titulo text-gray2">
