@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
 import { PersonService } from "@/api/services/PersonService";
 import { ProviderService } from "@/api/services/ProviderService"; // Import ProviderService
@@ -27,6 +27,7 @@ interface HelpRequest {
 
 export default function ViewPatient() {
   const { id, context } = useParams<{ id: string; context?: string }>();
+  const navigate = useNavigate();
   const [patient, setPatient] = useState<PersonRetrieve | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -270,9 +271,7 @@ export default function ViewPatient() {
                         helpRequest.value_as_string ||
                         "Pedido de ajuda sem descrição"
                       }
-                      onClick={() => {
-                        console.log("Clicked help request:", helpRequest.id);
-                      }}
+                      onClick={() => navigate(`/provider/help/${id}/${helpRequest.id}`)}
                     />
                   ))}
                 </div>
