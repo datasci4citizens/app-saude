@@ -65,14 +65,14 @@ export default function ViewPatient() {
           setDiariesLoading(true);
           const diariesData =
             await ProviderService.providerPatientsDiariesRetrieve(Number(id));
-          
+
           // Ordenar do mais recente para o mais antigo
           const sortedDiaries = (diariesData as DiaryEntry[]).sort((a, b) => {
             const dateA = new Date(a.date).getTime();
             const dateB = new Date(b.date).getTime();
             return dateB - dateA;
           });
-          
+
           setDiaries(sortedDiaries);
           setDiariesError(null);
         } catch (err) {
@@ -214,10 +214,11 @@ export default function ViewPatient() {
               <div className="space-y-4">
                 {diaries.map((diary) => {
                   const entriesCount = diary.entries?.length || 0;
-                  const entriesText = entriesCount > 0 
-                    ? `${entriesCount} entrada${entriesCount > 1 ? 's' : ''} registrada${entriesCount > 1 ? 's' : ''}` 
-                    : "Nenhuma entrada registrada";
-                  
+                  const entriesText =
+                    entriesCount > 0
+                      ? `${entriesCount} entrada${entriesCount > 1 ? "s" : ""} registrada${entriesCount > 1 ? "s" : ""}`
+                      : "Nenhuma entrada registrada";
+
                   return (
                     <ViewButton
                       key={diary.diary_id}
