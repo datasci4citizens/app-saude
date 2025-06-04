@@ -227,7 +227,9 @@ export default function ViewPatient() {
                       mainText="Diário"
                       subText={entriesText}
                       onClick={() => {
-                        console.log("Clicked diary:", diary.diary_id);
+                        navigate(
+                          `/provider/patient/${id}/diary/${diary.diary_id}`,
+                        );
                       }}
                     />
                   );
