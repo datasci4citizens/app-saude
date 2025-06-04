@@ -56,19 +56,21 @@ export default function ViewDiaryEntry() {
         // Fetch diary by ID
         const response = await DiariesService.diariesRetrieve2(diaryId);
         console.log("Diary API response:", response);
-        
+
         if (response) {
           console.log("Diary entries:", response.entries);
           console.log("Diary interest areas:", response.interest_areas);
-        } 
-
-        if(response && response.diary_id) {
-          setDiary(response);
-        } else {
-          console.error("Diary not found or invalid response format:", response);
-          setError("Diário não encontrado ou formato inválido.");
         }
 
+        if (response && response.diary_id) {
+          setDiary(response);
+        } else {
+          console.error(
+            "Diary not found or invalid response format:",
+            response,
+          );
+          setError("Diário não encontrado ou formato inválido.");
+        }
       } catch (error) {
         console.error("Error fetching diary:", error);
         setError("Falha ao carregar o diário. Por favor, tente novamente.");
@@ -104,17 +106,17 @@ export default function ViewDiaryEntry() {
 
     // Find the general text entry (usually observation_concept = 999002)
     for (const entry of diary.entries) {
-    // If we have text content, return it regardless of concept ID
-    if (entry.value_as_string && entry.value_as_string.trim() !== "") {
-      return {
-        text: entry.value_as_string,
-        shared: entry.shared_with_provider
-      };
+      // If we have text content, return it regardless of concept ID
+      if (entry.value_as_string && entry.value_as_string.trim() !== "") {
+        return {
+          text: entry.value_as_string,
+          shared: entry.shared_with_provider,
+        };
+      }
     }
-  }
 
-  return null;
-  }
+    return null;
+  };
 
   if (isLoading) {
     return (
@@ -130,8 +132,8 @@ export default function ViewDiaryEntry() {
   if (error || !diary) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
-        <Header 
-          title="Visualizar Diário" 
+        <Header
+          title="Visualizar Diário"
           onBackClick={() => navigate("/diary")}
         />
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 mt-6">

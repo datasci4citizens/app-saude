@@ -135,66 +135,79 @@ export default function DiaryListPage() {
 
   // Helper function to get summary text
   const getDiarySummary = (diary: DiaryData): string => {
-  let summary = "";
-  
-  // Include diary entry text if available
-  if (diary.entries && diary.entries.length > 0) {
-    const textEntry = diary.entries.find(e => e.value_as_string && e.value_as_string.trim() !== "");
-    if (textEntry) {
-      summary = textEntry.value_as_string;
-      
-      // If we also have trigger responses, add an indicator
-      const hasTriggerResponses = diary.interest_areas?.some(area => 
-        area.triggers?.some(t => t.value_as_string && t.value_as_string.trim() !== "")
+    let summary = "";
+
+    // Include diary entry text if available
+    if (diary.entries && diary.entries.length > 0) {
+      const textEntry = diary.entries.find(
+        (e) => e.value_as_string && e.value_as_string.trim() !== "",
       );
-      
-      if (hasTriggerResponses) {
-        summary += " (+ respostas de interesses)";
+      if (textEntry) {
+        summary = textEntry.value_as_string;
+
+        // If we also have trigger responses, add an indicator
+        const hasTriggerResponses = diary.interest_areas?.some((area) =>
+          area.triggers?.some(
+            (t) => t.value_as_string && t.value_as_string.trim() !== "",
+          ),
+        );
+
+        if (hasTriggerResponses) {
+          summary += " (+ respostas de interesses)";
+          return summary;
+        }
+
         return summary;
       }
-      
-      return summary;
     }
-  }
-  
-  // If no text entry, show trigger responses
-  const triggersWithResponses = diary.interest_areas?.flatMap(area => 
-    area.triggers.filter(t => t.value_as_string && t.value_as_string.trim() !== "")
-  ) || [];
-  
-  if (triggersWithResponses.length > 0) {
-    return triggersWithResponses[0].value_as_string || "Sem conteúdo";
-  }
-  
-  return "Sem conteúdo";
-};
+
+    // If no text entry, show trigger responses
+    const triggersWithResponses =
+      diary.interest_areas?.flatMap((area) =>
+        area.triggers.filter(
+          (t) => t.value_as_string && t.value_as_string.trim() !== "",
+        ),
+      ) || [];
+
+    if (triggersWithResponses.length > 0) {
+      return triggersWithResponses[0].value_as_string || "Sem conteúdo";
+    }
+
+    return "Sem conteúdo";
+  };
 
   // Helper function to get card title
   const getDiaryCardTitle = (diary: DiaryData): string => {
-  let components = [];
-  
-  // Check for text entry
-  const hasTextEntry = diary.entries?.some(e => 
-    e.value_as_string && e.value_as_string.trim() !== ""
-  );
-  
-  if (hasTextEntry) {
-    components.push("Texto");
-  }
-  
-  // Check for triggers with responses
-  const triggerCount = diary.interest_areas?.reduce((count, area) => 
-    count + area.triggers.filter(t => t.value_as_string && t.value_as_string.trim() !== "").length, 0
-  ) || 0;
-  
-  if (triggerCount > 0) {
-    components.push(`${triggerCount} resposta${triggerCount > 1 ? 's' : ''}`);
-  }
-  
-  return components.length > 0 
-    ? `Diário (${components.join(", ")})` 
-    : "Diário";
-};
+    let components = [];
+
+    // Check for text entry
+    const hasTextEntry = diary.entries?.some(
+      (e) => e.value_as_string && e.value_as_string.trim() !== "",
+    );
+
+    if (hasTextEntry) {
+      components.push("Texto");
+    }
+
+    // Check for triggers with responses
+    const triggerCount =
+      diary.interest_areas?.reduce(
+        (count, area) =>
+          count +
+          area.triggers.filter(
+            (t) => t.value_as_string && t.value_as_string.trim() !== "",
+          ).length,
+        0,
+      ) || 0;
+
+    if (triggerCount > 0) {
+      components.push(`${triggerCount} resposta${triggerCount > 1 ? "s" : ""}`);
+    }
+
+    return components.length > 0
+      ? `Diário (${components.join(", ")})`
+      : "Diário";
+  };
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-primary min-h-screen pb-24">
