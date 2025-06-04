@@ -29,6 +29,7 @@ import CreateNewInterest from "./pages/patient/CreateNewInterest";
 import ViewSelectedInterests from "./pages/patient/ViewSelectedInterests";
 import EditInterest from "./pages/patient/EditInterest";
 import ViewPatient from "./pages/provider/ViewPatient"; // Import ViewPatient
+import ViewHelp from "./pages/provider/ViewHelp"; // Import ViewHelp
 import ViewDiary from "./pages/provider/ViewDiary"; // Import ViewDiary
 
 const NotFound = () => (
@@ -180,6 +181,10 @@ const router = createBrowserRouter([
   {
     path: "/provider/patient/:personId/diary/:diaryId", // Route for viewing a specific diary
     element: <ViewDiary />,
+  },
+  {
+    path: "/provider/help/:personId/:helpId", // Route for viewing a help request
+    element: <ViewHelp />,
   },
   {
     path: "*",
