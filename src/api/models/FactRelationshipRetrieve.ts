@@ -3,13 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 export type FactRelationshipRetrieve = {
-    readonly id: number;
-    readonly created_at: string;
-    readonly updated_at: string;
-    fact_id_1: number;
-    fact_id_2: number;
-    domain_concept_1: number;
-    domain_concept_2: number;
-    relationship_concept: number;
+  readonly id: number;
+  readonly created_at: string;
+  readonly updated_at: string;
+  fact_id_1: number;
+  fact_id_2: number;
+  domain_concept_1: number;
+  domain_concept_2: number;
+  relationship_concept: number;
 };
-

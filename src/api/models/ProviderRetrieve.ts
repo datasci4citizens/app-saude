@@ -3,16 +3,15 @@
 /* tslint:disable */
 /* eslint-disable */
 export type ProviderRetrieve = {
-    readonly provider_id: number;
-    readonly username: string;
-    readonly email: string;
-    readonly created_at: string;
-    readonly updated_at: string;
-    social_name?: string | null;
-    birth_datetime?: string | null;
-    professional_registration?: number;
-    user: number;
-    specialty_concept?: number | null;
-    care_site?: number | null;
+  readonly provider_id: number;
+  readonly username: string;
+  readonly email: string;
+  readonly created_at: string;
+  readonly updated_at: string;
+  social_name?: string | null;
+  birth_datetime?: string | null;
+  professional_registration?: number;
+  user: number;
+  specialty_concept?: number | null;
+  care_site?: number | null;
 };
-

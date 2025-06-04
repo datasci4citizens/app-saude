@@ -34,7 +34,9 @@ export default function DiaryInfoForm() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingInterests, setIsLoadingInterests] = useState(true);
-  const [timeRange, setTimeRange] = useState<"today" | "sinceLast">("sinceLast");
+  const [timeRange, setTimeRange] = useState<"today" | "sinceLast">(
+    "sinceLast",
+  );
   const [freeText, setFreeText] = useState("");
 
   // User interests state
@@ -113,13 +115,14 @@ export default function DiaryInfoForm() {
         interest.interest_area_id === interestId
           ? {
               ...interest,
-              triggers: interest.triggers?.map((trigger) =>
-                trigger.trigger_id === triggerId
-                  ? { ...trigger, response }
-                  : trigger
-              ) || [],
+              triggers:
+                interest.triggers?.map((trigger) =>
+                  trigger.trigger_id === triggerId
+                    ? { ...trigger, response }
+                    : trigger,
+                ) || [],
             }
-          : interest
+          : interest,
       ),
     );
   };
@@ -133,7 +136,7 @@ export default function DiaryInfoForm() {
       prev.map((interest) =>
         interest.interest_area_id === interestId
           ? { ...interest, response }
-          : interest
+          : interest,
       ),
     );
   };
@@ -144,7 +147,7 @@ export default function DiaryInfoForm() {
       prev.map((interest) =>
         interest.interest_area_id === interestId
           ? { ...interest, shared }
-          : interest
+          : interest,
       ),
     );
   };
@@ -156,15 +159,16 @@ export default function DiaryInfoForm() {
     try {
       // Format interest areas according to the expected API structure
       const formattedInterestAreas = userInterests
-        .filter(interest => 
-          interest.response?.trim() !== "" || 
-          (interest.triggers?.some(t => t.response?.trim() !== ""))
+        .filter(
+          (interest) =>
+            interest.response?.trim() !== "" ||
+            interest.triggers?.some((t) => t.response?.trim() !== ""),
         )
         .map((interest) => {
           // Get triggers with responses
           const triggersWithResponses =
             interest.triggers?.filter(
-              (trigger) => trigger.response && trigger.response.trim() !== ""
+              (trigger) => trigger.response && trigger.response.trim() !== "",
             ) || [];
 
           return {
@@ -246,7 +250,11 @@ export default function DiaryInfoForm() {
         ) : (
           <div className="space-y-4">
             {userInterests.map((interest) => {
-              const interestName = interest.interest_name || interest.custom_interest_name || interest.value_as_string || "Interesse";
+              const interestName =
+                interest.interest_name ||
+                interest.custom_interest_name ||
+                interest.value_as_string ||
+                "Interesse";
 
               return (
                 <div key={interest.interest_area_id} className="space-y-3">
@@ -330,9 +338,7 @@ export default function DiaryInfoForm() {
             Observações Gerais
           </h3>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-typography">
-              Compartilhar
-            </span>
+            <span className="text-sm text-typography">Compartilhar</span>
             <Switch checked={shareText} onCheckedChange={setShareText} />
           </div>
         </div>

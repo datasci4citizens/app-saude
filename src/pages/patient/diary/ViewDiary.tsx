@@ -37,7 +37,7 @@ export default function ViewDiaryEntry() {
   useEffect(() => {
     const fetchDiaryData = async () => {
       if (!diaryId) return;
-      
+
       try {
         setIsLoading(true);
         // Fetch diary by ID
@@ -60,10 +60,10 @@ export default function ViewDiaryEntry() {
   const formatDate = (dateString: string): string => {
     try {
       const date = new Date(dateString);
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
       const year = date.getFullYear();
-      
+
       // Can format as needed for your locale
       return `${day}/${month}/${year}`;
     } catch (e) {
@@ -116,7 +116,9 @@ export default function ViewDiaryEntry() {
 
       <div className="text-center mb-6">
         <h2 className="text-xl font-medium text-gray-700">
-          {diary.created_at ? formatDate(diary.created_at) : "Data não disponível"}
+          {diary.created_at
+            ? formatDate(diary.created_at)
+            : "Data não disponível"}
         </h2>
       </div>
 
@@ -127,7 +129,9 @@ export default function ViewDiaryEntry() {
         </h3>
         <div className="bg-gray-50 p-4 rounded-lg">
           <p>
-            {diary.date_range_type === "TODAY" ? "Hoje" : "Desde o último diário"}
+            {diary.date_range_type === "TODAY"
+              ? "Hoje"
+              : "Desde o último diário"}
           </p>
         </div>
       </div>
@@ -146,12 +150,16 @@ export default function ViewDiaryEntry() {
               <div key={interest.interest_area_id} className="space-y-3">
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center justify-between">
-                    <HabitCard 
-                      title={interest.interest_name || `Interesse ${interest.interest_area_id}`}
+                    <HabitCard
+                      title={
+                        interest.interest_name ||
+                        `Interesse ${interest.interest_area_id}`
+                      }
                       className="inline-block w-auto min-w-fit max-w-full"
                     />
                     <span className="text-sm text-gray-500">
-                      Compartilhado: {interest.shared_with_provider ? "Sim" : "Não"}
+                      Compartilhado:{" "}
+                      {interest.shared_with_provider ? "Sim" : "Não"}
                     </span>
                   </div>
                 </div>
@@ -161,7 +169,10 @@ export default function ViewDiaryEntry() {
                     {interest.triggers.map((trigger) => (
                       <div key={trigger.trigger_id} className="mt-3 space-y-2">
                         <HabitCard
-                          title={trigger.trigger_name || `Pergunta ${trigger.trigger_id}`}
+                          title={
+                            trigger.trigger_name ||
+                            `Pergunta ${trigger.trigger_id}`
+                          }
                           className="inline-block w-auto min-w-fit max-w-full text-sm bg-secondary/20"
                         />
                         <div className="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap">
@@ -186,7 +197,8 @@ export default function ViewDiaryEntry() {
             </h3>
             <div className="flex items-center gap-3">
               <span className="text-sm text-gray-500">
-                Compartilhado com profissionais: {diary.text_shared ? "Sim" : "Não"}
+                Compartilhado com profissionais:{" "}
+                {diary.text_shared ? "Sim" : "Não"}
               </span>
             </div>
           </div>
