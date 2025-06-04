@@ -3,8 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type PatchedConceptSynonymUpdate = {
-  readonly id?: number;
-  concept_synonym_name?: string | null;
-  concept?: number;
-  language_concept?: number | null;
+    readonly id?: number;
+    concept_synonym_name?: string | null;
+    concept?: number;
+    language_concept?: number | null;
 };
+

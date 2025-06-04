@@ -208,6 +208,11 @@ export default function DiaryInfoForm() {
         })
         .filter((interest) => interest.triggers.length > 0); // Only include interests with answered triggers
 
+      let diary_shared = false;
+      if (shareText || shareHabits || userInterests.some(interest => interest.shared)) {
+        diary_shared = true;
+      }
+
       const diary = {
         date_range_type:
           timeRange === "today"
@@ -229,6 +234,7 @@ export default function DiaryInfoForm() {
             value: habit.value,
             shared: shareHabits,
           })),
+        diary_shared: diary_shared,
       };
 
       console.log("Submitting diary:", diary);

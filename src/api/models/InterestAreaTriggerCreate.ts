@@ -3,8 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type InterestAreaTriggerCreate = {
-  observation_concept_id?: number | null;
-  trigger_name?: string | null;
-  value_as_string?: string | null;
-  concept_name?: string | null;
+    observation_concept_id?: number | null;
+    trigger_name?: string | null;
+    value_as_string?: string | null;
+    concept_name?: string | null;
 };
+

@@ -2,12 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { PersonProviderUnlinkResponseStatusEnum } from "./PersonProviderUnlinkResponseStatusEnum";
+import type { PersonProviderUnlinkResponseStatusEnum } from './PersonProviderUnlinkResponseStatusEnum';
 export type PersonProviderUnlinkResponse = {
-  /**
-   * Unlinking result
-   *
-   * * `unlinked` - unlinked
-   */
-  status: PersonProviderUnlinkResponseStatusEnum;
+    /**
+     * Unlinking result
+     *
+     * * `unlinked` - unlinked
+     */
+    status: PersonProviderUnlinkResponseStatusEnum;
 };
+
