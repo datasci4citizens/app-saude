@@ -8,13 +8,12 @@ import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
 import ViewButton from "@/components/ui/ViewButton"; // Import ViewButton
 
-// Define a basic interface for Diary Entries
+// Define a basic interface for Diary Entries based on actual API response
 interface DiaryEntry {
-  id: string | number;
-  created_at: string; // Assuming a date string
-  title?: string;
-  text_content: string;
-  // Add other fields if known, e.g., type: 'diary' | 'help_request'
+  diary_id: number;
+  date: string;
+  scope: string;
+  entries: any[]; // The actual diary entries array
 }
 
 // Define interface for Help Requests
@@ -66,7 +65,15 @@ export default function ViewPatient() {
           setDiariesLoading(true);
           const diariesData =
             await ProviderService.providerPatientsDiariesRetrieve(Number(id));
-          setDiaries(diariesData as DiaryEntry[]);
+          
+          // Ordenar do mais recente para o mais antigo
+          const sortedDiaries = (diariesData as DiaryEntry[]).sort((a, b) => {
+            const dateA = new Date(a.date).getTime();
+            const dateB = new Date(b.date).getTime();
+            return dateB - dateA;
+          });
+          
+          setDiaries(sortedDiaries);
           setDiariesError(null);
         } catch (err) {
           console.error("Error fetching diaries:", err);
@@ -205,20 +212,24 @@ export default function ViewPatient() {
             )}
             {!diariesLoading && !diariesError && diaries.length > 0 && (
               <div className="space-y-4">
-                {diaries.map((diary) => (
-                  <ViewButton
-                    key={diary.id}
-                    dateText={formatDate(diary.created_at)}
-                    mainText={diary.title || "Diário"}
-                    subText={
-                      diary.text_content.substring(0, 100) +
-                      (diary.text_content.length > 100 ? "..." : "")
-                    }
-                    onClick={() => {
-                      console.log("Clicked diary:", diary.id);
-                    }}
-                  />
-                ))}
+                {diaries.map((diary) => {
+                  const entriesCount = diary.entries?.length || 0;
+                  const entriesText = entriesCount > 0 
+                    ? `${entriesCount} entrada${entriesCount > 1 ? 's' : ''} registrada${entriesCount > 1 ? 's' : ''}` 
+                    : "Nenhuma entrada registrada";
+                  
+                  return (
+                    <ViewButton
+                      key={diary.diary_id}
+                      dateText={formatDate(diary.date)}
+                      mainText="Diário"
+                      subText={entriesText}
+                      onClick={() => {
+                        console.log("Clicked diary:", diary.diary_id);
+                      }}
+                    />
+                  );
+                })}
               </div>
             )}
           </>
