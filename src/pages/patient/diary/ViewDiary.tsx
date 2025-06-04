@@ -1,31 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import BackArrow from "@/components/ui/back_arrow";
-import { ObservationService } from "@/api/services/ObservationService";
-import { ConceptService } from "@/api/services/ConceptService";
+import { DiariesService } from "@/api/services/DiariesService";
 import HabitCard from "@/components/ui/habit-card";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 
-// Define types based on the original form
-type TrackableItem = {
-  id: string;
-  name: string;
-  measurementType: string;
-  value: string | undefined;
-};
+// Define types based on our actual data model
+interface DiaryTrigger {
+  trigger_id: number;
+  trigger_name?: string;
+  value_as_string: string;
+}
 
-type DiaryData = {
+interface DiaryInterestArea {
+  interest_area_id: number;
+  interest_name?: string;
+  shared_with_provider: boolean;
+  triggers: DiaryTrigger[];
+}
+
+interface DiaryData {
   id: string;
-  date: string;
-  dateRangeType: string;
+  created_at: string;
+  date_range_type: string;
   text: string;
-  textShared: boolean;
-  habitsShared: boolean;
-  wellnessShared: boolean;
-  habits: TrackableItem[];
-  wellness: TrackableItem[];
-};
+  text_shared: boolean;
+  interest_areas: DiaryInterestArea[];
+}
 
 export default function ViewDiaryEntry() {
   const { diaryId } = useParams<{ diaryId: string }>();
@@ -36,106 +36,13 @@ export default function ViewDiaryEntry() {
 
   useEffect(() => {
     const fetchDiaryData = async () => {
+      if (!diaryId) return;
+      
       try {
         setIsLoading(true);
-
-        // Fetch all observations for this diary
-        const observations = await ObservationService.apiObservationList();
-        if (!observations) {
-          throw new Error("Failed to fetch observations");
-        }
-
-        // Filter observations for this specific diary
-        const diaryObservations = observations.filter(
-          (obs) =>
-            obs.observation_date === diaryId || obs.created_at === diaryId,
-        );
-
-        if (diaryObservations.length === 0) {
-          throw new Error("Diary not found");
-        }
-
-        // Get all wellness concepts for reference
-        const wellnessConcepts = await ConceptService.apiConceptList(
-          "Wellness",
-          "pt",
-          "has_value_type",
-        );
-
-        // Organize diary data
-        const habits: TrackableItem[] = [];
-        const wellness: TrackableItem[] = [];
-        let text = "";
-        let dateRangeType = "SINCE_LAST";
-        let textShared = false;
-        let habitsShared = false;
-        let wellnessShared = false;
-
-        // Process each observation
-        for (const obs of diaryObservations) {
-          const conceptId = obs.observation_concept?.toString();
-
-          switch (Number(conceptId)) {
-            case 101: // DIARY_TEXT
-              text = obs.value_as_string || "";
-              textShared = obs.shared_with_provider || false;
-              break;
-            case 456: // DIARY_HABITS
-              // Find the concept name by ID
-              const habitName =
-                obs.value_concept_name || `Hábito ${habits.length + 1}`;
-              const measurementType = getMeasurementType(obs.value_as_string);
-
-              habits.push({
-                id: obs.observation_id.toString(),
-                name: habitName,
-                measurementType: measurementType,
-                value: obs.value_as_string,
-              });
-
-              habitsShared = obs.shared_with_provider || false;
-              break;
-            case 789: // DIARY_WELLNESS
-              // Find the matching wellness concept
-              const wellnessConcept = wellnessConcepts.find(
-                (c) =>
-                  c.concept_id.toString() === obs.value_concept_id?.toString(),
-              );
-
-              if (wellnessConcept) {
-                wellness.push({
-                  id: obs.observation_id.toString(),
-                  name:
-                    wellnessConcept.translated_name ||
-                    wellnessConcept.concept_name,
-                  measurementType:
-                    wellnessConcept.related_concept?.concept_code || "unknown",
-                  value: obs.value_as_string,
-                });
-              }
-
-              wellnessShared = obs.shared_with_provider || false;
-              break;
-          }
-        }
-
-        // Format the diary date
-        const diaryDate =
-          diaryObservations[0].observation_date ||
-          diaryObservations[0].created_at ||
-          "";
-
-        setDiary({
-          id: diaryId || "",
-          date: diaryDate,
-          dateRangeType,
-          text,
-          textShared,
-          habitsShared,
-          wellnessShared,
-          habits,
-          wellness,
-        });
+        // Fetch diary by ID
+        const diaryData = await DiariesService.diariesRetrieve(diaryId);
+        setDiary(diaryData);
       } catch (error) {
         console.error("Error fetching diary:", error);
         setError("Failed to load diary. Please try again.");
@@ -149,46 +56,16 @@ export default function ViewDiaryEntry() {
     }
   }, [diaryId]);
 
-  // Helper function to determine measurement type based on value
-  const getMeasurementType = (value: string | undefined): string => {
-    if (!value) return "unknown";
-
-    if (value === "value_yes" || value === "value_no") {
-      return "yes_no";
-    }
-
-    const numValue = parseInt(value);
-    if (isNaN(numValue)) return "unknown";
-
-    if (numValue >= 1 && numValue <= 10) return "scale";
-    if (numValue >= 1 && numValue <= 24) return "hours";
-
-    return "times";
-  };
-
-  // Function to format the value for display
-  const formatValue = (item: TrackableItem): string => {
-    if (!item.value) return "Não informado";
-
-    switch (item.measurementType) {
-      case "yes_no":
-        return item.value === "value_yes" ? "Sim" : "Não";
-      case "scale":
-        return `${item.value}/10`;
-      case "hours":
-        return `${item.value}h`;
-      case "times":
-        return `${item.value} vez${parseInt(item.value) !== 1 ? "es" : ""}`;
-      default:
-        return item.value;
-    }
-  };
-
   // Format date for display
   const formatDate = (dateString: string): string => {
     try {
       const date = new Date(dateString);
-      return format(date, "d 'de' MMMM 'de' yyyy", { locale: ptBR });
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      
+      // Can format as needed for your locale
+      return `${day}/${month}/${year}`;
     } catch (e) {
       return dateString;
     }
@@ -239,7 +116,7 @@ export default function ViewDiaryEntry() {
 
       <div className="text-center mb-6">
         <h2 className="text-xl font-medium text-gray-700">
-          {formatDate(diary.date)}
+          {diary.created_at ? formatDate(diary.created_at) : "Data não disponível"}
         </h2>
       </div>
 
@@ -250,71 +127,50 @@ export default function ViewDiaryEntry() {
         </h3>
         <div className="bg-gray-50 p-4 rounded-lg">
           <p>
-            {diary.dateRangeType === "TODAY" ? "Hoje" : "Desde o último diário"}
+            {diary.date_range_type === "TODAY" ? "Hoje" : "Desde o último diário"}
           </p>
         </div>
       </div>
 
-      {/* Habits Section - Only show if there are habits */}
-      {diary.habits.length > 0 && (
+      {/* Interest Areas Section - Only show if there are interests */}
+      {diary.interest_areas && diary.interest_areas.length > 0 && (
         <div className="space-y-4 mb-6">
           <div className="flex flex-col gap-1">
             <h3 className="font-semibold text-lg text-neutral-700 mb-1">
-              Hábitos Personalizados
+              Seus Interesses
             </h3>
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-500">
-                Compartilhado com profissionais da saúde:{" "}
-                {diary.habitsShared ? "Sim" : "Não"}
-              </span>
-            </div>
           </div>
 
-          <div className="space-y-3">
-            {diary.habits.map((habit) => (
-              <div
-                key={habit.id}
-                className="flex flex-col md:flex-row gap-3 w-full items-center"
-              >
-                <div className="flex-1 min-w-[200px] w-full">
-                  <HabitCard title={habit.name} />
+          <div className="space-y-6">
+            {diary.interest_areas.map((interest) => (
+              <div key={interest.interest_area_id} className="space-y-3">
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center justify-between">
+                    <HabitCard 
+                      title={interest.interest_name || `Interesse ${interest.interest_area_id}`}
+                      className="inline-block w-auto min-w-fit max-w-full"
+                    />
+                    <span className="text-sm text-gray-500">
+                      Compartilhado: {interest.shared_with_provider ? "Sim" : "Não"}
+                    </span>
+                  </div>
                 </div>
-                <div className="w-full md:w-[200px] bg-gray-50 p-3 rounded-lg text-center">
-                  {formatValue(habit)}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
-      {/* Well-being Section - Only show if there are wellness items */}
-      {diary.wellness.length > 0 && (
-        <div className="space-y-4 mb-6">
-          <div className="flex flex-col gap-1">
-            <h3 className="font-semibold text-lg text-neutral-700 mb-1">
-              Bem-estar geral
-            </h3>
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-500">
-                Compartilhado com profissionais da saúde:{" "}
-                {diary.wellnessShared ? "Sim" : "Não"}
-              </span>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            {diary.wellness.map((question) => (
-              <div
-                key={question.id}
-                className="flex flex-col md:flex-row gap-3 w-full items-center"
-              >
-                <div className="flex-1 min-w-[200px] w-full">
-                  <HabitCard title={question.name} />
-                </div>
-                <div className="w-full md:w-[200px] bg-gray-50 p-3 rounded-lg text-center">
-                  {formatValue(question)}
-                </div>
+                {interest.triggers && interest.triggers.length > 0 && (
+                  <div className="ml-4 border-l-2 border-gray-200 pl-4">
+                    {interest.triggers.map((trigger) => (
+                      <div key={trigger.trigger_id} className="mt-3 space-y-2">
+                        <HabitCard
+                          title={trigger.trigger_name || `Pergunta ${trigger.trigger_id}`}
+                          className="inline-block w-auto min-w-fit max-w-full text-sm bg-secondary/20"
+                        />
+                        <div className="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap">
+                          {trigger.value_as_string}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -326,12 +182,11 @@ export default function ViewDiaryEntry() {
         <div className="space-y-3">
           <div className="flex flex-col gap-1">
             <h3 className="font-semibold text-lg text-neutral-700 mb-1">
-              Texto
+              Observações Gerais
             </h3>
             <div className="flex items-center gap-3">
               <span className="text-sm text-gray-500">
-                Compartilhado com profissionais da saúde:{" "}
-                {diary.textShared ? "Sim" : "Não"}
+                Compartilhado com profissionais: {diary.text_shared ? "Sim" : "Não"}
               </span>
             </div>
           </div>

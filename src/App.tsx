@@ -11,6 +11,7 @@ import EmergencyUser from "./pages/patient/emergency/EmergencyUser";
 import PatientsPage from "./pages/provider/PatientsPage";
 import ViewReminder from "./pages/patient/reminders/ViewReminder";
 import DiaryPage from "./pages/patient/diary/Diary";
+import DiaryListPage from "./pages/patient/diary/DiaryListPage";
 import Reminders from "./pages/patient/reminders/Reminders";
 import NewReminder from "./pages/patient/reminders/NewReminder";
 import OnboardingSlider from "./pages/landing/OnboardingSlider";
@@ -65,7 +66,15 @@ const router = createBrowserRouter([
   },
   {
     path: "/diary",
+    element: <DiaryListPage />,
+  },
+  {
+    path: "diary/new",
     element: <DiaryPage />,
+  },
+  {
+    path: "/diary/:diaryId",
+    element: <ViewDiaryEntry />,
   },
   {
     path: "/view-diary-user",

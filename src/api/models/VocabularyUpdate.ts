@@ -3,7 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export type VocabularyUpdate = {
-  vocabulary_id: string;
-  vocabulary_name?: string | null;
-  vocabulary_concept?: number | null;
+    vocabulary_id: string;
+    vocabulary_name?: string | null;
+    vocabulary_concept?: number | null;
 };
+
