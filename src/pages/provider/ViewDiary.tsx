@@ -11,6 +11,23 @@ interface DiaryEntryDetail {
   text_content?: string;
   created_at?: string;
   scope?: string;
+  value_as_string?: string;
+}
+
+// Interface para as respostas das áreas de interesse
+interface ResponseDetail {
+  id?: number;
+  content?: string;
+  created_at?: string;
+  trigger_name?: string;
+  value_as_string?: string;
+}
+
+// Interface para as áreas de interesse
+interface InterestAreaDetail {
+  id?: number;
+  interest_name?: string;
+  triggers?: ResponseDetail[];
 }
 
 // Interface para o diário completo
@@ -19,6 +36,7 @@ interface DiaryDetail {
   date: string;
   scope: string;
   entries: DiaryEntryDetail[];
+  interest_areas?: InterestAreaDetail[];
 }
 
 export default function ViewDiary() {
@@ -143,18 +161,6 @@ export default function ViewDiary() {
                   </span>{" "}
                   {formatDate(diary.date)}
                 </p>
-                <p className="text-campos-preenchimento2 text-typography">
-                  <span className="text-topicos2 text-typography-foreground">
-                    Escopo:
-                  </span>{" "}
-                  {diary.scope || "Não especificado"}
-                </p>
-                <p className="text-campos-preenchimento2 text-typography">
-                  <span className="text-topicos2 text-typography-foreground">
-                    Total de Entradas:
-                  </span>{" "}
-                  {diary.entries?.length || 0}
-                </p>
               </div>
             </div>
 
@@ -198,11 +204,91 @@ export default function ViewDiary() {
                         </div>
                       )}
 
+                      {entry.value_as_string && (
+                        <div className="mb-3">
+                          <p className="text-campos-preenchimento2 text-typography">
+                            <span className="text-topicos2 text-typography-foreground font-medium">
+                              Mensagem: 
+                            </span>{" "}
+                            {entry.value_as_string}
+                          </p>
+                        </div>
+                      )}
+
                       {entry.scope && (
                         <div className="text-desc-titulo text-gray2">
                           <span className="font-medium">Escopo:</span>{" "}
                           {entry.scope}
                         </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Áreas de Interesse */}
+            <div className="space-y-4">
+              <h2 className="text-topicos2 text-typography">
+                Áreas de Interesse
+              </h2>
+
+              {(!diary.interest_areas || diary.interest_areas.length === 0) && (
+                <div className="bg-offwhite p-4 rounded-lg shadow-md">
+                  <p className="text-campos-preenchimento2 text-gray2">
+                    Nenhuma área de interesse encontrada neste diário.
+                  </p>
+                </div>
+              )}
+
+              {diary.interest_areas && diary.interest_areas.length > 0 && (
+                <div className="space-y-3">
+                  {diary.interest_areas.map((area, areaIndex) => (
+                    <div
+                      key={area.id || areaIndex}
+                      className="bg-offwhite p-4 rounded-lg shadow-md"
+                    >
+                      <h3 className="text-topicos2 text-typography mb-3">
+                        {area.interest_name || `Área ${areaIndex + 1}`}
+                      </h3>
+
+                      {area.triggers && area.triggers.length > 0 ? (
+                        <div className="space-y-2">
+                          <h4 className="text-topicos2 text-typography-foreground font-medium">
+                            Respostas:
+                          </h4>
+                          <div className="space-y-2">
+                            {area.triggers.map((response, responseIndex) => (
+                              <div
+                                key={response.id || responseIndex}
+                                className="bg-background p-3 rounded border-l-4 border-primary"
+                              >
+                                <div className="flex justify-between items-start mb-2">
+                                  <span className="text-topicos2 text-typography-foreground">
+                                    {response.trigger_name && response.value_as_string 
+                                      ? `${response.trigger_name} : ${response.value_as_string}`
+                                      : `Resposta ${responseIndex + 1}`
+                                    }
+                                  </span>
+                                  {response.created_at && (
+                                    <span className="text-desc-titulo text-gray2">
+                                      {formatTime(response.created_at)}
+                                    </span>
+                                  )}
+                                </div>
+                                {response.content && (
+                                  <p className="text-campos-preenchimento2 text-typography whitespace-pre-wrap">
+                                    {response.content}
+                                  </p>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-campos-preenchimento2 text-gray2">
+                          Nenhuma resposta encontrada para esta área.
+                        </p>
                       )}
                     </div>
                   ))}
