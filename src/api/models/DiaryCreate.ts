@@ -8,5 +8,6 @@ export type DiaryCreate = {
   date_range_type: DateRangeTypeEnum;
   text: string;
   text_shared: boolean;
+  diary_shared: boolean;
   interest_areas?: Array<InterestAreaUpdate>;
 };
