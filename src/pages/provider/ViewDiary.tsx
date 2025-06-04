@@ -22,7 +22,10 @@ interface DiaryDetail {
 }
 
 export default function ViewDiary() {
-  const { diaryId, personId } = useParams<{ diaryId: string; personId: string }>();
+  const { diaryId, personId } = useParams<{
+    diaryId: string;
+    personId: string;
+  }>();
   const [diary, setDiary] = useState<DiaryDetail | null>(null);
   const [patient, setPatient] = useState<PersonRetrieve | null>(null);
   const [loading, setLoading] = useState(true);
@@ -36,12 +39,18 @@ export default function ViewDiary() {
           setError(null);
 
           // Buscar dados do paciente
-          const patientData = await PersonService.apiPersonRetrieve(Number(personId));
+          const patientData = await PersonService.apiPersonRetrieve(
+            Number(personId),
+          );
           setPatient(patientData);
 
           // Buscar o diário específico diretamente
-          const diaryData = await ProviderService.providerPatientsDiariesRetrieve2(diaryId, Number(personId));
-          
+          const diaryData =
+            await ProviderService.providerPatientsDiariesRetrieve2(
+              diaryId,
+              Number(personId),
+            );
+
           if (diaryData) {
             setDiary(diaryData as DiaryDetail);
           } else {
@@ -89,12 +98,12 @@ export default function ViewDiary() {
       <div className="p-4">
         <Header title="Visualizar Diário" centered={true} />
       </div>
-      
+
       <div className="flex-1 px-4 overflow-auto m-4">
         {loading && (
           <p className="text-campos-preenchimento2 text-gray2">Carregando...</p>
         )}
-        
+
         {error && (
           <p className="text-campos-preenchimento2 text-destructive">{error}</p>
         )}
@@ -103,14 +112,20 @@ export default function ViewDiary() {
           <div className="space-y-6">
             {/* Informações do Paciente */}
             <div className="bg-offwhite p-4 rounded-lg shadow-md">
-              <h2 className="text-topicos2 text-typography mb-3">Informações do Paciente</h2>
+              <h2 className="text-topicos2 text-typography mb-3">
+                Informações do Paciente
+              </h2>
               <div className="space-y-2">
                 <p className="text-campos-preenchimento2 text-typography">
-                  <span className="text-topicos2 text-typography-foreground">Nome:</span>{" "}
+                  <span className="text-topicos2 text-typography-foreground">
+                    Nome:
+                  </span>{" "}
                   {patient.social_name || "Não informado"}
                 </p>
                 <p className="text-campos-preenchimento2 text-typography">
-                  <span className="text-topicos2 text-typography-foreground">ID:</span>{" "}
+                  <span className="text-topicos2 text-typography-foreground">
+                    ID:
+                  </span>{" "}
                   {patient.person_id}
                 </p>
               </div>
@@ -118,18 +133,26 @@ export default function ViewDiary() {
 
             {/* Informações do Diário */}
             <div className="bg-offwhite p-4 rounded-lg shadow-md">
-              <h2 className="text-topicos2 text-typography mb-3">Informações do Diário</h2>
+              <h2 className="text-topicos2 text-typography mb-3">
+                Informações do Diário
+              </h2>
               <div className="space-y-2">
                 <p className="text-campos-preenchimento2 text-typography">
-                  <span className="text-topicos2 text-typography-foreground">Data:</span>{" "}
+                  <span className="text-topicos2 text-typography-foreground">
+                    Data:
+                  </span>{" "}
                   {formatDate(diary.date)}
                 </p>
                 <p className="text-campos-preenchimento2 text-typography">
-                  <span className="text-topicos2 text-typography-foreground">Escopo:</span>{" "}
+                  <span className="text-topicos2 text-typography-foreground">
+                    Escopo:
+                  </span>{" "}
                   {diary.scope || "Não especificado"}
                 </p>
                 <p className="text-campos-preenchimento2 text-typography">
-                  <span className="text-topicos2 text-typography-foreground">Total de Entradas:</span>{" "}
+                  <span className="text-topicos2 text-typography-foreground">
+                    Total de Entradas:
+                  </span>{" "}
                   {diary.entries?.length || 0}
                 </p>
               </div>
@@ -137,8 +160,10 @@ export default function ViewDiary() {
 
             {/* Entradas do Diário */}
             <div className="space-y-4">
-              <h2 className="text-topicos2 text-typography">Entradas do Diário</h2>
-              
+              <h2 className="text-topicos2 text-typography">
+                Entradas do Diário
+              </h2>
+
               {(!diary.entries || diary.entries.length === 0) && (
                 <div className="bg-offwhite p-4 rounded-lg shadow-md">
                   <p className="text-campos-preenchimento2 text-gray2">
@@ -150,7 +175,10 @@ export default function ViewDiary() {
               {diary.entries && diary.entries.length > 0 && (
                 <div className="space-y-3">
                   {diary.entries.map((entry, index) => (
-                    <div key={entry.id || index} className="bg-offwhite p-4 rounded-lg shadow-md">
+                    <div
+                      key={entry.id || index}
+                      className="bg-offwhite p-4 rounded-lg shadow-md"
+                    >
                       <div className="flex justify-between items-start mb-3">
                         <h3 className="text-topicos2 text-typography">
                           Entrada {index + 1}
@@ -161,7 +189,7 @@ export default function ViewDiary() {
                           </span>
                         )}
                       </div>
-                      
+
                       {entry.text_content && (
                         <div className="mb-3">
                           <p className="text-campos-preenchimento2 text-typography whitespace-pre-wrap">
@@ -169,10 +197,11 @@ export default function ViewDiary() {
                           </p>
                         </div>
                       )}
-                      
+
                       {entry.scope && (
                         <div className="text-desc-titulo text-gray2">
-                          <span className="font-medium">Escopo:</span> {entry.scope}
+                          <span className="font-medium">Escopo:</span>{" "}
+                          {entry.scope}
                         </div>
                       )}
                     </div>
@@ -185,4 +214,4 @@ export default function ViewDiary() {
       </div>
     </div>
   );
-}   
+}
