@@ -198,6 +198,7 @@ export default function DiaryInfoForm() {
         text: freeText,
         text_shared: shareText,
         interest_areas: formattedInterestAreas,
+        diary_shared: diary_shared,
       };
 
       console.log("Submitting diary:", diary);
