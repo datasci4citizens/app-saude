@@ -209,7 +209,11 @@ export default function DiaryInfoForm() {
         .filter((interest) => interest.triggers.length > 0); // Only include interests with answered triggers
 
       let diary_shared = false;
-      if (shareText || shareHabits || userInterests.some(interest => interest.shared)) {
+      if (
+        shareText ||
+        shareHabits ||
+        userInterests.some((interest) => interest.shared)
+      ) {
         diary_shared = true;
       }
 
