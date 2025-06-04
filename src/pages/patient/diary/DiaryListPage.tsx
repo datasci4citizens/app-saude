@@ -49,11 +49,15 @@ export default function DiaryListPage() {
         setIsLoading(true);
         const response = await DiariesService.diariesRetrieve();
         console.log("API response:", response);
-        
+
         if (Array.isArray(response)) {
           // Handle array response
           setDiaries(response);
-        } else if (response && response.results && Array.isArray(response.results)) {
+        } else if (
+          response &&
+          response.results &&
+          Array.isArray(response.results)
+        ) {
           // Handle paginated response
           setDiaries(response.results);
         } else {
@@ -62,7 +66,7 @@ export default function DiaryListPage() {
         }
       } catch (error) {
         console.error("Error fetching diaries:", error);
-        
+
         // For development testing, provide a sample diary
         setDiaries([
           {
@@ -75,7 +79,7 @@ export default function DiaryListPage() {
                 created_at: "2025-06-04T16:16:56.844846Z",
                 value_as_string: "Exemplo de entrada de diário",
                 shared_with_provider: true,
-              }
+              },
             ],
             interest_areas: [
               {
@@ -90,12 +94,12 @@ export default function DiaryListPage() {
                     trigger_name: "Alimentação",
                     trigger_id: 2,
                     observation_concept_id: 2000302,
-                    value_as_string: "Exemplo de resposta sobre alimentação"
-                  }
-                ]
-              }
-            ]
-          }
+                    value_as_string: "Exemplo de resposta sobre alimentação",
+                  },
+                ],
+              },
+            ],
+          },
         ]);
       } finally {
         setIsLoading(false);
@@ -198,7 +202,7 @@ export default function DiaryListPage() {
 
       {/* create new diary button */}
       <div className="flex justify-end my-4">
-        <Button 
+        <Button
           onClick={handleCreateDiary}
           className="bg-accent text-selection flex items-center gap-2"
         >
