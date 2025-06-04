@@ -180,13 +180,11 @@ export default function DiaryInfoForm() {
               value_as_string: trigger.response || "",
             })),
           };
-        }).filter((interest) => interest.triggers.length > 0); // Only include interests with answered triggers
+        })
+        .filter((interest) => interest.triggers.length > 0); // Only include interests with answered triggers
 
       let diary_shared = false;
-      if (
-        shareText ||
-        userInterests.some((interest) => interest.shared)
-      ) {
+      if (shareText || userInterests.some((interest) => interest.shared)) {
         diary_shared = true;
       }
 
