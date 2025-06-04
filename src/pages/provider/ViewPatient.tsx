@@ -271,7 +271,9 @@ export default function ViewPatient() {
                         helpRequest.value_as_string ||
                         "Pedido de ajuda sem descrição"
                       }
-                      onClick={() => navigate(`/provider/help/${id}/${helpRequest.id}`)}
+                      onClick={() =>
+                        navigate(`/provider/help/${id}/${helpRequest.id}`)
+                      }
                     />
                   ))}
                 </div>

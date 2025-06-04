@@ -7,11 +7,16 @@ import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
 
 export default function ViewHelp() {
-  const { personId, helpId } = useParams<{ personId: string; helpId: string }>();
+  const { personId, helpId } = useParams<{
+    personId: string;
+    helpId: string;
+  }>();
   const navigate = useNavigate();
-  
+
   const [patient, setPatient] = useState<PersonRetrieve | null>(null);
-  const [helpRequest, setHelpRequest] = useState<ObservationRetrieve | null>(null);
+  const [helpRequest, setHelpRequest] = useState<ObservationRetrieve | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,19 +30,21 @@ export default function ViewHelp() {
 
       try {
         setLoading(true);
-        
+
         // Buscar dados do paciente
-        const patientData = await PersonService.apiPersonRetrieve(Number(personId));
+        const patientData = await PersonService.apiPersonRetrieve(
+          Number(personId),
+        );
         setPatient(patientData);
 
         // Buscar todos os pedidos de ajuda do provider
         const allHelpRequests = await HelpService.providerHelpList();
-        
+
         // Encontrar o pedido específico
         const specificHelpRequest = allHelpRequests.find(
-          (help: ObservationRetrieve) => 
-            help.observation_id === Number(helpId) && 
-            help.person === Number(personId)
+          (help: ObservationRetrieve) =>
+            help.observation_id === Number(helpId) &&
+            help.person === Number(personId),
         );
 
         if (!specificHelpRequest) {
@@ -63,10 +70,10 @@ export default function ViewHelp() {
       const date = new Date(dateString);
       return date.toLocaleString("pt-BR", {
         day: "2-digit",
-        month: "2-digit", 
+        month: "2-digit",
         year: "numeric",
         hour: "2-digit",
-        minute: "2-digit"
+        minute: "2-digit",
       });
     } catch (e) {
       return "Data inválida";
@@ -113,7 +120,7 @@ export default function ViewHelp() {
       <div className="p-4">
         <Header title="Pedido de Ajuda" centered={true} />
       </div>
-      
+
       <div className="flex-1 px-4 overflow-auto">
         {/* Informações do Paciente */}
         {patient && (
@@ -126,7 +133,8 @@ export default function ViewHelp() {
                 <span className="font-medium">ID:</span> {patient.person_id}
               </p>
               <p className="text-campos-preenchimento2 text-typography">
-                <span className="font-medium">Nome:</span> {patient.social_name || "Não informado"}
+                <span className="font-medium">Nome:</span>{" "}
+                {patient.social_name || "Não informado"}
               </p>
             </div>
           </div>
@@ -147,14 +155,15 @@ export default function ViewHelp() {
                   {formatDateTime(helpRequest.created_at)}
                 </p>
               </div>
-              
+
               <div>
                 <p className="text-campos-preenchimento2 text-typography font-medium mb-2">
                   Mensagem do Paciente:
                 </p>
                 <div className="bg-gray1 border border-gray2-border rounded-lg p-4">
                   <p className="text-campos-preenchimento2 text-typography whitespace-pre-wrap">
-                    {helpRequest.value_as_string || "Nenhuma mensagem foi fornecida com este pedido de ajuda."}
+                    {helpRequest.value_as_string ||
+                      "Nenhuma mensagem foi fornecida com este pedido de ajuda."}
                   </p>
                 </div>
               </div>
