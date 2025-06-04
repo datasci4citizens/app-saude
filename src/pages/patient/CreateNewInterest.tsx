@@ -122,7 +122,7 @@ export default function CreateNewInterest() {
 
   return (
     <div
-      className="p-4 h-full bg-primary overflow-y-auto"
+      className="p-4 h-screen bg-primary overflow-y-auto"
       style={{ height: "100vh" }}
     >
       {/* Header */}
@@ -194,7 +194,7 @@ export default function CreateNewInterest() {
         </div>
 
         {/* Create Interest Button - Fixed at bottom */}
-        <div className="fixed bottom-8 left-0 right-0 px-4">
+        <div className="sticky bottom-8 left-0 right-0 px-4">
           <Button
             onClick={handleSubmit}
             className="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 font-bold"
