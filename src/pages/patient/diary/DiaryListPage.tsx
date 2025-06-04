@@ -49,11 +49,15 @@ export default function DiaryListPage() {
         setIsLoading(true);
         const response = await DiariesService.diariesRetrieve();
         console.log("API response:", response);
-        
+
         if (Array.isArray(response)) {
           // Handle array response
           setDiaries(response);
-        } else if (response && response.results && Array.isArray(response.results)) {
+        } else if (
+          response &&
+          response.results &&
+          Array.isArray(response.results)
+        ) {
           // Handle paginated response
           setDiaries(response.results);
         } else {
@@ -62,7 +66,7 @@ export default function DiaryListPage() {
         }
       } catch (error) {
         console.error("Error fetching diaries:", error);
-        
+
         // For development testing, provide a sample diary
         setDiaries([
           {
@@ -75,7 +79,7 @@ export default function DiaryListPage() {
                 created_at: "2025-06-04T16:16:56.844846Z",
                 value_as_string: "Exemplo de entrada de diário",
                 shared_with_provider: true,
-              }
+              },
             ],
             interest_areas: [
               {
@@ -90,12 +94,12 @@ export default function DiaryListPage() {
                     trigger_name: "Alimentação",
                     trigger_id: 2,
                     observation_concept_id: 2000302,
-                    value_as_string: "Exemplo de resposta sobre alimentação"
-                  }
-                ]
-              }
-            ]
-          }
+                    value_as_string: "Exemplo de resposta sobre alimentação",
+                  },
+                ],
+              },
+            ],
+          },
         ]);
       } finally {
         setIsLoading(false);
@@ -134,16 +138,16 @@ export default function DiaryListPage() {
     if (diary.entries && diary.entries.length > 0) {
       return diary.entries[0].value_as_string;
     }
-    
+
     // Look for any trigger responses
-    const triggerWithResponse = diary.interest_areas?.flatMap(area => 
-      area.triggers.filter(t => t.value_as_string)
+    const triggerWithResponse = diary.interest_areas?.flatMap((area) =>
+      area.triggers.filter((t) => t.value_as_string),
     )[0];
-    
+
     if (triggerWithResponse) {
       return triggerWithResponse.value_as_string || "";
     }
-    
+
     return "Sem conteúdo";
   };
 
@@ -152,16 +156,19 @@ export default function DiaryListPage() {
     if (!diary.interest_areas || diary.interest_areas.length === 0) {
       return "Diário";
     }
-    
+
     // Count filled triggers
-    const totalTriggers = diary.interest_areas.reduce((count, area) => 
-      count + area.triggers.filter(t => t.value_as_string).length, 0);
-      
+    const totalTriggers = diary.interest_areas.reduce(
+      (count, area) =>
+        count + area.triggers.filter((t) => t.value_as_string).length,
+      0,
+    );
+
     if (totalTriggers === 0) {
       return "Diário";
     }
-    
-    return `Diário (${totalTriggers} resposta${totalTriggers > 1 ? 's' : ''})`;
+
+    return `Diário (${totalTriggers} resposta${totalTriggers > 1 ? "s" : ""})`;
   };
 
   return (
@@ -170,7 +177,7 @@ export default function DiaryListPage() {
 
       {/* create new diary button */}
       <div className="flex justify-end my-4">
-        <Button 
+        <Button
           onClick={handleCreateDiary}
           className="bg-accent text-selection flex items-center gap-2"
         >

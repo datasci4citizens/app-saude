@@ -52,11 +52,11 @@ export default function ViewDiaryEntry() {
       try {
         setIsLoading(true);
         console.log(`Fetching diary with ID: ${diaryId}`);
-        
+
         // Fetch diary by ID
         const response = await DiariesService.diariesRetrieve2(diaryId);
         console.log("Diary API response:", response);
-        
+
         if (response && response.diary_id) {
           setDiary(response);
         } else {
@@ -97,18 +97,19 @@ export default function ViewDiaryEntry() {
     }
 
     // Find the general text entry (usually observation_concept = 999002)
-    const textEntry = diary.entries.find(entry => 
-      entry.observation_concept === 999002 || 
-      (entry.value_as_string && entry.value_as_string.trim() !== "")
+    const textEntry = diary.entries.find(
+      (entry) =>
+        entry.observation_concept === 999002 ||
+        (entry.value_as_string && entry.value_as_string.trim() !== ""),
     );
 
     if (!textEntry) return null;
 
     return {
       text: textEntry.value_as_string,
-      shared: textEntry.shared_with_provider
+      shared: textEntry.shared_with_provider,
     };
-  }
+  };
 
   if (isLoading) {
     return (
@@ -124,10 +125,7 @@ export default function ViewDiaryEntry() {
   if (error || !diary) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
-        <Header 
-          title="Visualizar Diário" 
-          onBackClick={() => navigate(-1)}
-        />
+        <Header title="Visualizar Diário" onBackClick={() => navigate(-1)} />
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 mt-6">
           {error || "Diário não encontrado"}
         </div>
@@ -144,23 +142,26 @@ export default function ViewDiaryEntry() {
   }
 
   const textEntry = getGeneralTextEntry();
-  const hasContent = 
-    (textEntry && textEntry.text) || 
-    (diary.interest_areas && diary.interest_areas.some(area => 
-      area.triggers && area.triggers.some(t => t.value_as_string)
-    ));
+  const hasContent =
+    (textEntry && textEntry.text) ||
+    (diary.interest_areas &&
+      diary.interest_areas.some(
+        (area) => area.triggers && area.triggers.some((t) => t.value_as_string),
+      ));
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
-      <Header 
-        title="Visualizar Diário" 
+      <Header
+        title="Visualizar Diário"
         onBackClick={() => navigate(-1)}
         subtitle={diary.date ? formatDate(diary.date) : "Data não disponível"}
       />
 
       {!hasContent && (
         <div className="bg-gray-50 p-6 rounded-lg text-center my-8">
-          <p className="text-gray-500 text-lg">Este diário não possui conteúdo.</p>
+          <p className="text-gray-500 text-lg">
+            Este diário não possui conteúdo.
+          </p>
         </div>
       )}
 
@@ -170,9 +171,7 @@ export default function ViewDiaryEntry() {
           Período de tempo
         </h3>
         <div className="bg-gray-50 p-4 rounded-lg">
-          <p>
-            {diary.scope === "today" ? "Hoje" : "Desde o último diário"}
-          </p>
+          <p>{diary.scope === "today" ? "Hoje" : "Desde o último diário"}</p>
         </div>
       </div>
 
@@ -189,21 +188,25 @@ export default function ViewDiaryEntry() {
             {diary.interest_areas.map((interest) => {
               // Only show triggers that have responses
               const triggersWithResponses = interest.triggers.filter(
-                t => t.value_as_string && t.value_as_string.trim() !== ""
+                (t) => t.value_as_string && t.value_as_string.trim() !== "",
               );
-              
+
               if (triggersWithResponses.length === 0) return null;
-              
+
               return (
                 <div key={interest.interest_area_id} className="space-y-3">
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center justify-between">
                       <HabitCard
-                        title={interest.interest_name || `Interesse ${interest.interest_area_id}`}
+                        title={
+                          interest.interest_name ||
+                          `Interesse ${interest.interest_area_id}`
+                        }
                         className="inline-block w-auto min-w-fit max-w-full"
                       />
                       <span className="text-sm text-gray-500">
-                        Compartilhado: {interest.shared_with_provider ? "Sim" : "Não"}
+                        Compartilhado:{" "}
+                        {interest.shared_with_provider ? "Sim" : "Não"}
                       </span>
                     </div>
                   </div>
@@ -213,9 +216,10 @@ export default function ViewDiaryEntry() {
                       <div key={trigger.trigger_id} className="mt-3 space-y-2">
                         {/* Trigger title as question */}
                         <div className="font-medium text-sm text-neutral-700 mb-1">
-                          {trigger.trigger_name || `Pergunta ${trigger.trigger_id}`}
+                          {trigger.trigger_name ||
+                            `Pergunta ${trigger.trigger_id}`}
                         </div>
-                        
+
                         {/* Removed HabitCard for triggers, showing full question instead */}
                         <div className="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap">
                           {trigger.value_as_string}
@@ -239,7 +243,8 @@ export default function ViewDiaryEntry() {
             </h3>
             <div className="flex items-center gap-3">
               <span className="text-sm text-gray-500">
-                Compartilhado com profissionais: {textEntry.shared ? "Sim" : "Não"}
+                Compartilhado com profissionais:{" "}
+                {textEntry.shared ? "Sim" : "Não"}
               </span>
             </div>
           </div>
