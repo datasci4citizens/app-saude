@@ -57,12 +57,18 @@ export default function ViewDiaryEntry() {
         const response = await DiariesService.diariesRetrieve2(diaryId);
         console.log("Diary API response:", response);
         
-        if (response && response.diary_id) {
+        if (response) {
+          console.log("Diary entries:", response.entries);
+          console.log("Diary interest areas:", response.interest_areas);
+        } 
+
+        if(response && response.diary_id) {
           setDiary(response);
         } else {
-          console.error("Invalid diary data received:", response);
-          setError("O diário não contém dados válidos.");
+          console.error("Diary not found or invalid response format:", response);
+          setError("Diário não encontrado ou formato inválido.");
         }
+
       } catch (error) {
         console.error("Error fetching diary:", error);
         setError("Falha ao carregar o diário. Por favor, tente novamente.");
@@ -97,17 +103,17 @@ export default function ViewDiaryEntry() {
     }
 
     // Find the general text entry (usually observation_concept = 999002)
-    const textEntry = diary.entries.find(entry => 
-      entry.observation_concept === 999002 || 
-      (entry.value_as_string && entry.value_as_string.trim() !== "")
-    );
+    for (const entry of diary.entries) {
+    // If we have text content, return it regardless of concept ID
+    if (entry.value_as_string && entry.value_as_string.trim() !== "") {
+      return {
+        text: entry.value_as_string,
+        shared: entry.shared_with_provider
+      };
+    }
+  }
 
-    if (!textEntry) return null;
-
-    return {
-      text: textEntry.value_as_string,
-      shared: textEntry.shared_with_provider
-    };
+  return null;
   }
 
   if (isLoading) {
@@ -126,7 +132,7 @@ export default function ViewDiaryEntry() {
       <div className="max-w-3xl mx-auto px-4 py-8">
         <Header 
           title="Visualizar Diário" 
-          onBackClick={() => navigate(-1)}
+          onBackClick={() => navigate("/diary")}
         />
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 mt-6">
           {error || "Diário não encontrado"}
