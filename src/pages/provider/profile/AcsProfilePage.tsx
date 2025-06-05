@@ -4,6 +4,7 @@ import ProfileBanner from "@/components/ui/profile-banner";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { AccountService } from "@/api/services/AccountService";
 import { ApiService } from "@/api/services/ApiService";
+import { LogoutService } from "@/api/services/LogoutService";
 
 interface AcsProfileMenuItem {
   title: string;
@@ -45,8 +46,23 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
     },
     {
       title: "Logout",
-      onClick: () => {
-        localStorage.removeItem("token");
+      onClick: async () => {
+        const refresh = localStorage.getItem("refreshToken");
+        if (!refresh) {
+          alert("Refresh token não encontrado.");
+          return;
+        }
+        try {
+          await LogoutService.authLogoutCreate({ refresh });
+        } catch (error: any) {
+          alert(
+            error?.message
+              ? `Erro ao fazer logout: ${error.message}`
+              : "Erro ao fazer logout. Tente novamente."
+          );
+        }
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
         navigate("/welcome");
       },
       hasArrow: false,
@@ -63,9 +79,10 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
             `Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.`,
           );
           if (!confirmed) return;
-          // alert(`A conta com o ID ${personId} será excluída.`);
+          // alert(`A conta com o ID ${providerId} será excluída.`);
           await AccountService.apiAccountDestroy(providerId);
-          localStorage.removeItem("token");
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
           navigate("/welcome");
         } catch (error) {
           alert("Erro ao excluir conta. Tente novamente.");
