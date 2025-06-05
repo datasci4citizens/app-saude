@@ -58,7 +58,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
           alert(
             error?.message
               ? `Erro ao fazer logout: ${error.message}`
-              : "Erro ao fazer logout. Tente novamente."
+              : "Erro ao fazer logout. Tente novamente.",
           );
         }
         localStorage.removeItem("accessToken");
