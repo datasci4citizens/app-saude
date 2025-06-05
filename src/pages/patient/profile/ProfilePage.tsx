@@ -5,7 +5,6 @@ import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { AccountService } from "@/api/services/AccountService";
 import { ApiService } from "@/api/services/ApiService"; // Import ApiService
 
-
 interface ProfileMenuItem {
   title: string;
   onClick: () => void;
@@ -72,7 +71,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
             return;
           }
           const confirmed = window.confirm(
-            `Tem certeza que deseja excluir a sua conta? Esta ação não pode ser desfeita.`
+            `Tem certeza que deseja excluir a sua conta? Esta ação não pode ser desfeita.`,
           );
           if (!confirmed) return;
           // alert(`A conta com o ID ${personId} será excluída.`);

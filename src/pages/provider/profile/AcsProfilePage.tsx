@@ -60,7 +60,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
             return;
           }
           const confirmed = window.confirm(
-            `Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.`
+            `Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.`,
           );
           if (!confirmed) return;
           // alert(`A conta com o ID ${personId} será excluída.`);
