@@ -222,7 +222,7 @@ export default function UserMainPage() {
       {/* Top banner */}
       <HomeBanner
         title="Registro diário"
-        subtitle="Cheque registro dos seus pacientes"
+        subtitle="Escreva seu diário!"
         onIconClick={handleBannerIconClick}
       />
 
