@@ -5,6 +5,7 @@ import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 import { AuthService } from "@/api/services/AuthService";
 import { Capacitor } from "@capacitor/core";
 import { useGoogleLogin } from "@react-oauth/google";
+import { AccountService } from "@/api";
 
 const isMobile = Capacitor.isNativePlatform();
 
@@ -60,7 +61,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
     }
   };
 
-  const handleLoginSuccess = (
+  const handleLoginSuccess = async (
     access: string,
     refresh: string,
     role: string,
@@ -68,6 +69,14 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
     localStorage.setItem("accessToken", access);
     localStorage.setItem("refreshToken", refresh);
     localStorage.setItem("role", role);
+
+    try {
+      const accountData = await AccountService.apiAccountList();
+      localStorage.setItem("fullname", accountData.full_name || "");
+    } catch (err) {
+      console.error("Erro ao buscar conta:", err);
+      localStorage.setItem("fullname", "");
+    }
 
     if (role === "provider") {
       window.location.href = "/acs-main-page";
@@ -77,6 +86,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
       onNext();
     }
   };
+
 
   return (
     <div className="onboarding-screen landing-screen">

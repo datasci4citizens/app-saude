@@ -45,56 +45,65 @@ export default function ViewPatient() {
   const [activeTab, setActiveTab] = useState("diarios");
 
   useEffect(() => {
-    if (id) {
-      const fetchPatientData = async () => {
-        try {
-          setLoading(true);
-          const patientData = await PersonService.apiPersonRetrieve(Number(id));
-          setPatient(patientData);
-          setError(null);
-        } catch (err) {
-          console.error("Error fetching patient data:", err);
-          setError("Não foi possível carregar os dados do paciente.");
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchPatientData();
+    if (!id) return;
 
-      const fetchDiaries = async () => {
-        try {
-          setDiariesLoading(true);
-          const diariesData =
-            await ProviderService.providerPatientsDiariesRetrieve(Number(id));
+    const fetchPatientData = async () => {
+      try {
+        setLoading(true);
+        const patientData = await PersonService.apiPersonRetrieve(Number(id));
+        setPatient(patientData);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching patient data:", err);
+        setError("Não foi possível carregar os dados do paciente.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-          // Ordenar do mais recente para o mais antigo
-          const sortedDiaries = (diariesData as DiaryEntry[]).sort((a, b) => {
-            const dateA = new Date(a.date).getTime();
-            const dateB = new Date(b.date).getTime();
-            return dateB - dateA;
-          });
+    fetchPatientData();
+  }, [id]);
 
-          setDiaries(sortedDiaries);
-          setDiariesError(null);
-        } catch (err) {
-          console.error("Error fetching diaries:", err);
-          setDiariesError("Não foi possível carregar os diários do paciente.");
-        } finally {
-          setDiariesLoading(false);
-        }
-      };
-      fetchDiaries();
+  useEffect(() => {
+    if (!patient) return;
 
-      const fetchHelpRequests = async () => {
-        try {
-          setHelpRequestsLoading(true);
-          // Buscar todos os pedidos de ajuda do provider
-          const allHelpRequests = await HelpService.providerHelpList();
+    const fetchDiaries = async () => {
+      try {
+        setDiariesLoading(true);
+        const diariesData = await ProviderService.providerPatientsDiariesList(patient.person_id);
 
-          // Filtrar apenas os pedidos de ajuda do paciente específico
-          const patientHelpRequests = allHelpRequests.filter(
-            (help: ObservationRetrieve) => help.person === Number(id),
-          );
+        const sortedDiaries = (diariesData as DiaryEntry[]).sort((a, b) => {
+          const dateA = new Date(a.date).getTime();
+          const dateB = new Date(b.date).getTime();
+          return dateB - dateA;
+        });
+
+        setDiaries(sortedDiaries);
+        setDiariesError(null);
+      } catch (err) {
+        console.error("Error fetching diaries:", err);
+        setDiariesError("Não foi possível carregar os diários do paciente.");
+      } finally {
+        setDiariesLoading(false);
+      }
+    };
+
+    fetchDiaries();
+  }, [patient]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchHelpRequests = async () => {
+      try {
+        setHelpRequestsLoading(true);
+        // Buscar todos os pedidos de ajuda do provider
+        const allHelpRequests = await HelpService.providerHelpList();
+
+        // Filtrar apenas os pedidos de ajuda do paciente específico
+        const patientHelpRequests = allHelpRequests.filter(
+          (help: ObservationRetrieve) => help.person === Number(id),
+        );
 
           // Mapear para o formato da interface HelpRequest
           const formattedHelpRequests: HelpRequest[] = patientHelpRequests.map(
@@ -130,8 +139,7 @@ export default function ViewPatient() {
         }
       };
       fetchHelpRequests();
-    }
-  }, [id]);
+    }, [id]);
 
   const formatDate = (dateString: string) => {
     try {

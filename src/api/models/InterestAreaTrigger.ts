@@ -2,9 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type HelpCreate = {
-    provider?: number | null;
+export type InterestAreaTrigger = {
+    observation_concept_id?: number | null;
+    trigger_name?: string | null;
     value_as_string?: string | null;
-    shared_with_provider?: boolean | null;
+    concept_name?: string | null;
 };
 

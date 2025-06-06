@@ -3,5 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export type HelpCount = {
-  help_count: number;
+    help_count: number;
 };
+
