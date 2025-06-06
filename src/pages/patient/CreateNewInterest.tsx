@@ -121,90 +121,84 @@ export default function CreateNewInterest() {
   }));
 
   return (
-    <div
-      className="p-4 h-full bg-primary overflow-y-auto"
-      style={{ height: "100vh" }}
-    >
-      {/* Header */}
+    <div className="p-4 min-h-screen bg-primary flex flex-col justify-between">
+      {/* Conteúdo que pode rolar */}
+      <div className="overflow-y-auto">
+        <Header title="Novo interesse" onBackClick={handleBack} />
 
-      <Header title="Novo interesse" onBackClick={handleBack} />
-
-      <div className="px-4 py-5 flex flex-col gap-6">
-        {/* Error message */}
-        {submitError && (
-          <div className="p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
-            <p>{submitError}</p>
-          </div>
-        )}
-
-        {/* Interest Name */}
-        <TextField
-          id="interest-name"
-          name="interest-name"
-          label=""
-          value={interestName}
-          onChange={handleNameChange}
-          placeholder="Nome do novo interesse"
-          error={nameError}
-        />
-
-        {/* Selected Questions Section */}
-        <div>
-          <h3 className="text-sm font-medium text-typography mb-2">
-            Perguntas selecionadas
-          </h3>
-
-          <MultiSelectCustom
-            id="selected-questions"
-            name="selected-questions"
-            options={questionOptions}
-            value={selectedQuestions}
-            onChange={handleSelectedQuestionsChange}
-            placeholder="Selecione perguntas"
-            isLoading={false}
-          />
-        </div>
-
-        {/* Add New Question Section */}
-        <div className="mt-2">
-          <h3 className="text-sm font-medium text-typography mb-2">
-            Criar nova pergunta
-          </h3>
+        <div className="px-4 py-5 flex flex-col gap-6">
+          {/* Error message */}
+          {submitError && (
+            <div className="p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
+              <p>{submitError}</p>
+            </div>
+          )}
 
           <TextField
-            id="new-question"
-            name="new-question"
+            id="interest-name"
+            name="interest-name"
             label=""
-            value={newQuestion}
-            onChange={handleQuestionChange}
-            placeholder="Nova pergunta"
-            error={questionError}
+            value={interestName}
+            onChange={handleNameChange}
+            placeholder="Nome do novo interesse"
+            error={nameError}
           />
 
-          {/* Add Question Button */}
-          <div className="flex justify-center mt-4">
-            <Button
-              onClick={handleAddQuestion}
-              className="bg-primary border border-2 border-selection hover:bg-primary/90 text-typography font-bold py-3 px-6 uppercase"
-              type="button"
-            >
-              Adicionar pergunta
-            </Button>
+          {/* MultiSelect de perguntas */}
+          <div>
+            <h3 className="text-sm font-medium text-typography mb-2">
+              Perguntas selecionadas
+            </h3>
+            <MultiSelectCustom
+              id="selected-questions"
+              name="selected-questions"
+              options={questionOptions}
+              value={selectedQuestions}
+              onChange={handleSelectedQuestionsChange}
+              placeholder="Selecione perguntas"
+              isLoading={false}
+            />
+          </div>
+
+          {/* Nova pergunta */}
+          <div className="mt-2">
+            <h3 className="text-sm font-medium text-typography mb-2">
+              Criar nova pergunta
+            </h3>
+            <TextField
+              id="new-question"
+              name="new-question"
+              label=""
+              value={newQuestion}
+              onChange={handleQuestionChange}
+              placeholder="Nova pergunta"
+              error={questionError}
+            />
+            <div className="flex justify-center mt-4">
+              <Button
+                onClick={handleAddQuestion}
+                className="bg-primary border border-2 border-selection hover:bg-primary/90 text-typography font-bold py-3 px-6 uppercase"
+                type="button"
+              >
+                Adicionar pergunta
+              </Button>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Create Interest Button - Fixed at bottom */}
-        <div className="fixed bottom-8 left-0 right-0 px-4">
-          <Button
-            onClick={handleSubmit}
-            className="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 font-bold"
-            disabled={isSubmitting}
-            type="button"
-          >
-            {isSubmitting ? "CRIANDO..." : "CRIAR NOVO INTERESSE"}
-          </Button>
-        </div>
+      {/* Botão fixado ao fim da tela */}
+      <div className="px-4">
+        <Button
+          onClick={handleSubmit}
+          className="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 font-bold"
+          disabled={isSubmitting}
+          type="button"
+        >
+          {isSubmitting ? "CRIANDO..." : "CRIAR NOVO INTERESSE"}
+        </Button>
       </div>
     </div>
+
   );
 }
