@@ -31,7 +31,7 @@ export default function AcsMainPage() {
 
   // Funções de navegação - atualizadas para usar navigate em vez de router.push
   const handleEmergencyClick = () => {
-    navigate("/emergencies");
+    navigate("/patients");
   };
 
   const handleAppointmentClick = () => {
