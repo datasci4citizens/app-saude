@@ -219,11 +219,28 @@ export default function UserMainPage() {
 
   return (
     <div className="bg-primary min-h-screen pb-24 flex flex-col justify-between">
-      <div>
+      <div> 
         <HomeBanner
           title="Registro diário"
-          subtitle="Cheque registro dos seus pacientes"
+          subtitle="Adicione seus interesses e acompanhe seu progresso"
           onIconClick={handleBannerIconClick}
+        />
+
+      <div className="px-4 py-5 justify-center gap-4">
+        {/* Multiselect - using API data */}
+        <MultiSelectCustom
+          id="interests"
+          name="interests"
+          label="Meus Interesses"
+          options={interestAreasOptions}
+          value={selectedInterests}
+          onChange={handleInterestChange}
+          isLoading={isLoadingInterests}
+          placeholder={
+            isLoadingInterests
+              ? "Carregando..."
+              : "Selecione suas áreas de interesse"
+          }
         />
 
         <div className="px-4 py-5 justify-center gap-4">

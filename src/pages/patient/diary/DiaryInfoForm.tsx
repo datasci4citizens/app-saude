@@ -5,7 +5,8 @@ import HabitCard from "@/components/ui/habit-card";
 import { Switch } from "@/components/ui/switch";
 import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
-import { DiaryService } from "@/api/services/DiaryService";
+import type { DiaryCreate } from "@/api/models/DiaryCreate";
+import { DiaryService } from "@/api/services/DiaryService"; // diariesCreate method will be used to submit the diary
 import { DateRangeTypeEnum } from "@/api";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
@@ -202,6 +203,7 @@ export default function DiaryInfoForm() {
       console.log("Submitting diary:", diary);
 
       await DiaryService.diariesCreate(diary);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       navigate("/diary");
     } catch (error) {
       console.error("Failed to submit diary", error);
@@ -238,11 +240,11 @@ export default function DiaryInfoForm() {
 
       {/* User Interests Section */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-lg text-accent2-700">
-            Seus Interesses
-          </h3>
-        </div>
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-lg text-accent2-700">
+              Seus Interesses
+            </h3>
+          </div>
 
         {isLoadingInterests ? (
           <div className="flex justify-center py-4">
@@ -267,13 +269,13 @@ export default function DiaryInfoForm() {
                 <div key={interest.interest_area_id} className="space-y-3">
                   {/* Interest card and switch row */}
                   <div className="flex items-center justify-between">
-                    <div className="flex">
+                    <div className="relative">
                       <HabitCard
-                        title={interestName}
-                        className="inline-block w-auto min-w-fit max-w-full"
+                        title={interestName ?? ""}
+                        isAttentionPoint={interest.is_attention_point}
+                        providerName={interest.provider_name}
                       />
                     </div>
-
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-typography">
                         Compartilhar
