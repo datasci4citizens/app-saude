@@ -39,7 +39,7 @@ export default function ViewPatient() {
   const [helpRequests, setHelpRequests] = useState<HelpRequest[]>([]);
   const [helpRequestsLoading, setHelpRequestsLoading] = useState(true);
   const [helpRequestsError, setHelpRequestsError] = useState<string | null>(
-    null
+    null,
   );
 
   const [activeTab, setActiveTab] = useState("diarios");
@@ -92,7 +92,7 @@ export default function ViewPatient() {
 
           // Filtrar apenas os pedidos de ajuda do paciente específico
           const patientHelpRequests = allHelpRequests.filter(
-            (help: ObservationRetrieve) => help.person === Number(id)
+            (help: ObservationRetrieve) => help.person === Number(id),
           );
 
           // Mapear para o formato da interface HelpRequest
@@ -103,16 +103,16 @@ export default function ViewPatient() {
               observation_date: help.observation_date,
               value_as_string: help.value_as_string,
               person: help.person,
-            })
+            }),
           );
 
           // Ordenar do mais recente para o mais antigo
           formattedHelpRequests.sort((a, b) => {
             const dateA = new Date(
-              a.observation_date || a.created_at
+              a.observation_date || a.created_at,
             ).getTime();
             const dateB = new Date(
-              b.observation_date || b.created_at
+              b.observation_date || b.created_at,
             ).getTime();
             return dateB - dateA;
           });
@@ -122,7 +122,7 @@ export default function ViewPatient() {
         } catch (err) {
           console.error("Error fetching help requests:", err);
           setHelpRequestsError(
-            "Não foi possível carregar os pedidos de ajuda do paciente."
+            "Não foi possível carregar os pedidos de ajuda do paciente.",
           );
         } finally {
           setHelpRequestsLoading(false);
@@ -240,7 +240,7 @@ export default function ViewPatient() {
                       subText={entriesText}
                       onClick={() => {
                         navigate(
-                          `/provider/patient/${id}/diary/${diary.diary_id}`
+                          `/provider/patient/${id}/diary/${diary.diary_id}`,
                         );
                       }}
                     />
@@ -278,7 +278,7 @@ export default function ViewPatient() {
                     <ViewButton
                       key={helpRequest.id}
                       dateText={formatDate(
-                        helpRequest.observation_date || helpRequest.created_at
+                        helpRequest.observation_date || helpRequest.created_at,
                       )}
                       mainText="Pedido de Ajuda"
                       subText={

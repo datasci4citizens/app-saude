@@ -58,7 +58,7 @@ export default function ViewDiary() {
 
           // Buscar dados do paciente
           const patientData = await PersonService.apiPersonRetrieve(
-            Number(personId)
+            Number(personId),
           );
           setPatient(patientData);
 
