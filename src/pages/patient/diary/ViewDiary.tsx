@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
-import { DiariesService } from "@/api/services/DiariesService";
+import { DiaryService } from "@/api/services/DiaryService";
 import HabitCard from "@/components/ui/habit-card";
 
 // Updated interfaces to match actual server response structure
@@ -54,7 +54,7 @@ export default function ViewDiaryEntry() {
         console.log(`Fetching diary with ID: ${diaryId}`);
 
         // Fetch diary by ID
-        const response = await DiariesService.diariesRetrieve2(diaryId);
+        const response = await DiaryService.diariesRetrieve2(diaryId);
         console.log("Diary API response:", response);
 
         if (response) {
@@ -67,7 +67,7 @@ export default function ViewDiaryEntry() {
         } else {
           console.error(
             "Diary not found or invalid response format:",
-            response,
+            response
           );
           setError("Diário não encontrado ou formato inválido.");
         }
@@ -156,7 +156,7 @@ export default function ViewDiaryEntry() {
     (textEntry && textEntry.text) ||
     (diary.interest_areas &&
       diary.interest_areas.some(
-        (area) => area.triggers && area.triggers.some((t) => t.value_as_string),
+        (area) => area.triggers && area.triggers.some((t) => t.value_as_string)
       ));
 
   return (
@@ -198,7 +198,7 @@ export default function ViewDiaryEntry() {
             {diary.interest_areas.map((interest) => {
               // Only show triggers that have responses
               const triggersWithResponses = interest.triggers.filter(
-                (t) => t.value_as_string && t.value_as_string.trim() !== "",
+                (t) => t.value_as_string && t.value_as_string.trim() !== ""
               );
 
               if (triggersWithResponses.length === 0) return null;

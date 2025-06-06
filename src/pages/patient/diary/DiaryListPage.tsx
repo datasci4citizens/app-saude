@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
 import { Button } from "@/components/forms/button";
-import { DiariesService } from "@/api/services/DiariesService";
+import { DiaryService } from "@/api/services/DiaryService";
 import { ChevronRight, PlusCircle } from "lucide-react";
 
 // Updated interface to match server response structure
@@ -47,7 +47,7 @@ export default function DiaryListPage() {
     const fetchDiaries = async () => {
       try {
         setIsLoading(true);
-        const response = await DiariesService.diariesRetrieve();
+        const response = await DiaryService.personDiariesList();
         console.log("API response:", response);
 
         if (Array.isArray(response)) {
@@ -140,7 +140,7 @@ export default function DiaryListPage() {
     // Include diary entry text if available
     if (diary.entries && diary.entries.length > 0) {
       const textEntry = diary.entries.find(
-        (e) => e.value_as_string && e.value_as_string.trim() !== "",
+        (e) => e.value_as_string && e.value_as_string.trim() !== ""
       );
       if (textEntry) {
         summary = textEntry.value_as_string;
@@ -148,8 +148,8 @@ export default function DiaryListPage() {
         // If we also have trigger responses, add an indicator
         const hasTriggerResponses = diary.interest_areas?.some((area) =>
           area.triggers?.some(
-            (t) => t.value_as_string && t.value_as_string.trim() !== "",
-          ),
+            (t) => t.value_as_string && t.value_as_string.trim() !== ""
+          )
         );
 
         if (hasTriggerResponses) {
@@ -165,8 +165,8 @@ export default function DiaryListPage() {
     const triggersWithResponses =
       diary.interest_areas?.flatMap((area) =>
         area.triggers.filter(
-          (t) => t.value_as_string && t.value_as_string.trim() !== "",
-        ),
+          (t) => t.value_as_string && t.value_as_string.trim() !== ""
+        )
       ) || [];
 
     if (triggersWithResponses.length > 0) {
@@ -182,7 +182,7 @@ export default function DiaryListPage() {
 
     // Check for text entry
     const hasTextEntry = diary.entries?.some(
-      (e) => e.value_as_string && e.value_as_string.trim() !== "",
+      (e) => e.value_as_string && e.value_as_string.trim() !== ""
     );
 
     if (hasTextEntry) {
@@ -195,9 +195,9 @@ export default function DiaryListPage() {
         (count, area) =>
           count +
           area.triggers.filter(
-            (t) => t.value_as_string && t.value_as_string.trim() !== "",
+            (t) => t.value_as_string && t.value_as_string.trim() !== ""
           ).length,
-        0,
+        0
       ) || 0;
 
     if (triggerCount > 0) {

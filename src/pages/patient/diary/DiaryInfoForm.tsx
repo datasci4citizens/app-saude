@@ -5,7 +5,7 @@ import HabitCard from "@/components/ui/habit-card";
 import { Switch } from "@/components/ui/switch";
 import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
-import { DiariesService } from "@/api/services/DiariesService";
+import { DiaryService } from "@/api/services/DiaryService";
 import { DateRangeTypeEnum } from "@/api";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
@@ -35,7 +35,7 @@ export default function DiaryInfoForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingInterests, setIsLoadingInterests] = useState(true);
   const [timeRange, setTimeRange] = useState<"today" | "sinceLast">(
-    "sinceLast",
+    "sinceLast"
   );
   const [freeText, setFreeText] = useState("");
 
@@ -69,7 +69,7 @@ export default function DiaryInfoForm() {
               (interest as any).interest_area_id || Math.random(),
             response: "", // Initialize empty response
             shared: false, // Initialize as not shared
-          }),
+          })
         );
 
         console.log("Formatted user interests:", formattedInterests);
@@ -108,7 +108,7 @@ export default function DiaryInfoForm() {
   const handleTriggerResponseChange = (
     interestId: number,
     triggerId: number,
-    response: string,
+    response: string
   ) => {
     setUserInterests((prev) =>
       prev.map((interest) =>
@@ -119,25 +119,25 @@ export default function DiaryInfoForm() {
                 interest.triggers?.map((trigger) =>
                   trigger.trigger_id === triggerId
                     ? { ...trigger, response }
-                    : trigger,
+                    : trigger
                 ) || [],
             }
-          : interest,
-      ),
+          : interest
+      )
     );
   };
 
   // Handle interest response change
   const handleInterestResponseChange = (
     interestId: number,
-    response: string,
+    response: string
   ) => {
     setUserInterests((prev) =>
       prev.map((interest) =>
         interest.interest_area_id === interestId
           ? { ...interest, response }
-          : interest,
-      ),
+          : interest
+      )
     );
   };
 
@@ -147,8 +147,8 @@ export default function DiaryInfoForm() {
       prev.map((interest) =>
         interest.interest_area_id === interestId
           ? { ...interest, shared }
-          : interest,
-      ),
+          : interest
+      )
     );
   };
 
@@ -162,13 +162,13 @@ export default function DiaryInfoForm() {
         .filter(
           (interest) =>
             interest.response?.trim() !== "" ||
-            interest.triggers?.some((t) => t.response?.trim() !== ""),
+            interest.triggers?.some((t) => t.response?.trim() !== "")
         )
         .map((interest) => {
           // Get triggers with responses
           const triggersWithResponses =
             interest.triggers?.filter(
-              (trigger) => trigger.response && trigger.response.trim() !== "",
+              (trigger) => trigger.response && trigger.response.trim() !== ""
             ) || [];
 
           return {
@@ -201,7 +201,7 @@ export default function DiaryInfoForm() {
 
       console.log("Submitting diary:", diary);
 
-      await DiariesService.diariesCreate(diary);
+      await DiaryService.diariesCreate(diary);
       navigate("/diary");
     } catch (error) {
       console.error("Failed to submit diary", error);
@@ -283,7 +283,7 @@ export default function DiaryInfoForm() {
                         onCheckedChange={(checked) =>
                           handleInterestSharingToggle(
                             interest.interest_area_id,
-                            checked,
+                            checked
                           )
                         }
                         size="sm"
@@ -319,7 +319,7 @@ export default function DiaryInfoForm() {
                               handleTriggerResponseChange(
                                 interest.interest_area_id,
                                 trigger.trigger_id,
-                                e.target.value,
+                                e.target.value
                               )
                             }
                             placeholder=""

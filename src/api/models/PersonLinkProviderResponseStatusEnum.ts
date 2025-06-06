@@ -6,5 +6,5 @@
  * * `linked` - linked
  */
 export enum PersonLinkProviderResponseStatusEnum {
-  LINKED = "linked",
+    LINKED = 'linked',
 }
