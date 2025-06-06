@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "@/components/ui/header";
-import { ProviderService } from "@/api/services/ProviderService";
+import { DiaryService } from "@/api/services/DiaryService";
 import { PersonService } from "@/api/services/PersonService";
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 
@@ -58,16 +58,12 @@ export default function ViewDiary() {
 
           // Buscar dados do paciente
           const patientData = await PersonService.apiPersonRetrieve(
-            Number(personId),
+            Number(personId)
           );
           setPatient(patientData);
 
           // Buscar o diário específico diretamente
-          const diaryData =
-            await ProviderService.providerPatientsDiariesRetrieve2(
-              diaryId,
-              Number(personId),
-            );
+          const diaryData = await DiaryService.diariesRetrieve2(diaryId);
 
           if (diaryData) {
             setDiary(diaryData as DiaryDetail);
