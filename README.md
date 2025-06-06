@@ -108,4 +108,4 @@ O clientId e secret desse app **NÃO SÃO USADOS**, ele serve literalmente só p
 
 O segundo deve ser do tipo Web App, mas vai ser usado tanto para login WEB quanto login Mobile. Precisamos cadastrar as redirect urls para o caso
 de login WEB, onde o server chama o client na web (no nosso caso, somente localhost). O clientId e secret devem ser usados como variáveis de ambiente
-nesse projeto e no server. O clientSecret só é necessário no server para o login mobile. 
+nesse projeto e no server. O clientSecret só é necessário no server para o login web. 

@@ -3,22 +3,19 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { DiaryCreate } from "../models/DiaryCreate";
+import type { DiaryRetrieve } from "../models/DiaryRetrieve";
 import type { CancelablePromise } from "../core/CancelablePromise";
 import { OpenAPI } from "../core/OpenAPI";
 import { request as __request } from "../core/request";
-export class DiariesService {
+export class DiaryService {
   /**
-   * @param limit Limit the number of returned diaries
    * @returns any No response body
    * @throws ApiError
    */
-  public static diariesRetrieve(limit?: number): CancelablePromise<any> {
+  public static diariesRetrieve(): CancelablePromise<any> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/diaries/",
-      query: {
-        limit: limit,
-      },
     });
   }
   /**
@@ -38,6 +35,22 @@ export class DiariesService {
     });
   }
   /**
+   * @param diaryId
+   * @returns DiaryRetrieve
+   * @throws ApiError
+   */
+  public static diariesRetrieve2(
+    diaryId: string,
+  ): CancelablePromise<DiaryRetrieve> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/diaries/{diary_id}/",
+      path: {
+        diary_id: diaryId,
+      },
+    });
+  }
+  /**
    * @param diaryId ID of the diary to delete
    * @returns void
    * @throws ApiError
@@ -45,24 +58,20 @@ export class DiariesService {
   public static diariesDestroy(diaryId: number): CancelablePromise<void> {
     return __request(OpenAPI, {
       method: "DELETE",
-      url: "/diaries/",
+      url: "/diaries/{diary_id}/",
       path: {
         diary_id: diaryId,
       },
     });
   }
   /**
-   * @param diaryId
-   * @returns any No response body
+   * @returns DiaryRetrieve
    * @throws ApiError
    */
-  public static diariesRetrieve2(diaryId: string): CancelablePromise<any> {
+  public static personDiariesList(): CancelablePromise<Array<DiaryRetrieve>> {
     return __request(OpenAPI, {
       method: "GET",
-      url: "/diaries/{diary_id}/",
-      path: {
-        diary_id: diaryId,
-      },
+      url: "/person/diaries/",
     });
   }
 }

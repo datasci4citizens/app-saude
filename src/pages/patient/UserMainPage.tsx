@@ -222,7 +222,7 @@ export default function UserMainPage() {
       <div>
         <HomeBanner
           title="Registro diário"
-          subtitle="Cheque registro dos seus pacientes"
+          subtitle="Adicione seus interesses e acompanhe seu progresso"
           onIconClick={handleBannerIconClick}
         />
 
@@ -243,79 +243,97 @@ export default function UserMainPage() {
             }
           />
 
-          {/* Sync button */}
-          <div className="mt-4 flex justify-end">
+          <div className="px-4 py-5 justify-center gap-4">
+            {/* Multiselect - using API data */}
+            <MultiSelectCustom
+              id="interests"
+              name="interests"
+              label="Meus Interesses"
+              options={interestAreasOptions}
+              value={selectedInterests}
+              onChange={handleInterestChange}
+              isLoading={isLoadingInterests}
+              placeholder={
+                isLoadingInterests
+                  ? "Carregando..."
+                  : "Selecione suas áreas de interesse"
+              }
+            />
+
+            {/* Sync button */}
+            <div className="mt-4 flex justify-end">
+              <Button
+                onClick={syncInterestsWithServer}
+                className="bg-primary border-selection border-2 hover:bg-secondary/90 text-secondary-foreground px-6 py-3 font-bold uppercase tracking-wide"
+                disabled={!hasUnsavedChanges() || isSyncing}
+              >
+                {isSyncing ? "Enviando..." : "Enviar Interesses"}
+              </Button>
+            </div>
+
+            {/* Success message */}
+            {syncSuccess && (
+              <div className="flex justify-center mt-4">
+                <div className="inline-block p-3 bg-green-100 border border-green-500 text-green-700 rounded-md">
+                  <p className="whitespace-nowrap">
+                    Interesses salvos com sucesso!
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Error handling for interest areas */}
+            {interestAreasError && (
+              <div className="flex justify-center mt-4">
+                <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
+                  <p className="whitespace-nowrap">
+                    Erro ao carregar áreas de interesse
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Error handling for syncing */}
+            {syncError && (
+              <div className="flex justify-center mt-4">
+                <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
+                  <p className="whitespace-nowrap">{syncError}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        {/* Top banner */}
+
+        {/* Custom interest button */}
+        <div>
+          <div className="px-4 mb-2 flex justify-center">
             <Button
-              onClick={syncInterestsWithServer}
-              className="bg-primary border-selection border-2 hover:bg-secondary/90 text-secondary-foreground px-6 py-3 font-bold uppercase tracking-wide"
-              disabled={!hasUnsavedChanges() || isSyncing}
+              onClick={handleSelectedInterests}
+              className="bg-selection hover:bg-secondary/90 text-typography flex items-center gap-2 px-6"
             >
-              {isSyncing ? "Enviando..." : "Enviar Interesses"}
+              Ver Interesses Selecionados
             </Button>
           </div>
 
-          {/* Success message */}
-          {syncSuccess && (
-            <div className="flex justify-center mt-4">
-              <div className="inline-block p-3 bg-green-100 border border-green-500 text-green-700 rounded-md">
-                <p className="whitespace-nowrap">
-                  Interesses salvos com sucesso!
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Error handling for interest areas */}
-          {interestAreasError && (
-            <div className="flex justify-center mt-4">
-              <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
-                <p className="whitespace-nowrap">
-                  Erro ao carregar áreas de interesse
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Error handling for syncing */}
-          {syncError && (
-            <div className="flex justify-center mt-4">
-              <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
-                <p className="whitespace-nowrap">{syncError}</p>
-              </div>
-            </div>
-          )}
+          {/* Custom interest button */}
+          <div className="px-4 mb-2 flex justify-center">
+            <Button
+              onClick={handleCreateCustomInterest}
+              className="bg-selection hover:bg-secondary/90 text-typography flex items-center gap-2 px-6"
+            >
+              Criar Interesse Personalizado
+            </Button>
+          </div>
         </div>
+
+        {/* Navigation bar */}
+        <BottomNavigationBar
+          variant="user"
+          initialActiveId="home"
+          onItemClick={handleNavigationClick}
+        />
       </div>
-      {/* Top banner */}
-
-      {/* Custom interest button */}
-      <div>
-        <div className="px-4 mb-2 flex justify-center">
-          <Button
-            onClick={handleSelectedInterests}
-            className="bg-selection hover:bg-secondary/90 text-typography flex items-center gap-2 px-6"
-          >
-            Ver Interesses Selecionados
-          </Button>
-        </div>
-
-        {/* Custom interest button */}
-        <div className="px-4 mb-2 flex justify-center">
-          <Button
-            onClick={handleCreateCustomInterest}
-            className="bg-selection hover:bg-secondary/90 text-typography flex items-center gap-2 px-6"
-          >
-            Criar Interesse Personalizado
-          </Button>
-        </div>
-      </div>
-
-      {/* Navigation bar */}
-      <BottomNavigationBar
-        variant="user"
-        initialActiveId="home"
-        onItemClick={handleNavigationClick}
-      />
     </div>
   );
 }
