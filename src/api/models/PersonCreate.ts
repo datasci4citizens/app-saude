@@ -3,11 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 export type PersonCreate = {
-    social_name?: string | null;
-    birth_datetime?: string | null;
-    year_of_birth?: number | null;
-    gender_concept?: number | null;
-    ethnicity_concept?: number | null;
-    race_concept?: number | null;
+  social_name?: string | null;
+  birth_datetime?: string | null;
+  year_of_birth?: number | null;
+  gender_concept?: number | null;
+  ethnicity_concept?: number | null;
+  race_concept?: number | null;
 };
-

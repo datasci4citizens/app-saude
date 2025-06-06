@@ -3,10 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type MeasurementUpdate = {
-    readonly measurement_id: number;
-    measurement_date?: string | null;
-    person?: number | null;
-    measurement_concept?: number | null;
-    measurement_type_concept?: number | null;
+  readonly measurement_id: number;
+  measurement_date?: string | null;
+  person?: number | null;
+  measurement_concept?: number | null;
+  measurement_type_concept?: number | null;
 };
-
