@@ -8,4 +8,3 @@ export type InterestAreaTrigger = {
     value_as_string?: string | null;
     concept_name?: string | null;
 };
-
