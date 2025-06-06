@@ -30,11 +30,14 @@ const AddProfessionalPage = () => {
 
     try {
       const request: PersonLinkProviderRequest = { code: providerCode };
-      const providerData = await LinkPersonProviderService.providerByLinkCodeCreate(request);
+      const providerData =
+        await LinkPersonProviderService.providerByLinkCodeCreate(request);
       setProvider(providerData);
     } catch (err) {
       console.error("Error fetching provider:", err);
-      setError("Não foi possível vincular ao profissional. Verifique o código e tente novamente.");
+      setError(
+        "Não foi possível vincular ao profissional. Verifique o código e tente novamente.",
+      );
       setShowVisualError(true);
     } finally {
       setIsLoading(false);
@@ -52,7 +55,8 @@ const AddProfessionalPage = () => {
 
     try {
       const linkRequest: PersonLinkProviderRequest = { code: providerCode };
-      const response = await LinkPersonProviderService.personLinkCodeCreate(linkRequest);
+      const response =
+        await LinkPersonProviderService.personLinkCodeCreate(linkRequest);
 
       setLinkSuccess(true);
       alert("Profissional vinculado com sucesso!");
@@ -124,7 +128,8 @@ const AddProfessionalPage = () => {
               </div>
             </div>
             <p className="mt-4 text-gray-500 text-sm text-center">
-              Certifique-se que este é o profissional correto antes de confirmar.
+              Certifique-se que este é o profissional correto antes de
+              confirmar.
             </p>
           </div>
         )}

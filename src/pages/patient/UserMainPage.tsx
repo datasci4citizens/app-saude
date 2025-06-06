@@ -288,7 +288,6 @@ export default function UserMainPage() {
       </div>
       {/* Top banner */}
 
-
       {/* Custom interest button */}
       <div>
         <div className="px-4 mb-2 flex justify-center">

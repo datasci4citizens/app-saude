@@ -199,6 +199,5 @@ export default function CreateNewInterest() {
         </Button>
       </div>
     </div>
-
   );
 }
