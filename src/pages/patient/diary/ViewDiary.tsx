@@ -67,7 +67,7 @@ export default function ViewDiaryEntry() {
         } else {
           console.error(
             "Diary not found or invalid response format:",
-            response
+            response,
           );
           setError("Diário não encontrado ou formato inválido.");
         }
@@ -156,7 +156,7 @@ export default function ViewDiaryEntry() {
     (textEntry && textEntry.text) ||
     (diary.interest_areas &&
       diary.interest_areas.some(
-        (area) => area.triggers && area.triggers.some((t) => t.value_as_string)
+        (area) => area.triggers && area.triggers.some((t) => t.value_as_string),
       ));
 
   return (
@@ -198,7 +198,7 @@ export default function ViewDiaryEntry() {
             {diary.interest_areas.map((interest) => {
               // Only show triggers that have responses
               const triggersWithResponses = interest.triggers.filter(
-                (t) => t.value_as_string && t.value_as_string.trim() !== ""
+                (t) => t.value_as_string && t.value_as_string.trim() !== "",
               );
 
               if (triggersWithResponses.length === 0) return null;

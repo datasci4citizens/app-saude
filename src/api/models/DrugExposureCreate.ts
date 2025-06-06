@@ -2,14 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { RecurrenceRuleCreate } from './RecurrenceRuleCreate';
+import type { RecurrenceRuleCreate } from "./RecurrenceRuleCreate";
 export type DrugExposureCreate = {
-    recurrence_rule?: RecurrenceRuleCreate;
-    stop_reason?: string | null;
-    quantity?: number | null;
-    sig?: string | null;
-    person?: number | null;
-    drug_concept?: number | null;
-    drug_type_concept?: number | null;
+  recurrence_rule?: RecurrenceRuleCreate;
+  stop_reason?: string | null;
+  quantity?: number | null;
+  sig?: string | null;
+  person?: number | null;
+  drug_concept?: number | null;
+  drug_type_concept?: number | null;
 };
-
