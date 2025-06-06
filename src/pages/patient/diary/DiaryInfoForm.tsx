@@ -269,7 +269,7 @@ export default function DiaryInfoForm() {
                 <div key={interest.interest_area_id} className="space-y-3">
                   {/* Interest card and switch row */}
                   <div className="flex items-center justify-between">
-                    <div className="relative">
+                    <div className="relative ">
                       <HabitCard
                         title={interestName ?? ""}
                         isAttentionPoint={interest.is_attention_point}

@@ -9,3 +9,4 @@ export type DiaryRetrieve = {
     readonly entries: string;
     readonly interest_areas: string;
 };
+
