@@ -115,7 +115,7 @@ export default function UserOnboarding() {
 
         <div className="pl-9 pr-4">
           {error && (
-            <div className="bg-destructive bg-opacity-10 border border-destructive text-destructive rounded-md p-3 mb-4">
+            <div className="bg-destructive bg-opacity-10 border border-destructive text-white rounded-md p-3 mb-4">
               <p>{error}</p>
             </div>
           )}

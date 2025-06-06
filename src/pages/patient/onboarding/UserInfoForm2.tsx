@@ -1,19 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/forms/button";
 import { TextField } from "@/components/forms/text_input";
 import { SelectField } from "@/components/forms/select_input";
 import { useLocationConcepts } from "@/utils/conceptLoader";
 
-// Define form data type that extends Location with form-specific fields
-export interface AddressFormData extends Partial<Location> {
-  // Fields from Location that we'll use
+export interface AddressFormData {
   address_1?: string | null;
   city?: string | null;
   state?: string | null;
   zip?: string | null;
-
-  // Additional form fields not in Location model
-  street?: string | null; // Added separate street field
+  street?: string | null;
   number?: string | null;
   complement?: string | null;
 }
@@ -41,25 +37,37 @@ export function UserInfoForm2({
   const [formData, setFormData] = useState<AddressFormData>({
     zip: "",
     state: "",
-    street: "", // Changed from address_1 to street
+    street: "",
     city: "",
     number: "",
     complement: "",
-    // country_concept: 44508529, // Default concept ID for Brazil
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
 
-  // Handle input change
   const handleChange: React.ChangeEventHandler<
     HTMLInputElement | HTMLSelectElement
   > = (e) => {
-    const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
-    setFormData({ ...formData, [name]: value || null });
+    const { name, value } = e.target;
+    
+    // Format CEP automatically
+    let processedValue = value;
+    if (name === 'zip') {
+      // Remove non-digits and format CEP
+      const digits = value.replace(/\D/g, '');
+      if (digits.length <= 8) {
+        processedValue = digits.length > 5 
+          ? `${digits.slice(0, 5)}-${digits.slice(5)}` 
+          : digits;
+      } else {
+        return; // Don't update if more than 8 digits
+      }
+    }
 
-    // Clear error when user starts typing
+    setFormData(prev => ({ ...prev, [name]: processedValue || null }));
+
     if (errors[name]) {
-      setErrors({ ...errors, [name]: undefined });
+      setErrors(prev => ({ ...prev, [name]: undefined }));
     }
   };
 
@@ -67,25 +75,34 @@ export function UserInfoForm2({
     const newErrors: FormErrors = {};
 
     // Required fields
-    if (!formData.zip) newErrors.zip = "CEP é obrigatório";
-    if (!formData.state) newErrors.state = "Estado é obrigatório";
-    if (!formData.street) newErrors.street = "Rua é obrigatória"; // Changed to street
-    if (!formData.city) newErrors.city = "Cidade é obrigatória";
-    if (!formData.number) newErrors.number = "Número é obrigatório";
+    if (!formData.zip?.trim()) {
+      newErrors.zip = "CEP é obrigatório";
+    } else if (!/^\d{5}-?\d{3}$/.test(formData.zip)) {
+      newErrors.zip = "Formato de CEP inválido (ex: 12345-678)";
+    }
 
-    // Validate CEP format (00000-000)
-    if (formData.zip && !/^\d{5}-?\d{3}$/.test(formData.zip)) {
-      newErrors.zip = "Formato de CEP inválido";
+    if (!formData.state?.trim()) {
+      newErrors.state = "Estado é obrigatório";
+    }
+
+    if (!formData.street?.trim()) {
+      newErrors.street = "Rua é obrigatória";
+    }
+
+    if (!formData.city?.trim()) {
+      newErrors.city = "Cidade é obrigatória";
+    }
+
+    if (!formData.number?.trim()) {
+      newErrors.number = "Número é obrigatório";
     }
 
     return newErrors;
   };
 
-  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate form
     const formErrors = validateForm();
 
     if (Object.keys(formErrors).length > 0) {
@@ -93,49 +110,47 @@ export function UserInfoForm2({
       return;
     }
 
-    // Format all address parts into address_1 using a format that's easy to parse
-    // Format: "street, number, complement"
-    const street = formData.street || "";
-    const number = formData.number || "";
-    const complement = formData.complement ? `, ${formData.complement}` : "";
+    // Format address_1 field for backend
+    const street = formData.street?.trim() || "";
+    const number = formData.number?.trim() || "";
+    const complement = formData.complement?.trim();
+    
+    const addressParts = [street, number];
+    if (complement) {
+      addressParts.push(complement);
+    }
+    
+    const address_1 = addressParts.join(", ");
 
-    // Combine into a single string with consistent delimiter for backend parsing
-    const address_1 = `${street}, ${number}${complement}`;
-
-    // Prepare final data with proper formatting
     const finalData: AddressFormData = {
       ...formData,
-      address_1, // Set the combined address
-      // Remove form-specific fields before submitting
-      street: undefined,
-      number: undefined,
-      complement: undefined,
+      address_1,
+      // Keep individual fields for potential future use
     };
 
-    // Clear all errors on successful submission
     setErrors({});
-
-    // Submit if no errors
     onSubmit(finalData);
   };
 
-  // Define the SelectOption type
-  interface SelectOption {
-    value: string | number;
-    label: string;
-  }
-
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-      <div className="flex flex-row gap-4 max-[311px]:flex-wrap">
+      {conceptError && (
+        <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-3 mb-4">
+          <p>{conceptError}</p>
+        </div>
+      )}
+
+      <div className="flex flex-row gap-4 max-[311px]:flex-col">
         <TextField
           id="zip"
           name="zip"
           label="CEP"
           value={formData.zip || ""}
           onChange={handleChange}
-          placeholder="00000-000"
+          placeholder="12345-678"
           error={errors.zip}
+          maxLength={9}
+          required
         />
 
         <SelectField
@@ -146,7 +161,7 @@ export function UserInfoForm2({
           onChange={handleChange}
           options={stateOptions}
           error={errors.state}
-          isLoading={false} // Placeholder for loading state
+          isLoading={isLoading}
         />
       </div>
 
@@ -158,6 +173,7 @@ export function UserInfoForm2({
         onChange={handleChange}
         placeholder="Rua Porta da Madelena"
         error={errors.street}
+        required
       />
 
       <TextField
@@ -168,9 +184,10 @@ export function UserInfoForm2({
         onChange={handleChange}
         placeholder="Sua cidade"
         error={errors.city}
+        required
       />
 
-      <div className="flex flex-row gap-4 max-[311px]:flex-wrap">
+      <div className="flex flex-row gap-4 max-[311px]:flex-col">
         <TextField
           id="number"
           name="number"
@@ -179,12 +196,13 @@ export function UserInfoForm2({
           onChange={handleChange}
           placeholder="123"
           error={errors.number}
+          required
         />
 
         <TextField
           id="complement"
           name="complement"
-          label="Complemento"
+          label="Complemento (opcional)"
           value={formData.complement || ""}
           onChange={handleChange}
           placeholder="Apto 101"
@@ -194,7 +212,8 @@ export function UserInfoForm2({
       <Button
         type="submit"
         variant="white"
-        className="w-full mt-4 font-['Inter'] font-bold mb-4"
+        className="w-full mt-4 font-['Inter'] font-bold"
+        disabled={isLoading}
       >
         CONTINUAR
       </Button>
