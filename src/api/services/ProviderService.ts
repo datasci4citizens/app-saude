@@ -141,28 +141,12 @@ export class ProviderService {
     });
   }
   /**
-   * @param personId
-   * @returns any No response body
-   * @throws ApiError
-   */
-  public static providerPatientsDiariesRetrieve(
-    personId: number,
-  ): CancelablePromise<any> {
-    return __request(OpenAPI, {
-      method: "GET",
-      url: "/provider/patients/{person_id}/diaries/",
-      path: {
-        person_id: personId,
-      },
-    });
-  }
-  /**
    * @param diaryId
    * @param personId
    * @returns any No response body
    * @throws ApiError
    */
-  public static providerPatientsDiariesRetrieve2(
+  public static providerPatientsDiariesRetrieve(
     diaryId: string,
     personId: number,
   ): CancelablePromise<any> {
