@@ -6,6 +6,7 @@ import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderServ
 import type { PersonLinkProviderRequest } from "@/api/models/PersonLinkProviderRequest";
 import type { ProviderRetrieve } from "@/api/models/ProviderRetrieve";
 import errorImage from "@/lib/images/error.png";
+import { AccountService } from "@/api";
 
 const AddProfessionalPage = () => {
   const [providerCode, setProviderCode] = useState("");
@@ -32,6 +33,8 @@ const AddProfessionalPage = () => {
       const request: PersonLinkProviderRequest = { code: providerCode };
       const providerData =
         await LinkPersonProviderService.providerByLinkCodeCreate(request);
+      const fullname = `${providerData.first_name} ${providerData.last_name}`;
+      providerData.social_name = providerData.social_name || fullname;
       setProvider(providerData);
     } catch (err) {
       console.error("Error fetching provider:", err);

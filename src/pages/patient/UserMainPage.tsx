@@ -334,5 +334,6 @@ export default function UserMainPage() {
         onItemClick={handleNavigationClick}
       />
     </div>
+  </div>
   );
 }

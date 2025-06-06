@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
 import { PersonService } from "@/api/services/PersonService";
-import { DiaryService } from "@/api/services/DiaryService"; // Import ProviderService
 import { HelpService } from "@/api/services/HelpService"; // Import HelpService
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
 import ViewButton from "@/components/ui/ViewButton"; // Import ViewButton
+import { ProviderService } from "@/api";
 
 // Define a basic interface for Diary Entries based on actual API response
 interface DiaryEntry {

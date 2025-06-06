@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "@/components/ui/header";
-import { DiaryService } from "@/api/services/DiaryService";
 import { PersonService } from "@/api/services/PersonService";
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import type { PatchedMarkAttentionPoint } from "@/api/models/PatchedMarkAttentionPoint";
-import { InterestAreasService } from "@/api";
+import { ProviderService } from "@/api/services/ProviderService";
+import { InterestAreasService } from "@/api/services/InterestAreasService";
 
 // Interface para as entradas do diário
 interface DiaryEntryDetail {
@@ -18,7 +18,7 @@ interface DiaryEntryDetail {
 
 // Interface para as respostas das áreas de interesse
 interface ResponseDetail {
-  id?: number;
+  trigger_id?: number;
   content?: string;
   created_at?: string;
   trigger_name?: string;
@@ -321,7 +321,7 @@ export default function ViewDiary() {
                           <div className="space-y-2">
                             {area.triggers.map((response, responseIndex) => (
                               <div
-                                key={response.id || responseIndex}
+                                key={response.trigger_id || responseIndex}
                                 className="bg-background p-3 rounded border-l-4 border-primary"
                               >
                                 <div className="flex justify-between items-start mb-2">
