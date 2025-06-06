@@ -20,25 +20,26 @@ const HabitCard: React.FC<HabitCardProps> = ({
   providerName = "",
 }) => {
   return (
-    <div
-      className={`
-        relative
-        ${isAttentionPoint ? "bg-red-600 border-2 border-yellow-300 animate-pulse" : "bg-selection"}
-        text-primary-foreground
-        font-inter
-        font-bold
-        text-lg
-        py-2.5
-        px-4
-        rounded-xl
-        flex
-        items-center
-        gap-2
-        shadow-sm
-        mb-1
-        ${className}
-      `}
-    >
+      <div
+        className={`
+          relative
+          ${isAttentionPoint ? "bg-red-600 border-2 border-yellow-300 animate-pulse" : "bg-selection"}
+          text-primary-foreground
+          font-inter
+          font-bold
+          text-lg
+          py-2.5
+          px-4
+          rounded-xl
+          flex
+          items-center
+          gap-2
+          shadow-sm
+          mb-1
+          mt-3 ml-2
+          ${className}
+        `}
+      >
       {/* Ícone de informação no canto superior direito */}
       {isAttentionPoint && (
         <div className="absolute -top-2 -right-2 group cursor-help z-10">

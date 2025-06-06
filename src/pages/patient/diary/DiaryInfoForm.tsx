@@ -281,11 +281,11 @@ export default function DiaryInfoForm() {
 
       {/* User Interests Section */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-lg text-accent2-700">
-            Seus Interesses
-          </h3>
-        </div>
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-lg text-accent2-700">
+              Seus Interesses
+            </h3>
+          </div>
 
         {isLoadingInterests ? (
           <div className="flex justify-center py-4">
@@ -308,7 +308,7 @@ export default function DiaryInfoForm() {
                   <div className="flex items-center justify-between">
                     <div className="relative">
                       <HabitCard
-                        title={interestName}
+                        title={interestName ?? ""}
                         isAttentionPoint={interest.is_attention_point}
                         providerName={interest.provider_name}
                       />
