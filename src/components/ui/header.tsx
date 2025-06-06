@@ -6,6 +6,7 @@ interface HeaderProps {
   onBackClick?: () => void;
   rightIcon?: React.ReactNode;
   subtitleClassName?: string; // Added subtitleClassName
+  centered?: boolean; // Added centered prop
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -14,6 +15,7 @@ const Header: React.FC<HeaderProps> = ({
   onBackClick,
   rightIcon,
   subtitleClassName, // Added subtitleClassName
+  centered = false, // Added centered prop with default false
 }) => {
   const handleBackClick = () => {
     if (onBackClick) {
@@ -35,7 +37,9 @@ const Header: React.FC<HeaderProps> = ({
       </button>
 
       <div className="flex flex-nowrap items-between justify-between">
-        <div className="flex-1 flex flex-col items-start justify-center my-3">
+        <div
+          className={`flex-1 flex flex-col ${centered ? "items-center" : "items-start"} justify-center my-3`}
+        >
           <h1 className="text-titulo m-0 font-inter text-typography">
             {" "}
             {/* Use text-titulo */}
