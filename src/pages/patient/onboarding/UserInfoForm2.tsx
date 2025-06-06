@@ -184,7 +184,7 @@ export function UserInfoForm2({
         <TextField
           id="complement"
           name="complement"
-          label="Complemento (opcional)"
+          label="Complemento"
           value={formData.complement || ""}
           onChange={handleChange}
           placeholder="Apto 101"
@@ -194,7 +194,7 @@ export function UserInfoForm2({
       <Button
         type="submit"
         variant="white"
-        className="w-full mt-4 font-['Inter'] font-bold"
+        className="w-full mt-4 font-['Inter'] font-bold mb-4"
       >
         CONTINUAR
       </Button>

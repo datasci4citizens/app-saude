@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
 import { PersonService } from "@/api/services/PersonService";
-import { ProviderService } from "@/api/services/ProviderService"; // Import ProviderService
+import { DiaryService } from "@/api/services/DiaryService"; // Import ProviderService
 import { HelpService } from "@/api/services/HelpService"; // Import HelpService
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
@@ -144,7 +144,10 @@ export default function ViewPatient() {
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return `Dia ${date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}`;
+      return `Dia ${date.toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+      })}`;
     } catch (e) {
       return "Data inválida";
     }
@@ -188,13 +191,21 @@ export default function ViewPatient() {
         {/* Tabs */}
         <div className="flex border-b mb-4">
           <button
-            className={`py-2 px-4 ${activeTab === "diarios" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
+            className={`py-2 px-4 ${
+              activeTab === "diarios"
+                ? "border-b-2 border-selection text-selection font-medium"
+                : ""
+            }`}
             onClick={() => setActiveTab("diarios")}
           >
             Diários
           </button>
           <button
-            className={`py-2 px-4 ${activeTab === "ajuda" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
+            className={`py-2 px-4 ${
+              activeTab === "ajuda"
+                ? "border-b-2 border-selection text-selection font-medium"
+                : ""
+            }`}
             onClick={() => setActiveTab("ajuda")}
           >
             Pedidos de Ajuda
@@ -225,7 +236,9 @@ export default function ViewPatient() {
                   const entriesCount = diary.entries?.length || 0;
                   const entriesText =
                     entriesCount > 0
-                      ? `${entriesCount} entrada${entriesCount > 1 ? "s" : ""} registrada${entriesCount > 1 ? "s" : ""}`
+                      ? `${entriesCount} entrada${
+                          entriesCount > 1 ? "s" : ""
+                        } registrada${entriesCount > 1 ? "s" : ""}`
                       : "Nenhuma entrada registrada";
 
                   return (

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "@/components/ui/header";
-import { ProviderService } from "@/api/services/ProviderService";
+import { DiaryService } from "@/api/services/DiaryService";
 import { PersonService } from "@/api/services/PersonService";
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import type { PatchedMarkAttentionPoint } from "@/api/models/PatchedMarkAttentionPoint";
