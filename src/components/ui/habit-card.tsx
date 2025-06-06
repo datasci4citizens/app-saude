@@ -1,7 +1,8 @@
-import React from "react";
+import React from 'react';
 
 interface HabitCardProps {
-  title: string;
+  number: number;
+  title?: string;
   className?: string;
   isAttentionPoint?: boolean;
   providerName?: string;
@@ -9,8 +10,9 @@ interface HabitCardProps {
 
 /**
  * HabitCard - Componente para exibir um hábito como card
- *
- * @param title - Texto do hábito (obrigatório)
+ * 
+ * @param number - Número do hábito
+ * @param title - Texto opcional para substituir "Hábito"
  * @param className - Classes adicionais para customização
  */
 const HabitCard: React.FC<HabitCardProps> = ({
@@ -20,7 +22,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
   providerName = "",
 }) => {
   return (
-    <div
+    <div 
       className={`
           relative
           ${isAttentionPoint ? "bg-red-600 border-2 border-yellow-300 animate-pulse" : "bg-selection"}

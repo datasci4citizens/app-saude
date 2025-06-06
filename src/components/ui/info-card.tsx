@@ -1,155 +1,149 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/forms/button";
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
-type InfoCardVariant = "emergency" | "appointment" | "consultations";
-
-// Interface para itens de consulta
-interface ConsultationItem {
-  doctor: string;
-  time: string;
-}
+type InfoCardVariant = 'emergency' | 'appointment';
 
 interface InfoCardProps {
   variant: InfoCardVariant;
-  title?: string;
   name?: string;
   subtitle?: string;
   count?: number;
   date?: string;
   time?: string;
-  consultations?: ConsultationItem[];
   onClick?: () => void;
 }
+
+// Estilos separados para cards de emergência e consulta
+const styles = {
+  card: {
+    base: {
+      width: '38%', 
+      borderRadius: '12px'
+    },
+    emergency: {
+      background: '#FFC97E'
+    },
+    appointment: {
+      background: 'white'
+    }
+  },
+  button: {
+    emergency: {
+      background: '#141B36',
+      hoverBackground: '#141B36/90',
+    },
+    appointment: {
+      background: '#FA6E5A',
+      hoverBackground: '#FA6E5A/90',
+    }
+  },
+  text: {
+    title: {
+      fontSize: '18px',
+      fontWeight: 'bold',
+      fontFamily: 'Inter, sans-serif',
+      color: '#464646',
+      marginBottom: '4px'
+    },
+    count: {
+      fontSize: '2.25rem', // text-4xl
+      fontWeight: 'bold',
+      marginBottom: '4px'
+    },
+    label: {
+      fontSize: '0.75rem', // text-xs
+      fontWeight: 'bold',
+      marginBottom: '16px'
+    },
+    info: {
+      fontSize: '11px', // text-sm
+      fontWeight: 500,
+      fontFamily: 'Work Sans, sans-serif',
+      color: '#464646',
+    }
+  }
+};
 
 const InfoCard: React.FC<InfoCardProps> = ({
   variant,
   name,
-  title = "Próxima consulta",
   subtitle,
   count,
   date,
   time,
-  consultations = [],
-  onClick,
+  onClick
 }) => {
-  const isEmergency = variant === "emergency";
-  const isConsultations = variant === "consultations";
+  const isEmergency = variant === 'emergency';
+  
+  // Determina o estilo do card com base na variante
+  const cardStyle = {
+    ...styles.card.base,
+    backgroundColor: isEmergency ? styles.card.emergency.background : styles.card.appointment.background
+  };
+
+  // Determina o estilo do botão com base na variante
+  const buttonClassName = `rounded-full px-6 py-2 text-sm text-white
+    ${isEmergency 
+      ? `bg-[${styles.button.emergency.background}] hover:bg-[${styles.button.emergency.hoverBackground}]` 
+      : `bg-orange hover:bg-orange/90`}`;
 
   return (
-    <Card
-      className={`
-        w-full 
-        rounded-xl 
-        h-[250px] 
-        overflow-hidden
-        ${isEmergency ? "bg-accent1  " : "bg-offwhite"}
-      `}
+    <Card 
+      className="overflow-hidden"
+      style={cardStyle}
     >
-      <CardContent className="p-0 h-full">
+      <CardContent className="p-0">
         {isEmergency ? (
-          /* Card de Pedido de Ajuda */
-          <div className="flex flex-col h-full">
+          /* Card de Emergência */
+          <div className="flex flex-col h-full ">
             {/* Conteúdo principal centralizado */}
-            <div className="flex flex-col items-center pt-4 flex-grow">
+            <div className="flex flex-col items-center pt-4">
               {/* Ícone de alerta */}
-              <div className="mb-3">
-                <span
-                  role="img"
-                  className="mgc_alert_diamond_line text-[60px] w-[60px] h-[60px] inline-block text-selection" // Kept text-[60px]
+                <div className="mb-3 ">
+                <span 
+                  role='img' 
+                  className="mgc_alert_diamond_line" 
+                  style={{ fontSize: '60px', width: '60px', height: '60px', display: 'inline-block' }}
                 ></span>
               </div>
-              {/* Número de pedidos de ajuda */}
-              <div className="text-titulo text-typography mb-1">
-                {count}
-              </div>{" "}
-              {/* Changed from text-4xl font-bold */}
-              {/* Texto fixo de pedidos de ajuda */}
-              <div className="text-topicos mb-4 text-typography">
-                PEDIDOS DE AJUDA
-              </div>{" "}
-              {/* Changed from text-xs font-bold */}
+              
+              {/* Número de emergências */}
+              <div style={styles.text.count}>{count}</div>
+              
+              {/* Texto fixo de emergências */}
+              <div style={styles.text.label}>EMERGÊNCIA(S)</div>
             </div>
-
+            
             {/* Container do botão alinhado à direita inferior */}
             <div className="mt-auto p-4 flex justify-end">
-              <Button
-                className="rounded-full px-6 py-2 text-sm bg-typography text-offwhite-foreground hover:bg-primary/90"
+              <Button 
+                className="rounded-full px-6 py-2 text-sm bg-[#141B36] text-white hover:bg-[#141B36]/90"
                 onClick={onClick}
-              >
-                VER
-              </Button>
-            </div>
-          </div>
-        ) : isConsultations ? (
-          /* Card de Lista de Consultas */
-          <div className="flex flex-col h-full, bg-offwhite">
-            {/* Cabeçalho */}
-            <div className="p-4 pb-2">
-              <h3 className="text-titulowindow text-typography mb-1">
-                {" "}
-                {/* Changed from text-lg font-bold font-inter */}
-                {title}
-              </h3>
-
-              {/* Lista de consultas */}
-              <div className="mt-3">
-                {consultations.map((consultation, index) => (
-                  <div key={index} className="mb-2">
-                    <div className="text-campos-preenchimento2 text-typography mb-0.5">
-                      {" "}
-                      {/* Changed from text-xs font-inter */}
-                      {consultation.doctor}
-                    </div>
-                    <div className="text-campos-preenchimento2 text-black font-inter mb-3">
-                      {" "}
-                      {/* Changed from text-xs */}
-                      {consultation.time}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Botão VER com fundo laranja */}
-            <div className="mt-auto p-4 pt-2 flex justify-center">
-              <Button
-                onClick={onClick}
-                className="rounded-full px-6 py-2 text-sm bg-selection text-primary hover:bg-primary/90"
               >
                 VER
               </Button>
             </div>
           </div>
         ) : (
-          /* Card de Próxima Consulta (original) */
+          /* Card de Próxima Consulta */
           <div className="flex flex-col h-full">
             {/* Cabeçalho */}
-            <div className="flex flex-col items-center pt-4 flex-grow">
-              <h3 className="text-titulowindow text-typography mb-1">
-                {" "}
-                {/* Changed from text-lg font-bold font-inter */}
-                {title}:
-              </h3>
-              <p className="text-titulowindow leading-tight text-typography">
-                {" "}
-                {/* Changed from font-bold text-lg font-inter */}
-                {name}
-              </p>
-              <div className="text-campos-preenchimento2 text-gray2">
-                {" "}
-                {/* Changed from text-xs font-medium font-inter */}
+            <div className="p-4 pb-2">
+              <h3 style={styles.text.title}>Próxima consulta:</h3>
+                <p className="font-bold text-lg leading-tight" style={{ fontFamily: 'Inter, sans-serif', color: "#464646"}}>{name}</p>
+              <div style={styles.text.info}>
                 {date} - {time}
               </div>
             </div>
-
+            
             {/* Botão VER com fundo laranja */}
             <div className="mt-auto p-4 flex justify-end">
-              <Button
-                onClick={onClick}
-                className="rounded-full px-6 py-2 text-sm bg-selection text-primary hover:bg-primary/90"
+              <Button 
+              onClick={onClick}
+              className={buttonClassName}
               >
-                VER
+              VER
               </Button>
             </div>
           </div>
