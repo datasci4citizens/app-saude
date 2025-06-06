@@ -28,15 +28,17 @@ interface FormattedEmergencyPatient {
 
 // Função para formatar a data para DD/MM/AAAA
 const formatDisplayDate = (dateString: string | undefined | null): string => {
-  if (!dateString || dateString === "-") { // Considera "-" como sem data também
+  if (!dateString || dateString === "-") {
+    // Considera "-" como sem data também
     return ""; // Retorna string vazia se não houver data ou for "-"
   }
   try {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
-      if (typeof dateString === 'string' && dateString.includes('/')) {
-        const parts = dateString.split('/');
-        if (parts.length === 3 && parts[0] && parts[1] && parts[2]) { // Verifica se todas as partes existem
+      if (typeof dateString === "string" && dateString.includes("/")) {
+        const parts = dateString.split("/");
+        if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
+          // Verifica se todas as partes existem
           const day = parseInt(parts[0], 10);
           const month = parseInt(parts[1], 10) - 1; // Mês é 0-indexado
           const year = parseInt(parts[2], 10);
@@ -44,15 +46,17 @@ const formatDisplayDate = (dateString: string | undefined | null): string => {
           if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
             const manualDate = new Date(year, month, day);
             if (!isNaN(manualDate.getTime())) {
-              return `${String(manualDate.getDate()).padStart(2, '0')}/${String(manualDate.getMonth() + 1).padStart(2, '0')}/${manualDate.getFullYear()}`;
+              return `${String(manualDate.getDate()).padStart(2, "0")}/${String(
+                manualDate.getMonth() + 1,
+              ).padStart(2, "0")}/${manualDate.getFullYear()}`;
             }
           }
         }
       }
       return ""; // Data inválida ou formato não reconhecido
     }
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Meses são 0-indexados
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Meses são 0-indexados
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   } catch (error) {
@@ -77,18 +81,19 @@ export default function EmergencyPage() {
     async () => {
       try {
         // Buscando dados dos pacientes vinculados ao provider
-        const patientData = await LinkPersonProviderService.providerPersonsList();
+        const patientData =
+          await LinkPersonProviderService.providerPersonsList();
 
         // Convertendo e formatando os dados da API para o formato esperado pelo componente
         const formattedPatients: FormattedEmergencyPatient[] = patientData
           // Filtrando apenas pacientes com pedidos de ajuda registradas
-          .filter((patient) => patient.last_emergency_date)
+          .filter((patient) => patient.last_help_date)
           .map((patient) => ({
             id: patient.person_id,
             name: patient.name,
             age: patient.age || 0,
             lastVisit: formatDisplayDate(patient.last_visit_date), // Formata a data
-            lastEmergency: formatDisplayDate(patient.last_emergency_date), // Formata a data
+            lastEmergency: formatDisplayDate(patient.last_help_date), // Formata a data
           }));
 
         return formattedPatients;
@@ -114,7 +119,7 @@ export default function EmergencyPage() {
 
     // Tenta parsear como DD/MM/YYYY
     if (dateStr.includes("/")) {
-      const parts = dateStr.split('/');
+      const parts = dateStr.split("/");
       if (parts.length === 3) {
         const dayStr = parts[0];
         const monthStr = parts[1];
@@ -128,7 +133,11 @@ export default function EmergencyPage() {
           if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
             const d = new Date(year, month, day);
             // Confirma se a data construída é válida e corresponde às partes (evita roll-overs)
-            if (d.getFullYear() === year && d.getMonth() === month && d.getDate() === day) {
+            if (
+              d.getFullYear() === year &&
+              d.getMonth() === month &&
+              d.getDate() === day
+            ) {
               return d;
             }
           }
@@ -148,8 +157,8 @@ export default function EmergencyPage() {
   // Filtra pacientes com base na busca
   const filteredBySearch = emergencyPatients
     ? emergencyPatients.filter((patient) =>
-      patient.name.toLowerCase().includes(searchValue.toLowerCase()),
-    )
+        patient.name.toLowerCase().includes(searchValue.toLowerCase()),
+      )
     : [];
 
   // Aplica ordenação por data se estiver na aba urgentes
@@ -163,8 +172,11 @@ export default function EmergencyPage() {
             }
             const emergencyDateObj = parseDate(patient.lastEmergency);
             // Ensure the parsed emergencyDate is a valid date (not Invalid Date and not epoch 0 from empty string).
-            if (isNaN(emergencyDateObj.getTime()) || emergencyDateObj.getTime() === 0) {
-                return false;
+            if (
+              isNaN(emergencyDateObj.getTime()) ||
+              emergencyDateObj.getTime() === 0
+            ) {
+              return false;
             }
 
             // 2. Check visit date.
@@ -173,10 +185,11 @@ export default function EmergencyPage() {
               return true;
             }
             const visitDateObj = parseDate(patient.lastVisit);
-            if (isNaN(visitDateObj.getTime()) || visitDateObj.getTime() === 0) { // No valid visit, so emergency is pending
-                return true;
+            if (isNaN(visitDateObj.getTime()) || visitDateObj.getTime() === 0) {
+              // No valid visit, so emergency is pending
+              return true;
             }
-            
+
             // 3. Both dates are valid and non-empty. Compare them.
             // Emergency is pending if visit is on or before emergency.
             return visitDateObj.getTime() <= emergencyDateObj.getTime();
@@ -214,10 +227,7 @@ export default function EmergencyPage() {
     <div className="flex flex-col min-h-screen bg-primary pb-24">
       {/* Header with back button and title */}
       <div className="p-4">
-        <Header
-          title="Pedidos de Ajuda"
-          onBackClick={() => navigate(-1)}
-          />
+        <Header title="Pedidos de Ajuda" onBackClick={() => navigate(-1)} />
       </div>
 
       {/* Search input */}
@@ -235,13 +245,21 @@ export default function EmergencyPage() {
       {/* Tabs */}
       <div className="px-4 flex border-b mb-4">
         <button
-          className={`py-2 px-4 ${activeTab === "todos" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
+          className={`py-2 px-4 ${
+            activeTab === "todos"
+              ? "border-b-2 border-selection text-selection font-medium"
+              : ""
+          }`}
           onClick={() => setActiveTab("todos")}
         >
           Todos
         </button>
         <button
-          className={`py-2 px-4 ${activeTab === "Requerem ajuda" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
+          className={`py-2 px-4 ${
+            activeTab === "Requerem ajuda"
+              ? "border-b-2 border-selection text-selection font-medium"
+              : ""
+          }`}
           onClick={() => setActiveTab("Requerem ajuda")}
         >
           Últimos Pedidos de Ajuda

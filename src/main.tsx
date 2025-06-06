@@ -6,14 +6,14 @@ import "mingcute_icon/font/Mingcute.css";
 import { App } from "./App";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
-import { Capacitor } from '@capacitor/core';
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+import { Capacitor } from "@capacitor/core";
+import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 
 // Initialize the Google Auth plugin for mobile platforms
 if (Capacitor.isNativePlatform()) {
   GoogleAuth.initialize({
     clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-    scopes: ['profile', 'email'],
+    scopes: ["profile", "email"],
     grantOfflineAccess: true,
   });
 }

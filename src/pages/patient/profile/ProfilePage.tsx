@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileBanner from "@/components/ui/profile-banner";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
+import { AccountService } from "@/api/services/AccountService";
+import { ApiService } from "@/api/services/ApiService"; // Import ApiService
+import { LogoutService } from "@/api/services/LogoutService";
 
 interface ProfileMenuItem {
   title: string;
@@ -21,6 +24,20 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   onEditProfile,
 }) => {
   const navigate = useNavigate();
+  const [personId, setPersonId] = useState<number | null>(null);
+
+  // Fetch person_id on mount
+  useEffect(() => {
+    const fetchPersonId = async () => {
+      try {
+        const userEntity = await ApiService.apiUserEntityRetrieve();
+        setPersonId(userEntity.person_id);
+      } catch (error) {
+        console.error("Erro ao buscar person_id:", error);
+      }
+    };
+    fetchPersonId();
+  }, []);
 
   const menuItems: ProfileMenuItem[] = [
     {
@@ -40,9 +57,48 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     },
     {
       title: "Logout",
-      onClick: () => {
-        localStorage.removeItem("token");
-        navigate("/welcome")
+      onClick: async () => {
+        const refresh = localStorage.getItem("refreshToken");
+        if (!refresh) {
+          alert("Refresh token não encontrado.");
+          return;
+        }
+        try {
+          await LogoutService.authLogoutCreate({ refresh });
+        } catch (error: any) {
+          alert(
+            error?.message
+              ? `Erro ao fazer logout: ${error.message}`
+              : "Erro ao fazer logout. Tente novamente.",
+          );
+        }
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        navigate("/welcome");
+      },
+      hasArrow: false,
+    },
+    {
+      title: "Excluir conta",
+      onClick: async () => {
+        try {
+          if (!personId) {
+            alert("ID do usuário não encontrado.");
+            return;
+          }
+          const confirmed = window.confirm(
+            `Tem certeza que deseja excluir a sua conta? Esta ação não pode ser desfeita.`,
+          );
+          if (!confirmed) return;
+          // alert(`A conta com o ID ${personId} será excluída.`);
+          await AccountService.apiAccountDestroy(personId);
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          navigate("/welcome");
+        } catch (error) {
+          alert("Erro ao excluir conta. Tente novamente.");
+          console.error(error);
+        }
       },
       hasArrow: false,
     },
@@ -77,24 +133,23 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       />
 
       {/* Menu Items */}
-      <div className="z-10 h-[calc(100vh-12rem)] pt-2">
-        <ul className="px-4 bg-white rounded-xl shadow-sm overflow-hidden h-full">
+      <div className="z-10 h-[calc(100vh-12rem)] mt-[-15px]">
+        <ul className="px-4 bg-primary rounded-xl shadow-sm overflow-hidden h-full pt-4">
           {menuItems.map((item, index) => (
             <React.Fragment key={index}>
               <li
-                className="px-4 py-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 transition-colors"
+                className="px-4 py-4 flex justify-between items-center cursor-pointer hover:bg-gray1 transition-colors rounded-md"
                 onClick={item.onClick}
               >
-                <span className="text-gray-800 font-inter text-sm">
+                <span className="text-typography font-inter text-sm">
                   {item.title}
                 </span>
                 {item.hasArrow && (
-                  <span className="mgc_right_line text-md">
-                  </span>
+                  <span className="mgc_right_line text-md"></span>
                 )}
               </li>
               {index < menuItems.length - 1 && (
-                <div className="border-b border-gray-100 mx-4"></div>
+                <div className="border-b border-gray1 mx-4"></div>
               )}
             </React.Fragment>
           ))}

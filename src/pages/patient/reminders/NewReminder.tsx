@@ -14,7 +14,7 @@ const NewReminder: React.FC = () => {
     i.toString().padStart(2, "0"),
   );
 
-  const [selectedDate, setSelectedDate] = useState<string>(""); 
+  const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedHour, setSelectedHour] = useState<string>("00");
   const [selectedMinute, setSelectedMinute] = useState<string>("00");
   const [title, setTitle] = useState("");
@@ -41,7 +41,7 @@ const NewReminder: React.FC = () => {
   const [observation, setObservation] = useState("");
 
   const handleDateChange = (formattedValue: string) => {
-    setSelectedDate(formattedValue); 
+    setSelectedDate(formattedValue);
   };
 
   const handleCheckboxChange = (day: keyof typeof repeatDays) => {
@@ -65,7 +65,10 @@ const NewReminder: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 bg-primary min-h-screen font-inter">
+    <form
+      onSubmit={handleSubmit}
+      className="p-4 bg-primary min-h-screen font-inter"
+    >
       {/* Header */}
       <Header title="Configurar lembrete" />
 
@@ -107,12 +110,9 @@ const NewReminder: React.FC = () => {
             height={150}
             width={80}
           >
-            <div className="bg-black bg-opacity-5 h-full w-full p-2.5 rounded-l-xl border-l-2 border-t-2 border-b-2 border-selection">
-            </div>
+            <div className="bg-black bg-opacity-5 h-full w-full p-2.5 rounded-l-xl border-l-2 border-t-2 border-b-2 border-selection"></div>
           </WheelPicker>
-          <span className="absolute top-1/2">
-            :
-          </span>
+          <span className="absolute top-1/2">:</span>
           <WheelPicker
             data={minutes}
             selected={selectedMinute}
@@ -120,8 +120,7 @@ const NewReminder: React.FC = () => {
             height={150}
             width={80}
           >
-            <div className="bg-black bg-opacity-5 h-full w-full p-2.5 rounded-r-xl border-r-2 border-t-2 border-b-2 border-selection">
-            </div>
+            <div className="bg-black bg-opacity-5 h-full w-full p-2.5 rounded-r-xl border-r-2 border-t-2 border-b-2 border-selection"></div>
           </WheelPicker>
         </div>
       </div>
@@ -149,9 +148,7 @@ const NewReminder: React.FC = () => {
                   {type}
                 </button>
                 {index < array.length - 1 && (
-                  <span
-                    className="w-px h-5 bg-typography self-center"
-                  />
+                  <span className="w-px h-5 bg-typography self-center" />
                 )}
               </React.Fragment>
             ),
@@ -170,12 +167,13 @@ const NewReminder: React.FC = () => {
                   onCheckedChange={() =>
                     handleCheckboxChange(day as keyof typeof repeatDays)
                   }
-                  
                   height="h-7"
                   width="w-7"
                   radius="rounded-md"
                 >
-                  <span className="text-xs font-medium text-typography">{day[0]}</span>
+                  <span className="text-xs font-medium text-typography">
+                    {day[0]}
+                  </span>
                 </Checkbox>
               </label>
             ))}

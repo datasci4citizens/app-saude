@@ -2,7 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type EmergencyCount = {
-    emergency_count: number;
+export type Logout = {
+  /**
+   * Refresh token for logout
+   */
+  refresh: string;
 };
-

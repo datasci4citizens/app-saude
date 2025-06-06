@@ -3,8 +3,7 @@ import { useState, useEffect } from "react";
 import HomeBanner from "@/components/ui/home-banner";
 import InfoCard from "@/components/ui/info-card";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
-import { ProviderService } from "@/api/services/ProviderService";
-
+import { HelpService } from "@/api/services/HelpService";
 export default function AcsMainPage() {
   const navigate = useNavigate();
   const [emergencyCount, setEmergencyCount] = useState<number>(0);
@@ -16,14 +15,9 @@ export default function AcsMainPage() {
     const fetchEmergencyCount = async () => {
       try {
         setLoading(true);
-        const response = await ProviderService.providerEmergencyCountRetrieve();
-        // Verifica se a resposta contém a propriedade emergency_count
-        if (response && "emergency_count" in response) {
-          setEmergencyCount(response.emergency_count);
-        } else {
-          console.error("Formato de resposta inválido:", response);
-          setError("Não foi possível obter o número de pedidos de ajuda.");
-        }
+        const response = await HelpService.providerHelpCountRetrieve();
+        // A nova API retorna um array, então contamos o tamanho do array
+        setEmergencyCount(response.help_count || 0);
       } catch (err) {
         console.error("Erro ao buscar contagem de pedidos de ajuda:", err);
         setError("Erro ao carregar contagem de pedidos de ajuda.");
@@ -63,8 +57,8 @@ export default function AcsMainPage() {
       case "emergency":
         navigate("/emergencies");
         break;
-      case 'profile':
-        navigate('/acs-profile');
+      case "profile":
+        navigate("/acs-profile");
         break;
     }
   };

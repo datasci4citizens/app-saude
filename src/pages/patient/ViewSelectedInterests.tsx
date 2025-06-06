@@ -5,21 +5,21 @@ import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import { Button } from "@/components/forms/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { InterestAreaTrigger } from "@/api/models/InterestAreaTrigger";
+import type { InterestAreaTriggerCreate } from "@/api/models/InterestAreaTriggerCreate";
 
 // Extended interface for API response that includes the ID
 interface InterestAreaResponse {
   interest_area_id: number;
   observation_concept_id?: number | null;
-  custom_interest_name?: string | null;
+  interest_name?: string | null;
   value_as_string?: string | null;
-  triggers?: InterestAreaTrigger[];
+  triggers?: InterestAreaTriggerCreate[];
 }
 
 export default function ViewSelectedInterests() {
   const navigate = useNavigate();
   const [userInterests, setUserInterests] = useState<InterestAreaResponse[]>(
-    []
+    [],
   );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -49,7 +49,7 @@ export default function ViewSelectedInterests() {
   // Handle unlinking/deleting an interest
   const handleUnlinkInterest = async (
     interestId: number,
-    isCustom: boolean
+    isCustom: boolean,
   ) => {
     try {
       // For both custom and default interests, we call the same delete endpoint
@@ -57,7 +57,7 @@ export default function ViewSelectedInterests() {
 
       // Remove from local state after successful delete
       setUserInterests((prev) =>
-        prev.filter((interest) => interest.interest_area_id !== interestId)
+        prev.filter((interest) => interest.interest_area_id !== interestId),
       );
 
       // No need for different handling between custom/default at the UI level
@@ -142,7 +142,7 @@ export default function ViewSelectedInterests() {
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg flex justify-between items-center">
                         <span>
-                          {interest.concept_name}
+                          {interest.interest_name}
                           <span className="text-sm font-normal">
                             {isCustomInterest(interest)
                               ? " (Padrão)"
@@ -158,7 +158,7 @@ export default function ViewSelectedInterests() {
                             e.stopPropagation(); // This prevents the click from bubbling up to the parent div
                             handleUnlinkInterest(
                               interest.interest_area_id,
-                              isCustomInterest(interest)
+                              isCustomInterest(interest),
                             );
                           }}
                         >
@@ -187,7 +187,7 @@ export default function ViewSelectedInterests() {
                             <li key={index} className="flex items-start">
                               <span className="mr-2">•</span>
                               <span>
-                                {trigger.concept_name || "Sem descrição"}
+                                {trigger.trigger_name || "Sem descrição"}
                               </span>
                             </li>
                           ))}

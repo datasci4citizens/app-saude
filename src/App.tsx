@@ -24,12 +24,13 @@ import ViewPatientDiaries from "./pages/patient/diary/ViewDiaryProvider";
 import ViewDiaryEntry from "./pages/patient/diary/ViewDiary";
 import ProfilePage from "./pages/patient/profile/ProfilePage";
 import AcsProfilePage from "./pages/provider/profile/AcsProfilePage";
+import InterestPage from "./pages/patient/interests/InterestsPage";
 import CreateNewInterest from "./pages/patient/CreateNewInterest";
 import ViewSelectedInterests from "./pages/patient/ViewSelectedInterests";
 import EditInterest from "./pages/patient/EditInterest";
 import ViewPatient from "./pages/provider/ViewPatient"; // Import ViewPatient
-
-
+import ViewHelp from "./pages/provider/ViewHelp"; // Import ViewHelp
+import ViewDiary from "./pages/provider/ViewDiary"; // Import ViewDiary
 
 const NotFound = () => (
   <div>
@@ -44,12 +45,12 @@ const NotFound = () => (
 </SWRConfig>;
 
 const router = createBrowserRouter([
-  { 
-    path: "/", 
+  {
+    path: "/",
     element: <OnboardingSlider />,
   },
-  { 
-    path: "/login", 
+  {
+    path: "/login",
     element: <OnboardingSlider />,
   },
   {
@@ -72,11 +73,11 @@ const router = createBrowserRouter([
     path: "/view-diary-user",
     element: <ViewDiaryUser />,
   },
-    {
+  {
     path: "/view-diary-provider",
     element: <ViewPatientDiaries />,
   },
-    {
+  {
     path: "/diary/:diaryId",
     element: <ViewDiaryEntry />,
   },
@@ -87,6 +88,10 @@ const router = createBrowserRouter([
   {
     path: "/new-reminder",
     element: <NewReminder />,
+  },
+  {
+    path: "/view-diary-user",
+    element: <ViewDiaryUser />,
   },
   {
     path: "/reminder",
@@ -162,12 +167,24 @@ const router = createBrowserRouter([
     element: <AcsProfilePage />,
   },
   {
+    path: "/interests",
+    element: <InterestPage />,
+  },
+  {
     path: "/provider/patient/:id", // Route for viewing a patient
     element: <ViewPatient />,
   },
   {
     path: "/provider/patient/:id/:context", // Route for viewing a patient with context (e.g., emergency)
     element: <ViewPatient />,
+  },
+  {
+    path: "/provider/patient/:personId/diary/:diaryId", // Route for viewing a specific diary
+    element: <ViewDiary />,
+  },
+  {
+    path: "/provider/help/:personId/:helpId", // Route for viewing a help request
+    element: <ViewHelp />,
   },
   {
     path: "*",
@@ -180,7 +197,7 @@ export function App() {
     <ThemeProvider>
       <div className="min-h-screen bg-primary text-typography">
         <RouterProvider router={router} />
-        <div className="fixed top-20 right-4">
+        <div className="fixed top-4 right-4 z-50">
           <ThemeToggle />
         </div>
       </div>

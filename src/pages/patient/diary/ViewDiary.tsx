@@ -38,7 +38,7 @@ export default function ViewDiaryEntry() {
     const fetchDiaryData = async () => {
       try {
         setIsLoading(true);
-        
+
         // Fetch all observations for this diary
         const observations = await ObservationService.apiObservationList();
         if (!observations) {
@@ -46,8 +46,9 @@ export default function ViewDiaryEntry() {
         }
 
         // Filter observations for this specific diary
-        const diaryObservations = observations.filter(obs => 
-          (obs.observation_date === diaryId || obs.created_at === diaryId)
+        const diaryObservations = observations.filter(
+          (obs) =>
+            obs.observation_date === diaryId || obs.created_at === diaryId,
         );
 
         if (diaryObservations.length === 0) {
@@ -73,49 +74,57 @@ export default function ViewDiaryEntry() {
         // Process each observation
         for (const obs of diaryObservations) {
           const conceptId = obs.observation_concept?.toString();
-          
-          switch(Number(conceptId)) {
+
+          switch (Number(conceptId)) {
             case 101: // DIARY_TEXT
               text = obs.value_as_string || "";
               textShared = obs.shared_with_provider || false;
               break;
             case 456: // DIARY_HABITS
               // Find the concept name by ID
-              const habitName = obs.value_concept_name || `Hábito ${habits.length + 1}`;
+              const habitName =
+                obs.value_concept_name || `Hábito ${habits.length + 1}`;
               const measurementType = getMeasurementType(obs.value_as_string);
-              
+
               habits.push({
                 id: obs.observation_id.toString(),
                 name: habitName,
                 measurementType: measurementType,
-                value: obs.value_as_string
+                value: obs.value_as_string,
               });
-              
+
               habitsShared = obs.shared_with_provider || false;
               break;
             case 789: // DIARY_WELLNESS
               // Find the matching wellness concept
               const wellnessConcept = wellnessConcepts.find(
-                c => c.concept_id.toString() === obs.value_concept_id?.toString()
+                (c) =>
+                  c.concept_id.toString() === obs.value_concept_id?.toString(),
               );
-              
+
               if (wellnessConcept) {
                 wellness.push({
                   id: obs.observation_id.toString(),
-                  name: wellnessConcept.translated_name || wellnessConcept.concept_name,
-                  measurementType: wellnessConcept.related_concept?.concept_code || "unknown",
-                  value: obs.value_as_string
+                  name:
+                    wellnessConcept.translated_name ||
+                    wellnessConcept.concept_name,
+                  measurementType:
+                    wellnessConcept.related_concept?.concept_code || "unknown",
+                  value: obs.value_as_string,
                 });
               }
-              
+
               wellnessShared = obs.shared_with_provider || false;
               break;
           }
         }
 
         // Format the diary date
-        const diaryDate = diaryObservations[0].observation_date || diaryObservations[0].created_at || "";
-        
+        const diaryDate =
+          diaryObservations[0].observation_date ||
+          diaryObservations[0].created_at ||
+          "";
+
         setDiary({
           id: diaryId || "",
           date: diaryDate,
@@ -143,24 +152,24 @@ export default function ViewDiaryEntry() {
   // Helper function to determine measurement type based on value
   const getMeasurementType = (value: string | undefined): string => {
     if (!value) return "unknown";
-    
+
     if (value === "value_yes" || value === "value_no") {
       return "yes_no";
     }
-    
+
     const numValue = parseInt(value);
     if (isNaN(numValue)) return "unknown";
-    
+
     if (numValue >= 1 && numValue <= 10) return "scale";
     if (numValue >= 1 && numValue <= 24) return "hours";
-    
+
     return "times";
   };
 
   // Function to format the value for display
   const formatValue = (item: TrackableItem): string => {
     if (!item.value) return "Não informado";
-    
+
     switch (item.measurementType) {
       case "yes_no":
         return item.value === "value_yes" ? "Sim" : "Não";
@@ -210,7 +219,7 @@ export default function ViewDiaryEntry() {
           {error || "Diário não encontrado"}
         </div>
         <div className="mt-6 text-center">
-          <button 
+          <button
             onClick={() => navigate(-1)}
             className="px-6 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700"
           >
@@ -227,7 +236,7 @@ export default function ViewDiaryEntry() {
         <BackArrow onClick={() => navigate(-1)} />
         <h1 className="text-2xl font-bold ml-4">Visualizar Diário</h1>
       </div>
-      
+
       <div className="text-center mb-6">
         <h2 className="text-xl font-medium text-gray-700">
           {formatDate(diary.date)}
@@ -240,7 +249,9 @@ export default function ViewDiaryEntry() {
           Período de tempo
         </h3>
         <div className="bg-gray-50 p-4 rounded-lg">
-          <p>{diary.dateRangeType === "TODAY" ? "Hoje" : "Desde o último diário"}</p>
+          <p>
+            {diary.dateRangeType === "TODAY" ? "Hoje" : "Desde o último diário"}
+          </p>
         </div>
       </div>
 
@@ -253,7 +264,8 @@ export default function ViewDiaryEntry() {
             </h3>
             <div className="flex items-center gap-3">
               <span className="text-sm text-gray-500">
-                Compartilhado com profissionais da saúde: {diary.habitsShared ? "Sim" : "Não"}
+                Compartilhado com profissionais da saúde:{" "}
+                {diary.habitsShared ? "Sim" : "Não"}
               </span>
             </div>
           </div>
@@ -285,7 +297,8 @@ export default function ViewDiaryEntry() {
             </h3>
             <div className="flex items-center gap-3">
               <span className="text-sm text-gray-500">
-                Compartilhado com profissionais da saúde: {diary.wellnessShared ? "Sim" : "Não"}
+                Compartilhado com profissionais da saúde:{" "}
+                {diary.wellnessShared ? "Sim" : "Não"}
               </span>
             </div>
           </div>
@@ -312,10 +325,13 @@ export default function ViewDiaryEntry() {
       {diary.text && (
         <div className="space-y-3">
           <div className="flex flex-col gap-1">
-            <h3 className="font-semibold text-lg text-neutral-700 mb-1">Texto</h3>
+            <h3 className="font-semibold text-lg text-neutral-700 mb-1">
+              Texto
+            </h3>
             <div className="flex items-center gap-3">
               <span className="text-sm text-gray-500">
-                Compartilhado com profissionais da saúde: {diary.textShared ? "Sim" : "Não"}
+                Compartilhado com profissionais da saúde:{" "}
+                {diary.textShared ? "Sim" : "Não"}
               </span>
             </div>
           </div>
