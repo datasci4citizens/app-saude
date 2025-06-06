@@ -5,10 +5,10 @@
 import type { DateRangeTypeEnum } from './DateRangeTypeEnum';
 import type { InterestAreaUpdate } from './InterestAreaUpdate';
 export type DiaryCreate = {
-    date_range_type: DateRangeTypeEnum;
-    text: string;
-    text_shared: boolean;
-    diary_shared: boolean;
-    interest_areas?: Array<InterestAreaUpdate>;
+  date_range_type: DateRangeTypeEnum;
+  text: string;
+  text_shared: boolean;
+  diary_shared: boolean;
+  interest_areas?: Array<InterestAreaUpdate>;
 };
 

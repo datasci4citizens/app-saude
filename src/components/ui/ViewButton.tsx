@@ -16,7 +16,7 @@ const ViewButton: React.FC<ViewButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className="w-full bg-accent2 text-typography p-4 rounded-lg shadow-md focus:outline-none focus:ring-2"
+      className="w-full bg-offwhite text-typography p-4 rounded-lg shadow-md focus:outline-none focus:ring-2"
     >
       <div className="text-left">
         <p className="text-desc-titulo text-typography mb-1">{dateText}</p>

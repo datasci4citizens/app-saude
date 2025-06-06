@@ -46,7 +46,9 @@ const formatDisplayDate = (dateString: string | undefined | null): string => {
           if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
             const manualDate = new Date(year, month, day);
             if (!isNaN(manualDate.getTime())) {
-              return `${String(manualDate.getDate()).padStart(2, "0")}/${String(manualDate.getMonth() + 1).padStart(2, "0")}/${manualDate.getFullYear()}`;
+              return `${String(manualDate.getDate()).padStart(2, "0")}/${String(
+                manualDate.getMonth() + 1,
+              ).padStart(2, "0")}/${manualDate.getFullYear()}`;
             }
           }
         }
@@ -85,13 +87,13 @@ export default function EmergencyPage() {
         // Convertendo e formatando os dados da API para o formato esperado pelo componente
         const formattedPatients: FormattedEmergencyPatient[] = patientData
           // Filtrando apenas pacientes com pedidos de ajuda registradas
-          .filter((patient) => patient.last_emergency_date)
+          .filter((patient) => patient.last_help_date)
           .map((patient) => ({
             id: patient.person_id,
             name: patient.name,
             age: patient.age || 0,
             lastVisit: formatDisplayDate(patient.last_visit_date), // Formata a data
-            lastEmergency: formatDisplayDate(patient.last_emergency_date), // Formata a data
+            lastEmergency: formatDisplayDate(patient.last_help_date), // Formata a data
           }));
 
         return formattedPatients;
@@ -243,13 +245,21 @@ export default function EmergencyPage() {
       {/* Tabs */}
       <div className="px-4 flex border-b mb-4">
         <button
-          className={`py-2 px-4 ${activeTab === "todos" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
+          className={`py-2 px-4 ${
+            activeTab === "todos"
+              ? "border-b-2 border-selection text-selection font-medium"
+              : ""
+          }`}
           onClick={() => setActiveTab("todos")}
         >
           Todos
         </button>
         <button
-          className={`py-2 px-4 ${activeTab === "Requerem ajuda" ? "border-b-2 border-selection text-selection font-medium" : ""}`}
+          className={`py-2 px-4 ${
+            activeTab === "Requerem ajuda"
+              ? "border-b-2 border-selection text-selection font-medium"
+              : ""
+          }`}
           onClick={() => setActiveTab("Requerem ajuda")}
         >
           Últimos Pedidos de Ajuda
