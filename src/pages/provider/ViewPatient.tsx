@@ -70,7 +70,9 @@ export default function ViewPatient() {
     const fetchDiaries = async () => {
       try {
         setDiariesLoading(true);
-        const diariesData = await ProviderService.providerPatientsDiariesList(patient.person_id);
+        const diariesData = await ProviderService.providerPatientsDiariesList(
+          patient.person_id,
+        );
 
         const sortedDiaries = (diariesData as DiaryEntry[]).sort((a, b) => {
           const dateA = new Date(a.date).getTime();
@@ -105,41 +107,37 @@ export default function ViewPatient() {
           (help: ObservationRetrieve) => help.person === Number(id),
         );
 
-          // Mapear para o formato da interface HelpRequest
-          const formattedHelpRequests: HelpRequest[] = patientHelpRequests.map(
-            (help: ObservationRetrieve) => ({
-              id: help.observation_id,
-              created_at: help.created_at,
-              observation_date: help.observation_date,
-              value_as_string: help.value_as_string,
-              person: help.person,
-            }),
-          );
+        // Mapear para o formato da interface HelpRequest
+        const formattedHelpRequests: HelpRequest[] = patientHelpRequests.map(
+          (help: ObservationRetrieve) => ({
+            id: help.observation_id,
+            created_at: help.created_at,
+            observation_date: help.observation_date,
+            value_as_string: help.value_as_string,
+            person: help.person,
+          }),
+        );
 
-          // Ordenar do mais recente para o mais antigo
-          formattedHelpRequests.sort((a, b) => {
-            const dateA = new Date(
-              a.observation_date || a.created_at,
-            ).getTime();
-            const dateB = new Date(
-              b.observation_date || b.created_at,
-            ).getTime();
-            return dateB - dateA;
-          });
+        // Ordenar do mais recente para o mais antigo
+        formattedHelpRequests.sort((a, b) => {
+          const dateA = new Date(a.observation_date || a.created_at).getTime();
+          const dateB = new Date(b.observation_date || b.created_at).getTime();
+          return dateB - dateA;
+        });
 
-          setHelpRequests(formattedHelpRequests);
-          setHelpRequestsError(null);
-        } catch (err) {
-          console.error("Error fetching help requests:", err);
-          setHelpRequestsError(
-            "Não foi possível carregar os pedidos de ajuda do paciente.",
-          );
-        } finally {
-          setHelpRequestsLoading(false);
-        }
-      };
-      fetchHelpRequests();
-    }, [id]);
+        setHelpRequests(formattedHelpRequests);
+        setHelpRequestsError(null);
+      } catch (err) {
+        console.error("Error fetching help requests:", err);
+        setHelpRequestsError(
+          "Não foi possível carregar os pedidos de ajuda do paciente.",
+        );
+      } finally {
+        setHelpRequestsLoading(false);
+      }
+    };
+    fetchHelpRequests();
+  }, [id]);
 
   const formatDate = (dateString: string) => {
     try {

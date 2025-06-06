@@ -87,7 +87,6 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
     }
   };
 
-
   return (
     <div className="onboarding-screen landing-screen">
       <div className="content">

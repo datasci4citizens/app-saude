@@ -74,17 +74,20 @@ export default function ViewDiary() {
             );
 
           if (diaryData) {
-            const loggedProviderName = localStorage.getItem("fullname") || "Você";
+            const loggedProviderName =
+              localStorage.getItem("fullname") || "Você";
             const diaryWithResolvedNames: DiaryDetail = {
               ...diaryData,
               interest_areas: diaryData.interest_areas.map((area) => ({
                 ...area,
                 provider_name:
-                  area.provider_name === loggedProviderName ? "Você" : area.provider_name,
+                  area.provider_name === loggedProviderName
+                    ? "Você"
+                    : area.provider_name,
               })),
             };
 
-              setDiary(diaryWithResolvedNames);
+            setDiary(diaryWithResolvedNames);
           } else {
             setError("Diário não encontrado.");
           }
@@ -125,35 +128,43 @@ export default function ViewDiary() {
     }
   };
 
-  const handleToggleFlag = async (areaId: number, isCurrentlyFlagged: boolean) => {
-  try {
-    console.log("Toggling flag for area:", areaId, "Current state:", isCurrentlyFlagged);
-    const updatedArea: PatchedMarkAttentionPoint = {
-      area_id: areaId,
-      is_attention_point: !isCurrentlyFlagged,
-    };
-    await InterestAreasService.markObservationAsAttentionPoint(updatedArea);
-
-    setDiary((prevDiary) => {
-      if (!prevDiary) return prevDiary;
-      return {
-        ...prevDiary,
-        interest_areas: (prevDiary.interest_areas ?? []).map((area) =>
-          area.interest_area_id === areaId
-            ? {
-                ...area,
-                is_attention_point: updatedArea.is_attention_point,
-                provider_name: updatedArea.is_attention_point ? "Você" : null
-              }
-            : area
-        ),
+  const handleToggleFlag = async (
+    areaId: number,
+    isCurrentlyFlagged: boolean,
+  ) => {
+    try {
+      console.log(
+        "Toggling flag for area:",
+        areaId,
+        "Current state:",
+        isCurrentlyFlagged,
+      );
+      const updatedArea: PatchedMarkAttentionPoint = {
+        area_id: areaId,
+        is_attention_point: !isCurrentlyFlagged,
       };
-    });
-  } catch (error) {
-    console.error("Erro ao atualizar área de interesse:", error);
-    setError("Não foi possível atualizar a área de interesse.");
-  }
-};
+      await InterestAreasService.markObservationAsAttentionPoint(updatedArea);
+
+      setDiary((prevDiary) => {
+        if (!prevDiary) return prevDiary;
+        return {
+          ...prevDiary,
+          interest_areas: (prevDiary.interest_areas ?? []).map((area) =>
+            area.interest_area_id === areaId
+              ? {
+                  ...area,
+                  is_attention_point: updatedArea.is_attention_point,
+                  provider_name: updatedArea.is_attention_point ? "Você" : null,
+                }
+              : area,
+          ),
+        };
+      });
+    } catch (error) {
+      console.error("Erro ao atualizar área de interesse:", error);
+      setError("Não foi possível atualizar a área de interesse.");
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-primary pb-24">
@@ -182,7 +193,9 @@ export default function ViewDiary() {
                   <span className="text-topicos2 text-typography-foreground">
                     Nome:
                   </span>{" "}
-                  {patient.social_name || patient.first_name + " " + patient.last_name || "Não informado"}	
+                  {patient.social_name ||
+                    patient.first_name + " " + patient.last_name ||
+                    "Não informado"}
                 </p>
                 <p className="text-campos-preenchimento2 text-typography">
                   <span className="text-topicos2 text-typography-foreground">
@@ -301,9 +314,16 @@ export default function ViewDiary() {
                           className={`flex items-center text-sm font-medium rounded px-2 py-1 border 
                             ${area.is_attention_point ? "text-destructive border-destructive" : "text-gray2 border-gray3"} 
                             hover:bg-muted transition`}
-                          onClick={() => handleToggleFlag(area.interest_area_id || areaIndex, area.is_attention_point || false)}
+                          onClick={() =>
+                            handleToggleFlag(
+                              area.interest_area_id || areaIndex,
+                              area.is_attention_point || false,
+                            )
+                          }
                         >
-                          {area.is_attention_point ? "Remover atenção ⚠️" : "Marcar atenção ⚠️"}
+                          {area.is_attention_point
+                            ? "Remover atenção ⚠️"
+                            : "Marcar atenção ⚠️"}
                         </button>
                       </div>
 
@@ -312,7 +332,7 @@ export default function ViewDiary() {
                           Marcado por {area.provider_name}
                         </p>
                       )}
-                      
+
                       {area.triggers && area.triggers.length > 0 ? (
                         <div className="space-y-2">
                           <h4 className="text-topicos2 text-typography-foreground font-medium">
