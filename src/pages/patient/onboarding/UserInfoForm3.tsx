@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/forms/button";
 import { SelectField } from "@/components/forms/select_input";
 import type { ObservationCreate } from "@/api/models/ObservationCreate";
@@ -6,21 +6,15 @@ import type { DrugExposureCreate } from "@/api/models/DrugExposureCreate";
 import { useHealthConcepts } from "@/utils/conceptLoader";
 import { MultiSelectCustom } from "@/components/forms/multi_select_custom";
 
-// Define form data interface (user-friendly structure)
-// Todos sao conceptIds como String
 interface FormData {
-  // Esses são selects simples (1 escolha, com concept_id em string)
   sleepHealth: string;
   physicalExercise: string;
   eatingHabits: string;
-
-  // Listas onde cada item tem concept_id + texto
   comorbidities: string[];
   medications: string[];
   substanceUse: string[];
 }
 
-// Define the structure for API submission
 export interface SubmissionData {
   observations: ObservationCreate[];
   drugExposures: DrugExposureCreate[];
@@ -41,7 +35,6 @@ export function UserInfoForm3({
 }: {
   onSubmit: (data: SubmissionData) => void;
 }): JSX.Element {
-  // User-friendly form data
   const {
     sleepHealthOptions,
     exerciseOptions,
@@ -65,42 +58,42 @@ export function UserInfoForm3({
 
   const [errors, setErrors] = useState<FormErrors>({});
 
-  // Handle input change
   const handleChange: React.ChangeEventHandler<
     HTMLInputElement | HTMLSelectElement
   > = (e) => {
-    const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
-    setFormData({ ...formData, [name]: value });
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
 
-    // Clear error when user starts typing
     if (errors[name]) {
-      setErrors({ ...errors, [name]: undefined });
+      setErrors(prev => ({ ...prev, [name]: undefined }));
     }
   };
 
   const validateForm = (): FormErrors => {
     const newErrors: FormErrors = {};
 
-    // Required fields
-    if (!formData.sleepHealth)
+    if (!formData.sleepHealth) {
       newErrors.sleepHealth = "Saúde de sono é obrigatório";
-    if (!formData.physicalExercise)
+    }
+    if (!formData.physicalExercise) {
       newErrors.physicalExercise = "Exercícios físicos é obrigatório";
-    if (!formData.eatingHabits)
+    }
+    if (!formData.eatingHabits) {
       newErrors.eatingHabits = "Hábitos alimentares é obrigatório";
+    }
 
     return newErrors;
   };
 
-  // Transform form data into properly structured API objects
   const transformFormData = (): SubmissionData => {
-    const now = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    const now = new Date().toISOString().split("T")[0];
 
-    console.log("Form data before transformation:", formData);
+    // Validate conceptIds exist before using them
+    if (!conceptIds) {
+      throw new Error("Concept IDs not loaded");
+    }
 
-    // Create observations
     const observations: ObservationCreate[] = [
-      // Sleep health observation
       {
         value_as_concept: parseInt(formData.sleepHealth),
         observation_date: now,
@@ -108,7 +101,6 @@ export function UserInfoForm3({
         shared_with_provider: true,
         observation_type_concept: conceptIds.selfReported,
       },
-      // Physical exercise observation
       {
         value_as_concept: parseInt(formData.physicalExercise),
         observation_date: now,
@@ -116,7 +108,6 @@ export function UserInfoForm3({
         shared_with_provider: true,
         observation_type_concept: conceptIds.selfReported,
       },
-      // Eating habits observation
       {
         value_as_concept: parseInt(formData.eatingHabits),
         observation_date: now,
@@ -160,19 +151,12 @@ export function UserInfoForm3({
       })),
     ];
 
-    console.log("Transformed data for submission:", {
-      observations,
-      drugExposures,
-    });
-
     return { observations, drugExposures };
   };
 
-  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate form
     const formErrors = validateForm();
 
     if (Object.keys(formErrors).length > 0) {
@@ -180,12 +164,14 @@ export function UserInfoForm3({
       return;
     }
 
-    // Clear all errors on successful submission
-    setErrors({});
-
-    // Transform and submit the data
-    const submissionData = transformFormData();
-    onSubmit(submissionData);
+    try {
+      setErrors({});
+      const submissionData = transformFormData();
+      onSubmit(submissionData);
+    } catch (error) {
+      console.error("Error transforming form data:", error);
+      setErrors({ sleepHealth: "Erro ao processar dados. Tente novamente." });
+    }
   };
 
   return (
@@ -196,7 +182,7 @@ export function UserInfoForm3({
         </div>
       )}
 
-      <div className="flex flex-row gap-4 max-[311px]:flex-wrap w-full">
+      <div className="flex flex-row gap-4 max-[311px]:flex-col w-full">
         <div className="flex-1">
           <SelectField
             id="sleepHealth"
@@ -240,7 +226,7 @@ export function UserInfoForm3({
         label="Comorbidades"
         value={formData.comorbidities}
         onChange={(selectedValues) => {
-          setFormData({ ...formData, comorbidities: selectedValues });
+          setFormData(prev => ({ ...prev, comorbidities: selectedValues }));
         }}
         options={comorbiditiesOptions}
         isLoading={isLoading}
@@ -254,7 +240,7 @@ export function UserInfoForm3({
         label="Medicamentos"
         value={formData.medications}
         onChange={(selectedValues) => {
-          setFormData({ ...formData, medications: selectedValues });
+          setFormData(prev => ({ ...prev, medications: selectedValues }));
         }}
         options={medicationOptions}
         isLoading={isLoading}
@@ -268,7 +254,7 @@ export function UserInfoForm3({
         label="Substâncias"
         value={formData.substanceUse}
         onChange={(selectedValues) => {
-          setFormData({ ...formData, substanceUse: selectedValues });
+          setFormData(prev => ({ ...prev, substanceUse: selectedValues }));
         }}
         options={substanceOptions}
         isLoading={isLoading}
@@ -279,7 +265,7 @@ export function UserInfoForm3({
       <Button
         type="submit"
         variant="white"
-        className="w-full mt-4 font-['Inter'] font-bold mb-4"
+        className="w-full mt-4 font-['Inter'] font-bold"
         disabled={isLoading}
       >
         CONTINUAR
