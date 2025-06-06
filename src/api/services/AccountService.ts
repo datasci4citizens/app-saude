@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { UserRetrieve } from "../models/UserRetrieve";
 import type { CancelablePromise } from "../core/CancelablePromise";
 import { OpenAPI } from "../core/OpenAPI";
 import { request as __request } from "../core/request";
@@ -22,10 +23,12 @@ export class AccountService {
    * ViewSet to manage user accounts.
    * Allowed HTTP methods: GET, DELETE.
    * @param id A unique integer value identifying this user.
-   * @returns any No response body
+   * @returns UserRetrieve
    * @throws ApiError
    */
-  public static apiAccountRetrieve(id: number): CancelablePromise<any> {
+  public static apiAccountRetrieve(
+    id: number,
+  ): CancelablePromise<UserRetrieve> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/api/account/{id}/",

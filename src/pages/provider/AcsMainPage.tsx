@@ -15,9 +15,9 @@ export default function AcsMainPage() {
     const fetchEmergencyCount = async () => {
       try {
         setLoading(true);
-        const response = await HelpService.providerHelpCountList();
+        const response = await HelpService.providerHelpCountRetrieve();
         // A nova API retorna um array, então contamos o tamanho do array
-        setEmergencyCount(response.length);
+        setEmergencyCount(response.help_count || 0);
       } catch (err) {
         console.error("Erro ao buscar contagem de pedidos de ajuda:", err);
         setError("Erro ao carregar contagem de pedidos de ajuda.");

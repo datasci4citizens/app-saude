@@ -1,134 +1,156 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { RadioCheckbox } from "@/components/forms/radio-checkbox";
 import HabitCard from "@/components/ui/habit-card";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select_habit";
-import { TextField } from "@/components/ui/text_input_diary";
+import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
 import type { DiaryCreate } from "@/api/models/DiaryCreate";
-import { DiariesService } from "@/api/services/DiariesService";
+import { DiaryService } from "@/api/services/DiaryService"; // diariesCreate method will be used to submit the diary
 import { DateRangeTypeEnum } from "@/api";
-import { ConceptService } from "@/api/services/ConceptService";
-import { Slider } from "@/components/ui/slider";
+import { InterestAreasService } from "@/api/services/InterestAreasService";
+import type { InterestArea } from "@/api/models/InterestArea";
 
-interface TrackableItem {
-  id: string;
-  name: string;
-  measurementType: string;
-  value?: string | null | undefined;
+// Properly define interface for triggers
+interface Trigger {
+  trigger_name: string;
+  custom_trigger_name: string | null;
+  observation_concept_id: number;
+  trigger_id: number;
+  value_as_string: string | null;
+  response?: string;
+  shared?: boolean;
+}
+
+// Properly define interface for user interests
+interface UserInterest extends InterestArea {
+  interest_area_id: number;
+  interest_name?: string;
+  response?: string;
+  shared?: boolean;
+  triggers?: Trigger[];
 }
 
 export default function DiaryInfoForm() {
   const navigate = useNavigate();
-  const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoadingWellBeing, setIsLoadingWellBeing] = useState(true);
+  const [isLoadingInterests, setIsLoadingInterests] = useState(true);
   const [timeRange, setTimeRange] = useState<"today" | "sinceLast">(
     "sinceLast",
   );
   const [freeText, setFreeText] = useState("");
 
-  const [shareHabits, setShareHabits] = useState(false);
-  const [shareWellBeing, setShareWellBeing] = useState(false);
+  // User interests state
+  const [userInterests, setUserInterests] = useState<UserInterest[]>([]);
+
+  // Share switch for text
   const [shareText, setShareText] = useState(false);
 
-  const [habits, setHabits] = useState<TrackableItem[]>([]);
-  const [wellBeingQuestions, setWellBeingQuestions] = useState<TrackableItem[]>(
-    [],
-  );
-
-  // Debug logging
+  // Load user interests
   useEffect(() => {
-    console.log("Well-being questions state:", wellBeingQuestions);
-    console.log("Is loading well-being:", isLoadingWellBeing);
-  }, [wellBeingQuestions, isLoadingWellBeing]);
-
-  useEffect(() => {
-    const fetchConcepts = async () => {
-      console.log("Starting to fetch concepts...");
-      setIsLoadingWellBeing(true);
+    const fetchUserInterests = async () => {
+      console.log("Starting to fetch user interests...");
+      setIsLoadingInterests(true);
 
       try {
-        const concepts = await ConceptService.apiConceptList(
-          "Wellness",
-          "pt",
-          "has_value_type",
-        );
+        const interests = await InterestAreasService.personInterestAreasList();
+        console.log("Raw interests received:", interests);
 
-        console.log("Raw concepts received:", concepts);
-
-        if (!concepts || concepts.length === 0) {
-          console.warn("No concepts received from API");
-          setWellBeingQuestions([]);
+        if (!interests || interests.length === 0) {
+          console.warn("No interests received from API");
+          setUserInterests([]);
           return;
         }
 
-        // Fixed backend connection - using proper field mapping
-        const formatted: TrackableItem[] = concepts.map((c) => {
-          const item = {
-            id: c.concept_id?.toString() || Math.random().toString(),
-            name: c.translated_name || c.concept_name || "Unnamed concept",
-            measurementType: c.related_concept?.concept_code || "scale", // Default to scale
-            value: undefined, // Fixed: Don't set value to measurementType
-          };
-          console.log("Formatted concept:", item);
-          return item;
-        });
+        // Convert to UserInterest format with response tracking
+        const formattedInterests: UserInterest[] = interests.map(
+          (interest) => ({
+            ...interest,
+            interest_area_id:
+              (interest as any).interest_area_id || Math.random(),
+            response: "", // Initialize empty response
+            shared: false, // Initialize as not shared
+          }),
+        );
 
-        console.log("Final formatted concepts:", formatted);
-        setWellBeingQuestions(formatted);
+        console.log("Formatted user interests:", formattedInterests);
+        setUserInterests(formattedInterests);
       } catch (error) {
-        console.error("Error fetching well-being concepts:", error);
-        // Set some default questions for testing
-        setWellBeingQuestions([
+        console.error("Error fetching user interests:", error);
+        // Set some test interests for development
+        setUserInterests([
           {
-            id: "test-1",
-            name: "Teste 1",
-            measurementType: "scale",
-            value: undefined,
+            interest_area_id: 1,
+            observation_concept_id: null,
+            custom_interest_name: "Teste Interesse 1",
+            value_as_string: "Teste Interesse 1",
+            response: "",
+            shared: false,
+            triggers: [],
           },
           {
-            id: "test-2",
-            name: "Teste 2",
-            measurementType: "yes_no",
-            value: undefined,
+            interest_area_id: 2,
+            observation_concept_id: null,
+            custom_interest_name: "Teste Interesse 2",
+            value_as_string: "Teste Interesse 2",
+            response: "",
+            shared: false,
+            triggers: [],
           },
         ]);
       } finally {
-        setIsLoadingWellBeing(false);
+        setIsLoadingInterests(false);
       }
     };
 
-    fetchConcepts();
+    fetchUserInterests();
   }, []);
 
-  useEffect(() => {
-    if (location.state?.newHabit) {
-      setHabits((prev) => [...prev, location.state.newHabit]);
-    }
-  }, [location.state]);
-
-  const handleItemChange = (
-    items: TrackableItem[],
-    setItems: React.Dispatch<React.SetStateAction<TrackableItem[]>>,
-    itemId: string,
-    value: string,
+  const handleTriggerResponseChange = (
+    interestId: number,
+    triggerId: number,
+    response: string,
   ) => {
-    console.log("Changing item:", itemId, "to value:", value);
-    setItems(
-      items.map((item) => (item.id === itemId ? { ...item, value } : item)),
+    setUserInterests((prev) =>
+      prev.map((interest) =>
+        interest.interest_area_id === interestId
+          ? {
+              ...interest,
+              triggers:
+                interest.triggers?.map((trigger) =>
+                  trigger.trigger_id === triggerId
+                    ? { ...trigger, response }
+                    : trigger,
+                ) || [],
+            }
+          : interest,
+      ),
     );
   };
 
-  const handleAddHabit = () => {
-    navigate("/modify-habits");
+  // Handle interest response change
+  const handleInterestResponseChange = (
+    interestId: number,
+    response: string,
+  ) => {
+    setUserInterests((prev) =>
+      prev.map((interest) =>
+        interest.interest_area_id === interestId
+          ? { ...interest, response }
+          : interest,
+      ),
+    );
+  };
+
+  // Handle individual interest sharing toggle
+  const handleInterestSharingToggle = (interestId: number, shared: boolean) => {
+    setUserInterests((prev) =>
+      prev.map((interest) =>
+        interest.interest_area_id === interestId
+          ? { ...interest, shared }
+          : interest,
+      ),
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -136,153 +158,59 @@ export default function DiaryInfoForm() {
     setIsSubmitting(true);
 
     try {
-      const diary: DiaryCreate = {
+      // Format interest areas according to the expected API structure
+      const formattedInterestAreas = userInterests
+        .filter(
+          (interest) =>
+            interest.response?.trim() !== "" ||
+            interest.triggers?.some((t) => t.response?.trim() !== ""),
+        )
+        .map((interest) => {
+          // Get triggers with responses
+          const triggersWithResponses =
+            interest.triggers?.filter(
+              (trigger) => trigger.response && trigger.response.trim() !== "",
+            ) || [];
+
+          return {
+            interest_area_id: interest.interest_area_id,
+            value_as_string: interest.response || null,
+            shared_with_provider: interest.shared || false,
+            triggers: triggersWithResponses.map((trigger) => ({
+              trigger_id: trigger.trigger_id,
+              value_as_string: trigger.response || "",
+            })),
+          };
+        })
+        .filter((interest) => interest.triggers.length > 0); // Only include interests with answered triggers
+
+      let diary_shared = false;
+      if (shareText || userInterests.some((interest) => interest.shared)) {
+        diary_shared = true;
+      }
+
+      const diary = {
         date_range_type:
           timeRange === "today"
             ? DateRangeTypeEnum.TODAY
             : DateRangeTypeEnum.SINCE_LAST,
         text: freeText,
         text_shared: shareText,
-        habits_shared: shareHabits,
-        wellness_shared: shareWellBeing,
-        habits: habits
-          .filter(
-            (habit) =>
-              habit.value !== undefined &&
-              habit.value !== null &&
-              habit.value !== "",
-          )
-          .map((habit) => ({
-            concept_id: habit.id,
-            value: habit.value,
-            shared: shareHabits,
-          })),
-        wellness: wellBeingQuestions
-          .filter(
-            (q) => q.value !== undefined && q.value !== null && q.value !== "",
-          )
-          .map((q) => ({
-            concept_id: q.id,
-            value: q.value,
-            shared: shareWellBeing,
-          })),
+        interest_areas: formattedInterestAreas,
+        diary_shared: diary_shared,
       };
 
       console.log("Submitting diary:", diary);
 
-      await DiariesService.diariesCreate(diary);
+      await DiaryService.diariesCreate(diary);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      navigate(-1);
+      navigate("/diary");
     } catch (error) {
       console.error("Failed to submit diary", error);
       alert("Ocorreu um erro ao salvar o diário. Por favor, tente novamente.");
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const renderTrackableItem = (
-    item: TrackableItem,
-    items: TrackableItem[],
-    setItems: React.Dispatch<React.SetStateAction<TrackableItem[]>>,
-  ) => {
-    const measurementType = item.measurementType.toLowerCase();
-    const isYesNoType = ["yes_no", "yesno"].includes(measurementType);
-    const isScaleType = measurementType === "scale";
-
-    // Value parsing and conversion
-    const rawValue = item.value ? parseInt(item.value) : null;
-    const isValid = rawValue !== null && !isNaN(rawValue);
-
-    // Get display value with suffix
-    const getDisplayValue = () => {
-      if (!isValid) {
-        return {
-          text: isYesNoType
-            ? "sim ou não"
-            : isScaleType
-              ? "-/5"
-              : measurementType === "hours"
-                ? "- horas"
-                : measurementType === "times"
-                  ? "- vezes"
-                  : "-",
-          value: "-",
-        };
-      }
-
-      if (isYesNoType) {
-        return {
-          text: rawValue === 1 ? "sim" : "não",
-          value: rawValue.toString(),
-        };
-      }
-      if (isScaleType) {
-        const frontendValue = Math.round(rawValue / 2);
-        return { text: `${frontendValue}/5`, value: frontendValue.toString() };
-      }
-      return {
-        text: `${rawValue} ${measurementType === "hours" ? "horas" : "vezes"}`,
-        value: rawValue.toString(),
-      };
-    };
-
-    const display = getDisplayValue();
-    const sliderParams = (() => {
-      if (isYesNoType) return { min: 0, max: 1, step: 1 };
-      if (isScaleType) return { min: 1, max: 5, step: 1 };
-      if (measurementType === "hours") return { min: 1, max: 24, step: 1 };
-      if (measurementType === "times") return { min: 1, max: 10, step: 1 };
-      return { min: 1, max: 5, step: 1 }; // Default to scale
-    })();
-
-    return (
-      <div key={item.id} className="space-y-4">
-        <HabitCard title={item.name} />
-
-        <div className="flex flex-col gap-2">
-          <Slider
-            value={[
-              isValid
-                ? isScaleType
-                  ? parseInt(display.value)
-                  : rawValue
-                : sliderParams.min,
-            ]}
-            onValueChange={(value) => {
-              console.log("Slider changed for", item.name, "to", value);
-              let backendValue;
-              if (isYesNoType) {
-                backendValue = value[0].toString();
-              } else if (isScaleType) {
-                backendValue = (value[0] * 2).toString();
-              } else {
-                backendValue = value[0].toString();
-              }
-              handleItemChange(items, setItems, item.id, backendValue);
-            }}
-            min={sliderParams.min}
-            max={sliderParams.max}
-            step={sliderParams.step}
-          />
-          <div className="flex justify-between items-center text-sm text-gray-500">
-            <span>
-              {sliderParams.min === 0 && isYesNoType ? "não" : sliderParams.min}
-              {isScaleType && "/5"}
-              {measurementType === "hours" && " horas"}
-              {measurementType === "times" && " vezes"}
-            </span>
-            <span className="font-medium text-selection">{display.text}</span>
-            <span>
-              {sliderParams.max === 1 && isYesNoType ? "sim" : sliderParams.max}
-              {isScaleType && "/5"}
-              {measurementType === "hours" && " horas"}
-              {measurementType === "times" && " vezes"}
-            </span>
-          </div>
-        </div>
-      </div>
-    );
   };
 
   return (
@@ -310,100 +238,128 @@ export default function DiaryInfoForm() {
         </div>
       </div>
 
-      {/* Habits Section */}
+      {/* User Interests Section */}
       <div className="space-y-4">
-        <div className="flex flex-col gap-1">
-          <h3 className="font-semibold text-lg text-accent2-700 mb-1">
-            Seus Hábitos Personalizados
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-lg text-accent2-700">
+            Seus Interesses
           </h3>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">
-              Compartilhar com profissionais da saúde
-            </span>
-            <Switch checked={shareHabits} onCheckedChange={setShareHabits} />
-          </div>
         </div>
 
-        <div className="space-y-6">
-          {habits.map((habit) => renderTrackableItem(habit, habits, setHabits))}
-
-          <div
-            className="flex flex-col items-center gap-2 p-4 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
-            onClick={handleAddHabit}
-          >
-            <div className="bg-gray-100 rounded-full w-12 h-12 flex items-center justify-center">
-              <span className="text-2xl text-gray-600">+</span>
-            </div>
-            <span className="text-sm text-gray-500">Adicionar hábito</span>
+        {isLoadingInterests ? (
+          <div className="flex justify-center py-4">
+            <p className="text-typography">Carregando seus interesses...</p>
           </div>
-        </div>
+        ) : userInterests.length === 0 ? (
+          <div className="text-center py-4">
+            <p className="text-typography text-sm">
+              Você ainda não tem interesses cadastrados.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {userInterests.map((interest) => {
+              const interestName =
+                interest.interest_name ||
+                interest.custom_interest_name ||
+                interest.value_as_string ||
+                "Interesse";
+
+              return (
+                <div key={interest.interest_area_id} className="space-y-3">
+                  {/* Interest card and switch row */}
+                  <div className="flex items-center justify-between">
+                    <div className="relative ">
+                      <HabitCard
+                        title={interestName ?? ""}
+                        isAttentionPoint={interest.is_attention_point}
+                        providerName={interest.provider_name}
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-typography">
+                        Compartilhar
+                      </span>
+                      <Switch
+                        checked={interest.shared || false}
+                        onCheckedChange={(checked) =>
+                          handleInterestSharingToggle(
+                            interest.interest_area_id,
+                            checked,
+                          )
+                        }
+                        size="sm"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Render triggers if available */}
+                  {interest.triggers && interest.triggers.length > 0 && (
+                    <div className="ml-4 space-y-4 border-l-2 border-gray2 pl-4 mt-4">
+                      {interest.triggers.map((trigger) => (
+                        <div key={trigger.trigger_id} className="space-y-2">
+                          {/* Trigger title */}
+                          <div className="flex items-center justify-between">
+                            <div className="flex">
+                              <HabitCard
+                                title={
+                                  trigger.trigger_name ||
+                                  trigger.custom_trigger_name ||
+                                  "Pergunta relacionada"
+                                }
+                                className="inline-block w-auto min-w-fit max-w-full text-sm bg-secondary/20"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Trigger text field */}
+                          <TextField
+                            id={`trigger-${interest.interest_area_id}-${trigger.trigger_id}`}
+                            name={`trigger-${interest.interest_area_id}-${trigger.trigger_id}`}
+                            value={trigger.response || ""}
+                            onChange={(e) =>
+                              handleTriggerResponseChange(
+                                interest.interest_area_id,
+                                trigger.trigger_id,
+                                e.target.value,
+                              )
+                            }
+                            placeholder=""
+                            className="border-gray2 border-2 focus:border-selection"
+                            multiline={true}
+                            rows={2}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {/* Well-being Section */}
-      <div className="space-y-4">
-        <div className="flex flex-col gap-1">
-          <h3 className="font-semibold text-lg text-accent2-700 mb-1">
-            Bem-estar geral:
-          </h3>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">
-              Compartilhar com profissionais da saúde
-            </span>
-            <Switch
-              checked={shareWellBeing}
-              onCheckedChange={setShareWellBeing}
-            />
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          {isLoadingWellBeing ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="text-sm text-gray-500">
-                Carregando perguntas de bem-estar...
-              </div>
-            </div>
-          ) : wellBeingQuestions.length === 0 ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="text-sm text-gray-500">
-                Nenhuma pergunta de bem-estar encontrada.
-                <br />
-                <span className="text-xs">
-                  Verifique a conexão com o servidor.
-                </span>
-              </div>
-            </div>
-          ) : (
-            wellBeingQuestions.map((question) =>
-              renderTrackableItem(
-                question,
-                wellBeingQuestions,
-                setWellBeingQuestions,
-              ),
-            )
-          )}
-        </div>
-      </div>
-
-      {/* Text Section */}
+      {/* Free Text Section */}
       <div className="space-y-3">
-        <div className="flex flex-col gap-1">
-          <h3 className="font-semibold text-lg text-accent2-700 mb-1">Texto</h3>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">
-              Compartilhar com profissionais da saúde
-            </span>
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-lg text-accent2-700">
+            Observações Gerais
+          </h3>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-typography">Compartilhar</span>
             <Switch checked={shareText} onCheckedChange={setShareText} />
           </div>
         </div>
-
         <TextField
-          size="large"
-          multiline
-          variant="static-orange"
-          className="w-full min-h-[150px]"
+          id="freeText"
+          name="freeText"
           value={freeText}
           onChange={(e) => setFreeText(e.target.value)}
+          placeholder="Descreva como você se sente ou qualquer observação importante..."
+          className="border-gray2 border-2 focus:border-selection"
+          multiline={true}
+          rows={4}
         />
       </div>
 
@@ -414,7 +370,7 @@ export default function DiaryInfoForm() {
           size="lg"
           type="submit"
           disabled={isSubmitting}
-          className="w-full max-w-[280px] text-offwhite mx-auto py-3 text-base"
+          className="w-full max-w-[280px] text-typography mx-auto py-3 text-base"
         >
           {isSubmitting ? "Salvando..." : "SALVAR"}
         </Button>

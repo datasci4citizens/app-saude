@@ -11,6 +11,7 @@ import EmergencyUser from "./pages/patient/emergency/EmergencyUser";
 import PatientsPage from "./pages/provider/PatientsPage";
 import ViewReminder from "./pages/patient/reminders/ViewReminder";
 import DiaryPage from "./pages/patient/diary/Diary";
+import DiaryListPage from "./pages/patient/diary/DiaryListPage";
 import Reminders from "./pages/patient/reminders/Reminders";
 import NewReminder from "./pages/patient/reminders/NewReminder";
 import OnboardingSlider from "./pages/landing/OnboardingSlider";
@@ -29,6 +30,8 @@ import CreateNewInterest from "./pages/patient/CreateNewInterest";
 import ViewSelectedInterests from "./pages/patient/ViewSelectedInterests";
 import EditInterest from "./pages/patient/EditInterest";
 import ViewPatient from "./pages/provider/ViewPatient"; // Import ViewPatient
+import ViewHelp from "./pages/provider/ViewHelp"; // Import ViewHelp
+import ViewDiary from "./pages/provider/ViewDiary"; // Import ViewDiary
 
 const NotFound = () => (
   <div>
@@ -65,7 +68,15 @@ const router = createBrowserRouter([
   },
   {
     path: "/diary",
+    element: <DiaryListPage />,
+  },
+  {
+    path: "diary/new",
     element: <DiaryPage />,
+  },
+  {
+    path: "/diary/:diaryId",
+    element: <ViewDiaryEntry />,
   },
   {
     path: "/view-diary-user",
@@ -175,6 +186,14 @@ const router = createBrowserRouter([
   {
     path: "/provider/patient/:id/:context", // Route for viewing a patient with context (e.g., emergency)
     element: <ViewPatient />,
+  },
+  {
+    path: "/provider/patient/:personId/diary/:diaryId", // Route for viewing a specific diary
+    element: <ViewDiary />,
+  },
+  {
+    path: "/provider/help/:personId/:helpId", // Route for viewing a help request
+    element: <ViewHelp />,
   },
   {
     path: "*",

@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { DiaryRetrieve } from "../models/DiaryRetrieve";
 import type { PatchedProviderUpdate } from "../models/PatchedProviderUpdate";
 import type { ProviderCreate } from "../models/ProviderCreate";
 import type { ProviderRetrieve } from "../models/ProviderRetrieve";
@@ -142,12 +143,12 @@ export class ProviderService {
   }
   /**
    * @param personId
-   * @returns any No response body
+   * @returns DiaryRetrieve
    * @throws ApiError
    */
-  public static providerPatientsDiariesRetrieve(
+  public static providerPatientsDiariesList(
     personId: number,
-  ): CancelablePromise<any> {
+  ): CancelablePromise<Array<DiaryRetrieve>> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/provider/patients/{person_id}/diaries/",
@@ -162,7 +163,7 @@ export class ProviderService {
    * @returns any No response body
    * @throws ApiError
    */
-  public static providerPatientsDiariesRetrieve2(
+  public static providerPatientsDiariesRetrieve(
     diaryId: string,
     personId: number,
   ): CancelablePromise<any> {
