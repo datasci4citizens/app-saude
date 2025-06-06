@@ -133,7 +133,7 @@ export default function EmergencyScreen() {
           </p>
           <Button
             variant="orange"
-            onClick={() => navigate("/patient/profile/add-professional")}
+            onClick={() => navigate("/add-professional")}
           >
             Adicionar profissional
           </Button>

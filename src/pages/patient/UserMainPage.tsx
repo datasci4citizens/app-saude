@@ -208,7 +208,7 @@ export default function UserMainPage() {
         navigate("/emergency-user");
         break;
       case "profile":
-        navigate("/add-professional");
+        navigate("/profile");
         break;
     }
   };
@@ -242,23 +242,6 @@ export default function UserMainPage() {
                 : "Selecione suas áreas de interesse"
             }
           />
-
-          <div className="px-4 py-5 justify-center gap-4">
-            {/* Multiselect - using API data */}
-            <MultiSelectCustom
-              id="interests"
-              name="interests"
-              label="Meus Interesses"
-              options={interestAreasOptions}
-              value={selectedInterests}
-              onChange={handleInterestChange}
-              isLoading={isLoadingInterests}
-              placeholder={
-                isLoadingInterests
-                  ? "Carregando..."
-                  : "Selecione suas áreas de interesse"
-              }
-            />
 
             {/* Sync button */}
             <div className="mt-4 flex justify-end">
@@ -301,7 +284,6 @@ export default function UserMainPage() {
                 </div>
               </div>
             )}
-          </div>
         </div>
         {/* Top banner */}
 
