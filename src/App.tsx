@@ -32,6 +32,8 @@ import EditInterest from "./pages/patient/EditInterest";
 import ViewPatient from "./pages/provider/ViewPatient"; // Import ViewPatient
 import ViewHelp from "./pages/provider/ViewHelp"; // Import ViewHelp
 import ViewDiary from "./pages/provider/ViewDiary"; // Import ViewDiary
+import TermsScreen from "./pages/landing/Terms";
+import TermsAndConditionsPage from "./pages/landing/TermsAndConditionsPage";
 
 const NotFound = () => (
   <div>
@@ -194,6 +196,10 @@ const router = createBrowserRouter([
   {
     path: "/provider/help/:personId/:helpId", // Route for viewing a help request
     element: <ViewHelp />,
+  },
+  {
+    path: "/terms",
+    element: <TermsAndConditionsPage />,
   },
   {
     path: "*",
