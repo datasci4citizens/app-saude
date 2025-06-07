@@ -54,7 +54,6 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
   });
 
   const handleLogin = () => {
-    onNext();
     if (isMobile) {
       loginMobile();
     } else {
