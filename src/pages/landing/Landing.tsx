@@ -5,7 +5,7 @@ import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 import { AuthService } from "@/api/services/AuthService";
 import { Capacitor } from "@capacitor/core";
 import { useGoogleLogin } from "@react-oauth/google";
-import { AccountService } from "@/api";
+import { type AuthTokenResponse } from "@/api";
 
 const isMobile = Capacitor.isNativePlatform();
 
@@ -20,13 +20,13 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
       const googleUser = await GoogleAuth.signIn();
       const idToken = googleUser.authentication.idToken;
       localStorage.removeItem("accessToken");
-      const { access, refresh, role } = await AuthService.authLoginGoogleCreate(
+      const loginResponse = await AuthService.authLoginGoogleCreate(
         {
           token: idToken,
         },
       );
 
-      handleLoginSuccess(access, refresh, role);
+      handleLoginSuccess(loginResponse);
     } catch (err: any) {
       const message = err?.message || err;
       const full = JSON.stringify(err, Object.getOwnPropertyNames(err));
@@ -41,12 +41,12 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
     onSuccess: async ({ code }) => {
       try {
         localStorage.removeItem("accessToken");
-        const { access, refresh, role } =
+        const loginResponse =
           await AuthService.authLoginGoogleCreate({
             code: code,
           });
 
-        handleLoginSuccess(access, refresh, role);
+        handleLoginSuccess(loginResponse);
       } catch (err) {
         console.error("Erro ao logar (web):", err);
       }
@@ -62,25 +62,18 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
   };
 
   const handleLoginSuccess = async (
-    access: string,
-    refresh: string,
-    role: string,
+    loginResponse: AuthTokenResponse
   ) => {
-    localStorage.setItem("accessToken", access);
-    localStorage.setItem("refreshToken", refresh);
-    localStorage.setItem("role", role);
+    localStorage.setItem("accessToken", loginResponse.access);
+    localStorage.setItem("refreshToken", loginResponse.refresh);
+    localStorage.setItem("role", loginResponse.role);
+    localStorage.setItem("userId", String(loginResponse.user_id));
+    localStorage.setItem("fullname", loginResponse.full_name || "");
+    localStorage.setItem("profileImage", loginResponse.profile_picture || "");
 
-    try {
-      const accountData = await AccountService.apiAccountList();
-      localStorage.setItem("fullname", accountData.full_name || "");
-    } catch (err) {
-      console.error("Erro ao buscar conta:", err);
-      localStorage.setItem("fullname", "");
-    }
-
-    if (role === "provider") {
+    if (loginResponse.role === "provider") {
       window.location.href = "/acs-main-page";
-    } else if (role === "person") {
+    } else if (loginResponse.role === "person") {
       window.location.href = "/user-main-page";
     } else {
       onNext();

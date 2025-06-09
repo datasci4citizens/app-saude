@@ -44,6 +44,7 @@ export default function ProfessionalOnboarding() {
       specialty_concept: data.specialty_concept,
       // will be null for now
       care_site: null,
+      profile_picture: localStorage.getItem("profileImage") || "",
     };
     // save provider data
     setProvider(provider);
@@ -83,8 +84,13 @@ export default function ProfessionalOnboarding() {
         await fetchUserEntity();
       } catch (err) {
         console.error("Registration error:", err);
-        // Error is already set in the mutation function
-        alert(`Erro: ${error}`);
+        if (err instanceof Error && err.message && err.message.includes("professional registration")) {
+          setError(
+            "Erro ao registrar profissional: Número CNES inválido ou já cadastrado.",
+          );
+        } else {
+          setError("Erro ao registrar profissional. " + err);
+        }
       }
     }, 0);
   };
