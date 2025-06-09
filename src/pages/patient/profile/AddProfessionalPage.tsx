@@ -63,8 +63,18 @@ const AddProfessionalPage = () => {
 
       setLinkSuccess(true);
       console.log("Successfully linked with provider:", response);
-    } catch (error) {
-      console.error("Error linking with provider:", error);
+    } catch (error: any) {
+      console.error("Erro ao vincular com provedor:", error);
+
+      const response = error?.body;
+
+      if (response?.error) {
+        setError(`Erro ao vincular: ${response.error}`);
+      } else if (response?.message) {
+        setError(`Erro ao vincular: ${response.message}`);
+      } else {
+        setError("Erro inesperado ao vincular com provedor.");
+      }
     } finally {
       setIsLinking(false);
     }
