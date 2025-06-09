@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileBanner from "@/components/ui/profile-banner";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { AccountService } from "@/api/services/AccountService";
-import { ApiService } from "@/api/services/ApiService"; // Import ApiService
 import { LogoutService } from "@/api/services/LogoutService";
 
 interface ProfileMenuItem {
@@ -24,21 +23,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   onEditProfile,
 }) => {
   const navigate = useNavigate();
-  const [personId, setPersonId] = useState<number | null>(null);
-
-  // Fetch person_id on mount
-  useEffect(() => {
-    const fetchPersonId = async () => {
-      try {
-        const userEntity = await ApiService.apiUserEntityRetrieve();
-        setPersonId(userEntity.person_id);
-      } catch (error) {
-        console.error("Erro ao buscar person_id:", error);
-      }
-    };
-    fetchPersonId();
-  }, []);
-
   const menuItems: ProfileMenuItem[] = [
     {
       title: "Histórico de diários",
@@ -82,16 +66,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       title: "Excluir conta",
       onClick: async () => {
         try {
-          if (!personId) {
-            alert("ID do usuário não encontrado.");
-            return;
-          }
           const confirmed = window.confirm(
             `Tem certeza que deseja excluir a sua conta? Esta ação não pode ser desfeita.`,
           );
           if (!confirmed) return;
           // alert(`A conta com o ID ${personId} será excluída.`);
-          await AccountService.apiAccountDestroy(personId);
+          await AccountService.accountsDestroy();
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
           navigate("/welcome");

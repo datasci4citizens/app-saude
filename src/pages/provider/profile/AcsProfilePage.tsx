@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileBanner from "@/components/ui/profile-banner";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { AccountService } from "@/api/services/AccountService";
-import { ApiService } from "@/api/services/ApiService";
 import { LogoutService } from "@/api/services/LogoutService";
 
 interface AcsProfileMenuItem {
@@ -24,19 +23,6 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
   onEditProfile,
 }) => {
   const navigate = useNavigate();
-  const [providerId, setProviderId] = useState<number | null>(null);
-
-  useEffect(() => {
-    const fetchProviderId = async () => {
-      try {
-        const userEntity = await ApiService.apiUserEntityRetrieve();
-        setProviderId(userEntity.provider_id);
-      } catch (error) {
-        console.error("Erro ao buscar provider_id:", error);
-      }
-    };
-    fetchProviderId();
-  }, []);
 
   const menuItems: AcsProfileMenuItem[] = [
     {
@@ -71,16 +57,12 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
       title: "Excluir conta",
       onClick: async () => {
         try {
-          if (!providerId) {
-            alert("ID do profissional não encontrado.");
-            return;
-          }
           const confirmed = window.confirm(
             `Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.`,
           );
           if (!confirmed) return;
           // alert(`A conta com o ID ${providerId} será excluída.`);
-          await AccountService.apiAccountDestroy(providerId);
+          await AccountService.accountsDestroy();
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
           navigate("/welcome");

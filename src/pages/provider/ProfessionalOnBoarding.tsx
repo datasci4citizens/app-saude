@@ -33,6 +33,48 @@ export default function ProfessionalOnboarding() {
     },
   );
 
+  const messageRules: { match: (msg: string) => boolean; translation: string }[] = [
+    {
+      match: (msg) =>
+        msg.toLowerCase().includes("professional registration") &&
+        msg.toLowerCase().includes("exists"),
+      translation: "Já existe o cadastro de um profissional com esse número CNES",
+    },
+    // adicione outras regras conforme necessário
+  ];
+
+  function translateMessageFlex(msg: string): string {
+    const rule = messageRules.find((r) => r.match(msg));
+    return rule ? rule.translation : msg;
+  }
+
+  const fieldTranslation: Record<string, string> = {
+    "provider.professional_registration": "Número CNES",
+    // etc.
+  };
+
+  function translateField(field: string): string {
+    return fieldTranslation[field] || field;
+  }
+  
+  function flattenErrors(errors: any, prefix = ""): string[] {
+    return Object.entries(errors).flatMap(([field, value]) => {
+      const fieldPath = prefix ? `${prefix}.${field}` : field;
+
+      if (Array.isArray(value)) {
+        return value.map((msg) => {
+          return `${translateField(fieldPath)}: ${translateMessageFlex(msg)}`;
+        });
+      } else if (typeof value === "string") {
+        return [`${translateField(fieldPath)}: ${translateMessageFlex(value)}`];
+      } else if (typeof value === "object" && value !== null) {
+        return flattenErrors(value, fieldPath);
+      } else {
+        return [`${translateField(fieldPath)}: Erro desconhecido`];
+      }
+    });
+  }
+
   // Handle form submission
   const handleFormSubmit = async (data: ProviderData) => {
     console.log("Professional data submitted:", data);
@@ -82,6 +124,7 @@ export default function ProfessionalOnboarding() {
         console.log("Submission result:", result);
 
         await fetchUserEntity();
+<<<<<<< Updated upstream
       } catch (err) {
         console.error("Registration error:", err);
         if (
@@ -92,8 +135,17 @@ export default function ProfessionalOnboarding() {
           setError(
             "Erro ao registrar profissional: Número CNES inválido ou já cadastrado.",
           );
+=======
+      } catch (err: any) {
+        const response = err?.body;
+        if (response?.errors) {
+          const formattedErrors = flattenErrors(response.errors).join("\n");
+          setError(`Erro ao registrar profissional:\n${formattedErrors}`);
+        } else if (response?.message) {
+          setError(`Erro ao registrar profissional: ${response.message}`);
+>>>>>>> Stashed changes
         } else {
-          setError("Erro ao registrar profissional. " + err);
+          setError("Erro inesperado ao registrar profissional.");
         }
       }
     }, 0);

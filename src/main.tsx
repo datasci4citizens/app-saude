@@ -9,6 +9,10 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Capacitor } from "@capacitor/core";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 
+import { customFetch } from "./api/core/customFetch";
+
+globalThis.fetch = customFetch;
+
 // Initialize the Google Auth plugin for mobile platforms
 if (Capacitor.isNativePlatform()) {
   GoogleAuth.initialize({
