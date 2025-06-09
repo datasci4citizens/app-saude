@@ -152,8 +152,7 @@ export default function EmergencyScreen() {
           <div className="text-white text-xl font-bold">⚠️</div>
           <div>
             <p className="text-white font-semibold text-sm mb-2">
-              ATENÇÃO: você pode não ser respondido imediatamente ou nem sequer
-              respondido!
+              ATENÇÃO: você pode não ser respondido imediatamente!
             </p>
             <p className="text-white text-xs">
               Em caso de necessidade, ligue{" "}

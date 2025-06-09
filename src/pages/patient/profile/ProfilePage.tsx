@@ -19,8 +19,8 @@ interface ProfilePageProps {
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({
-  name = "Nome",
-  profileImage,
+  name = localStorage.getItem("fullname") ?? "undefined",
+  profileImage = localStorage.getItem("profileImage") ?? "",
   onEditProfile,
 }) => {
   const navigate = useNavigate();

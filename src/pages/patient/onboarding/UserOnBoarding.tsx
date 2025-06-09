@@ -57,6 +57,7 @@ export default function UserOnboarding() {
       gender_concept: data.gender_concept,
       ethnicity_concept: 3, // fill
       race_concept: data.race_concept,
+      profile_picture: localStorage.getItem("profileImage") || "",
     };
     setPerson(person);
     setStep(2);

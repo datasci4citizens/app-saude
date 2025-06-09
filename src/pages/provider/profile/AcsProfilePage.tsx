@@ -19,8 +19,8 @@ interface AcsProfilePageProps {
 }
 
 const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
-  name = "Nome",
-  profileImage,
+  name = localStorage.getItem("fullname") ?? "undefined",
+  profileImage = localStorage.getItem("profileImage") ?? "",
   onEditProfile,
 }) => {
   const navigate = useNavigate();
