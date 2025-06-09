@@ -2,8 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { VisitDetails } from './VisitDetails';
+import type { VisitDetails } from "./VisitDetails";
 export type NextVisit = {
-    next_visit: VisitDetails | null;
+  next_visit: VisitDetails | null;
 };
-

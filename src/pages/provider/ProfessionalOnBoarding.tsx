@@ -84,7 +84,11 @@ export default function ProfessionalOnboarding() {
         await fetchUserEntity();
       } catch (err) {
         console.error("Registration error:", err);
-        if (err instanceof Error && err.message && err.message.includes("professional registration")) {
+        if (
+          err instanceof Error &&
+          err.message &&
+          err.message.includes("professional registration")
+        ) {
           setError(
             "Erro ao registrar profissional: Número CNES inválido ou já cadastrado.",
           );

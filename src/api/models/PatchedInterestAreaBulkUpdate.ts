@@ -2,11 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { InterestAreaUpdate } from './InterestAreaUpdate';
+import type { InterestAreaUpdate } from "./InterestAreaUpdate";
 export type PatchedInterestAreaBulkUpdate = {
-    /**
-     * List of interest areas to update
-     */
-    interest_areas?: Array<InterestAreaUpdate>;
+  /**
+   * List of interest areas to update
+   */
+  interest_areas?: Array<InterestAreaUpdate>;
 };
-

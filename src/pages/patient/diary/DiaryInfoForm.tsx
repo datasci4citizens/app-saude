@@ -278,7 +278,8 @@ export default function DiaryInfoForm() {
                       }
                       setOpenTriggers((prev) => ({
                         ...prev,
-                        [interest.interest_area_id]: !prev[interest.interest_area_id],
+                        [interest.interest_area_id]:
+                          !prev[interest.interest_area_id],
                       }));
                     }}
                     className="cursor-pointer"
@@ -293,11 +294,16 @@ export default function DiaryInfoForm() {
 
                   {/* Toggle de compartilhamento */}
                   <div className="flex items-center justify-end gap-2 pr-2 mt-1">
-                    <span className="text-sm text-gray-600 italic">Compartilhar com profissional</span>
+                    <span className="text-sm text-gray-600 italic">
+                      Compartilhar com profissional
+                    </span>
                     <Switch
                       checked={interest.shared || false}
                       onCheckedChange={(checked) =>
-                        handleInterestSharingToggle(interest.interest_area_id, checked)
+                        handleInterestSharingToggle(
+                          interest.interest_area_id,
+                          checked,
+                        )
                       }
                       size="sm"
                     />
@@ -305,50 +311,50 @@ export default function DiaryInfoForm() {
 
                   {/* Render triggers if available */}
                   <AnimatePresence initial={false}>
-                    {openTriggers[interest.interest_area_id] && interest.triggers?.length > 0 && (
-                      <motion.div
-                        key="triggers"
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="overflow-hidden ml-4 space-y-4 border-l-2 border-gray2 pl-4 mt-4"
-                      >
-                        {interest.triggers.map((trigger) => (
-                          <div key={trigger.trigger_id} className="space-y-2">
-                            {/* Trigger title */}
-                            <HabitCard
-                              title={
-                                trigger.trigger_name ||
-                                trigger.custom_trigger_name ||
-                                "Pergunta relacionada"
-                              }
-                              className="inline-block w-auto min-w-fit max-w-full text-sm bg-secondary/20"
-                            />
+                    {openTriggers[interest.interest_area_id] &&
+                      interest.triggers?.length > 0 && (
+                        <motion.div
+                          key="triggers"
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
+                          className="overflow-hidden ml-4 space-y-4 border-l-2 border-gray2 pl-4 mt-4"
+                        >
+                          {interest.triggers.map((trigger) => (
+                            <div key={trigger.trigger_id} className="space-y-2">
+                              {/* Trigger title */}
+                              <HabitCard
+                                title={
+                                  trigger.trigger_name ||
+                                  trigger.custom_trigger_name ||
+                                  "Pergunta relacionada"
+                                }
+                                className="inline-block w-auto min-w-fit max-w-full text-sm bg-secondary/20"
+                              />
 
-                            {/* Trigger text field */}
-                            <TextField
-                              id={`trigger-${interest.interest_area_id}-${trigger.trigger_id}`}
-                              name={`trigger-${interest.interest_area_id}-${trigger.trigger_id}`}
-                              value={trigger.response || ""}
-                              onChange={(e) =>
-                                handleTriggerResponseChange(
-                                  interest.interest_area_id,
-                                  trigger.trigger_id,
-                                  e.target.value,
-                                )
-                              }
-                              placeholder=""
-                              className="border-gray2 border-2 focus:border-selection"
-                              multiline={true}
-                              rows={2}
-                            />
-                          </div>
-                        ))}
-                      </motion.div>
-                    )}
+                              {/* Trigger text field */}
+                              <TextField
+                                id={`trigger-${interest.interest_area_id}-${trigger.trigger_id}`}
+                                name={`trigger-${interest.interest_area_id}-${trigger.trigger_id}`}
+                                value={trigger.response || ""}
+                                onChange={(e) =>
+                                  handleTriggerResponseChange(
+                                    interest.interest_area_id,
+                                    trigger.trigger_id,
+                                    e.target.value,
+                                  )
+                                }
+                                placeholder=""
+                                className="border-gray2 border-2 focus:border-selection"
+                                multiline={true}
+                                rows={2}
+                              />
+                            </div>
+                          ))}
+                        </motion.div>
+                      )}
                   </AnimatePresence>
-
                 </div>
               );
             })}
@@ -362,16 +368,14 @@ export default function DiaryInfoForm() {
           <h3 className="font-semibold text-lg text-accent2-700">
             Observações Gerais
           </h3>
-            <div className="flex items-center justify-end gap-2 pr-2 mt-1">
-              <span className="text-sm text-gray-600 italic">Compartilhar</span>
-              <Switch
-                checked={shareText || false}
-                onCheckedChange={(checked) =>
-                  setShareText(checked)
-                }
-                size="sm"
-              />
-            </div>
+          <div className="flex items-center justify-end gap-2 pr-2 mt-1">
+            <span className="text-sm text-gray-600 italic">Compartilhar</span>
+            <Switch
+              checked={shareText || false}
+              onCheckedChange={(checked) => setShareText(checked)}
+              size="sm"
+            />
+          </div>
         </div>
         <TextField
           id="freeText"

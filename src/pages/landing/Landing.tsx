@@ -20,11 +20,9 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
       const googleUser = await GoogleAuth.signIn();
       const idToken = googleUser.authentication.idToken;
       localStorage.removeItem("accessToken");
-      const loginResponse = await AuthService.authLoginGoogleCreate(
-        {
-          token: idToken,
-        },
-      );
+      const loginResponse = await AuthService.authLoginGoogleCreate({
+        token: idToken,
+      });
 
       handleLoginSuccess(loginResponse);
     } catch (err: any) {
@@ -41,10 +39,9 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
     onSuccess: async ({ code }) => {
       try {
         localStorage.removeItem("accessToken");
-        const loginResponse =
-          await AuthService.authLoginGoogleCreate({
-            code: code,
-          });
+        const loginResponse = await AuthService.authLoginGoogleCreate({
+          code: code,
+        });
 
         handleLoginSuccess(loginResponse);
       } catch (err) {
@@ -61,9 +58,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
     }
   };
 
-  const handleLoginSuccess = async (
-    loginResponse: AuthTokenResponse
-  ) => {
+  const handleLoginSuccess = async (loginResponse: AuthTokenResponse) => {
     localStorage.setItem("accessToken", loginResponse.access);
     localStorage.setItem("refreshToken", loginResponse.refresh);
     localStorage.setItem("role", loginResponse.role);
