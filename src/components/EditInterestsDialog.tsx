@@ -92,7 +92,9 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
           />
 
           <div>
-            <label className="block text-base font-semibold text-[var(--typography)] mb-1">Perguntas</label>
+            <label className="block text-base font-semibold text-[var(--typography)] mb-1">
+              Perguntas
+            </label>
             <div className="flex gap-2 mb-2">
               <div className="flex-1">
                 <TextField

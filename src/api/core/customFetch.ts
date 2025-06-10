@@ -8,11 +8,11 @@ let requestQueue: ((token: string) => void)[] = [];
 const originalFetch = globalThis.fetch;
 
 export const isString = (value: any): value is string => {
-    return typeof value === 'string';
+  return typeof value === "string";
 };
 
 export const isStringWithValue = (value: any): value is string => {
-    return isString(value) && value !== '';
+  return isString(value) && value !== "";
 };
 
 function subscribeToTokenRefresh(callback: (token: string) => void) {
@@ -54,12 +54,14 @@ export const customFetch: typeof fetch = async (input, init = {}) => {
   });
 
   const doRequest = () => {
-    const isJson = typeof init.body === "string" && init.body.trim().startsWith("{");
+    const isJson =
+      typeof init.body === "string" && init.body.trim().startsWith("{");
 
     return originalFetch(input, {
       ...init,
       headers: {
-        ...(isStringWithValue(localStorage.getItem("accessToken"))) && injectAuth(init.headers),
+        ...(isStringWithValue(localStorage.getItem("accessToken")) &&
+          injectAuth(init.headers)),
         ...(isJson ? { "Content-Type": "application/json" } : {}),
       },
     });

@@ -78,18 +78,22 @@ export default function ViewDiary() {
               localStorage.getItem("fullname") || "Você";
             const diaryWithResolvedNames: DiaryDetail = {
               ...diaryData,
-              entries: diaryData.entries.map((entry) => ({
-                ...entry,
-                text_content: entry.text || "",
-                text_shared: entry.text_shared || false,
-              })).filter((entry) => entry.text_shared),
-              interest_areas: diaryData.interest_areas.map((area) => ({
-                ...area,
-                provider_name:
-                  area.provider_name === loggedProviderName
-                    ? "Você"
-                    : area.provider_name,
-              })).filter((area) => area.shared_with_provider),
+              entries: diaryData.entries
+                .map((entry) => ({
+                  ...entry,
+                  text_content: entry.text || "",
+                  text_shared: entry.text_shared || false,
+                }))
+                .filter((entry) => entry.text_shared),
+              interest_areas: diaryData.interest_areas
+                .map((area) => ({
+                  ...area,
+                  provider_name:
+                    area.provider_name === loggedProviderName
+                      ? "Você"
+                      : area.provider_name,
+                }))
+                .filter((area) => area.shared_with_provider),
             };
 
             setDiary(diaryWithResolvedNames);
@@ -247,7 +251,6 @@ export default function ViewDiary() {
                       key={entry.id || index}
                       className="bg-offwhite p-4 rounded-lg shadow-md"
                     >
-
                       {entry.text_content && (
                         <div className="mb-3">
                           <p className="text-campos-preenchimento2 text-typography whitespace-pre-wrap">

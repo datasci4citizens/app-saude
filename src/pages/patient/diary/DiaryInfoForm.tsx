@@ -294,7 +294,9 @@ export default function DiaryInfoForm() {
 
                   {/* Toggle de compartilhamento */}
                   <div className="flex items-center justify-end gap-2 pr-2 mt-1">
-                    <span className="text-sm text-gray-600 italic">Compartilhar com profissionais</span>
+                    <span className="text-sm text-gray-600 italic">
+                      Compartilhar com profissionais
+                    </span>
                     <Switch
                       checked={interest.shared || false}
                       onCheckedChange={(checked) =>
@@ -366,16 +368,16 @@ export default function DiaryInfoForm() {
           <h3 className="font-semibold text-lg text-accent2-700">
             Observações Gerais
           </h3>
-            <div className="flex items-center justify-end gap-2 pr-2 mt-1">
-              <span className="text-sm text-gray-600 italic">Compartilhar com profissionais</span>
-              <Switch
-                checked={shareText || false}
-                onCheckedChange={(checked) =>
-                  setShareText(checked)
-                }
-                size="sm"
-              />
-            </div>
+          <div className="flex items-center justify-end gap-2 pr-2 mt-1">
+            <span className="text-sm text-gray-600 italic">
+              Compartilhar com profissionais
+            </span>
+            <Switch
+              checked={shareText || false}
+              onCheckedChange={(checked) => setShareText(checked)}
+              size="sm"
+            />
+          </div>
         </div>
         <TextField
           id="freeText"

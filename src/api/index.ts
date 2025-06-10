@@ -33,4 +33,4 @@ export { PersonService } from "./services/PersonService";
 export { ProviderService } from "./services/ProviderService";
 export { VisitOccurrenceService } from "./services/VisitOccurrenceService";
 export { VocabularyService } from "./services/VocabularyService";
-export { DateRangeTypeEnum } from './models/DateRangeTypeEnum';
+export { DateRangeTypeEnum } from "./models/DateRangeTypeEnum";

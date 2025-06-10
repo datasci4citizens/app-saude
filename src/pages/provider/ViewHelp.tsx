@@ -135,8 +135,8 @@ export default function ViewHelp() {
               <p className="text-campos-preenchimento2 text-typography">
                 <span className="font-medium">Nome:</span>{" "}
                 {patient.social_name ||
-                    patient.first_name + " " + patient.last_name ||
-                    "Não informado"}
+                  patient.first_name + " " + patient.last_name ||
+                  "Não informado"}
               </p>
             </div>
           </div>

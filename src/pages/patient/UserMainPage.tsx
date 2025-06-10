@@ -18,15 +18,19 @@ interface InterestAreaResponse extends InterestArea {
 
 export default function UserMainPage() {
   const navigate = useNavigate();
-  
+
   // Estados principais
-  const [userInterestObjects, setUserInterestObjects] = useState<InterestAreaResponse[]>([]);
+  const [userInterestObjects, setUserInterestObjects] = useState<
+    InterestAreaResponse[]
+  >([]);
   const [editionMode, setEditionMode] = useState(false);
-  const [editingInterest, setEditingInterest] = useState<InterestAreaResponse | null>(null);
+  const [editingInterest, setEditingInterest] =
+    useState<InterestAreaResponse | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [interestToDelete, setInterestToDelete] = useState<InterestAreaResponse | null>(null);
+  const [interestToDelete, setInterestToDelete] =
+    useState<InterestAreaResponse | null>(null);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-  
+
   // Estados de sincronização
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
@@ -44,7 +48,8 @@ export default function UserMainPage() {
   useEffect(() => {
     const loadExistingInterests = async () => {
       try {
-        const userInterests = (await InterestAreasService.personInterestAreasList()) as InterestAreaResponse[];
+        const userInterests =
+          (await InterestAreasService.personInterestAreasList()) as InterestAreaResponse[];
         setUserInterestObjects(userInterests);
       } catch (error) {
         console.error("Error loading user interests:", error);
@@ -64,13 +69,15 @@ export default function UserMainPage() {
       setSyncError(null);
 
       if (interest.interest_area_id) {
-        await InterestAreasService.personInterestAreasDestroy(interest.interest_area_id);
-        
+        await InterestAreasService.personInterestAreasDestroy(
+          interest.interest_area_id,
+        );
+
         // Remove do estado local
         setUserInterestObjects((prev) =>
-          prev.filter((i) => i.interest_area_id !== interest.interest_area_id)
+          prev.filter((i) => i.interest_area_id !== interest.interest_area_id),
         );
-        
+
         setSyncSuccess(true);
         setTimeout(() => setSyncSuccess(false), 3000);
       }
@@ -95,9 +102,9 @@ export default function UserMainPage() {
       if (interestData.id) {
         // Editando interesse existente
         const existingInterest = userInterestObjects.find(
-          i => i.interest_area_id.toString() === interestData.id
+          (i) => i.interest_area_id.toString() === interestData.id,
         );
-        
+
         if (existingInterest) {
           // Atualiza localmente (assumindo que a API não tem endpoint de update)
           setUserInterestObjects((prev) =>
@@ -107,10 +114,13 @@ export default function UserMainPage() {
                     ...interest,
                     observation_concept_id: 2000301, // Conceito padrão para interesses personalizados
                     interest_name: interestData.interest_name,
-                    triggers: interestData.triggers.map((t) => ({ trigger_name: t, observation_concept_id: 2000201 })),
+                    triggers: interestData.triggers.map((t) => ({
+                      trigger_name: t,
+                      observation_concept_id: 2000201,
+                    })),
                   }
-                : interest
-            )
+                : interest,
+            ),
           );
         }
       } else {
@@ -118,20 +128,21 @@ export default function UserMainPage() {
         const newInterestArea: InterestArea = {
           observation_concept_id: 2000301, // Conceito padrão para interesses personalizados
           interest_name: interestData.interest_name,
-          triggers: interestData.triggers.map((t) => ({ 
+          triggers: interestData.triggers.map((t) => ({
             trigger_name: t,
             observation_concept_id: 2000201, // Conceito padrão para gatilhos personalizados
           })),
         };
 
-        const result = await InterestAreasService.personInterestAreasCreate(newInterestArea);
-        
+        const result =
+          await InterestAreasService.personInterestAreasCreate(newInterestArea);
+
         if (result && "interest_area_id" in result) {
           const newInterestWithId = {
             ...result,
             interest_name: interestData.interest_name,
             triggers: interestData.triggers.map((t) => ({ trigger_name: t })),
-            is_custom: true
+            is_custom: true,
           } as InterestAreaResponse;
           setUserInterestObjects((prev) => [...prev, newInterestWithId]);
         }
@@ -210,7 +221,7 @@ export default function UserMainPage() {
     // Se houver mudanças pendentes, salvar aqui
     setEditionMode(false);
     setHasChanges(false);
-    
+
     // Mostrar mensagem de sucesso
     setSyncSuccess(true);
     setTimeout(() => setSyncSuccess(false), 3000);
@@ -225,18 +236,27 @@ export default function UserMainPage() {
           subtitle="Adicione seus interesses e acompanhe seu progresso"
           onIconClick={handleBannerIconClick}
         />
-        <h2 className="text-xl font-semibold pl-4 pb-2 mt-4 text-typography">Meus Interesses</h2>
+        <h2 className="text-xl font-semibold pl-4 pb-2 mt-4 text-typography">
+          Meus Interesses
+        </h2>
       </div>
 
       {/* ÁREA SCROLLÁVEL - Lista de Interesses */}
-      <div className="px-4 overflow-y-auto" style={{ paddingBottom: '180px', maxHeight: 'calc(100vh - 140px)' }}>
+      <div
+        className="px-4 overflow-y-auto"
+        style={{ paddingBottom: "180px", maxHeight: "calc(100vh - 140px)" }}
+      >
         {userInterestObjects.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mb-4">
               <span className="text-2xl">📋</span>
             </div>
-            <p className="text-foreground text-lg font-medium mb-2">Nenhum interesse selecionado</p>
-            <p className="text-sm text-muted-foreground">Adicione seus interesses para começar!</p>
+            <p className="text-foreground text-lg font-medium mb-2">
+              Nenhum interesse selecionado
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Adicione seus interesses para começar!
+            </p>
           </div>
         ) : (
           <div className="flex flex-col gap-4">
@@ -271,7 +291,9 @@ export default function UserMainPage() {
 
                 <h3 className="font-bold text-lg text-card-foreground mb-2 flex items-center gap-2 flex-wrap">
                   <span className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex-shrink-0"></span>
-                  <span className="break-words min-w-0">{interest.interest_name}</span>
+                  <span className="break-words min-w-0">
+                    {interest.interest_name}
+                  </span>
                   {interest.is_custom && (
                     <span className="ml-2 text-xs bg-violet-600 text-white dark:bg-purple-900/50 dark:text-purple-200 px-2 py-1 rounded-full font-medium border border-violet-700 dark:border-purple-700 flex-shrink-0">
                       Personalizado
@@ -280,9 +302,14 @@ export default function UserMainPage() {
                 </h3>
                 <div className="space-y-1">
                   {interest.triggers?.map((t, index) => (
-                    <div key={`${t.trigger_name}-${index}`} className="flex items-start gap-2 text-sm text-muted-foreground">
+                    <div
+                      key={`${t.trigger_name}-${index}`}
+                      className="flex items-start gap-2 text-sm text-muted-foreground"
+                    >
                       <span className="w-1 h-1 bg-muted-foreground rounded-full flex-shrink-0 mt-2"></span>
-                      <span className="break-words min-w-0">{t.trigger_name}</span>
+                      <span className="break-words min-w-0">
+                        {t.trigger_name}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -298,7 +325,9 @@ export default function UserMainPage() {
           <div className="flex justify-center mb-2">
             <div className="inline-block p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 rounded-lg shadow-lg backdrop-blur-sm animate-in slide-in-from-bottom-5 duration-300">
               <div className="flex items-center gap-2">
-                <span className="text-green-600 dark:text-green-400 text-sm">✅</span>
+                <span className="text-green-600 dark:text-green-400 text-sm">
+                  ✅
+                </span>
                 <p className="font-medium text-sm">Interesses salvos!</p>
               </div>
             </div>
@@ -308,7 +337,9 @@ export default function UserMainPage() {
           <div className="flex justify-center mb-2">
             <div className="inline-block p-3 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg shadow-lg backdrop-blur-sm animate-in slide-in-from-bottom-5 duration-300">
               <div className="flex items-center gap-2">
-                <span className="text-red-600 dark:text-red-400 text-sm">❌</span>
+                <span className="text-red-600 dark:text-red-400 text-sm">
+                  ❌
+                </span>
                 <p className="font-medium text-sm">{syncError}</p>
               </div>
             </div>
@@ -320,8 +351,8 @@ export default function UserMainPage() {
       <div className="fixed bottom-24 left-0 right-0 px-4 py-3 bg-gradient-to-t from-primary via-primary to-transparent backdrop-blur-sm border-t border-gray-200/20 z-20">
         {editionMode ? (
           <div className="flex justify-center gap-2 max-w-md mx-auto">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => setEditionMode(false)}
               className="flex-1 bg-background/50 border-border/30 text-foreground hover:bg-background/70 transition-all duration-200 backdrop-blur-sm text-sm py-2"
               disabled={isSyncing}
@@ -368,11 +399,16 @@ export default function UserMainPage() {
       {/* DIALOGS */}
       <EditInterestDialog
         open={dialogOpen}
-        initialData={editingInterest ? {
-          id: editingInterest.interest_area_id.toString(),
-          interest_name: editingInterest.interest_name || '',
-          triggers: editingInterest.triggers?.map(t => t.trigger_name) || []
-        } : undefined}
+        initialData={
+          editingInterest
+            ? {
+                id: editingInterest.interest_area_id.toString(),
+                interest_name: editingInterest.interest_name || "",
+                triggers:
+                  editingInterest.triggers?.map((t) => t.trigger_name) || [],
+              }
+            : undefined
+        }
         onClose={() => {
           setDialogOpen(false);
           setEditingInterest(null);

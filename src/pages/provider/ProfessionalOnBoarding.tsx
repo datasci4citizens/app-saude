@@ -33,12 +33,16 @@ export default function ProfessionalOnboarding() {
     },
   );
 
-  const messageRules: { match: (msg: string) => boolean; translation: string }[] = [
+  const messageRules: {
+    match: (msg: string) => boolean;
+    translation: string;
+  }[] = [
     {
       match: (msg) =>
         msg.toLowerCase().includes("professional registration") &&
         msg.toLowerCase().includes("exists"),
-      translation: "Já existe o cadastro de um profissional com esse número CNES",
+      translation:
+        "Já existe o cadastro de um profissional com esse número CNES",
     },
     // adicione outras regras conforme necessário
   ];
@@ -56,7 +60,7 @@ export default function ProfessionalOnboarding() {
   function translateField(field: string): string {
     return fieldTranslation[field] || field;
   }
-  
+
   function flattenErrors(errors: any, prefix = ""): string[] {
     return Object.entries(errors).flatMap(([field, value]) => {
       const fieldPath = prefix ? `${prefix}.${field}` : field;
