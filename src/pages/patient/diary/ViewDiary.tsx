@@ -136,13 +136,13 @@ export default function ViewDiaryEntry() {
           title="Visualizar Diário"
           onBackClick={() => navigate("/diary")}
         />
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 mt-6">
+        <div className="bg-destructive border border-destructive rounded-lg p-4 text-white mt-6">
           {error || "Diário não encontrado"}
         </div>
         <div className="mt-6 text-center">
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-2 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700"
+            className="px-6 py-2 bg-gray12 hover:bg-gray2 rounded-full text-white"
           >
             Voltar
           </button>

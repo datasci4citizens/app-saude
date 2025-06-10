@@ -35,6 +35,7 @@ export default function DiaryInfoForm() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingInterests, setIsLoadingInterests] = useState(true);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<"today" | "sinceLast">(
     "sinceLast",
   );
@@ -156,6 +157,7 @@ export default function DiaryInfoForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError(null);
 
     try {
       // Format interest areas according to the expected API structure
@@ -207,14 +209,47 @@ export default function DiaryInfoForm() {
       navigate("/diary");
     } catch (error) {
       console.error("Failed to submit diary", error);
-      alert("Ocorreu um erro ao salvar o diário. Por favor, tente novamente.");
+      setSubmitError(
+        "Ocorreu um erro ao salvar o diário. Por favor, tente novamente.",
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const clearSubmitError = () => {
+    setSubmitError(null);
+  };
+
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl mx-auto px-4 space-y-6">
+      
+      {/* error message display */}
+      {submitError && (
+        <div className="bg-destructive border border-destructive rounded-lg p-4 text-white mt-4">
+          <div className="flex justify-between items-start">
+            <p className="text-sm">{submitError}</p>
+            <button
+              onClick={clearSubmitError}
+              className="text-white hover:text-white text-lg font-bold ml-2"
+              aria-label="Fechar erro"
+              type="button"
+            >
+              ×
+            </button>
+          </div>
+          <div className="mt-2">
+            <button
+              onClick={clearSubmitError}
+              className="text-sm text-white hover:text-white underline"
+              type="button"
+            >
+              Tentar novamente
+            </button>
+          </div>
+        </div>
+      )}
+      
       {/* Time Range Section */}
       <div className="space-y-3">
         <h3 className="font-semibold text-lg text-accent2-700 mb-1">

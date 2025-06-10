@@ -303,12 +303,12 @@ export default function UserMainPage() {
 
           {/* Duplicate interest error*/}
           {duplicateInterestError && (
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 text-orange-700 mt-4">
+            <div className="bg-destructive border border-destructive rounded-lg p-4 text-white mt-4">
               <div className="flex justify-between items-start">
                 <p className="text-sm">{duplicateInterestError}</p>
                 <button
                   onClick={clearDuplicateError}
-                  className="text-orange-500 hover:text-orange-700 text-lg font-bold ml-2"
+                  className="text-white hover:text-white text-lg font-bold ml-2"
                   aria-label="Fechar aviso"
                 >
                   ×
@@ -317,7 +317,7 @@ export default function UserMainPage() {
               <div className="mt-2">
                 <button
                   onClick={clearDuplicateError}
-                  className="text-sm text-orange-600 hover:text-orange-800 underline"
+                  className="text-sm text-white hover:text-white underline"
                 >
                   Entendi
                 </button>

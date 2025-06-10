@@ -107,12 +107,12 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
 
         {/* Error Message Display */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 mt-4 mx-4">
+          <div className="bg-destructive border-destructive rounded-lg p-4 text-white mt-4 mx-4">
             <div className="flex justify-between items-start">
               <p className="text-sm">{error}</p>
               <button
                 onClick={clearError}
-                className="text-red-500 hover:text-red-700 text-lg font-bold ml-2"
+                className="text-white hover:text-white text-lg font-bold ml-2"
                 aria-label="Fechar erro"
               >
                 ×
@@ -121,7 +121,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
             <div className="mt-2">
               <button
                 onClick={() => setError(null)}
-                className="text-sm text-red-600 hover:text-red-800 underline"
+                className="text-sm text-white hover:text-white underline"
               >
                 Tentar novamente
               </button>
