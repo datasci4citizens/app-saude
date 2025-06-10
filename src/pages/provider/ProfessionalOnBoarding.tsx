@@ -72,9 +72,13 @@ export default function ProfessionalOnboarding() {
         console.log("User entity result:", result);
 
         if (result.person_id) {
-          setSuccess(`Cadastro realizado com sucesso! Seu Person ID é: ${result.person_id}`);
+          setSuccess(
+            `Cadastro realizado com sucesso! Seu Person ID é: ${result.person_id}`,
+          );
         } else if (result.provider_id) {
-          setSuccess(`Cadastro realizado com sucesso! Seu Provider ID é: ${result.provider_id}`);
+          setSuccess(
+            `Cadastro realizado com sucesso! Seu Provider ID é: ${result.provider_id}`,
+          );
         } else {
           setSuccess("Cadastro realizado com sucesso!");
         }
@@ -96,7 +100,9 @@ export default function ProfessionalOnboarding() {
       await fetchUserEntity();
     } catch (err) {
       console.error("Registration error:", err);
-      setError("Erro ao realizar cadastro profissional. Verifique os dados e tente novamente.");
+      setError(
+        "Erro ao realizar cadastro profissional. Verifique os dados e tente novamente.",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -123,12 +129,7 @@ export default function ProfessionalOnboarding() {
 
         <div className="pl-9 pr-9">
           {/* Success Message */}
-          {success && (
-            <SuccessMessage 
-              message={success}
-              className="mb-4"
-            />
-          )}
+          {success && <SuccessMessage message={success} className="mb-4" />}
 
           {/* Error Message */}
           {error && (
@@ -146,7 +147,9 @@ export default function ProfessionalOnboarding() {
             <div className="flex flex-col items-center justify-center py-8">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-selected mb-4"></div>
               <p className="text-typography text-sm text-center">
-                {success ? "Finalizando cadastro..." : "Processando dados profissionais..."}
+                {success
+                  ? "Finalizando cadastro..."
+                  : "Processando dados profissionais..."}
               </p>
             </div>
           ) : !success ? (
