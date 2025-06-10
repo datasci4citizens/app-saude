@@ -96,9 +96,7 @@ const AddProfessionalPage = () => {
 
         {/* Success message */}
         {linkSuccess && (
-          <SuccessMessage 
-            message="Profissional vinculado com sucesso! Você agora tem acesso aos serviços deste profissional."
-          />
+          <SuccessMessage message="Profissional vinculado com sucesso! Você agora tem acesso aos serviços deste profissional." />
         )}
 
         {/* Link error message */}
