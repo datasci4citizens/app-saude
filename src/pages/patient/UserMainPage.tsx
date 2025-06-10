@@ -7,6 +7,8 @@ import { useInterestAreasConcepts } from "@/utils/conceptLoader";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
 import { Button } from "@/components/forms/button";
+import SuccessMessage from "@/components/ui/success-message";
+import ErrorMessage from "@/components/ui/error-message";
 
 // Extended interface for API response that includes the ID
 interface InterestAreaResponse extends InterestArea {
@@ -230,6 +232,12 @@ export default function UserMainPage() {
     setDuplicateInterestError(null);
   };
 
+  const clearSyncError = () => {
+    setSyncError(null);
+  };
+
+
+
   // Navigation functions
   const handleEmergencyClick = () => {
     navigate("/emergency-user");
@@ -270,7 +278,7 @@ export default function UserMainPage() {
   const handleCreateCustomInterest = () => {
     navigate("/user-create-interest");
   };
-
+  
   return (
     <div className="bg-primary min-h-screen pb-24 flex flex-col justify-between">
       <div>
@@ -310,61 +318,35 @@ export default function UserMainPage() {
 
           {/* Duplicate interest error*/}
           {duplicateInterestError && (
-            <div className="bg-destructive border border-destructive rounded-lg p-4 text-white mt-4">
-              <div className="flex justify-between items-start">
-                <p className="text-sm">{duplicateInterestError}</p>
-                <button
-                  onClick={clearDuplicateError}
-                  className="text-white hover:text-white text-lg font-bold ml-2"
-                  aria-label="Fechar aviso"
-                >
-                  ×
-                </button>
-              </div>
-              <div className="mt-2">
-                <button
-                  onClick={clearDuplicateError}
-                  className="text-sm text-white hover:text-white underline"
-                >
-                  Entendi
-                </button>
-              </div>
-            </div>
+            <ErrorMessage 
+            message={duplicateInterestError}
+            variant="destructive"
+            onClose={clearDuplicateError}/>
           )}
 
           {/* Success message */}
           {syncSuccess && (
-            <div className="flex justify-center mt-4">
-              <div className="inline-block p-3 bg-success border border-success-foreground text-success-text rounded-md">
-                <p className="whitespace-nowrap">
-                  Interesses salvos com sucesso!
-                </p>
-              </div>
-            </div>
+            <SuccessMessage message="Interesses salvos com sucesso!"/>
           )}
 
           {/* Error handling for interest areas */}
           {interestAreasError && (
-            <div className="flex justify-center mt-4">
-              <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
-                <p className="whitespace-nowrap">
-                  Erro ao carregar áreas de interesse
-                </p>
-              </div>
-            </div>
+            <ErrorMessage
+            message="Erro ao carregar áreas de interesse. Tente novamente mais tarde."
+            variant="destructive"
+            />
           )}
 
           {/* Error handling for syncing */}
           {syncError && (
-            <div className="flex justify-center mt-4">
-              <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
-                <p className="whitespace-nowrap">{syncError}</p>
-              </div>
-            </div>
+            <ErrorMessage 
+            message={syncError} 
+            variant="destructive"
+            onClose={clearSyncError}/>
           )}
         </div>
-        {/* Top banner */}
 
+        {/* Top banner */}
         {/* Custom interest button */}
         <div>
           <div className="px-4 mb-2 flex justify-center">

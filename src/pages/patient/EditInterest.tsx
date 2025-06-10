@@ -6,6 +6,8 @@ import { Button } from "@/components/forms/button";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
 import type { InterestAreaTriggerCreate } from "@/api/models/InterestAreaTriggerCreate";
+import  {SuccessMessage} from "@/components/ui/success-message";
+import  {ErrorMessage} from "@/components/ui/error-message";
 
 // Extended interface for API response that includes the ID
 interface InterestAreaResponse extends InterestArea {
@@ -188,9 +190,7 @@ export default function EditInterest() {
           <>
             {/* Success Message */}
             {success && (
-              <div className="p-3 mb-4 bg-green-500 bg-opacity-10 border border-green-500 text-green-600 rounded-md">
-                <p>{success}</p>
-              </div>
+              <SuccessMessage message={success}/>
             )}
 
             {/* Current Triggers */}

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
 import { DiaryService } from "@/api/services/DiaryService";
 import HabitCard from "@/components/ui/habit-card";
+import { ErrorMessage } from "@/components/ui/error-message";
 
 // Updated interfaces to match actual server response structure
 interface DiaryTrigger {
@@ -118,6 +119,10 @@ export default function ViewDiaryEntry() {
     return null;
   };
 
+  const clearError = () => {
+    setError(null);
+  };
+
   if (isLoading) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
@@ -132,13 +137,17 @@ export default function ViewDiaryEntry() {
   if (error || !diary) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
+
         <Header
           title="Visualizar Diário"
           onBackClick={() => navigate("/diary")}
         />
-        <div className="bg-destructive border border-destructive rounded-lg p-4 text-white mt-6">
-          {error || "Diário não encontrado"}
-        </div>
+
+        <ErrorMessage 
+        message={error || "Diário não encontrado"} 
+        variant="destructive"
+        onClose={clearError}/>
+
         <div className="mt-6 text-center">
           <button
             onClick={() => navigate(-1)}
