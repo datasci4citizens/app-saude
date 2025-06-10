@@ -65,7 +65,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
     try {
       await LogoutService.authLogoutCreate({ refresh });
       setSuccess("Logout realizado com sucesso!");
-      
+
       // Clear tokens and navigate after showing success message
       setTimeout(() => {
         localStorage.removeItem("accessToken");
@@ -73,7 +73,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
         navigate("/welcome");
       }, 1500);
     } catch (error: any) {
-      const errorMessage = error?.message 
+      const errorMessage = error?.message
         ? `Erro ao fazer logout: ${error.message}`
         : "Erro ao fazer logout. Tente novamente.";
       setError(errorMessage);
@@ -91,7 +91,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
     const confirmed = window.confirm(
       `Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.`,
     );
-    
+
     if (!confirmed) return;
 
     setIsLoading(true);
@@ -100,7 +100,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
     try {
       await AccountService.apiAccountDestroy(providerId);
       setSuccess("Conta excluída com sucesso!");
-      
+
       // Clear tokens and navigate after showing success message
       setTimeout(() => {
         localStorage.removeItem("accessToken");
@@ -161,14 +161,8 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
       {/* Menu Items */}
       <div className="z-10 h-[calc(100vh-12rem)] pt-2">
         <div className="px-4 bg-white rounded-xl shadow-sm h-full pt-4">
-          
           {/* Success Message */}
-          {success && (
-            <SuccessMessage 
-              message={success} 
-              className="mb-4"
-            />
-          )}
+          {success && <SuccessMessage message={success} className="mb-4" />}
 
           {/* Error Message */}
           {error && (
@@ -194,7 +188,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
               <React.Fragment key={index}>
                 <li
                   className={`px-4 py-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 transition-colors rounded-md ${
-                    isLoading ? 'opacity-50 pointer-events-none' : ''
+                    isLoading ? "opacity-50 pointer-events-none" : ""
                   }`}
                   onClick={item.onClick}
                 >
@@ -213,7 +207,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
           </ul>
         </div>
       </div>
-      
+
       <BottomNavigationBar
         variant="acs"
         initialActiveId="profile"
