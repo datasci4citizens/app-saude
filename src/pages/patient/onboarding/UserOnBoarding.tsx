@@ -7,9 +7,6 @@ import useSWRMutation from "swr/mutation";
 import type { PersonCreate } from "@/api/models/PersonCreate";
 import type { LocationCreate } from "@/api/models/LocationCreate";
 import { ProgressIndicator } from "@/components/forms/progress_indicator";
-
-// Empty placeholder for future service implementation
-// Will create a placeholder service that matches the pattern you described
 import { FullPersonService } from "@/api/services/FullPersonService";
 import type { FullPersonCreate } from "@/api/models/FullPersonCreate";
 import type { AddressFormData } from "@/pages/patient/onboarding/UserInfoForm2";
@@ -31,6 +28,8 @@ export default function UserOnboarding() {
   const [person, setPerson] = useState<PersonCreate>({});
   const [location, setLocation] = useState<LocationCreate>({});
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState<boolean>(false);
 
   // Setup SWR mutation
   const { trigger, isMutating } = useSWRMutation(
@@ -65,6 +64,10 @@ export default function UserOnboarding() {
   const handleSecondFormSubmit = async (data: AddressFormData) => {
     console.log("Second form data:", data);
 
+    setError(null);
+    setSuccess(false);
+    setIsSubmitting(true);
+
     // Save location data
     setLocation(data);
     try {
@@ -78,11 +81,16 @@ export default function UserOnboarding() {
 
       const result = await FullPersonService.apiFullPersonCreate(fullData);
       console.log("Submission result:", result);
-      alert("Cadastro realizado com sucesso!");
+      
+      setSuccess(true);
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate delay
+
       router("/user-main-page");
     } catch (err) {
       console.error("Registration error:", err);
       setError("Erro ao realizar cadastro. Tente novamente.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -94,6 +102,10 @@ export default function UserOnboarding() {
       // Handle back on first screen (could redirect or show confirmation)
       console.log("On first step, nowhere to go back");
     }
+  };
+
+  const clearError = () => {
+    setError(null);
   };
 
   return (
@@ -114,9 +126,46 @@ export default function UserOnboarding() {
         <ProgressIndicator currentStep={step} totalSteps={2} />
 
         <div className="pl-9 pr-4">
+          {/* Success message - show above error */}
+          {success && (
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-700 mt-4 mb-4">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <p className="text-sm font-medium">Cadastro realizado com sucesso! Redirecionando...</p>
+              </div>
+            </div>
+          )}
+
+          {/* Error message display */}
           {error && (
-            <div className="bg-destructive bg-opacity-10 border border-destructive text-destructive rounded-md p-3 mb-4">
-              <p>{error}</p>
+            <div className="bg-destructive border border-destructive rounded-lg p-4 text-white mt-4 mb-4">
+              <div className="flex justify-between items-start">
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-sm">{error}</p>
+                </div>
+                <button
+                  onClick={clearError}
+                  className="text-white hover:text-white text-lg font-bold ml-2"
+                  aria-label="Fechar erro"
+                  type="button"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="mt-2">
+                <button
+                  onClick={clearError}
+                  className="text-sm text-white hover:text-white underline"
+                  type="button"
+                >
+                  Tentar novamente
+                </button>
+              </div>
             </div>
           )}
 
