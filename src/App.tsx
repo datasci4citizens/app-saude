@@ -26,9 +26,7 @@ import ViewDiaryEntry from "./pages/patient/diary/ViewDiary";
 import ProfilePage from "./pages/patient/profile/ProfilePage";
 import AcsProfilePage from "./pages/provider/profile/AcsProfilePage";
 import InterestPage from "./pages/patient/interests/InterestsPage";
-import CreateNewInterest from "./pages/patient/CreateNewInterest";
 import ViewSelectedInterests from "./pages/patient/ViewSelectedInterests";
-import EditInterest from "./pages/patient/EditInterest";
 import ViewPatient from "./pages/provider/ViewPatient"; // Import ViewPatient
 import ViewHelp from "./pages/provider/ViewHelp"; // Import ViewHelp
 import ViewDiary from "./pages/provider/ViewDiary"; // Import ViewDiary
@@ -136,16 +134,8 @@ const router = createBrowserRouter([
     element: <UsermainPage />,
   },
   {
-    path: "/user-create-interest",
-    element: <CreateNewInterest />,
-  },
-  {
     path: "/user-selected-interests",
     element: <ViewSelectedInterests />,
-  },
-  {
-    path: "/user-edit-interest/:interestId",
-    element: <EditInterest />,
   },
   {
     path: "/emergencies",

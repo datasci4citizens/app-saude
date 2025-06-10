@@ -9,4 +9,12 @@ export type AuthTokenResponse = {
   user_id: number;
   provider_id: number | null;
   person_id: number | null;
+  /**
+   * Full name of the user.
+   */
+  full_name: string;
+  /**
+   * URL of the user's profile picture.
+   */
+  profile_picture: string | null;
 };

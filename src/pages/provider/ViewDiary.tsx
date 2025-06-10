@@ -78,13 +78,22 @@ export default function ViewDiary() {
               localStorage.getItem("fullname") || "Você";
             const diaryWithResolvedNames: DiaryDetail = {
               ...diaryData,
-              interest_areas: diaryData.interest_areas.map((area) => ({
-                ...area,
-                provider_name:
-                  area.provider_name === loggedProviderName
-                    ? "Você"
-                    : area.provider_name,
-              })),
+              entries: diaryData.entries
+                .map((entry) => ({
+                  ...entry,
+                  text_content: entry.text || "",
+                  text_shared: entry.text_shared || false,
+                }))
+                .filter((entry) => entry.text_shared),
+              interest_areas: diaryData.interest_areas
+                .map((area) => ({
+                  ...area,
+                  provider_name:
+                    area.provider_name === loggedProviderName
+                      ? "Você"
+                      : area.provider_name,
+                }))
+                .filter((area) => area.shared_with_provider),
             };
 
             setDiary(diaryWithResolvedNames);
@@ -224,7 +233,7 @@ export default function ViewDiary() {
             {/* Entradas do Diário */}
             <div className="space-y-4">
               <h2 className="text-topicos2 text-typography">
-                Entradas do Diário
+                Observações (texto livre)
               </h2>
 
               {(!diary.entries || diary.entries.length === 0) && (
@@ -242,40 +251,11 @@ export default function ViewDiary() {
                       key={entry.id || index}
                       className="bg-offwhite p-4 rounded-lg shadow-md"
                     >
-                      <div className="flex justify-between items-start mb-3">
-                        <h3 className="text-topicos2 text-typography">
-                          Entrada {index + 1}
-                        </h3>
-                        {entry.created_at && (
-                          <span className="text-desc-titulo text-gray2">
-                            {formatTime(entry.created_at)}
-                          </span>
-                        )}
-                      </div>
-
                       {entry.text_content && (
                         <div className="mb-3">
                           <p className="text-campos-preenchimento2 text-typography whitespace-pre-wrap">
                             {entry.text_content}
                           </p>
-                        </div>
-                      )}
-
-                      {entry.value_as_string && (
-                        <div className="mb-3">
-                          <p className="text-campos-preenchimento2 text-typography">
-                            <span className="text-topicos2 text-typography-foreground font-medium">
-                              Mensagem:
-                            </span>{" "}
-                            {entry.value_as_string}
-                          </p>
-                        </div>
-                      )}
-
-                      {entry.scope && (
-                        <div className="text-desc-titulo text-gray2">
-                          <span className="font-medium">Escopo:</span>{" "}
-                          {entry.scope}
                         </div>
                       )}
                     </div>

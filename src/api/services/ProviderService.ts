@@ -17,6 +17,7 @@ export class ProviderService {
    * @param createdAt
    * @param ordering Which field to use when ordering the results.
    * @param professionalRegistration
+   * @param profilePicture
    * @param search A search term.
    * @param socialName
    * @param specialtyConcept
@@ -31,6 +32,7 @@ export class ProviderService {
     createdAt?: string,
     ordering?: string,
     professionalRegistration?: number,
+    profilePicture?: string,
     search?: string,
     socialName?: string,
     specialtyConcept?: number,
@@ -46,6 +48,7 @@ export class ProviderService {
         created_at: createdAt,
         ordering: ordering,
         professional_registration: professionalRegistration,
+        profile_picture: profilePicture,
         search: search,
         social_name: socialName,
         specialty_concept: specialtyConcept,

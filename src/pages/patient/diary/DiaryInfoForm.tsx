@@ -5,7 +5,7 @@ import HabitCard from "@/components/ui/habit-card";
 import { Switch } from "@/components/ui/switch";
 import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
-import type { DiaryCreate } from "@/api/models/DiaryCreate";
+import { motion, AnimatePresence } from "framer-motion";
 import { DiaryService } from "@/api/services/DiaryService"; // diariesCreate method will be used to submit the diary
 import { DateRangeTypeEnum } from "@/api";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
@@ -39,6 +39,7 @@ export default function DiaryInfoForm() {
   const [isLoadingInterests, setIsLoadingInterests] = useState(true);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [openTriggers, setOpenTriggers] = useState<Record<number, boolean>>({});
   const [timeRange, setTimeRange] = useState<"today" | "sinceLast">(
     "sinceLast",
   );
@@ -293,40 +294,62 @@ export default function DiaryInfoForm() {
 
               return (
                 <div key={interest.interest_area_id} className="space-y-3">
-                  {/* Interest card and switch row */}
-                  <div className="flex items-center justify-between">
-                    <div className="relative ">
-                      <HabitCard
-                        title={interestName ?? ""}
-                        isAttentionPoint={interest.is_attention_point}
-                        providerName={interest.provider_name}
-                      />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-typography">
-                        Compartilhar
-                      </span>
-                      <Switch
-                        checked={interest.shared || false}
-                        onCheckedChange={(checked) =>
-                          handleInterestSharingToggle(
-                            interest.interest_area_id,
-                            checked,
-                          )
-                        }
-                        size="sm"
-                      />
-                    </div>
+                  <div
+                    onClick={(e) => {
+                      if (
+                        (e.target as HTMLElement).closest("button") ||
+                        (e.target as HTMLElement).closest("input")
+                      ) {
+                        return;
+                      }
+                      setOpenTriggers((prev) => ({
+                        ...prev,
+                        [interest.interest_area_id]:
+                          !prev[interest.interest_area_id],
+                      }));
+                    }}
+                    className="cursor-pointer"
+                  >
+                    <HabitCard
+                      title={interestName ?? ""}
+                      isAttentionPoint={interest.is_attention_point}
+                      providerName={interest.provider_name}
+                      isOpen={openTriggers[interest.interest_area_id] || false}
+                    />
+                  </div>
+
+                  {/* Toggle de compartilhamento */}
+                  <div className="flex items-center justify-end gap-2 pr-2 mt-1">
+                    <span className="text-sm text-gray-600 italic">
+                      Compartilhar com profissionais
+                    </span>
+                    <Switch
+                      checked={interest.shared || false}
+                      onCheckedChange={(checked) =>
+                        handleInterestSharingToggle(
+                          interest.interest_area_id,
+                          checked,
+                        )
+                      }
+                      size="sm"
+                    />
                   </div>
 
                   {/* Render triggers if available */}
-                  {interest.triggers && interest.triggers.length > 0 && (
-                    <div className="ml-4 space-y-4 border-l-2 border-gray2 pl-4 mt-4">
-                      {interest.triggers.map((trigger) => (
-                        <div key={trigger.trigger_id} className="space-y-2">
-                          {/* Trigger title */}
-                          <div className="flex items-center justify-between">
-                            <div className="flex">
+                  <AnimatePresence initial={false}>
+                    {openTriggers[interest.interest_area_id] &&
+                      interest.triggers?.length > 0 && (
+                        <motion.div
+                          key="triggers"
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
+                          className="overflow-hidden ml-4 space-y-4 border-l-2 border-gray2 pl-4 mt-4"
+                        >
+                          {interest.triggers.map((trigger) => (
+                            <div key={trigger.trigger_id} className="space-y-2">
+                              {/* Trigger title */}
                               <HabitCard
                                 title={
                                   trigger.trigger_name ||
@@ -335,30 +358,29 @@ export default function DiaryInfoForm() {
                                 }
                                 className="inline-block w-auto min-w-fit max-w-full text-sm bg-secondary/20"
                               />
-                            </div>
-                          </div>
 
-                          {/* Trigger text field */}
-                          <TextField
-                            id={`trigger-${interest.interest_area_id}-${trigger.trigger_id}`}
-                            name={`trigger-${interest.interest_area_id}-${trigger.trigger_id}`}
-                            value={trigger.response || ""}
-                            onChange={(e) =>
-                              handleTriggerResponseChange(
-                                interest.interest_area_id,
-                                trigger.trigger_id,
-                                e.target.value,
-                              )
-                            }
-                            placeholder=""
-                            className="border-gray2 border-2 focus:border-selection"
-                            multiline={true}
-                            rows={2}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                              {/* Trigger text field */}
+                              <TextField
+                                id={`trigger-${interest.interest_area_id}-${trigger.trigger_id}`}
+                                name={`trigger-${interest.interest_area_id}-${trigger.trigger_id}`}
+                                value={trigger.response || ""}
+                                onChange={(e) =>
+                                  handleTriggerResponseChange(
+                                    interest.interest_area_id,
+                                    trigger.trigger_id,
+                                    e.target.value,
+                                  )
+                                }
+                                placeholder=""
+                                className="border-gray2 border-2 focus:border-selection"
+                                multiline={true}
+                                rows={2}
+                              />
+                            </div>
+                          ))}
+                        </motion.div>
+                      )}
+                  </AnimatePresence>
                 </div>
               );
             })}
@@ -372,9 +394,15 @@ export default function DiaryInfoForm() {
           <h3 className="font-semibold text-lg text-accent2-700">
             Observações Gerais
           </h3>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-typography">Compartilhar</span>
-            <Switch checked={shareText} onCheckedChange={setShareText} />
+          <div className="flex items-center justify-end gap-2 pr-2 mt-1">
+            <span className="text-sm text-gray-600 italic">
+              Compartilhar com profissionais
+            </span>
+            <Switch
+              checked={shareText || false}
+              onCheckedChange={(checked) => setShareText(checked)}
+              size="sm"
+            />
           </div>
         </div>
         <TextField

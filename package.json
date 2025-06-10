@@ -42,6 +42,7 @@
 		"clsx": "^2.1.1",
 		"dotenv": "^16.5.0",
 		"embla-carousel-react": "^8.2.0",
+		"framer-motion": "^12.16.0",
 		"lucide-react": "^0.436.0",
 		"mingcute_icon": "^2.9.6",
 		"next": "^15.3.1",

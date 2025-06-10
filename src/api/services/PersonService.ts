@@ -17,6 +17,7 @@ export class PersonService {
    * @param genderConcept
    * @param location
    * @param ordering Which field to use when ordering the results.
+   * @param profilePicture
    * @param raceConcept
    * @param search A search term.
    * @param socialName
@@ -33,6 +34,7 @@ export class PersonService {
     genderConcept?: number,
     location?: number,
     ordering?: string,
+    profilePicture?: string,
     raceConcept?: number,
     search?: string,
     socialName?: string,
@@ -50,6 +52,7 @@ export class PersonService {
         gender_concept: genderConcept,
         location: location,
         ordering: ordering,
+        profile_picture: profilePicture,
         race_concept: raceConcept,
         search: search,
         social_name: socialName,

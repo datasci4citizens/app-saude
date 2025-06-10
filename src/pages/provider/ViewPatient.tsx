@@ -176,7 +176,9 @@ export default function ViewPatient() {
               <span className="text-topicos2 text-typography-foreground">
                 Nome:
               </span>{" "}
-              {patient.social_name || "Não informado"}
+              {patient.social_name ||
+                patient.first_name + " " + patient.last_name ||
+                "Não informado"}
             </p>
             {context === "emergency" && (
               <p className="text-topicos text-destructive">

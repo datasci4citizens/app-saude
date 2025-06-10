@@ -45,6 +45,52 @@ export default function ProfessionalOnboarding() {
     setSuccess(null);
   };
 
+  const messageRules: {
+    match: (msg: string) => boolean;
+    translation: string;
+  }[] = [
+    {
+      match: (msg) =>
+        msg.toLowerCase().includes("professional registration") &&
+        msg.toLowerCase().includes("exists"),
+      translation:
+        "Já existe o cadastro de um profissional com esse número CNES",
+    },
+    // adicione outras regras conforme necessário
+  ];
+
+  function translateMessageFlex(msg: string): string {
+    const rule = messageRules.find((r) => r.match(msg));
+    return rule ? rule.translation : msg;
+  }
+
+  const fieldTranslation: Record<string, string> = {
+    "provider.professional_registration": "Número CNES",
+    // etc.
+  };
+
+  function translateField(field: string): string {
+    return fieldTranslation[field] || field;
+  }
+
+  function flattenErrors(errors: any, prefix = ""): string[] {
+    return Object.entries(errors).flatMap(([field, value]) => {
+      const fieldPath = prefix ? `${prefix}.${field}` : field;
+
+      if (Array.isArray(value)) {
+        return value.map((msg) => {
+          return `${translateField(fieldPath)}: ${translateMessageFlex(msg)}`;
+        });
+      } else if (typeof value === "string") {
+        return [`${translateField(fieldPath)}: ${translateMessageFlex(value)}`];
+      } else if (typeof value === "object" && value !== null) {
+        return flattenErrors(value, fieldPath);
+      } else {
+        return [`${translateField(fieldPath)}: Erro desconhecido`];
+      }
+    });
+  }
+
   // Handle form submission
   const handleFormSubmit = async (data: ProviderData) => {
     console.log("Professional data submitted:", data);
@@ -60,6 +106,7 @@ export default function ProfessionalOnboarding() {
       professional_registration: data.professional_registration,
       specialty_concept: data.specialty_concept,
       care_site: null,
+      profile_picture: localStorage.getItem("profileImage") || "",
     };
 
     // Save provider data
@@ -96,7 +143,6 @@ export default function ProfessionalOnboarding() {
       // Trigger the SWR mutation with form data
       const result = await trigger();
       console.log("Submission result:", result);
-
       await fetchUserEntity();
     } catch (err) {
       console.error("Registration error:", err);

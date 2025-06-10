@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileBanner from "@/components/ui/profile-banner";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { AccountService } from "@/api/services/AccountService";
-import { ApiService } from "@/api/services/ApiService";
 import { LogoutService } from "@/api/services/LogoutService";
 import { SuccessMessage } from "@/components/ui/success-message";
 import { ErrorMessage } from "@/components/ui/error-message";
@@ -21,8 +20,8 @@ interface AcsProfilePageProps {
 }
 
 const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
-  name = "Nome",
-  profileImage,
+  name = localStorage.getItem("fullname") ?? "undefined",
+  profileImage = localStorage.getItem("profileImage") ?? "",
   onEditProfile,
 }) => {
   const navigate = useNavigate();
@@ -128,7 +127,22 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
     },
     {
       title: "Excluir conta",
-      onClick: handleDeleteAccount,
+      onClick: async () => {
+        try {
+          const confirmed = window.confirm(
+            `Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.`,
+          );
+          if (!confirmed) return;
+          // alert(`A conta com o ID ${providerId} será excluída.`);
+          await AccountService.accountsDestroy();
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          navigate("/welcome");
+        } catch (error) {
+          setError("Erro ao excluir conta. Tente novamente.");
+          console.error(error);
+        }
+      },
       hasArrow: false,
     },
   ];

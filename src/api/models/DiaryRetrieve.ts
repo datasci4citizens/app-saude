@@ -5,7 +5,6 @@
 export type DiaryRetrieve = {
   diary_id: number;
   date: string;
-  scope: string;
   readonly entries: string;
   readonly interest_areas: string;
 };

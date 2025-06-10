@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileBanner from "@/components/ui/profile-banner";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
@@ -21,8 +21,8 @@ interface ProfilePageProps {
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({
-  name = "Nome",
-  profileImage,
+  name = localStorage.getItem("fullname") ?? "undefined",
+  profileImage = localStorage.getItem("profileImage") ?? "",
   onEditProfile,
 }) => {
   const navigate = useNavigate();
@@ -115,7 +115,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       setIsLoading(false);
     }
   };
-
+      
   const menuItems: ProfileMenuItem[] = [
     {
       title: "Histórico de diários",
@@ -139,7 +139,22 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     },
     {
       title: "Excluir conta",
-      onClick: handleDeleteAccount,
+      onClick: async () => {
+        try {
+          const confirmed = window.confirm(
+            `Tem certeza que deseja excluir a sua conta? Esta ação não pode ser desfeita.`,
+          );
+          if (!confirmed) return;
+          // alert(`A conta com o ID ${personId} será excluída.`);
+          await AccountService.accountsDestroy();
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          navigate("/welcome");
+        } catch (error) {
+          alert("Erro ao excluir conta. Tente novamente.");
+          console.error(error);
+        }
+      },
       hasArrow: false,
     },
   ];

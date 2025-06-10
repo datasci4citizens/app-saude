@@ -27,24 +27,23 @@ const ProfileBanner: React.FC<ProfileBannerProps> = ({
       />
 
       {/* Conteúdo do perfil */}
-      <div className="absolute z-10 w-[100px] left-[calc(50vw-50px)] top-10 flex flex-col items-center">
+      <div className="absolute z-10 w-28 left-1/2 -translate-x-1/2 top-10 flex flex-col items-center">
         {/* Profile image */}
-        <div className="bg-white bg-opacity-20 w-16 h-16 rounded-full flex items-center justify-center mb-2">
+        <div className="w-20 h-20 rounded-full overflow-hidden shadow-lg border-4 border-white bg-white bg-opacity-10 backdrop-blur-sm">
           {profileImage ? (
             <img
               src={profileImage}
               alt={name}
-              className="w-full h-full rounded-full object-cover"
+              className="w-full h-full object-cover"
             />
           ) : (
-            <span className="mgc_user_3_line text-3xl text-white"></span>
+            <span className="mgc_user_3_line text-4xl text-white flex items-center justify-center w-full h-full"></span>
           )}
         </div>
-
-        {/* Name */}
-        <h2 className="text-[20px] font-bold m-0 font-inter text-white text-center">
+        {/* Name (opcional) */}
+        <p className="mt-2 text-white font-semibold text-center leading-snug break-words max-w-[160px]">
           {name}
-        </h2>
+        </p>
 
         {/* Edit button - optional */}
         {onEditClick && (
