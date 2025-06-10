@@ -263,7 +263,7 @@ export default function DiaryInfoForm() {
           </div>
         </div>
       )}
-      
+
       {/* Time Range Section */}
       <div className="space-y-3">
         <h3 className="font-semibold text-lg text-accent2-700 mb-1">
