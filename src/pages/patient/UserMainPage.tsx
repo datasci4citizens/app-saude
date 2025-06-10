@@ -1,12 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import HomeBanner from "@/components/ui/home-banner";
-import { MultiSelectCustom } from "@/components/forms/multi_select_custom";
+import { X } from "lucide-react";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { useState, useEffect } from "react";
 import { useInterestAreasConcepts } from "@/utils/conceptLoader";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
 import { Button } from "@/components/forms/button";
+import EditInterestDialog from "../../components/EditInterestsDialog";
+import { ConfirmDialog } from "@/components/ui/confirmDialog";
 
 // Extended interface for API response that includes the ID
 interface InterestAreaResponse extends InterestArea {
@@ -16,14 +18,20 @@ interface InterestAreaResponse extends InterestArea {
 
 export default function UserMainPage() {
   const navigate = useNavigate();
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-  const [originalInterests, setOriginalInterests] = useState<string[]>([]);
-  const [userInterestObjects, setUserInterestObjects] = useState<
-    InterestAreaResponse[]
-  >([]);
+  
+  // Estados principais
+  const [userInterestObjects, setUserInterestObjects] = useState<InterestAreaResponse[]>([]);
+  const [editionMode, setEditionMode] = useState(false);
+  const [editingInterest, setEditingInterest] = useState<InterestAreaResponse | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [interestToDelete, setInterestToDelete] = useState<InterestAreaResponse | null>(null);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  
+  // Estados de sincronização
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
   const [syncSuccess, setSyncSuccess] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
   // Fetch interest areas from API
   const {
@@ -36,21 +44,11 @@ export default function UserMainPage() {
   useEffect(() => {
     const loadExistingInterests = async () => {
       try {
-        const userInterests =
-          (await InterestAreasService.personInterestAreasList()) as InterestAreaResponse[];
-
-        // Store the full objects for deletion purposes
+        const userInterests = (await InterestAreasService.personInterestAreasList()) as InterestAreaResponse[];
         setUserInterestObjects(userInterests);
-
-        // Extract concept IDs for the UI
-        const conceptIds = userInterests
-          .map((interest) => interest.concept_id?.toString() || "")
-          .filter((id) => id !== "");
-
-        setSelectedInterests(conceptIds);
-        setOriginalInterests(conceptIds); // Store original interests for comparison
       } catch (error) {
         console.error("Error loading user interests:", error);
+        setSyncError("Erro ao carregar interesses. Tente novamente.");
       }
     };
 
@@ -59,138 +57,90 @@ export default function UserMainPage() {
     }
   }, [isLoadingInterests, interestAreasOptions]);
 
-  // Handle interest selection change (just updates local state)
-  const handleInterestChange = (selectedValues: string[]) => {
-    setSelectedInterests(selectedValues);
-    setSyncSuccess(false);
-  };
-
-  // Check if there are unsaved changes
-  const hasUnsavedChanges = () => {
-    const addedInterests = selectedInterests.filter(
-      (id) => !originalInterests.includes(id),
-    );
-    const removedInterests = originalInterests.filter(
-      (id) => !selectedInterests.includes(id),
-    );
-    return addedInterests.length > 0 || removedInterests.length > 0;
-  };
-
-  // Sync changes to server
-  const syncInterestsWithServer = async () => {
-    const all_interests = await InterestAreasService.personInterestAreasList();
-    console.log("All interests from server:", all_interests);
-
-    setSyncError(null);
-    setIsSyncing(true);
-
+  // Função para deletar interesse do servidor
+  const deleteInterestFromServer = async (interest: InterestAreaResponse) => {
     try {
-      // Find which interests were added and removed
-      const addedInterests = selectedInterests.filter(
-        (id) => !originalInterests.includes(id),
-      );
-      const removedInterests = originalInterests.filter(
-        (id) => !selectedInterests.includes(id),
-      );
+      setIsSyncing(true);
+      setSyncError(null);
 
-      // Create new interests
-      for (const interestId of addedInterests) {
-        const interestOption = interestAreasOptions.find(
-          (opt) => opt.value === interestId,
+      if (interest.interest_area_id) {
+        await InterestAreasService.personInterestAreasDestroy(interest.interest_area_id);
+        
+        // Remove do estado local
+        setUserInterestObjects((prev) =>
+          prev.filter((i) => i.interest_area_id !== interest.interest_area_id)
         );
-
-        if (interestOption) {
-          const newInterestArea: InterestArea = {
-            observation_concept_id: parseInt(interestId),
-          };
-
-          console.log(interestId);
-          console.log("new", newInterestArea);
-
-          // Verificar se o interesse já existe
-          let interestExists = false;
-          for (const interest_area of all_interests) {
-            if (interest_area.observation_concept_id === parseInt(interestId)) {
-              alert(`Interesse já existe: ${interest_area.concept_name}`);
-              interestExists = true;
-              break;
-            }
-          }
-
-          // Se o interesse já existe, pula para o próximo usando continue
-          if (interestExists) {
-            continue;
-          }
-
-          // Cria o interesse se não existir
-          const result =
-            await InterestAreasService.personInterestAreasCreate(
-              newInterestArea,
-            );
-
-          // Update our local state with the new interest object
-          if (result && "interest_area_id" in result) {
-            const newInterestWithId = result as InterestAreaResponse;
-            setUserInterestObjects((prev) => [...prev, newInterestWithId]);
-          }
-        }
+        
+        setSyncSuccess(true);
+        setTimeout(() => setSyncSuccess(false), 3000);
       }
-
-      // Remove interests
-      for (const conceptId of removedInterests) {
-        const interestToDelete = userInterestObjects.find((interest) => {
-          const interestConceptId = interest.concept_id?.toString().trim();
-          const searchConceptId = conceptId.toString().trim();
-
-          return interestConceptId === searchConceptId;
-        });
-
-        if (interestToDelete && interestToDelete.interest_area_id) {
-          await InterestAreasService.personInterestAreasDestroy(
-            interestToDelete.interest_area_id,
-          );
-
-          // Update our local state
-          setUserInterestObjects((prev) =>
-            prev.filter(
-              (interest) =>
-                interest.interest_area_id !== interestToDelete.interest_area_id,
-            ),
-          );
-        }
-      }
-
-      // Update originalInterests to reflect the current state
-      setOriginalInterests([...selectedInterests]);
-      setSyncSuccess(true);
-
-      // Hide success message after 3 seconds
-      setTimeout(() => {
-        setSyncSuccess(false);
-      }, 3000);
     } catch (error) {
-      console.error("Error syncing interests:", error);
-      setSyncError("Erro ao salvar interesses. Tente novamente.");
+      console.error("Error deleting interest:", error);
+      setSyncError("Erro ao excluir interesse. Tente novamente.");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  // Função para salvar interesse editado/novo no servidor
+  const saveInterestToServer = async (interestData: {
+    id?: string;
+    interest_name: string;
+    triggers: string[];
+  }) => {
+    try {
+      setIsSyncing(true);
+      setSyncError(null);
+
+      if (interestData.id) {
+        // Editando interesse existente
+        const existingInterest = userInterestObjects.find(
+          i => i.interest_area_id.toString() === interestData.id
+        );
+        
+        if (existingInterest) {
+          // Atualiza localmente (assumindo que a API não tem endpoint de update)
+          setUserInterestObjects((prev) =>
+            prev.map((interest) =>
+              interest.interest_area_id.toString() === interestData.id
+                ? {
+                    ...interest,
+                    interest_name: interestData.interest_name,
+                    triggers: interestData.triggers.map((t) => ({ trigger_name: t })),
+                  }
+                : interest
+            )
+          );
+        }
+      } else {
+        // Criando novo interesse personalizado
+        const newInterestArea: InterestArea = {
+          observation_concept_id: parseInt(interestData.id || "0", 10) || undefined,
+          interest_name: interestData.interest_name,
+          triggers: interestData.triggers.map((t) => ({ trigger_name: t })),
+        };
+
+        const result = await InterestAreasService.personInterestAreasCreate(newInterestArea);
+        
+        if (result && "interest_area_id" in result) {
+          const newInterestWithId = result as InterestAreaResponse;
+          setUserInterestObjects((prev) => [...prev, newInterestWithId]);
+        }
+      }
+
+      setSyncSuccess(true);
+      setTimeout(() => setSyncSuccess(false), 3000);
+    } catch (error) {
+      console.error("Error saving interest:", error);
+      setSyncError("Erro ao salvar interesse. Tente novamente.");
     } finally {
       setIsSyncing(false);
     }
   };
 
   // Navigation functions
-  const handleEmergencyClick = () => {
-    navigate("/emergency-user");
-  };
-
-  const handleAppointmentClick = () => {
-    navigate("/reminders");
-  };
-
   const handleBannerIconClick = () => {
     navigate("/diary");
-  };
-
-  const handleSelectedInterests = () => {
-    navigate("/user-selected-interests");
   };
 
   const handleNavigationClick = (itemId: string) => {
@@ -213,109 +163,224 @@ export default function UserMainPage() {
     }
   };
 
-  const handleCreateCustomInterest = () => {
-    navigate("/user-create-interest");
+  // Handlers para a interface
+  const handleEditInterest = (interest: InterestAreaResponse) => {
+    setEditingInterest(interest);
+    setDialogOpen(true);
+  };
+
+  const handleCreateNewInterest = () => {
+    setEditingInterest(null);
+    setDialogOpen(true);
+  };
+
+  const handleDeleteInterest = (interest: InterestAreaResponse) => {
+    setInterestToDelete(interest);
+    setConfirmDeleteOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (interestToDelete) {
+      await deleteInterestFromServer(interestToDelete);
+      setConfirmDeleteOpen(false);
+      setInterestToDelete(null);
+    }
+  };
+
+  const handleSaveInterest = async (interestData: {
+    id?: string;
+    interest_name: string;
+    triggers: string[];
+  }) => {
+    await saveInterestToServer(interestData);
+    setDialogOpen(false);
+    setEditingInterest(null);
+  };
+
+  const handleSaveChanges = () => {
+    // Se houver mudanças pendentes, salvar aqui
+    setEditionMode(false);
+    setHasChanges(false);
+    
+    // Mostrar mensagem de sucesso
+    setSyncSuccess(true);
+    setTimeout(() => setSyncSuccess(false), 3000);
   };
 
   return (
-    <div className="bg-primary min-h-screen pb-24 flex flex-col justify-between">
-      <div>
+    <div className="min-h-screen bg-primary relative">
+      {/* HEADER fixo */}
+      <div className="relative z-10 bg-primary">
         <HomeBanner
           title="Registro diário"
           subtitle="Adicione seus interesses e acompanhe seu progresso"
           onIconClick={handleBannerIconClick}
         />
+        <h2 className="text-xl font-semibold pl-4 pb-2 mt-4 text-typography">Meus Interesses</h2>
+      </div>
 
-        <div className="px-4 py-5 justify-center gap-4">
-          {/* Multiselect - using API data */}
-          <MultiSelectCustom
-            id="interests"
-            name="interests"
-            label="Meus Interesses"
-            options={interestAreasOptions}
-            value={selectedInterests}
-            onChange={handleInterestChange}
-            isLoading={isLoadingInterests}
-            placeholder={
-              isLoadingInterests
-                ? "Carregando..."
-                : "Selecione suas áreas de interesse"
-            }
-          />
-
-          {/* Sync button */}
-          <div className="mt-4 flex justify-end">
-            <Button
-              onClick={syncInterestsWithServer}
-              className="bg-primary border-selection border-2 hover:bg-secondary/90 text-secondary-foreground px-6 py-3 font-bold uppercase tracking-wide"
-              disabled={!hasUnsavedChanges() || isSyncing}
-            >
-              {isSyncing ? "Enviando..." : "Enviar Interesses"}
-            </Button>
+      {/* ÁREA SCROLLÁVEL - Lista de Interesses */}
+      <div className="px-4 overflow-y-auto" style={{ paddingBottom: '180px', maxHeight: 'calc(100vh - 140px)' }}>
+        {userInterestObjects.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mb-4">
+              <span className="text-2xl">📋</span>
+            </div>
+            <p className="text-foreground text-lg font-medium mb-2">Nenhum interesse selecionado</p>
+            <p className="text-sm text-muted-foreground">Adicione seus interesses para começar!</p>
           </div>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {userInterestObjects.map((interest) => (
+              <div
+                key={interest.interest_area_id}
+                onClick={() => {
+                  if (editionMode) {
+                    handleEditInterest(interest);
+                  }
+                }}
+                className={
+                  "bg-card border-border rounded-xl p-5 shadow-sm transition-all duration-200 relative group" +
+                  (editionMode
+                    ? " cursor-pointer hover:shadow-lg hover:scale-[1.02] hover:border-ring hover:bg-accent/50"
+                    : "")
+                }
+              >
+                {/* botão de deletar */}
+                {editionMode && (
+                  <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <X
+                      size={20}
+                      className="text-red-500 hover:text-red-600 cursor-pointer hover:scale-110 transition-all duration-200 bg-background rounded-full p-1 shadow-md border border-border"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteInterest(interest);
+                      }}
+                    />
+                  </div>
+                )}
 
-          {/* Success message */}
-          {syncSuccess && (
-            <div className="flex justify-center mt-4">
-              <div className="inline-block p-3 bg-green-100 border border-green-500 text-green-700 rounded-md">
-                <p className="whitespace-nowrap">
-                  Interesses salvos com sucesso!
-                </p>
+                <h3 className="font-bold text-lg text-card-foreground mb-2 flex items-center gap-2 flex-wrap">
+                  <span className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex-shrink-0"></span>
+                  <span className="break-words min-w-0">{interest.interest_name}</span>
+                  {interest.is_custom && (
+                    <span className="ml-2 text-xs bg-violet-600 text-white dark:bg-purple-900/50 dark:text-purple-200 px-2 py-1 rounded-full font-medium border border-violet-700 dark:border-purple-700 flex-shrink-0">
+                      Personalizado
+                    </span>
+                  )}
+                </h3>
+                <div className="space-y-1">
+                  {interest.triggers?.map((t, index) => (
+                    <div key={`${t.trigger_name}-${index}`} className="flex items-start gap-2 text-sm text-muted-foreground">
+                      <span className="w-1 h-1 bg-muted-foreground rounded-full flex-shrink-0 mt-2"></span>
+                      <span className="break-words min-w-0">{t.trigger_name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* MENSAGENS DE SUCESSO/ERRO - Fixas acima dos botões */}
+      <div className="fixed bottom-32 left-0 right-0 px-4 z-20">
+        {syncSuccess && (
+          <div className="flex justify-center mb-2">
+            <div className="inline-block p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 rounded-lg shadow-lg backdrop-blur-sm animate-in slide-in-from-bottom-5 duration-300">
+              <div className="flex items-center gap-2">
+                <span className="text-green-600 dark:text-green-400 text-sm">✅</span>
+                <p className="font-medium text-sm">Interesses salvos!</p>
               </div>
             </div>
-          )}
-
-          {/* Error handling for interest areas */}
-          {interestAreasError && (
-            <div className="flex justify-center mt-4">
-              <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
-                <p className="whitespace-nowrap">
-                  Erro ao carregar áreas de interesse
-                </p>
+          </div>
+        )}
+        {syncError && (
+          <div className="flex justify-center mb-2">
+            <div className="inline-block p-3 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg shadow-lg backdrop-blur-sm animate-in slide-in-from-bottom-5 duration-300">
+              <div className="flex items-center gap-2">
+                <span className="text-red-600 dark:text-red-400 text-sm">❌</span>
+                <p className="font-medium text-sm">{syncError}</p>
               </div>
             </div>
-          )}
+          </div>
+        )}
+      </div>
 
-          {/* Error handling for syncing */}
-          {syncError && (
-            <div className="flex justify-center mt-4">
-              <div className="inline-block p-3 bg-destructive bg-opacity-10 border border-destructive text-white rounded-md">
-                <p className="whitespace-nowrap">{syncError}</p>
-              </div>
-            </div>
-          )}
-        </div>
-        {/* Top banner */}
-
-        {/* Custom interest button */}
-        <div>
-          <div className="px-4 mb-2 flex justify-center">
-            <Button
-              onClick={handleSelectedInterests}
-              className="bg-selection hover:bg-secondary/90 text-typography flex items-center gap-2 px-6"
+      {/* BOTÕES FIXOS - Sempre visíveis acima da navegação */}
+      <div className="fixed bottom-20 left-0 right-0 px-4 py-3 bg-gradient-to-t from-primary via-primary to-transparent backdrop-blur-sm border-t border-gray-200/20 z-20">
+        {editionMode ? (
+          <div className="flex justify-center gap-2 max-w-md mx-auto">
+            <Button 
+              variant="outline" 
+              onClick={() => setEditionMode(false)}
+              className="flex-1 bg-background/50 border-border/30 text-foreground hover:bg-background/70 transition-all duration-200 backdrop-blur-sm text-sm py-2"
+              disabled={isSyncing}
             >
-              Ver Interesses Selecionados
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleSaveChanges}
+              className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-200 border-0 text-sm py-2"
+              disabled={isSyncing}
+            >
+              {isSyncing ? "..." : "✓ Salvar"}
+            </Button>
+            <Button
+              onClick={handleCreateNewInterest}
+              className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-200 border-0 text-sm py-2"
+              disabled={isSyncing}
+            >
+              + Novo
             </Button>
           </div>
-
-          {/* Custom interest button */}
-          <div className="px-4 mb-2 flex justify-center">
+        ) : (
+          <div className="w-full flex justify-center px-2">
             <Button
-              onClick={handleCreateCustomInterest}
-              className="bg-selection hover:bg-secondary/90 text-typography flex items-center gap-2 px-6"
+              onClick={() => setEditionMode(true)}
+              className="bg-gradient-to-r from-selection to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white w-full max-w-xs shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 py-2.5 rounded-xl font-semibold text-sm"
+              disabled={isSyncing}
             >
-              Criar Interesse Personalizado
+              ✏️ Editar Interesses
             </Button>
           </div>
-        </div>
+        )}
+      </div>
 
-        {/* Navigation bar */}
+      {/* NAVEGAÇÃO INFERIOR - Sempre no fundo */}
+      <div className="fixed bottom-0 left-0 right-0 z-30">
         <BottomNavigationBar
           variant="user"
           initialActiveId="home"
           onItemClick={handleNavigationClick}
         />
       </div>
+
+      {/* DIALOGS */}
+      <EditInterestDialog
+        open={dialogOpen}
+        initialData={editingInterest ? {
+          id: editingInterest.interest_area_id.toString(),
+          interest_name: editingInterest.interest_name || '',
+          triggers: editingInterest.triggers?.map(t => t.trigger_name) || []
+        } : undefined}
+        onClose={() => {
+          setDialogOpen(false);
+          setEditingInterest(null);
+        }}
+        onSave={handleSaveInterest}
+      />
+
+      <ConfirmDialog
+        open={confirmDeleteOpen}
+        title="Excluir Interesse"
+        description={`Tem certeza que deseja excluir "${interestToDelete?.interest_name}"?`}
+        onCancel={() => {
+          setConfirmDeleteOpen(false);
+          setInterestToDelete(null);
+        }}
+        onConfirm={confirmDelete}
+      />
     </div>
   );
 }

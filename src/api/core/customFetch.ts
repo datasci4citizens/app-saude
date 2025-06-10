@@ -25,6 +25,7 @@ function notifySubscribers(newToken: string) {
 }
 
 async function refreshToken(): Promise<string> {
+  console.log("Iniciando refresh de token...");
   const refresh = localStorage.getItem("refreshToken");
 
   if (!refresh) throw new Error("Refresh token não encontrado");
@@ -33,6 +34,8 @@ async function refreshToken(): Promise<string> {
     access: localStorage.getItem("accessToken") || "",
     refresh,
   };
+
+  console.log("Token de refresh:", tokenRefresh);
 
   localStorage.removeItem("accessToken");
 
@@ -69,7 +72,8 @@ export const customFetch: typeof fetch = async (input, init = {}) => {
   // Token expirado. Tenta refresh.
   if (!isRefreshing) {
     isRefreshing = true;
-    refreshPromise = refreshToken()
+    console.log("Token expirado, tentando refresh...");
+    await refreshToken()
       .then((newToken) => {
         notifySubscribers(newToken);
         return newToken;
