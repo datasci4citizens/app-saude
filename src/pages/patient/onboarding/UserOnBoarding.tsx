@@ -81,7 +81,7 @@ export default function UserOnboarding() {
 
       const result = await FullPersonService.apiFullPersonCreate(fullData);
       console.log("Submission result:", result);
-      
+
       setSuccess(true);
       await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate delay
 
@@ -130,10 +130,20 @@ export default function UserOnboarding() {
           {success && (
             <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-700 mt-4 mb-4">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                <svg
+                  className="w-5 h-5 text-green-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
                 </svg>
-                <p className="text-sm font-medium">Cadastro realizado com sucesso! Redirecionando...</p>
+                <p className="text-sm font-medium">
+                  Cadastro realizado com sucesso! Redirecionando...
+                </p>
               </div>
             </div>
           )}
@@ -143,8 +153,16 @@ export default function UserOnboarding() {
             <div className="bg-destructive border border-destructive rounded-lg p-4 text-white mt-4 mb-4">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  <svg
+                    className="w-5 h-5 text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                   <p className="text-sm">{error}</p>
                 </div>
