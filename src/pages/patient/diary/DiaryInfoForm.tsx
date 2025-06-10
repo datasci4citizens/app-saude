@@ -223,7 +223,6 @@ export default function DiaryInfoForm() {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl mx-auto px-4 space-y-6">
-      
       {/* error message display */}
       {submitError && (
         <div className="bg-destructive border border-destructive rounded-lg p-4 text-white mt-4">
@@ -249,7 +248,7 @@ export default function DiaryInfoForm() {
           </div>
         </div>
       )}
-      
+
       {/* Time Range Section */}
       <div className="space-y-3">
         <h3 className="font-semibold text-lg text-accent2-700 mb-1">
