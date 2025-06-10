@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { RadioCheckbox } from "@/components/forms/radio-checkbox";
-import HabitCard from "@/components/ui/habit-card";
 import { Switch } from "@/components/ui/switch";
 import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
-import { motion, AnimatePresence } from "framer-motion";
-import { DiaryService } from "@/api/services/DiaryService"; // diariesCreate method will be used to submit the diary
+import { DiaryService } from "@/api/services/DiaryService";
 import { DateRangeTypeEnum } from "@/api";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
 import { SuccessMessage } from "@/components/ui/success-message";
 import { ErrorMessage } from "@/components/ui/error-message";
+import CollapsibleInterestCard from "@/components/ui/CollapsibleInterestCard";
 
-// Properly define interface for triggers
+// Interfaces tipadas
 interface Trigger {
   trigger_name: string;
   custom_trigger_name: string | null;
@@ -24,7 +23,6 @@ interface Trigger {
   shared?: boolean;
 }
 
-// Properly define interface for user interests
 interface UserInterest extends InterestArea {
   interest_area_id: number;
   interest_name?: string;
@@ -35,54 +33,49 @@ interface UserInterest extends InterestArea {
 
 export default function DiaryInfoForm() {
   const navigate = useNavigate();
+  
+  // Estados principais
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingInterests, setIsLoadingInterests] = useState(true);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  
+  // Estados do formulário
   const [openTriggers, setOpenTriggers] = useState<Record<number, boolean>>({});
-  const [timeRange, setTimeRange] = useState<"today" | "sinceLast">(
-    "sinceLast",
-  );
+  const [timeRange, setTimeRange] = useState<"today" | "sinceLast">("sinceLast");
   const [freeText, setFreeText] = useState("");
-
-  // User interests state
+  const [shareText, setShareText] = useState(false);
   const [userInterests, setUserInterests] = useState<UserInterest[]>([]);
 
-  // Share switch for text
-  const [shareText, setShareText] = useState(false);
-
-  // Load user interests
+  // Carrega interesses do usuário
   useEffect(() => {
     const fetchUserInterests = async () => {
-      console.log("Starting to fetch user interests...");
+      console.log("Carregando interesses do usuário...");
       setIsLoadingInterests(true);
 
       try {
         const interests = await InterestAreasService.personInterestAreasList();
-        console.log("Raw interests received:", interests);
+        console.log("Interesses recebidos:", interests);
 
         if (!interests || interests.length === 0) {
-          console.warn("No interests received from API");
+          console.warn("Nenhum interesse encontrado");
           setUserInterests([]);
           return;
         }
 
-        // Convert to UserInterest format with response tracking
-        const formattedInterests: UserInterest[] = interests.map(
-          (interest) => ({
-            ...interest,
-            interest_area_id:
-              (interest as any).interest_area_id || Math.random(),
-            response: "", // Initialize empty response
-            shared: false, // Initialize as not shared
-          }),
-        );
+        // Formata interesses para o estado local
+        const formattedInterests: UserInterest[] = interests.map((interest) => ({
+          ...interest,
+          interest_area_id: (interest as any).interest_area_id || Math.random(),
+          response: "",
+          shared: false,
+        }));
 
-        console.log("Formatted user interests:", formattedInterests);
+        console.log("Interesses formatados:", formattedInterests);
         setUserInterests(formattedInterests);
       } catch (error) {
-        console.error("Error fetching user interests:", error);
-        // Set some test interests for development
+        console.error("Erro ao carregar interesses:", error);
+        // Dados de teste para desenvolvimento
         setUserInterests([
           {
             interest_area_id: 1,
@@ -91,16 +84,16 @@ export default function DiaryInfoForm() {
             value_as_string: "Teste Interesse 1",
             response: "",
             shared: false,
-            triggers: [],
-          },
-          {
-            interest_area_id: 2,
-            observation_concept_id: null,
-            custom_interest_name: "Teste Interesse 2",
-            value_as_string: "Teste Interesse 2",
-            response: "",
-            shared: false,
-            triggers: [],
+            triggers: [
+              {
+                trigger_name: "Como você se sentiu hoje?",
+                custom_trigger_name: null,
+                observation_concept_id: 1001,
+                trigger_id: 1,
+                value_as_string: null,
+                response: ""
+              }
+            ],
           },
         ]);
       } finally {
@@ -110,6 +103,34 @@ export default function DiaryInfoForm() {
 
     fetchUserInterests();
   }, []);
+
+  // Handlers para interesses
+  const toggleInterest = (interestId: number) => {
+    setOpenTriggers((prev) => ({
+      ...prev,
+      [interestId]: !prev[interestId],
+    }));
+  };
+
+  const handleInterestResponseChange = (interestId: number, response: string) => {
+    setUserInterests((prev) =>
+      prev.map((interest) =>
+        interest.interest_area_id === interestId
+          ? { ...interest, response }
+          : interest,
+      ),
+    );
+  };
+
+  const handleInterestSharingToggle = (interestId: number, shared: boolean) => {
+    setUserInterests((prev) =>
+      prev.map((interest) =>
+        interest.interest_area_id === interestId
+          ? { ...interest, shared }
+          : interest,
+      ),
+    );
+  };
 
   const handleTriggerResponseChange = (
     interestId: number,
@@ -133,38 +154,14 @@ export default function DiaryInfoForm() {
     );
   };
 
-  // Handle interest response change
-  const handleInterestResponseChange = (
-    interestId: number,
-    response: string,
-  ) => {
-    setUserInterests((prev) =>
-      prev.map((interest) =>
-        interest.interest_area_id === interestId
-          ? { ...interest, response }
-          : interest,
-      ),
-    );
-  };
-
-  // Handle individual interest sharing toggle
-  const handleInterestSharingToggle = (interestId: number, shared: boolean) => {
-    setUserInterests((prev) =>
-      prev.map((interest) =>
-        interest.interest_area_id === interestId
-          ? { ...interest, shared }
-          : interest,
-      ),
-    );
-  };
-
+  // Submissão do formulário
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitError(null);
 
     try {
-      // Format interest areas according to the expected API structure
+      // Formata áreas de interesse para a API
       const formattedInterestAreas = userInterests
         .filter(
           (interest) =>
@@ -172,7 +169,6 @@ export default function DiaryInfoForm() {
             interest.triggers?.some((t) => t.response?.trim() !== ""),
         )
         .map((interest) => {
-          // Get triggers with responses
           const triggersWithResponses =
             interest.triggers?.filter(
               (trigger) => trigger.response && trigger.response.trim() !== "",
@@ -188,12 +184,9 @@ export default function DiaryInfoForm() {
             })),
           };
         })
-        .filter((interest) => interest.triggers.length > 0); // Only include interests with answered triggers
+        .filter((interest) => interest.triggers.length > 0);
 
-      let diary_shared = false;
-      if (shareText || userInterests.some((interest) => interest.shared)) {
-        diary_shared = true;
-      }
+      const diary_shared = shareText || userInterests.some((interest) => interest.shared);
 
       const diary = {
         date_range_type:
@@ -206,14 +199,17 @@ export default function DiaryInfoForm() {
         diary_shared: diary_shared,
       };
 
-      console.log("Submitting diary:", diary);
+      console.log("Enviando diário:", diary);
 
       await DiaryService.diariesCreate(diary);
       setSubmitSuccess(true);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      navigate("/diary");
+      
+      // Redireciona após sucesso
+      setTimeout(() => {
+        navigate("/diary");
+      }, 2000);
     } catch (error) {
-      console.error("Failed to submit diary", error);
+      console.error("Erro ao salvar diário:", error);
       setSubmitError(
         "Ocorreu um erro ao salvar o diário. Por favor, tente novamente.",
       );
@@ -221,214 +217,169 @@ export default function DiaryInfoForm() {
       setIsSubmitting(false);
     }
   };
+
   const clearSubmitError = () => {
     setSubmitError(null);
   };
 
+  // Estatísticas do formulário
+  const totalInterests = userInterests.length;
+  const answeredInterests = userInterests.filter(
+    (interest) =>
+      interest.response?.trim() ||
+      interest.triggers?.some((t) => t.response?.trim()),
+  ).length;
+
   return (
-    <form onSubmit={handleSubmit} className="max-w-3xl mx-auto px-4 space-y-6">
-      {/* Success message - show above error */}
-      {submitSuccess && (
-        <SuccessMessage message="Diário salvo com sucesso! Redirecionando..." />
-      )}
-
-      {/* error message display */}
-      {submitError && (
-        <ErrorMessage
-          message={submitError}
-          onClose={clearSubmitError}
-          onRetry={clearSubmitError}
-          variant="destructive"
-        />
-      )}
-
-      {/* Time Range Section */}
-      <div className="space-y-3">
-        <h3 className="font-semibold text-lg text-accent2-700 mb-1">
-          A qual período de tempo esse diário se refere?
-        </h3>
-        <div className="flex flex-col gap-2">
-          <RadioCheckbox
-            id="today"
-            label="Hoje"
-            checked={timeRange === "today"}
-            onCheckedChange={() => setTimeRange("today")}
-            className="py-2"
-          />
-          <RadioCheckbox
-            id="sinceLast"
-            label="Desde o último diário"
-            checked={timeRange === "sinceLast"}
-            onCheckedChange={() => setTimeRange("sinceLast")}
-            className="py-2"
-          />
-        </div>
-      </div>
-
-      {/* User Interests Section */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-lg text-accent2-700">
-            Seus Interesses
-          </h3>
-        </div>
-
-        {isLoadingInterests ? (
-          <div className="flex justify-center py-4">
-            <p className="text-typography">Carregando seus interesses...</p>
-          </div>
-        ) : userInterests.length === 0 ? (
-          <div className="text-center py-4">
-            <p className="text-typography text-sm">
-              Você ainda não tem interesses cadastrados.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {userInterests.map((interest) => {
-              const interestName =
-                interest.interest_name ||
-                interest.custom_interest_name ||
-                interest.value_as_string ||
-                "Interesse";
-
-              return (
-                <div key={interest.interest_area_id} className="space-y-3">
-                  <div
-                    onClick={(e) => {
-                      if (
-                        (e.target as HTMLElement).closest("button") ||
-                        (e.target as HTMLElement).closest("input")
-                      ) {
-                        return;
-                      }
-                      setOpenTriggers((prev) => ({
-                        ...prev,
-                        [interest.interest_area_id]:
-                          !prev[interest.interest_area_id],
-                      }));
-                    }}
-                    className="cursor-pointer"
-                  >
-                    <HabitCard
-                      title={interestName ?? ""}
-                      isAttentionPoint={interest.is_attention_point}
-                      providerName={interest.provider_name}
-                      isOpen={openTriggers[interest.interest_area_id] || false}
-                    />
-                  </div>
-
-                  {/* Toggle de compartilhamento */}
-                  <div className="flex items-center justify-end gap-2 pr-2 mt-1">
-                    <span className="text-sm text-gray-600 italic">
-                      Compartilhar com profissionais
-                    </span>
-                    <Switch
-                      checked={interest.shared || false}
-                      onCheckedChange={(checked) =>
-                        handleInterestSharingToggle(
-                          interest.interest_area_id,
-                          checked,
-                        )
-                      }
-                      size="sm"
-                    />
-                  </div>
-
-                  {/* Render triggers if available */}
-                  <AnimatePresence initial={false}>
-                    {openTriggers[interest.interest_area_id] &&
-                      interest.triggers?.length > 0 && (
-                        <motion.div
-                          key="triggers"
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.3, ease: "easeInOut" }}
-                          className="overflow-hidden ml-4 space-y-4 border-l-2 border-gray2 pl-4 mt-4"
-                        >
-                          {interest.triggers.map((trigger) => (
-                            <div key={trigger.trigger_id} className="space-y-2">
-                              {/* Trigger title */}
-                              <HabitCard
-                                title={
-                                  trigger.trigger_name ||
-                                  trigger.custom_trigger_name ||
-                                  "Pergunta relacionada"
-                                }
-                                className="inline-block w-auto min-w-fit max-w-full text-sm bg-secondary/20"
-                              />
-
-                              {/* Trigger text field */}
-                              <TextField
-                                id={`trigger-${interest.interest_area_id}-${trigger.trigger_id}`}
-                                name={`trigger-${interest.interest_area_id}-${trigger.trigger_id}`}
-                                value={trigger.response || ""}
-                                onChange={(e) =>
-                                  handleTriggerResponseChange(
-                                    interest.interest_area_id,
-                                    trigger.trigger_id,
-                                    e.target.value,
-                                  )
-                                }
-                                placeholder=""
-                                className="border-gray2 border-2 focus:border-selection"
-                                multiline={true}
-                                rows={2}
-                              />
-                            </div>
-                          ))}
-                        </motion.div>
-                      )}
-                  </AnimatePresence>
-                </div>
-              );
-            })}
-          </div>
+    <div className="max-w-3xl mx-auto px-4 space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Mensagens de status */}
+        {submitSuccess && (
+          <SuccessMessage message="Diário salvo com sucesso! Redirecionando..." />
         )}
-      </div>
 
-      {/* Free Text Section */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
+        {submitError && (
+          <ErrorMessage
+            message={submitError}
+            onClose={clearSubmitError}
+            onRetry={clearSubmitError}
+            variant="destructive"
+          />
+        )}
+
+        {/* Seção de Período de Tempo */}
+        <section className="space-y-3">
           <h3 className="font-semibold text-lg text-accent2-700">
-            Observações Gerais
+            A qual período de tempo esse diário se refere?
           </h3>
-          <div className="flex items-center justify-end gap-2 pr-2 mt-1">
-            <span className="text-sm text-gray-600 italic">
-              Compartilhar com profissionais
-            </span>
-            <Switch
-              checked={shareText || false}
-              onCheckedChange={(checked) => setShareText(checked)}
-              size="sm"
+          <div className="flex flex-col gap-2">
+            <RadioCheckbox
+              id="today"
+              label="Hoje"
+              checked={timeRange === "today"}
+              onCheckedChange={() => setTimeRange("today")}
+              className="py-2"
+            />
+            <RadioCheckbox
+              id="sinceLast"
+              label="Desde o último diário"
+              checked={timeRange === "sinceLast"}
+              onCheckedChange={() => setTimeRange("sinceLast")}
+              className="py-2"
             />
           </div>
-        </div>
-        <TextField
-          id="freeText"
-          name="freeText"
-          value={freeText}
-          onChange={(e) => setFreeText(e.target.value)}
-          placeholder="Descreva como você se sente ou qualquer observação importante..."
-          className="border-gray2 border-2 focus:border-selection"
-          multiline={true}
-          rows={4}
-        />
-      </div>
+        </section>
 
-      {/* Submit Button */}
-      <div className="pt-4 text-center">
-        <Button
-          variant="orange"
-          size="lg"
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full max-w-[280px] text-typography mx-auto py-3 text-base"
-        >
-          {isSubmitting ? "Salvando..." : "SALVAR"}
-        </Button>
-      </div>
-    </form>
+        {/* Seção de Interesses do Usuário */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-lg text-accent2-700">
+              Seus Interesses
+            </h3>
+            {totalInterests > 0 && (
+              <span className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+                {answeredInterests}/{totalInterests} respondidos
+              </span>
+            )}
+          </div>
+
+          {isLoadingInterests ? (
+            <div className="flex justify-center py-8">
+              <div className="text-center">
+                <div className="w-8 h-8 border-2 border-selection border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                <p className="text-typography">Carregando seus interesses...</p>
+              </div>
+            </div>
+          ) : totalInterests === 0 ? (
+            <div className="text-center py-8 bg-gray-50 rounded-lg">
+              <p className="text-typography text-sm mb-2">
+                Você ainda não tem interesses cadastrados.
+              </p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/user-main")}
+              >
+                Adicionar Interesses
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {userInterests.map((interest) => (
+                <CollapsibleInterestCard
+                  key={interest.interest_area_id}
+                  interest={interest}
+                  isOpen={openTriggers[interest.interest_area_id] || false}
+                  onToggle={() => toggleInterest(interest.interest_area_id)}
+                  onResponseChange={(response) =>
+                    handleInterestResponseChange(interest.interest_area_id, response)
+                  }
+                  onSharingToggle={(shared) =>
+                    handleInterestSharingToggle(interest.interest_area_id, shared)
+                  }
+                  onTriggerResponseChange={(triggerId, response) =>
+                    handleTriggerResponseChange(
+                      interest.interest_area_id,
+                      triggerId,
+                      response,
+                    )
+                  }
+                />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Seção de Observações Gerais */}
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-lg text-accent2-700">
+              Observações Gerais
+            </h3>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600 italic">
+                Compartilhar com profissionais
+              </span>
+              <Switch
+                checked={shareText}
+                onCheckedChange={setShareText}
+                size="sm"
+              />
+            </div>
+          </div>
+          <TextField
+            id="freeText"
+            name="freeText"
+            value={freeText}
+            onChange={(e) => setFreeText(e.target.value)}
+            placeholder="Descreva como você se sente ou qualquer observação importante..."
+            className="border-gray2 border-2 focus:border-selection"
+            multiline={true}
+            rows={4}
+          />
+        </section>
+
+        {/* Botão de Submissão */}
+        <div className="pt-6 text-center">
+          <Button
+            variant="orange"
+            size="lg"
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full max-w-[280px] text-typography mx-auto py-3 text-base"
+          >
+            {isSubmitting ? (
+              <span className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Salvando...
+              </span>
+            ) : (
+              "SALVAR DIÁRIO"
+            )}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }

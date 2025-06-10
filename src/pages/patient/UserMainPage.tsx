@@ -10,34 +10,28 @@ import { Button } from "@/components/forms/button";
 import SuccessMessage from "@/components/ui/success-message";
 import ErrorMessage from "@/components/ui/error-message";
 import EditInterestDialog from "../../components/EditInterestsDialog";
+import { ConfirmDialog } from "@/components/ui/confirmDialog";
 
 // Extended interface for API response that includes the ID
 interface InterestAreaResponse extends InterestArea {
   interest_area_id: number;
   concept_id?: number;
-  interest_name?: string;
+  is_temporary?: boolean; // Flag para identificar criados localmente
+  is_deleted?: boolean;   // Flag para identificar deletados localmente
 }
 
 export default function UserMainPage() {
   const navigate = useNavigate();
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-  const [originalInterests, setOriginalInterests] = useState<string[]>([]);
-  const [duplicateInterestError, setDuplicateInterestError] = useState<
-    string | null
-  >(null);
-
+  
   // Estados principais
-  const [userInterestObjects, setUserInterestObjects] = useState<
-    InterestAreaResponse[]
-  >([]);
+  const [userInterestObjects, setUserInterestObjects] = useState<InterestAreaResponse[]>([]);
+  const [originalInterests, setOriginalInterests] = useState<InterestAreaResponse[]>([]); // Para comparar mudanças
   const [editionMode, setEditionMode] = useState(false);
-  const [editingInterest, setEditingInterest] =
-    useState<InterestAreaResponse | null>(null);
+  const [editingInterest, setEditingInterest] = useState<InterestAreaResponse | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [interestToDelete, setInterestToDelete] =
-    useState<InterestAreaResponse | null>(null);
+  const [interestToDelete, setInterestToDelete] = useState<InterestAreaResponse | null>(null);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-
+  
   // Estados de sincronização
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
@@ -55,9 +49,10 @@ export default function UserMainPage() {
   useEffect(() => {
     const loadExistingInterests = async () => {
       try {
-        const userInterests =
-          (await InterestAreasService.personInterestAreasList()) as InterestAreaResponse[];
+        const userInterests = (await InterestAreasService.personInterestAreasList()) as InterestAreaResponse[];
         setUserInterestObjects(userInterests);
+        setOriginalInterests([...userInterests]); // Cópia para comparação
+        setHasChanges(false);
       } catch (error) {
         console.error("Error loading user interests:", error);
         setSyncError("Erro ao carregar interesses. Tente novamente.");
@@ -69,224 +64,162 @@ export default function UserMainPage() {
     }
   }, [isLoadingInterests, interestAreasOptions]);
 
-  // Função para deletar interesse do servidor
-  const deleteInterestFromServer = async (interest: InterestAreaResponse) => {
-    try {
-      setIsSyncing(true);
-      setSyncError(null);
-
-      if (interest.interest_area_id) {
-        await InterestAreasService.personInterestAreasDestroy(
-          interest.interest_area_id,
-        );
-
-        // Remove do estado local
-        setUserInterestObjects((prev) =>
-          prev.filter((i) => i.interest_area_id !== interest.interest_area_id),
-        );
-
-        setSyncSuccess(true);
-        setTimeout(() => setSyncSuccess(false), 3000);
-      }
-    } catch (error) {
-      console.error("Error deleting interest:", error);
-      setSyncError("Erro ao excluir interesse. Tente novamente.");
-    } finally {
-      setIsSyncing(false);
+  // Função para deletar interesse APENAS LOCALMENTE
+  const deleteInterestLocally = (interest: InterestAreaResponse) => {
+    if (interest.is_temporary) {
+      // Se é temporário, apenas remove da lista
+      setUserInterestObjects((prev) =>
+        prev.filter((i) => i.interest_area_id !== interest.interest_area_id)
+      );
+    } else {
+      // Se existe no servidor, marca como deletado
+      setUserInterestObjects((prev) =>
+        prev.map((i) =>
+          i.interest_area_id === interest.interest_area_id
+            ? { ...i, is_deleted: true }
+            : i
+        )
+      );
     }
+    setHasChanges(true);
   };
 
-  // Função para sincronizar interesses com o servidor
-  const syncInterestsWithServer = async () => {
-    const all_interests = await InterestAreasService.personInterestAreasList();
-    console.log("All interests from server:", all_interests);
+  // Função para salvar interesse APENAS LOCALMENTE  
+  const saveInterestLocally = (interestData: {
+    id?: string;
+    interest_name: string;
+    triggers: string[];
+  }) => {
+    console.log("saveInterestLocally chamado:", interestData);
 
-    setSyncError(null);
-    setDuplicateInterestError(null);
+    if (interestData.id) {
+      // Editando interesse existente
+      setUserInterestObjects((prev) =>
+        prev.map((interest) =>
+          interest.interest_area_id.toString() === interestData.id
+            ? {
+                ...interest,
+                interest_name: interestData.interest_name,
+                triggers: interestData.triggers.map((t) => ({ trigger_name: t })),
+              }
+            : interest
+        )
+      );
+    } else {
+      // Criando novo interesse temporário
+      const tempInterest: InterestAreaResponse = {
+        interest_area_id: Date.now(), // ID temporário único
+        interest_name: interestData.interest_name,
+        observation_concept_id: 2000201,
+        triggers: interestData.triggers.map((t) => ({ trigger_name: t })),
+        is_temporary: true, // Flag para identificar que é temporário
+      };
+      
+      setUserInterestObjects((prev) => [...prev, tempInterest]);
+    }
+
+    console.log("Marcando hasChanges = true");
+    setHasChanges(true);
+  };
+
+  // Função para sincronizar com servidor (apenas quando clicar em Salvar)
+  const syncWithServer = async () => {
     setIsSyncing(true);
+    setSyncError(null);
 
     try {
-      // Find which interests were added and removed
-      const addedInterests = selectedInterests.filter(
-        (id) => !originalInterests.includes(id),
+      // 1. Deletar interesses marcados como deletados
+      const toDelete = userInterestObjects.filter(i => i.is_deleted && !i.is_temporary);
+      for (const interest of toDelete) {
+        await InterestAreasService.personInterestAreasDestroy(interest.interest_area_id);
+      }
+
+      // 2. Criar novos interesses temporários
+      const toCreate = userInterestObjects.filter(i => i.is_temporary && !i.is_deleted);
+      const createdInterests = [];
+      
+      for (const interest of toCreate) {
+        const newInterestArea: InterestArea = {
+          interest_name: interest.interest_name,
+          observation_concept_id: 2000201,
+          triggers: interest.triggers?.map((t) => ({
+            trigger_name: t.trigger_name,
+            observation_concept_id: 2000301,
+          })) || [],
+        };
+
+        const result = await InterestAreasService.personInterestAreasCreate(newInterestArea);
+        if (result && "interest_area_id" in result) {
+          createdInterests.push({
+            ...result,
+            interest_name: interest.interest_name,
+            triggers: interest.triggers,
+          } as InterestAreaResponse);
+        }
+      }
+
+      // 3. Atualizar interesses modificados (deletar e recriar)
+      const toUpdate = userInterestObjects.filter(i => 
+        !i.is_temporary && 
+        !i.is_deleted && 
+        hasInterestChanged(i, originalInterests.find(o => o.interest_area_id === i.interest_area_id))
       );
-      const removedInterests = originalInterests.filter(
-        (id) => !selectedInterests.includes(id),
-      );
 
-      // Check ALL added interests for duplicates BEFORE processing any
-      const duplicateInterests: string[] = [];
+      const updatedInterests = [];
+      for (const interest of toUpdate) {
+        // Deletar versão antiga
+        await InterestAreasService.personInterestAreasDestroy(interest.interest_area_id);
+        
+        // Criar versão nova
+        const updatedInterestArea: InterestArea = {
+          interest_name: interest.interest_name,
+          observation_concept_id: 2000201,
+          triggers: interest.triggers?.map((t) => ({
+            trigger_name: t.trigger_name,
+            observation_concept_id: 2000301,
+          })) || [],
+        };
 
-      for (const interestId of addedInterests) {
-        const existingInterest = all_interests.find(
-          (interest_area) =>
-            interest_area.observation_concept_id === parseInt(interestId),
-        );
-
-        if (existingInterest) {
-          const interestName =
-            existingInterest.interest_name || "Interesse sem nome";
-          duplicateInterests.push(interestName);
+        const result = await InterestAreasService.personInterestAreasCreate(updatedInterestArea);
+        if (result && "interest_area_id" in result) {
+          updatedInterests.push({
+            ...result,
+            interest_name: interest.interest_name,
+            triggers: interest.triggers,
+          } as InterestAreaResponse);
         }
       }
 
-      // If we found ANY duplicates, show error and stop processing
-      if (duplicateInterests.length > 0) {
-        if (duplicateInterests.length === 1) {
-          setDuplicateInterestError(
-            `O interesse "${duplicateInterests[0]}" já foi adicionado anteriormente`,
-          );
-        } else {
-          setDuplicateInterestError(
-            `Os seguintes interesses já foram adicionados: ${duplicateInterests.join(", ")}`,
-          );
-        }
-        setIsSyncing(false);
-        return; // Stop execution here
-      }
+      // 4. Atualizar estado local com dados finais do servidor
+      const finalInterests = [
+        ...userInterestObjects.filter(i => !i.is_temporary && !i.is_deleted && !toUpdate.includes(i)),
+        ...createdInterests,
+        ...updatedInterests,
+      ];
 
-      // Create new interests (only if no duplicates found)
-      for (const interestId of addedInterests) {
-        const interestOption = interestAreasOptions.find(
-          (opt) => opt.value === interestId,
-        );
-
-        if (interestOption) {
-          const newInterestArea: InterestArea = {
-            observation_concept_id: parseInt(interestId),
-          };
-
-          console.log(interestId);
-          console.log("new", newInterestArea);
-
-          // Create the interest (we already know it doesn't exist)
-          const result =
-            await InterestAreasService.personInterestAreasCreate(
-              newInterestArea,
-            );
-
-          // Update our local state with the new interest object
-          if (result && "interest_area_id" in result) {
-            const newInterestWithId = result as InterestAreaResponse;
-            setUserInterestObjects((prev) => [...prev, newInterestWithId]);
-          }
-        }
-      }
-
-      // Remove interests
-      for (const conceptId of removedInterests) {
-        const interestToDelete = userInterestObjects.find((interest) => {
-          const interestConceptId = interest.concept_id?.toString().trim();
-          const searchConceptId = conceptId.toString().trim();
-          return interestConceptId === searchConceptId;
-        });
-
-        if (interestToDelete && interestToDelete.interest_area_id) {
-          await InterestAreasService.personInterestAreasDestroy(
-            interestToDelete.interest_area_id,
-          );
-
-          // Update our local state
-          setUserInterestObjects((prev) =>
-            prev.filter(
-              (interest) =>
-                interest.interest_area_id !== interestToDelete.interest_area_id,
-            ),
-          );
-        }
-      }
-
-      // Update originalInterests to reflect the current state
-      setOriginalInterests([...selectedInterests]);
+      setUserInterestObjects(finalInterests);
+      setOriginalInterests([...finalInterests]);
+      setHasChanges(false);
       setSyncSuccess(true);
+      setTimeout(() => setSyncSuccess(false), 3000);
 
-      // Hide success message after 3 seconds
-      setTimeout(() => {
-        setSyncSuccess(false);
-      }, 3000);
     } catch (error) {
-      console.error("Error syncing interests:", error);
+      console.error("Error syncing with server:", error);
       setSyncError("Erro ao salvar interesses. Tente novamente.");
     } finally {
       setIsSyncing(false);
     }
   };
 
-  // Função para salvar interesse editado/novo no servidor
-  const saveInterestToServer = async (interestData: {
-    id?: string;
-    interest_name: string;
-    triggers: string[];
-  }) => {
-    try {
-      setIsSyncing(true);
-      setSyncError(null);
-
-      if (interestData.id) {
-        // Editando interesse existente
-        const existingInterest = userInterestObjects.find(
-          (i) => i.interest_area_id.toString() === interestData.id,
-        );
-
-        if (existingInterest) {
-          // Atualiza localmente (assumindo que a API não tem endpoint de update)
-          setUserInterestObjects((prev) =>
-            prev.map((interest) =>
-              interest.interest_area_id.toString() === interestData.id
-                ? {
-                    ...interest,
-                    observation_concept_id: 2000301, // Conceito padrão para interesses personalizados
-                    interest_name: interestData.interest_name,
-                    triggers: interestData.triggers.map((t) => ({
-                      trigger_name: t,
-                      observation_concept_id: 2000201,
-                    })),
-                  }
-                : interest,
-            ),
-          );
-        }
-      } else {
-        // Criando novo interesse personalizado
-        const newInterestArea: InterestArea = {
-          observation_concept_id: 2000301, // Conceito padrão para interesses personalizados
-          interest_name: interestData.interest_name,
-          triggers: interestData.triggers.map((t) => ({
-            trigger_name: t,
-            observation_concept_id: 2000201, // Conceito padrão para gatilhos personalizados
-          })),
-        };
-
-        const result =
-          await InterestAreasService.personInterestAreasCreate(newInterestArea);
-
-        if (result && "interest_area_id" in result) {
-          const newInterestWithId = {
-            ...result,
-            interest_name: interestData.interest_name,
-            triggers: interestData.triggers.map((t) => ({ trigger_name: t })),
-            is_custom: true,
-          } as InterestAreaResponse;
-          setUserInterestObjects((prev) => [...prev, newInterestWithId]);
-        }
-      }
-
-      setSyncSuccess(true);
-      setTimeout(() => setSyncSuccess(false), 3000);
-    } catch (error) {
-      console.error("Error saving interest:", error);
-      setSyncError("Erro ao salvar interesse. Tente novamente.");
-    } finally {
-      setIsSyncing(false);
-    }
-  };
-
-  const clearDuplicateError = () => {
-    setDuplicateInterestError(null);
-  };
-
-  const clearSyncError = () => {
-    setSyncError(null);
+  // Helper para verificar se interesse foi modificado
+  const hasInterestChanged = (current: InterestAreaResponse, original?: InterestAreaResponse) => {
+    if (!original) return false;
+    
+    const currentTriggers = current.triggers?.map(t => t.trigger_name).sort() || [];
+    const originalTriggers = original.triggers?.map(t => t.trigger_name).sort() || [];
+    
+    return current.interest_name !== original.interest_name ||
+           JSON.stringify(currentTriggers) !== JSON.stringify(originalTriggers);
   };
 
   // Navigation functions
@@ -297,7 +230,6 @@ export default function UserMainPage() {
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
       case "home":
-        // Already on home
         break;
       case "meds":
         navigate("/reminders");
@@ -330,33 +262,38 @@ export default function UserMainPage() {
     setConfirmDeleteOpen(true);
   };
 
-  const confirmDelete = async () => {
+  const confirmDelete = () => {
     if (interestToDelete) {
-      await deleteInterestFromServer(interestToDelete);
+      deleteInterestLocally(interestToDelete);
       setConfirmDeleteOpen(false);
       setInterestToDelete(null);
     }
   };
 
-  const handleSaveInterest = async (interestData: {
+  const handleSaveInterest = (interestData: {
     id?: string;
     interest_name: string;
     triggers: string[];
   }) => {
-    await saveInterestToServer(interestData);
+    saveInterestLocally(interestData);
     setDialogOpen(false);
     setEditingInterest(null);
   };
 
-  const handleSaveChanges = () => {
-    // Se houver mudanças pendentes, salvar aqui
+  const handleSaveChanges = async () => {
+    await syncWithServer();
     setEditionMode(false);
-    setHasChanges(false);
-
-    // Mostrar mensagem de sucesso
-    setSyncSuccess(true);
-    setTimeout(() => setSyncSuccess(false), 3000);
   };
+
+  const handleCancelChanges = () => {
+    // Restaurar estado original
+    setUserInterestObjects([...originalInterests]);
+    setHasChanges(false);
+    setEditionMode(false);
+  };
+
+  // Filtrar interesses para exibição (excluir os marcados como deletados)
+  const visibleInterests = userInterestObjects.filter(i => !i.is_deleted);
 
   return (
     <div className="min-h-screen bg-primary relative">
@@ -367,76 +304,29 @@ export default function UserMainPage() {
           subtitle="Adicione seus interesses e acompanhe seu progresso"
           onIconClick={handleBannerIconClick}
         />
-        <h2 className="text-xl font-semibold pl-4 pb-2 mt-4 text-typography">
-          Meus Interesses
-        </h2>
+        <h2 className="text-xl font-semibold pl-4 pb-2 mt-4 text-typography">Meus Interesses</h2>
       </div>
 
-      {/* Success/Error Messages - Fixed position */}
-      <div className="px-4">
-        {/* Duplicate interest error */}
-        {duplicateInterestError && (
-          <ErrorMessage
-            message={duplicateInterestError}
-            variant="destructive"
-            onClose={clearDuplicateError}
-          />
-        )}
-
-        {/* Success message */}
-        {syncSuccess && (
-          <SuccessMessage message="Interesses salvos com sucesso!" />
-        )}
-
-        {/* Error handling for interest areas */}
-        {interestAreasError && (
-          <ErrorMessage
-            message="Erro ao carregar áreas de interesse. Tente novamente mais tarde."
-            variant="destructive"
-          />
-        )}
-
-        {/* Error handling for syncing */}
-        {syncError && (
-          <ErrorMessage
-            message={syncError}
-            variant="destructive"
-            onClose={clearSyncError}
-          />
-        )}
-      </div>
+      {/* Debug info - remover depois */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-4 right-4 bg-black text-white p-2 rounded text-xs z-50">
+          hasChanges: {hasChanges.toString()}
+        </div>
+      )}
 
       {/* ÁREA SCROLLÁVEL - Lista de Interesses */}
-      <div
-        className="px-4 overflow-y-auto"
-        style={{ paddingBottom: "180px", maxHeight: "calc(100vh - 140px)" }}
-      >
-        {userInterestObjects.length === 0 ? (
+      <div className="px-4 overflow-y-auto" style={{ paddingBottom: '180px', maxHeight: 'calc(100vh - 140px)' }}>
+        {visibleInterests.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mb-4">
               <span className="text-2xl">📋</span>
             </div>
-            <p className="text-foreground text-lg font-medium mb-2">
-              Nenhum interesse selecionado
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Adicione seus interesses para começar!
-            </p>
-
-            {/* Custom interest button for empty state */}
-            <div className="mt-6">
-              <Button
-                onClick={handleCreateNewInterest}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-200"
-                disabled={isSyncing}
-              >
-                + Criar Primeiro Interesse
-              </Button>
-            </div>
+            <p className="text-foreground text-lg font-medium mb-2">Nenhum interesse selecionado</p>
+            <p className="text-sm text-muted-foreground">Adicione seus interesses para começar!</p>
           </div>
         ) : (
           <div className="flex flex-col gap-4">
-            {userInterestObjects.map((interest) => (
+            {visibleInterests.map((interest) => (
               <div
                 key={interest.interest_area_id}
                 onClick={() => {
@@ -467,10 +357,13 @@ export default function UserMainPage() {
 
                 <h3 className="font-bold text-lg text-card-foreground mb-2 flex items-center gap-2 flex-wrap">
                   <span className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex-shrink-0"></span>
-                  <span className="break-words min-w-0">
-                    {interest.interest_name}
-                  </span>
-                  {interest.is_custom && (
+                  <span className="break-words min-w-0">{interest.interest_name}</span>
+                  {interest.is_temporary && (
+                    <span className="ml-2 text-xs bg-orange-500 text-white px-2 py-1 rounded-full font-medium flex-shrink-0">
+                      Não salvo
+                    </span>
+                  )}
+                  {interest.observation_concept_id === 2000201 && !interest.is_temporary && (
                     <span className="ml-2 text-xs bg-violet-600 text-white dark:bg-purple-900/50 dark:text-purple-200 px-2 py-1 rounded-full font-medium border border-violet-700 dark:border-purple-700 flex-shrink-0">
                       Personalizado
                     </span>
@@ -478,14 +371,9 @@ export default function UserMainPage() {
                 </h3>
                 <div className="space-y-1">
                   {interest.triggers?.map((t, index) => (
-                    <div
-                      key={`${t.trigger_name}-${index}`}
-                      className="flex items-start gap-2 text-sm text-muted-foreground"
-                    >
+                    <div key={`${t.trigger_name}-${index}`} className="flex items-start gap-2 text-sm text-muted-foreground">
                       <span className="w-1 h-1 bg-muted-foreground rounded-full flex-shrink-0 mt-2"></span>
-                      <span className="break-words min-w-0">
-                        {t.trigger_name}
-                      </span>
+                      <span className="break-words min-w-0">{t.trigger_name}</span>
                     </div>
                   ))}
                 </div>
@@ -495,13 +383,36 @@ export default function UserMainPage() {
         )}
       </div>
 
+      {/* MENSAGENS DE SUCESSO/ERRO - Fixas acima dos botões */}
+      <div className="fixed bottom-36 left-0 right-0 px-4 z-20">
+        {syncSuccess && (
+          <div className="flex justify-center">
+            <SuccessMessage 
+              message="Interesses salvos com sucesso!" 
+              className="animate-in slide-in-from-bottom-5 duration-300 shadow-lg backdrop-blur-sm"
+            />
+          </div>
+        )}
+        {syncError && (
+          <div className="flex justify-center">
+            <ErrorMessage
+              message={syncError}
+              variant="destructive"
+              onClose={() => setSyncError(null)}
+              onRetry={() => setSyncError(null)}
+              className="animate-in slide-in-from-bottom-5 duration-300 shadow-lg backdrop-blur-sm"
+            />
+          </div>
+        )}
+      </div>
+
       {/* BOTÕES FIXOS - Sempre visíveis acima da navegação */}
       <div className="fixed bottom-24 left-0 right-0 px-4 py-3 bg-gradient-to-t from-primary via-primary to-transparent backdrop-blur-sm border-t border-gray-200/20 z-20">
         {editionMode ? (
           <div className="flex justify-center gap-2 max-w-md mx-auto">
-            <Button
-              variant="outline"
-              onClick={() => setEditionMode(false)}
+            <Button 
+              variant="outline" 
+              onClick={handleCancelChanges}
               className="flex-1 bg-background/50 border-border/30 text-foreground hover:bg-background/70 transition-all duration-200 backdrop-blur-sm text-sm py-2"
               disabled={isSyncing}
             >
@@ -509,12 +420,13 @@ export default function UserMainPage() {
             </Button>
             <Button
               onClick={handleSaveChanges}
-              className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-200 border-0 text-sm py-2"
-              disabled={isSyncing}
+              className={`flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-200 border-0 text-sm py-2 ${
+                !hasChanges ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+              disabled={isSyncing || !hasChanges}
             >
-              {isSyncing ? "..." : "✓ Salvar"}
+              {isSyncing ? "..." : hasChanges ? "✓ Salvar Mudanças" : "✓ Salvar"}
             </Button>
-
             <Button
               onClick={handleCreateNewInterest}
               className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-200 border-0 text-sm py-2"
@@ -548,21 +460,27 @@ export default function UserMainPage() {
       {/* DIALOGS */}
       <EditInterestDialog
         open={dialogOpen}
-        initialData={
-          editingInterest
-            ? {
-                id: editingInterest.interest_area_id.toString(),
-                interest_name: editingInterest.interest_name || "",
-                triggers:
-                  editingInterest.triggers?.map((t) => t.trigger_name) || [],
-              }
-            : undefined
-        }
+        initialData={editingInterest ? {
+          id: editingInterest.interest_area_id.toString(),
+          interest_name: editingInterest.interest_name || '',
+          triggers: editingInterest.triggers?.map(t => t.trigger_name) || []
+        } : undefined}
         onClose={() => {
           setDialogOpen(false);
           setEditingInterest(null);
         }}
         onSave={handleSaveInterest}
+      />
+
+      <ConfirmDialog
+        open={confirmDeleteOpen}
+        title="Excluir Interesse"
+        description={`Tem certeza que deseja excluir "${interestToDelete?.interest_name}"?`}
+        onCancel={() => {
+          setConfirmDeleteOpen(false);
+          setInterestToDelete(null);
+        }}
+        onConfirm={confirmDelete}
       />
     </div>
   );
