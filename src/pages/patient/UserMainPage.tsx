@@ -15,14 +15,11 @@ interface InterestAreaResponse extends InterestArea {
   interest_name?: string;
 }
 
-const [duplicateInterestError, setDuplicateInterestError] = useState<string | null>(null);
-
-
-
 export default function UserMainPage() {
   const navigate = useNavigate();
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [originalInterests, setOriginalInterests] = useState<string[]>([]);
+  const [duplicateInterestError, setDuplicateInterestError] = useState<string | null>(null);
   const [userInterestObjects, setUserInterestObjects] = useState<
     InterestAreaResponse[]
   >([]);
@@ -91,6 +88,7 @@ export default function UserMainPage() {
     setIsSyncing(true);
 
     try {
+
       // Find which interests were added and removed
       const addedInterests = selectedInterests.filter(
         (id) => !originalInterests.includes(id),
@@ -98,6 +96,31 @@ export default function UserMainPage() {
       const removedInterests = originalInterests.filter(
         (id) => !selectedInterests.includes(id),
       );
+
+      // Check ALL added interests for duplicates BEFORE processing any
+      const duplicateInterests: string[] = [];
+      
+      for (const interestId of addedInterests) {
+        const existingInterest = all_interests.find(
+          interest_area => interest_area.observation_concept_id === parseInt(interestId)
+        );
+
+        if (existingInterest) {
+          const interestName = existingInterest.interest_name || "Interesse sem nome";
+          duplicateInterests.push(interestName);
+        }
+      }
+
+      // If we found ANY duplicates, show error and stop processing
+      if (duplicateInterests.length > 0) {
+        if (duplicateInterests.length === 1) {
+          setDuplicateInterestError(`O interesse "${duplicateInterests[0]}" já foi adicionado anteriormente`);
+        } else {
+          setDuplicateInterestError(`Os seguintes interesses já foram adicionados: ${duplicateInterests.join(", ")}`);
+        }
+        setIsSyncing(false);
+        return; // Stop execution here
+      }
 
       // Create new interests
       for (const interestId of addedInterests) {
@@ -118,13 +141,13 @@ export default function UserMainPage() {
           let existingInterestName = "";
           for (const interest_area of all_interests) {
             if (interest_area.observation_concept_id === parseInt(interestId)) {
-              if( interest_area.interest_name) {
+              if(interest_area.interest_name) {
                 existingInterestName = interest_area.interest_name;
               } else {
                 existingInterestName = "";
+              }
               interestExists = true;
               break;
-              }
             }
           }
 
