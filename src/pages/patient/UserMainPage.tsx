@@ -96,7 +96,7 @@ export default function UserMainPage() {
     }
   };
 
-// Função para sincronizar interesses com o servidor
+  // Função para sincronizar interesses com o servidor
   const syncInterestsWithServer = async () => {
     const all_interests = await InterestAreasService.personInterestAreasList();
     console.log("All interests from server:", all_interests);
@@ -160,9 +160,10 @@ export default function UserMainPage() {
           console.log("new", newInterestArea);
 
           // Create the interest (we already know it doesn't exist)
-          const result = await InterestAreasService.personInterestAreasCreate(
-            newInterestArea,
-          );
+          const result =
+            await InterestAreasService.personInterestAreasCreate(
+              newInterestArea,
+            );
 
           // Update our local state with the new interest object
           if (result && "interest_area_id" in result) {
@@ -421,7 +422,7 @@ export default function UserMainPage() {
             <p className="text-sm text-muted-foreground">
               Adicione seus interesses para começar!
             </p>
-            
+
             {/* Custom interest button for empty state */}
             <div className="mt-6">
               <Button

@@ -115,7 +115,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       setIsLoading(false);
     }
   };
-      
+
   const menuItems: ProfileMenuItem[] = [
     {
       title: "Histórico de diários",
