@@ -7,12 +7,12 @@ import useSWRMutation from "swr/mutation";
 import type { PersonCreate } from "@/api/models/PersonCreate";
 import type { LocationCreate } from "@/api/models/LocationCreate";
 import { ProgressIndicator } from "@/components/forms/progress_indicator";
-
-// Empty placeholder for future service implementation
-// Will create a placeholder service that matches the pattern you described
 import { FullPersonService } from "@/api/services/FullPersonService";
 import type { FullPersonCreate } from "@/api/models/FullPersonCreate";
 import type { AddressFormData } from "@/pages/patient/onboarding/UserInfoForm2";
+import { SuccessMessage } from "@/components/ui/success-message";
+import { ErrorMessage } from "@/components/ui/error-message";
+
 // Define types for the incoming data from each form
 interface PersonData {
   social_name?: string | null;
@@ -31,6 +31,8 @@ export default function UserOnboarding() {
   const [person, setPerson] = useState<PersonCreate>({});
   const [location, setLocation] = useState<LocationCreate>({});
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState<boolean>(false);
 
   // Setup SWR mutation
   const { trigger, isMutating } = useSWRMutation(
@@ -66,6 +68,10 @@ export default function UserOnboarding() {
   const handleSecondFormSubmit = async (data: AddressFormData) => {
     console.log("Second form data:", data);
 
+    setError(null);
+    setSuccess(false);
+    setIsSubmitting(true);
+
     // Save location data
     setLocation(data);
     try {
@@ -79,11 +85,16 @@ export default function UserOnboarding() {
 
       const result = await FullPersonService.apiFullPersonCreate(fullData);
       console.log("Submission result:", result);
-      alert("Cadastro realizado com sucesso!");
+
+      setSuccess(true);
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate delay
+
       router("/user-main-page");
     } catch (err) {
       console.error("Registration error:", err);
       setError("Erro ao realizar cadastro. Tente novamente.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -95,6 +106,10 @@ export default function UserOnboarding() {
       // Handle back on first screen (could redirect or show confirmation)
       console.log("On first step, nowhere to go back");
     }
+  };
+
+  const clearError = () => {
+    setError(null);
   };
 
   return (
@@ -115,10 +130,18 @@ export default function UserOnboarding() {
         <ProgressIndicator currentStep={step} totalSteps={2} />
 
         <div className="pl-9 pr-4">
+          {/* Success message - show above error */}
+          {success && (
+            <SuccessMessage message="Cadastro realizado com sucesso!" />
+          )}
+
+          {/* Error message display */}
           {error && (
-            <div className="bg-destructive bg-opacity-10 border border-destructive text-destructive rounded-md p-3 mb-4">
-              <p>{error}</p>
-            </div>
+            <ErrorMessage
+              message={error}
+              onClose={clearError}
+              variant="destructive"
+            />
           )}
 
           {isMutating ? (

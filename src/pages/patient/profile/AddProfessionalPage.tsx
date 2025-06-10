@@ -7,6 +7,8 @@ import type { PersonLinkProviderRequest } from "@/api/models/PersonLinkProviderR
 import type { ProviderRetrieve } from "@/api/models/ProviderRetrieve";
 import errorImage from "@/lib/images/error.png";
 import { AccountService } from "@/api";
+import { SuccessMessage } from "@/components/ui/success-message";
+import { ErrorMessage } from "@/components/ui/error-message";
 
 const AddProfessionalPage = () => {
   const [providerCode, setProviderCode] = useState("");
@@ -14,6 +16,7 @@ const AddProfessionalPage = () => {
   const [isLinking, setIsLinking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [linkSuccess, setLinkSuccess] = useState(false);
+  const [linkError, setLinkError] = useState<string | null>(null);
   const [provider, setProvider] = useState<ProviderRetrieve | null>(null);
   const [showVisualError, setShowVisualError] = useState(false);
 
@@ -26,6 +29,7 @@ const AddProfessionalPage = () => {
 
     setIsLoading(true);
     setError(null);
+    setLinkError(null);
     setShowVisualError(false);
     setProvider(null);
 
@@ -55,6 +59,7 @@ const AddProfessionalPage = () => {
     }
 
     setIsLinking(true);
+    setLinkError(null);
 
     try {
       const linkRequest: PersonLinkProviderRequest = { code: providerCode };
@@ -63,21 +68,21 @@ const AddProfessionalPage = () => {
 
       setLinkSuccess(true);
       console.log("Successfully linked with provider:", response);
-    } catch (error: any) {
-      console.error("Erro ao vincular com provedor:", error);
-
-      const response = error?.body;
-
-      if (response?.error) {
-        setError(`Erro ao vincular: ${response.error}`);
-      } else if (response?.message) {
-        setError(`Erro ao vincular: ${response.message}`);
-      } else {
-        setError("Erro inesperado ao vincular com provedor.");
-      }
+    } catch (error) {
+      console.error("Error linking with provider:", error);
+      setLinkError("Erro ao vincular profissional. Tente novamente.");
     } finally {
       setIsLinking(false);
     }
+  };
+
+  const clearError = () => {
+    setError(null);
+    setShowVisualError(false);
+  };
+
+  const clearLinkError = () => {
+    setLinkError(null);
   };
 
   return (
@@ -88,6 +93,21 @@ const AddProfessionalPage = () => {
           title="Adicionar profissional"
           subtitle="Peça para o profissional de saúde ou ACS te fornecer o ID dele"
         />
+
+        {/* Success message */}
+        {linkSuccess && (
+          <SuccessMessage message="Profissional vinculado com sucesso! Você agora tem acesso aos serviços deste profissional." />
+        )}
+
+        {/* Link error message */}
+        {linkError && (
+          <ErrorMessage
+            message={linkError}
+            onClose={clearLinkError}
+            onRetry={clearLinkError}
+            variant="destructive"
+          />
+        )}
 
         <div className="mt-6">
           <TextField
@@ -107,7 +127,13 @@ const AddProfessionalPage = () => {
                 alt="Erro ao buscar"
                 className="w-64 h-64 mb-4"
               />
-              <div className="text-[#141B36]">{error}</div>
+              <ErrorMessage
+                message={error || "Erro desconhecido"}
+                onClose={clearError}
+                onRetry={clearError}
+                variant="destructive"
+                className="mt-4"
+              />
             </div>
           )}
         </div>
@@ -138,30 +164,6 @@ const AddProfessionalPage = () => {
               Certifique-se que este é o profissional correto antes de
               confirmar.
             </p>
-          </div>
-        )}
-
-        {linkSuccess && (
-          <div className="mt-6 p-4 bg-green-50 border border-green-100 text-green-700 rounded-lg flex items-center">
-            <svg
-              className="w-6 h-6 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-            <div>
-              <p className="font-medium">Profissional vinculado com sucesso!</p>
-              <p className="text-sm">
-                Você agora tem acesso aos serviços deste profissional.
-              </p>
-            </div>
           </div>
         )}
       </div>
@@ -201,7 +203,7 @@ const AddProfessionalPage = () => {
             className="w-full mt-4"
             disabled={isLoading || providerCode.length !== 6}
           >
-            {isLoading ? "Buscando..." : "Buscar profissional"}
+            {isLinking ? "Buscando..." : "Buscar profissional"}
           </Button>
         )}
       </div>

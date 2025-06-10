@@ -177,8 +177,8 @@ export default function ViewPatient() {
                 Nome:
               </span>{" "}
               {patient.social_name ||
-                    patient.first_name + " " + patient.last_name ||
-                    "Não informado"}
+                patient.first_name + " " + patient.last_name ||
+                "Não informado"}
             </p>
             {context === "emergency" && (
               <p className="text-topicos text-destructive">
