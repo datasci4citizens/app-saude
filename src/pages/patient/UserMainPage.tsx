@@ -15,9 +15,9 @@ interface InterestAreaResponse extends InterestArea {
   interest_name?: string;
 }
 
-const [duplicateInterestError, setDuplicateInterestError] = useState<string | null>(null);
-
-
+const [duplicateInterestError, setDuplicateInterestError] = useState<
+  string | null
+>(null);
 
 export default function UserMainPage() {
   const navigate = useNavigate();
@@ -118,20 +118,24 @@ export default function UserMainPage() {
           let existingInterestName = "";
           for (const interest_area of all_interests) {
             if (interest_area.observation_concept_id === parseInt(interestId)) {
-              if( interest_area.interest_name) {
+              if (interest_area.interest_name) {
                 existingInterestName = interest_area.interest_name;
               } else {
                 existingInterestName = "";
-              interestExists = true;
-              break;
+                interestExists = true;
+                break;
               }
             }
           }
 
           // Se o interesse já existe, pula para o próximo usando continue
           if (interestExists) {
-            if(existingInterestName !== "") {
-              setDuplicateInterestError("O interesse "+ existingInterestName + " já foi adicionado anteriormente");
+            if (existingInterestName !== "") {
+              setDuplicateInterestError(
+                "O interesse " +
+                  existingInterestName +
+                  " já foi adicionado anteriormente",
+              );
             } else {
               setDuplicateInterestError("Nome do interesse não encontrado");
             }
