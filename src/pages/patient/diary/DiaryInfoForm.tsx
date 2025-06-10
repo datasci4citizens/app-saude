@@ -5,7 +5,6 @@ import HabitCard from "@/components/ui/habit-card";
 import { Switch } from "@/components/ui/switch";
 import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
-import { motion, AnimatePresence } from "framer-motion";
 import { DiaryService } from "@/api/services/DiaryService"; // diariesCreate method will be used to submit the diary
 import { DateRangeTypeEnum } from "@/api";
 import { InterestAreasService } from "@/api/services/InterestAreasService";

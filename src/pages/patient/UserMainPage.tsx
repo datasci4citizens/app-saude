@@ -10,7 +10,6 @@ import { Button } from "@/components/forms/button";
 import SuccessMessage from "@/components/ui/success-message";
 import ErrorMessage from "@/components/ui/error-message";
 import EditInterestDialog from "../../components/EditInterestsDialog";
-import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 // Extended interface for API response that includes the ID
 interface InterestAreaResponse extends InterestArea {
@@ -76,6 +75,32 @@ export default function UserMainPage() {
       setIsSyncing(true);
       setSyncError(null);
 
+      if (interest.interest_area_id) {
+        await InterestAreasService.personInterestAreasDestroy(
+          interest.interest_area_id,
+        );
+
+        // Remove do estado local
+        setUserInterestObjects((prev) =>
+          prev.filter((i) => i.interest_area_id !== interest.interest_area_id),
+        );
+
+        setSyncSuccess(true);
+        setTimeout(() => setSyncSuccess(false), 3000);
+      }
+    } catch (error) {
+      console.error("Error deleting interest:", error);
+      setSyncError("Erro ao excluir interesse. Tente novamente.");
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+// Função para sincronizar interesses com o servidor
+  const syncInterestsWithServer = async () => {
+    const all_interests = await InterestAreasService.personInterestAreasList();
+    console.log("All interests from server:", all_interests);
+
     setSyncError(null);
     setDuplicateInterestError(null);
     setIsSyncing(true);
@@ -120,7 +145,7 @@ export default function UserMainPage() {
         return; // Stop execution here
       }
 
-      // Create new interests
+      // Create new interests (only if no duplicates found)
       for (const interestId of addedInterests) {
         const interestOption = interestAreasOptions.find(
           (opt) => opt.value === interestId,
@@ -134,40 +159,10 @@ export default function UserMainPage() {
           console.log(interestId);
           console.log("new", newInterestArea);
 
-          // Verificar se o interesse já existe
-          let interestExists = false;
-          let existingInterestName = "";
-          for (const interest_area of all_interests) {
-            if (interest_area.observation_concept_id === parseInt(interestId)) {
-              if (interest_area.interest_name) {
-                existingInterestName = interest_area.interest_name;
-              } else {
-                existingInterestName = "";
-              }
-              interestExists = true;
-              break;
-            }
-          }
-
-          // Se o interesse já existe, pula para o próximo usando continue
-          if (interestExists) {
-            if (existingInterestName !== "") {
-              setDuplicateInterestError(
-                "O interesse " +
-                  existingInterestName +
-                  " já foi adicionado anteriormente",
-              );
-            } else {
-              setDuplicateInterestError("Nome do interesse não encontrado");
-            }
-            continue;
-          }
-
-          // Cria o interesse se não existir
-          const result =
-            await InterestAreasService.personInterestAreasCreate(
-              newInterestArea,
-            );
+          // Create the interest (we already know it doesn't exist)
+          const result = await InterestAreasService.personInterestAreasCreate(
+            newInterestArea,
+          );
 
           // Update our local state with the new interest object
           if (result && "interest_area_id" in result) {
@@ -175,23 +170,42 @@ export default function UserMainPage() {
             setUserInterestObjects((prev) => [...prev, newInterestWithId]);
           }
         }
-        
-      if (interest.interest_area_id) {
-        await InterestAreasService.personInterestAreasDestroy(
-          interest.interest_area_id,
-        );
-
-        // Remove do estado local
-        setUserInterestObjects((prev) =>
-          prev.filter((i) => i.interest_area_id !== interest.interest_area_id),
-        );
-
-        setSyncSuccess(true);
-        setTimeout(() => setSyncSuccess(false), 3000);
       }
+
+      // Remove interests
+      for (const conceptId of removedInterests) {
+        const interestToDelete = userInterestObjects.find((interest) => {
+          const interestConceptId = interest.concept_id?.toString().trim();
+          const searchConceptId = conceptId.toString().trim();
+          return interestConceptId === searchConceptId;
+        });
+
+        if (interestToDelete && interestToDelete.interest_area_id) {
+          await InterestAreasService.personInterestAreasDestroy(
+            interestToDelete.interest_area_id,
+          );
+
+          // Update our local state
+          setUserInterestObjects((prev) =>
+            prev.filter(
+              (interest) =>
+                interest.interest_area_id !== interestToDelete.interest_area_id,
+            ),
+          );
+        }
+      }
+
+      // Update originalInterests to reflect the current state
+      setOriginalInterests([...selectedInterests]);
+      setSyncSuccess(true);
+
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setSyncSuccess(false);
+      }, 3000);
     } catch (error) {
-      console.error("Error deleting interest:", error);
-      setSyncError("Erro ao excluir interesse. Tente novamente.");
+      console.error("Error syncing interests:", error);
+      setSyncError("Erro ao salvar interesses. Tente novamente.");
     } finally {
       setIsSyncing(false);
     }
@@ -357,6 +371,40 @@ export default function UserMainPage() {
         </h2>
       </div>
 
+      {/* Success/Error Messages - Fixed position */}
+      <div className="px-4">
+        {/* Duplicate interest error */}
+        {duplicateInterestError && (
+          <ErrorMessage
+            message={duplicateInterestError}
+            variant="destructive"
+            onClose={clearDuplicateError}
+          />
+        )}
+
+        {/* Success message */}
+        {syncSuccess && (
+          <SuccessMessage message="Interesses salvos com sucesso!" />
+        )}
+
+        {/* Error handling for interest areas */}
+        {interestAreasError && (
+          <ErrorMessage
+            message="Erro ao carregar áreas de interesse. Tente novamente mais tarde."
+            variant="destructive"
+          />
+        )}
+
+        {/* Error handling for syncing */}
+        {syncError && (
+          <ErrorMessage
+            message={syncError}
+            variant="destructive"
+            onClose={clearSyncError}
+          />
+        )}
+      </div>
+
       {/* ÁREA SCROLLÁVEL - Lista de Interesses */}
       <div
         className="px-4 overflow-y-auto"
@@ -373,44 +421,18 @@ export default function UserMainPage() {
             <p className="text-sm text-muted-foreground">
               Adicione seus interesses para começar!
             </p>
+            
+            {/* Custom interest button for empty state */}
+            <div className="mt-6">
+              <Button
+                onClick={handleCreateNewInterest}
+                className="bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-200"
+                disabled={isSyncing}
+              >
+                + Criar Primeiro Interesse
+              </Button>
+            </div>
           </div>
-
-          {/* Duplicate interest error*/}
-          {duplicateInterestError && (
-            <ErrorMessage
-              message={duplicateInterestError}
-              variant="destructive"
-              onClose={clearDuplicateError}
-            />
-          )}
-
-          {/* Success message */}
-          {syncSuccess && (
-            <SuccessMessage message="Interesses salvos com sucesso!" />
-          )}
-
-          {/* Error handling for interest areas */}
-          {interestAreasError && (
-            <ErrorMessage
-              message="Erro ao carregar áreas de interesse. Tente novamente mais tarde."
-              variant="destructive"
-            />
-          )}
-
-          {/* Error handling for syncing */}
-          {syncError && (
-            <ErrorMessage
-              message={syncError}
-              variant="destructive"
-              onClose={clearSyncError}
-            />
-          )}
-        </div>
-
-        {/* Top banner */}
-        {/* Custom interest button */}
-        <div>
-          <div className="px-4 mb-2 flex justify-center">
         ) : (
           <div className="flex flex-col gap-4">
             {userInterestObjects.map((interest) => (
@@ -471,34 +493,6 @@ export default function UserMainPage() {
           </div>
         )}
       </div>
-
-      // {/* MENSAGENS DE SUCESSO/ERRO - Fixas acima dos botões */}
-      // <div className="fixed bottom-36 left-0 right-0 px-4 z-20">
-       // {syncSuccess && (
-        //  <div className="flex justify-center mb-2">
-          //  <div className="inline-block p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 rounded-lg shadow-lg backdrop-blur-sm animate-in slide-in-from-bottom-5 duration-300">
-            //  <div className="flex items-center gap-2">
-             //   <span className="text-green-600 dark:text-green-400 text-sm">
-               //   ✅
-               // </span>
-              //  <p className="font-medium text-sm">Interesses salvos!</p>
-            //  </div>
-            // </div>
-          // </div>
-        // )}
-        // {syncError && (
-          // <div className="flex justify-center mb-2">
-           // <div className="inline-block p-3 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg shadow-lg backdrop-blur-sm animate-in slide-in-from-bottom-5 duration-300">
-            //  <div className="flex items-center gap-2">
-           //     <span className="text-red-600 dark:text-red-400 text-sm">
-           //       ❌
-           //     </span>
-           //     <p className="font-medium text-sm">{syncError}</p>
-           //   </div>
-           // </div>
-         // </div>
-      // // )}
-      // </div>
 
       {/* BOTÕES FIXOS - Sempre visíveis acima da navegação */}
       <div className="fixed bottom-24 left-0 right-0 px-4 py-3 bg-gradient-to-t from-primary via-primary to-transparent backdrop-blur-sm border-t border-gray-200/20 z-20">
@@ -568,17 +562,6 @@ export default function UserMainPage() {
           setEditingInterest(null);
         }}
         onSave={handleSaveInterest}
-      />
-
-      <ConfirmDialog
-        open={confirmDeleteOpen}
-        title="Excluir Interesse"
-        description={`Tem certeza que deseja excluir "${interestToDelete?.interest_name}"?`}
-        onCancel={() => {
-          setConfirmDeleteOpen(false);
-          setInterestToDelete(null);
-        }}
-        onConfirm={confirmDelete}
       />
     </div>
   );
