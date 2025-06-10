@@ -105,9 +105,8 @@ export default function UserMainPage() {
               interest.interest_area_id.toString() === interestData.id
                 ? {
                     ...interest,
-                    observation_concept_id: 2000301, // Conceito padrão para interesses personalizados
                     interest_name: interestData.interest_name,
-                    triggers: interestData.triggers.map((t) => ({ trigger_name: t, observation_concept_id: 2000201 })),
+                    triggers: interestData.triggers.map((t) => ({ trigger_name: t })),
                   }
                 : interest
             )
@@ -116,12 +115,9 @@ export default function UserMainPage() {
       } else {
         // Criando novo interesse personalizado
         const newInterestArea: InterestArea = {
-          observation_concept_id: 2000301, // Conceito padrão para interesses personalizados
           interest_name: interestData.interest_name,
-          triggers: interestData.triggers.map((t) => ({ 
-            trigger_name: t,
-            observation_concept_id: 2000201, // Conceito padrão para gatilhos personalizados
-          })),
+          is_custom: true,
+          triggers: interestData.triggers.map((t) => ({ trigger_name: t })),
         };
 
         const result = await InterestAreasService.personInterestAreasCreate(newInterestArea);

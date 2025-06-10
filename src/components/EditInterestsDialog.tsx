@@ -18,7 +18,7 @@ interface EditInterestDialogProps {
   initialData?: {
     id?: string;
     interest_name: string;
-    triggers: { trigger_name: string }[];
+    triggers: string[]; // Mudança aqui: direto array de strings
   };
   onSave: (updatedData: {
     id?: string;
@@ -39,8 +39,9 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
 
   useEffect(() => {
     if (open && initialData) {
-      setName(initialData.interest_name);
-      setQuestions(initialData.triggers.map((t) => t.trigger_name));
+      setName(initialData.interest_name || "");
+      // Agora funciona direto com array de strings
+      setQuestions(initialData.triggers || []);
     } else {
       setName("");
       setQuestions([]);
@@ -56,8 +57,8 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
     }
   };
 
-  const handleRemoveQuestion = (text: string) => {
-    setQuestions((prev) => prev.filter((q) => q !== text));
+  const handleRemoveQuestion = (index: number) => {
+    setQuestions((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = () => {
@@ -70,8 +71,16 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
     onClose();
   };
 
+  // Função para resetar o dialog quando fechar
+  const handleClose = () => {
+    setName("");
+    setQuestions([]);
+    setNewQuestion("");
+    onClose();
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogOverlay className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9998]" />
       <DialogContent className="bg-[var(--primary)] text-[var(--typography)] z-[9999] w-[min(90vw,400px)] rounded-xl">
         <DialogHeader>
@@ -79,7 +88,10 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
             {initialData ? "Editar interesse" : "Novo interesse"}
           </DialogTitle>
           <DialogDescription className="text-sm text-gray-500">
-            Altere o nome ou as perguntas desta área de interesse.
+            {initialData 
+              ? "Altere o nome ou as perguntas desta área de interesse."
+              : "Crie um novo interesse personalizado com suas próprias perguntas."
+            }
           </DialogDescription>
         </DialogHeader>
 
@@ -92,13 +104,21 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
           />
 
           <div>
-            <label className="block text-base font-semibold text-[var(--typography)] mb-1">Perguntas</label>
+            <label className="block text-base font-semibold text-[var(--typography)] mb-1">
+              Perguntas ({questions.length})
+            </label>
             <div className="flex gap-2 mb-2">
               <div className="flex-1">
                 <TextField
                   placeholder="Nova pergunta"
                   value={newQuestion}
                   onChange={(e) => setNewQuestion(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddQuestion();
+                    }
+                  }}
                   className="w-full text-sm"
                 />
               </div>
@@ -113,26 +133,32 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
             </div>
 
             <div className="flex flex-wrap gap-2 max-h-32 overflow-y-hidden hover:overflow-y-auto scrollbar-thin pr-1 transition-all">
-              {questions.map((q) => (
+              {questions.map((q, index) => (
                 <span
-                  key={q}
+                  key={`${q}-${index}`} // Key única usando conteúdo + índice
                   className="bg-selection text-white px-3 py-1 rounded-full flex items-center gap-2 max-w-[240px] truncate animate-fade-in"
                   title={q}
                 >
                   {q}
                   <X
                     size={14}
-                    className="cursor-pointer"
-                    onClick={() => handleRemoveQuestion(q)}
+                    className="cursor-pointer hover:scale-110 transition-transform"
+                    onClick={() => handleRemoveQuestion(index)}
                   />
                 </span>
               ))}
             </div>
+            
+            {questions.length === 0 && (
+              <p className="text-xs text-gray-500 mt-2 italic">
+                Adicione pelo menos uma pergunta para continuar
+              </p>
+            )}
           </div>
         </div>
 
         <DialogFooter className="mt-6 flex justify-end gap-4">
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
           <Button
@@ -140,7 +166,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
             onClick={handleSubmit}
             disabled={!name.trim() || questions.length === 0}
           >
-            Salvar
+            {initialData ? "Salvar Alterações" : "Criar Interesse"}
           </Button>
         </DialogFooter>
       </DialogContent>
