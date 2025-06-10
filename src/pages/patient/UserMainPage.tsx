@@ -8,7 +8,7 @@ import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
 import { Button } from "@/components/forms/button";
 import EditInterestDialog from "../../components/EditInterestsDialog";
-import { ConfirmDialog } from "@/components/ui/confirmDialog";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 // Extended interface for API response that includes the ID
 interface InterestAreaResponse extends InterestArea {
@@ -105,8 +105,9 @@ export default function UserMainPage() {
               interest.interest_area_id.toString() === interestData.id
                 ? {
                     ...interest,
+                    observation_concept_id: 2000301, // Conceito padrão para interesses personalizados
                     interest_name: interestData.interest_name,
-                    triggers: interestData.triggers.map((t) => ({ trigger_name: t })),
+                    triggers: interestData.triggers.map((t) => ({ trigger_name: t, observation_concept_id: 2000201 })),
                   }
                 : interest
             )
@@ -115,15 +116,23 @@ export default function UserMainPage() {
       } else {
         // Criando novo interesse personalizado
         const newInterestArea: InterestArea = {
-          observation_concept_id: parseInt(interestData.id || "0", 10) || undefined,
+          observation_concept_id: 2000301, // Conceito padrão para interesses personalizados
           interest_name: interestData.interest_name,
-          triggers: interestData.triggers.map((t) => ({ trigger_name: t })),
+          triggers: interestData.triggers.map((t) => ({ 
+            trigger_name: t,
+            observation_concept_id: 2000201, // Conceito padrão para gatilhos personalizados
+          })),
         };
 
         const result = await InterestAreasService.personInterestAreasCreate(newInterestArea);
         
         if (result && "interest_area_id" in result) {
-          const newInterestWithId = result as InterestAreaResponse;
+          const newInterestWithId = {
+            ...result,
+            interest_name: interestData.interest_name,
+            triggers: interestData.triggers.map((t) => ({ trigger_name: t })),
+            is_custom: true
+          } as InterestAreaResponse;
           setUserInterestObjects((prev) => [...prev, newInterestWithId]);
         }
       }
@@ -284,7 +293,7 @@ export default function UserMainPage() {
       </div>
 
       {/* MENSAGENS DE SUCESSO/ERRO - Fixas acima dos botões */}
-      <div className="fixed bottom-32 left-0 right-0 px-4 z-20">
+      <div className="fixed bottom-36 left-0 right-0 px-4 z-20">
         {syncSuccess && (
           <div className="flex justify-center mb-2">
             <div className="inline-block p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 rounded-lg shadow-lg backdrop-blur-sm animate-in slide-in-from-bottom-5 duration-300">
@@ -308,7 +317,7 @@ export default function UserMainPage() {
       </div>
 
       {/* BOTÕES FIXOS - Sempre visíveis acima da navegação */}
-      <div className="fixed bottom-20 left-0 right-0 px-4 py-3 bg-gradient-to-t from-primary via-primary to-transparent backdrop-blur-sm border-t border-gray-200/20 z-20">
+      <div className="fixed bottom-24 left-0 right-0 px-4 py-3 bg-gradient-to-t from-primary via-primary to-transparent backdrop-blur-sm border-t border-gray-200/20 z-20">
         {editionMode ? (
           <div className="flex justify-center gap-2 max-w-md mx-auto">
             <Button 
