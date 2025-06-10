@@ -124,18 +124,6 @@ export default function ProfessionalOnboarding() {
         console.log("Submission result:", result);
 
         await fetchUserEntity();
-<<<<<<< Updated upstream
-      } catch (err) {
-        console.error("Registration error:", err);
-        if (
-          err instanceof Error &&
-          err.message &&
-          err.message.includes("professional registration")
-        ) {
-          setError(
-            "Erro ao registrar profissional: Número CNES inválido ou já cadastrado.",
-          );
-=======
       } catch (err: any) {
         const response = err?.body;
         if (response?.errors) {
@@ -143,7 +131,6 @@ export default function ProfessionalOnboarding() {
           setError(`Erro ao registrar profissional:\n${formattedErrors}`);
         } else if (response?.message) {
           setError(`Erro ao registrar profissional: ${response.message}`);
->>>>>>> Stashed changes
         } else {
           setError("Erro inesperado ao registrar profissional.");
         }
