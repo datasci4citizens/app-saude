@@ -6,6 +6,8 @@ import useSWRMutation from "swr/mutation";
 import type { FullProviderCreate } from "@/api/models/FullProviderCreate";
 import { ApiService, type ProviderCreate } from "@/api";
 import { FullProviderService } from "@/api/services/FullProviderService";
+import { SuccessMessage } from "@/components/ui/success-message";
+import { ErrorMessage } from "@/components/ui/error-message";
 
 // Define the provider data type with proper backend field naming (snake_case)
 interface ProviderData {
@@ -21,6 +23,8 @@ export default function ProfessionalOnboarding() {
   const navigate = useNavigate();
   const [provider, setProvider] = useState<ProviderCreate>({});
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Setup SWR mutation
   const { trigger, isMutating } = useSWRMutation(
@@ -33,65 +37,73 @@ export default function ProfessionalOnboarding() {
     },
   );
 
+  const clearError = () => {
+    setError(null);
+  };
+
+  const clearSuccess = () => {
+    setSuccess(null);
+  };
+
   // Handle form submission
   const handleFormSubmit = async (data: ProviderData) => {
     console.log("Professional data submitted:", data);
+
+    // Clear previous states
+    setError(null);
+    setSuccess(null);
+    setIsSubmitting(true);
 
     const provider: ProviderCreate = {
       social_name: data.social_name,
       birth_datetime: data.birth_datetime,
       professional_registration: data.professional_registration,
       specialty_concept: data.specialty_concept,
-      // will be null for now
       care_site: null,
     };
-    // save provider data
-    setProvider(provider);
-    // delay ate os dados estarem completados
 
-    // Exemplo de como recuperar o ID
+    // Save provider data
+    setProvider(provider);
+
+    // Function to fetch user entity and show success
     const fetchUserEntity = async () => {
       try {
         const result = await ApiService.apiUserEntityRetrieve();
         console.log("User entity result:", result);
 
         if (result.person_id) {
-          alert(
-            `Cadastro realizado com sucesso! Seu Person ID é: ${result.person_id}`,
-          );
+          setSuccess(`Cadastro realizado com sucesso! Seu Person ID é: ${result.person_id}`);
         } else if (result.provider_id) {
-          alert(
-            `Cadastro realizado com sucesso! Seu Provider ID é: ${result.provider_id}`,
-          );
+          setSuccess(`Cadastro realizado com sucesso! Seu Provider ID é: ${result.provider_id}`);
         } else {
-          alert("Cadastro realizado com sucesso, mas nenhum ID foi retornado.");
+          setSuccess("Cadastro realizado com sucesso!");
         }
 
-        navigate("/acs-main-page"); // Redireciona para a página principal
+        // Wait to show success message, then navigate
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        navigate("/acs-main-page");
       } catch (err) {
         console.error("Erro ao buscar entidade do usuário:", err);
-        alert("Erro ao buscar entidade do usuário.");
+        setError("Erro ao buscar informações do usuário após o cadastro.");
       }
     };
 
-    setTimeout(async () => {
-      try {
-        // Trigger the SWR mutation with form data
-        const result = await trigger();
-        console.log("Submission result:", result);
+    try {
+      // Trigger the SWR mutation with form data
+      const result = await trigger();
+      console.log("Submission result:", result);
 
-        await fetchUserEntity();
-      } catch (err) {
-        console.error("Registration error:", err);
-        // Error is already set in the mutation function
-        alert(`Erro: ${error}`);
-      }
-    }, 0);
+      await fetchUserEntity();
+    } catch (err) {
+      console.error("Registration error:", err);
+      setError("Erro ao realizar cadastro profissional. Verifique os dados e tente novamente.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Handle back button click
   const handleBackClick = (): void => {
-    // Could redirect to login or previous page
     navigate(-1); // Go back to previous page
   };
 
@@ -110,18 +122,50 @@ export default function ProfessionalOnboarding() {
         </div>
 
         <div className="pl-9 pr-9">
-          {error && (
-            <div className="bg-destructive/10 border border-destructive/20 text-destructive rounded-md p-3 mb-4">
-              <p>{error}</p>
-            </div>
+          {/* Success Message */}
+          {success && (
+            <SuccessMessage 
+              message={success}
+              className="mb-4"
+            />
           )}
 
-          {isMutating ? (
-            <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-selected"></div>
+          {/* Error Message */}
+          {error && (
+            <ErrorMessage
+              message={error}
+              onClose={clearError}
+              onRetry={clearError}
+              variant="destructive"
+              className="mb-4"
+            />
+          )}
+
+          {/* Loading State */}
+          {(isMutating || isSubmitting) && !success ? (
+            <div className="flex flex-col items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-selected mb-4"></div>
+              <p className="text-typography text-sm text-center">
+                {success ? "Finalizando cadastro..." : "Processando dados profissionais..."}
+              </p>
             </div>
-          ) : (
+          ) : !success ? (
             <ProfessionalInfoForm onSubmit={handleFormSubmit} />
+          ) : null}
+
+          {/* Show success state with option to navigate manually */}
+          {success && (
+            <div className="text-center mt-6">
+              <p className="text-typography text-sm mb-4">
+                Redirecionando para a página principal...
+              </p>
+              <button
+                onClick={() => navigate("/acs-main-page")}
+                className="px-6 py-2 bg-selected hover:bg-selected/80 rounded-full text-accent2 font-medium transition-colors"
+              >
+                Ir para página principal
+              </button>
+            </div>
           )}
         </div>
       </div>
