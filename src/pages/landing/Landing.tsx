@@ -1,11 +1,13 @@
-import React from "react";
+import React, {useState} from "react";
 import GoogleSignin from "@/components/ui/google-signin";
 import landingImage from "@/lib/images/landing.png";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 import { AuthService } from "@/api/services/AuthService";
 import { Capacitor } from "@capacitor/core";
 import { useGoogleLogin } from "@react-oauth/google";
-import { AccountService } from "@/api";
+import { type AuthTokenResponse } from "@/api";
+import { setDefaultResultOrder } from "dns";
+import { set } from "react-hook-form";
 
 const isMobile = Capacitor.isNativePlatform();
 
@@ -14,25 +16,32 @@ interface LandingScreenProps {
 }
 
 export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
+  
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  
   const loginMobile = async () => {
     try {
+      setIsLoading(true);
+      setError(null);
+
       await GoogleAuth.signOut(); // força novo login completo
       const googleUser = await GoogleAuth.signIn();
       const idToken = googleUser.authentication.idToken;
       localStorage.removeItem("accessToken");
-      const { access, refresh, role } = await AuthService.authLoginGoogleCreate(
-        {
-          token: idToken,
-        },
-      );
+      const loginResponse = await AuthService.authLoginGoogleCreate({
+        token: idToken,
+      });
 
-      handleLoginSuccess(access, refresh, role);
+      handleLoginSuccess(loginResponse);
     } catch (err: any) {
       const message = err?.message || err;
       const full = JSON.stringify(err, Object.getOwnPropertyNames(err));
-
-      alert("Erro ao logar:\n" + message + "\n\nDetalhes:\n" + full);
       console.error("Erro ao logar (mobile):", err);
+
+      setError("Falha ao fazer login. Por favor, tente novamente.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -41,15 +50,22 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
     onSuccess: async ({ code }) => {
       try {
         localStorage.removeItem("accessToken");
-        const { access, refresh, role } =
-          await AuthService.authLoginGoogleCreate({
-            code: code,
-          });
+        const loginResponse = await AuthService.authLoginGoogleCreate({
+          code: code,
+        });
 
-        handleLoginSuccess(access, refresh, role);
+        handleLoginSuccess(loginResponse);
       } catch (err) {
         console.error("Erro ao logar (web):", err);
+        setError("Falha ao fazer login. Por favor, tente novamente.");
+      } finally {
+        setIsLoading(false);
       }
+    },
+    onError: (error) => {
+      console.error("Erro ao logar (web):", error);
+      setError("Falha ao fazer login. Por favor, tente novamente.");
+      setIsLoading(false);
     },
   });
 
@@ -61,30 +77,25 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
     }
   };
 
-  const handleLoginSuccess = async (
-    access: string,
-    refresh: string,
-    role: string,
-  ) => {
-    localStorage.setItem("accessToken", access);
-    localStorage.setItem("refreshToken", refresh);
-    localStorage.setItem("role", role);
+  const handleLoginSuccess = async (loginResponse: AuthTokenResponse) => {
+    localStorage.setItem("accessToken", loginResponse.access);
+    localStorage.setItem("refreshToken", loginResponse.refresh);
+    localStorage.setItem("role", loginResponse.role);
+    localStorage.setItem("userId", String(loginResponse.user_id));
+    localStorage.setItem("fullname", loginResponse.full_name || "");
+    localStorage.setItem("profileImage", loginResponse.profile_picture || "");
 
-    try {
-      const accountData = await AccountService.apiAccountList();
-      localStorage.setItem("fullname", accountData.full_name || "");
-    } catch (err) {
-      console.error("Erro ao buscar conta:", err);
-      localStorage.setItem("fullname", "");
-    }
-
-    if (role === "provider") {
+    if (loginResponse.role === "provider") {
       window.location.href = "/acs-main-page";
-    } else if (role === "person") {
+    } else if (loginResponse.role === "person") {
       window.location.href = "/user-main-page";
     } else {
       onNext();
     }
+  };
+
+  const clearError = () => {
+    setError(null);
   };
 
   return (
@@ -94,6 +105,30 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
         <p className="subtitle">
           Aplicativo dedicado à sua saúde mental e tratamento
         </p>
+
+        {/* Error Message Display */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 mt-4 mx-4">
+            <div className="flex justify-between items-start">
+              <p className="text-sm">{error}</p>
+              <button
+                onClick={clearError}
+                className="text-red-500 hover:text-red-700 text-lg font-bold ml-2"
+                aria-label="Fechar erro"
+              >
+                ×
+              </button>
+            </div>
+            <div className="mt-2">
+              <button
+                onClick={() => setError(null)}
+                className="text-sm text-red-600 hover:text-red-800 underline"
+              >
+                Tentar novamente
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="illustration-container">
           <div className="meditation-circles">
