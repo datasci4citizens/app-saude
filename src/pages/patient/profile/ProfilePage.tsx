@@ -66,7 +66,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     try {
       await LogoutService.authLogoutCreate({ refresh });
       setSuccess("Logout realizado com sucesso!");
-      
+
       // Clear tokens and navigate after showing success message
       setTimeout(() => {
         localStorage.removeItem("accessToken");
@@ -74,7 +74,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
         navigate("/welcome");
       }, 1500);
     } catch (error: any) {
-      const errorMessage = error?.message 
+      const errorMessage = error?.message
         ? `Erro ao fazer logout: ${error.message}`
         : "Erro ao fazer logout. Tente novamente.";
       setError(errorMessage);
@@ -92,7 +92,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     const confirmed = window.confirm(
       `Tem certeza que deseja excluir a sua conta? Esta ação não pode ser desfeita.`,
     );
-    
+
     if (!confirmed) return;
 
     setIsLoading(true);
@@ -101,7 +101,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     try {
       await AccountService.apiAccountDestroy(personId);
       setSuccess("Conta excluída com sucesso!");
-      
+
       // Clear tokens and navigate after showing success message
       setTimeout(() => {
         localStorage.removeItem("accessToken");
@@ -175,14 +175,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       {/* Menu Items */}
       <div className="z-10 h-[calc(100vh-12rem)] mt-[-15px]">
         <div className="px-4 bg-primary rounded-xl shadow-sm h-full pt-4">
-          
           {/* Success Message */}
-          {success && (
-            <SuccessMessage 
-              message={success} 
-              className="mb-4"
-            />
-          )}
+          {success && <SuccessMessage message={success} className="mb-4" />}
 
           {/* Error Message */}
           {error && (
@@ -208,7 +202,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
               <React.Fragment key={index}>
                 <li
                   className={`px-4 py-4 flex justify-between items-center cursor-pointer hover:bg-gray1 transition-colors rounded-md ${
-                    isLoading ? 'opacity-50 pointer-events-none' : ''
+                    isLoading ? "opacity-50 pointer-events-none" : ""
                   }`}
                   onClick={item.onClick}
                 >
@@ -227,7 +221,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
           </ul>
         </div>
       </div>
-      
+
       <BottomNavigationBar
         variant="user"
         initialActiveId="profile"
