@@ -35,6 +35,9 @@
     --homeblob2: #2c78f9ff;
     --homeblob2-background: #2c78f9ff;
     --destructive: #ff4d4f;
+    --success: #85e191;
+    --success-foreground: #065f19;
+    --success-text: #006924;
   }
 
   .theme-dark {
@@ -68,6 +71,9 @@
     --homeblob2: #1f478cff;
     --homeblob2-background: #1f478cff;
     --destructive: #ff4d4f;
+    --success: #85e191;
+    --success-foreground: #065f19;
+    --success-text: #006924;
   }
 
   [class^="mgc_"]::before,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import GoogleSignin from "@/components/ui/google-signin";
 import landingImage from "@/lib/images/landing.png";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
@@ -6,6 +6,8 @@ import { AuthService } from "@/api/services/AuthService";
 import { Capacitor } from "@capacitor/core";
 import { useGoogleLogin } from "@react-oauth/google";
 import { type AuthTokenResponse } from "@/api";
+import { setDefaultResultOrder } from "dns";
+import { set } from "react-hook-form";
 
 const isMobile = Capacitor.isNativePlatform();
 
@@ -14,8 +16,14 @@ interface LandingScreenProps {
 }
 
 export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const loginMobile = async () => {
     try {
+      setIsLoading(true);
+      setError(null);
+
       await GoogleAuth.signOut(); // força novo login completo
       const googleUser = await GoogleAuth.signIn();
       const idToken = googleUser.authentication.idToken;
@@ -28,9 +36,11 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
     } catch (err: any) {
       const message = err?.message || err;
       const full = JSON.stringify(err, Object.getOwnPropertyNames(err));
-
-      alert("Erro ao logar:\n" + message + "\n\nDetalhes:\n" + full);
       console.error("Erro ao logar (mobile):", err);
+
+      setError("Falha ao fazer login. Por favor, tente novamente.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -46,7 +56,15 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
         handleLoginSuccess(loginResponse);
       } catch (err) {
         console.error("Erro ao logar (web):", err);
+        setError("Falha ao fazer login. Por favor, tente novamente.");
+      } finally {
+        setIsLoading(false);
       }
+    },
+    onError: (error) => {
+      console.error("Erro ao logar (web):", error);
+      setError("Falha ao fazer login. Por favor, tente novamente.");
+      setIsLoading(false);
     },
   });
 
@@ -75,6 +93,10 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
     }
   };
 
+  const clearError = () => {
+    setError(null);
+  };
+
   return (
     <div className="onboarding-screen landing-screen">
       <div className="content">
@@ -82,6 +104,30 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
         <p className="subtitle">
           Aplicativo dedicado à sua saúde mental e tratamento
         </p>
+
+        {/* Error Message Display */}
+        {error && (
+          <div className="bg-destructive border-destructive rounded-lg p-4 text-white mt-4 mx-4">
+            <div className="flex justify-between items-start">
+              <p className="text-sm">{error}</p>
+              <button
+                onClick={clearError}
+                className="text-white hover:text-white text-lg font-bold ml-2"
+                aria-label="Fechar erro"
+              >
+                ×
+              </button>
+            </div>
+            <div className="mt-2">
+              <button
+                onClick={() => setError(null)}
+                className="text-sm text-white hover:text-white underline"
+              >
+                Tentar novamente
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="illustration-container">
           <div className="meditation-circles">

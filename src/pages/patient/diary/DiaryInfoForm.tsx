@@ -10,6 +10,8 @@ import { DiaryService } from "@/api/services/DiaryService"; // diariesCreate met
 import { DateRangeTypeEnum } from "@/api";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
+import { SuccessMessage } from "@/components/ui/success-message";
+import { ErrorMessage } from "@/components/ui/error-message";
 
 // Properly define interface for triggers
 interface Trigger {
@@ -35,6 +37,8 @@ export default function DiaryInfoForm() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingInterests, setIsLoadingInterests] = useState(true);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
   const [openTriggers, setOpenTriggers] = useState<Record<number, boolean>>({});
   const [timeRange, setTimeRange] = useState<"today" | "sinceLast">(
     "sinceLast",
@@ -157,6 +161,7 @@ export default function DiaryInfoForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError(null);
 
     try {
       // Format interest areas according to the expected API structure
@@ -204,18 +209,39 @@ export default function DiaryInfoForm() {
       console.log("Submitting diary:", diary);
 
       await DiaryService.diariesCreate(diary);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setSubmitSuccess(true);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       navigate("/diary");
     } catch (error) {
       console.error("Failed to submit diary", error);
-      alert("Ocorreu um erro ao salvar o diário. Por favor, tente novamente.");
+      setSubmitError(
+        "Ocorreu um erro ao salvar o diário. Por favor, tente novamente.",
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
+  const clearSubmitError = () => {
+    setSubmitError(null);
+  };
 
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl mx-auto px-4 space-y-6">
+      {/* Success message - show above error */}
+      {submitSuccess && (
+        <SuccessMessage message="Diário salvo com sucesso! Redirecionando..." />
+      )}
+
+      {/* error message display */}
+      {submitError && (
+        <ErrorMessage
+          message={submitError}
+          onClose={clearSubmitError}
+          onRetry={clearSubmitError}
+          variant="destructive"
+        />
+      )}
+
       {/* Time Range Section */}
       <div className="space-y-3">
         <h3 className="font-semibold text-lg text-accent2-700 mb-1">

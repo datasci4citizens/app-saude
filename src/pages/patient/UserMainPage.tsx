@@ -7,6 +7,8 @@ import { useInterestAreasConcepts } from "@/utils/conceptLoader";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
 import { Button } from "@/components/forms/button";
+import SuccessMessage from "@/components/ui/success-message";
+import ErrorMessage from "@/components/ui/error-message";
 import EditInterestDialog from "../../components/EditInterestsDialog";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
@@ -14,10 +16,16 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 interface InterestAreaResponse extends InterestArea {
   interest_area_id: number;
   concept_id?: number;
+  interest_name?: string;
 }
 
 export default function UserMainPage() {
   const navigate = useNavigate();
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const [originalInterests, setOriginalInterests] = useState<string[]>([]);
+  const [duplicateInterestError, setDuplicateInterestError] = useState<
+    string | null
+  >(null);
 
   // Estados principais
   const [userInterestObjects, setUserInterestObjects] = useState<
@@ -68,6 +76,106 @@ export default function UserMainPage() {
       setIsSyncing(true);
       setSyncError(null);
 
+    setSyncError(null);
+    setDuplicateInterestError(null);
+    setIsSyncing(true);
+
+    try {
+      // Find which interests were added and removed
+      const addedInterests = selectedInterests.filter(
+        (id) => !originalInterests.includes(id),
+      );
+      const removedInterests = originalInterests.filter(
+        (id) => !selectedInterests.includes(id),
+      );
+
+      // Check ALL added interests for duplicates BEFORE processing any
+      const duplicateInterests: string[] = [];
+
+      for (const interestId of addedInterests) {
+        const existingInterest = all_interests.find(
+          (interest_area) =>
+            interest_area.observation_concept_id === parseInt(interestId),
+        );
+
+        if (existingInterest) {
+          const interestName =
+            existingInterest.interest_name || "Interesse sem nome";
+          duplicateInterests.push(interestName);
+        }
+      }
+
+      // If we found ANY duplicates, show error and stop processing
+      if (duplicateInterests.length > 0) {
+        if (duplicateInterests.length === 1) {
+          setDuplicateInterestError(
+            `O interesse "${duplicateInterests[0]}" já foi adicionado anteriormente`,
+          );
+        } else {
+          setDuplicateInterestError(
+            `Os seguintes interesses já foram adicionados: ${duplicateInterests.join(", ")}`,
+          );
+        }
+        setIsSyncing(false);
+        return; // Stop execution here
+      }
+
+      // Create new interests
+      for (const interestId of addedInterests) {
+        const interestOption = interestAreasOptions.find(
+          (opt) => opt.value === interestId,
+        );
+
+        if (interestOption) {
+          const newInterestArea: InterestArea = {
+            observation_concept_id: parseInt(interestId),
+          };
+
+          console.log(interestId);
+          console.log("new", newInterestArea);
+
+          // Verificar se o interesse já existe
+          let interestExists = false;
+          let existingInterestName = "";
+          for (const interest_area of all_interests) {
+            if (interest_area.observation_concept_id === parseInt(interestId)) {
+              if (interest_area.interest_name) {
+                existingInterestName = interest_area.interest_name;
+              } else {
+                existingInterestName = "";
+              }
+              interestExists = true;
+              break;
+            }
+          }
+
+          // Se o interesse já existe, pula para o próximo usando continue
+          if (interestExists) {
+            if (existingInterestName !== "") {
+              setDuplicateInterestError(
+                "O interesse " +
+                  existingInterestName +
+                  " já foi adicionado anteriormente",
+              );
+            } else {
+              setDuplicateInterestError("Nome do interesse não encontrado");
+            }
+            continue;
+          }
+
+          // Cria o interesse se não existir
+          const result =
+            await InterestAreasService.personInterestAreasCreate(
+              newInterestArea,
+            );
+
+          // Update our local state with the new interest object
+          if (result && "interest_area_id" in result) {
+            const newInterestWithId = result as InterestAreaResponse;
+            setUserInterestObjects((prev) => [...prev, newInterestWithId]);
+          }
+        }
+        
       if (interest.interest_area_id) {
         await InterestAreasService.personInterestAreasDestroy(
           interest.interest_area_id,
@@ -156,6 +264,14 @@ export default function UserMainPage() {
     } finally {
       setIsSyncing(false);
     }
+  };
+
+  const clearDuplicateError = () => {
+    setDuplicateInterestError(null);
+  };
+
+  const clearSyncError = () => {
+    setSyncError(null);
   };
 
   // Navigation functions
@@ -258,6 +374,43 @@ export default function UserMainPage() {
               Adicione seus interesses para começar!
             </p>
           </div>
+
+          {/* Duplicate interest error*/}
+          {duplicateInterestError && (
+            <ErrorMessage
+              message={duplicateInterestError}
+              variant="destructive"
+              onClose={clearDuplicateError}
+            />
+          )}
+
+          {/* Success message */}
+          {syncSuccess && (
+            <SuccessMessage message="Interesses salvos com sucesso!" />
+          )}
+
+          {/* Error handling for interest areas */}
+          {interestAreasError && (
+            <ErrorMessage
+              message="Erro ao carregar áreas de interesse. Tente novamente mais tarde."
+              variant="destructive"
+            />
+          )}
+
+          {/* Error handling for syncing */}
+          {syncError && (
+            <ErrorMessage
+              message={syncError}
+              variant="destructive"
+              onClose={clearSyncError}
+            />
+          )}
+        </div>
+
+        {/* Top banner */}
+        {/* Custom interest button */}
+        <div>
+          <div className="px-4 mb-2 flex justify-center">
         ) : (
           <div className="flex flex-col gap-4">
             {userInterestObjects.map((interest) => (
@@ -319,33 +472,33 @@ export default function UserMainPage() {
         )}
       </div>
 
-      {/* MENSAGENS DE SUCESSO/ERRO - Fixas acima dos botões */}
-      <div className="fixed bottom-36 left-0 right-0 px-4 z-20">
-        {syncSuccess && (
-          <div className="flex justify-center mb-2">
-            <div className="inline-block p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 rounded-lg shadow-lg backdrop-blur-sm animate-in slide-in-from-bottom-5 duration-300">
-              <div className="flex items-center gap-2">
-                <span className="text-green-600 dark:text-green-400 text-sm">
-                  ✅
-                </span>
-                <p className="font-medium text-sm">Interesses salvos!</p>
-              </div>
-            </div>
-          </div>
-        )}
-        {syncError && (
-          <div className="flex justify-center mb-2">
-            <div className="inline-block p-3 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg shadow-lg backdrop-blur-sm animate-in slide-in-from-bottom-5 duration-300">
-              <div className="flex items-center gap-2">
-                <span className="text-red-600 dark:text-red-400 text-sm">
-                  ❌
-                </span>
-                <p className="font-medium text-sm">{syncError}</p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+      // {/* MENSAGENS DE SUCESSO/ERRO - Fixas acima dos botões */}
+      // <div className="fixed bottom-36 left-0 right-0 px-4 z-20">
+       // {syncSuccess && (
+        //  <div className="flex justify-center mb-2">
+          //  <div className="inline-block p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 rounded-lg shadow-lg backdrop-blur-sm animate-in slide-in-from-bottom-5 duration-300">
+            //  <div className="flex items-center gap-2">
+             //   <span className="text-green-600 dark:text-green-400 text-sm">
+               //   ✅
+               // </span>
+              //  <p className="font-medium text-sm">Interesses salvos!</p>
+            //  </div>
+            // </div>
+          // </div>
+        // )}
+        // {syncError && (
+          // <div className="flex justify-center mb-2">
+           // <div className="inline-block p-3 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 border border-red-200 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg shadow-lg backdrop-blur-sm animate-in slide-in-from-bottom-5 duration-300">
+            //  <div className="flex items-center gap-2">
+           //     <span className="text-red-600 dark:text-red-400 text-sm">
+           //       ❌
+           //     </span>
+           //     <p className="font-medium text-sm">{syncError}</p>
+           //   </div>
+           // </div>
+         // </div>
+      // // )}
+      // </div>
 
       {/* BOTÕES FIXOS - Sempre visíveis acima da navegação */}
       <div className="fixed bottom-24 left-0 right-0 px-4 py-3 bg-gradient-to-t from-primary via-primary to-transparent backdrop-blur-sm border-t border-gray-200/20 z-20">
@@ -366,6 +519,7 @@ export default function UserMainPage() {
             >
               {isSyncing ? "..." : "✓ Salvar"}
             </Button>
+
             <Button
               onClick={handleCreateNewInterest}
               className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-200 border-0 text-sm py-2"
