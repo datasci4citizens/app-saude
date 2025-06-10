@@ -1,3 +1,4 @@
+import { text } from 'stream/consumers';
 import type { Config } from 'tailwindcss';
 import tailwindcssAnimate from 'tailwindcss-animate';
 
@@ -81,6 +82,7 @@ export default {
         success: {
           DEFAULT: 'var(--success)',
           foreground: 'var(--success-foreground)',
+          text: 'var(--success-text)',
         },
 		homeblob1:{
 			DEFAULT: 'var(--homeblob1)',

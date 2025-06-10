@@ -335,7 +335,7 @@ export default function UserMainPage() {
           {/* Success message */}
           {syncSuccess && (
             <div className="flex justify-center mt-4">
-              <div className="inline-block p-3 bg-green-100 border border-green-500 text-green-700 rounded-md">
+              <div className="inline-block p-3 bg-success border border-success-foreground text-success-text rounded-md">
                 <p className="whitespace-nowrap">
                   Interesses salvos com sucesso!
                 </p>

@@ -218,7 +218,6 @@ export default function DiaryInfoForm() {
       setIsSubmitting(false);
     }
   };
-
   const clearSubmitError = () => {
     setSubmitError(null);
   };
