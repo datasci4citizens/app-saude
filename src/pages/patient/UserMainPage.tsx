@@ -12,7 +12,12 @@ import { Button } from "@/components/forms/button";
 interface InterestAreaResponse extends InterestArea {
   interest_area_id: number;
   concept_id?: number;
+  interest_name?: string;
 }
+
+const [duplicateInterestError, setDuplicateInterestError] = useState<string | null>(null);
+
+
 
 export default function UserMainPage() {
   const navigate = useNavigate();
@@ -82,6 +87,7 @@ export default function UserMainPage() {
     console.log("All interests from server:", all_interests);
 
     setSyncError(null);
+    setDuplicateInterestError(null);
     setIsSyncing(true);
 
     try {
@@ -109,16 +115,26 @@ export default function UserMainPage() {
 
           // Verificar se o interesse já existe
           let interestExists = false;
+          let existingInterestName = "";
           for (const interest_area of all_interests) {
             if (interest_area.observation_concept_id === parseInt(interestId)) {
-              alert(`Interesse já existe: ${interest_area.concept_name}`);
+              if( interest_area.interest_name) {
+                existingInterestName = interest_area.interest_name;
+              } else {
+                existingInterestName = "";
               interestExists = true;
               break;
+              }
             }
           }
 
           // Se o interesse já existe, pula para o próximo usando continue
           if (interestExists) {
+            if(existingInterestName !== "") {
+              setDuplicateInterestError("O interesse "+ existingInterestName + " já foi adicionado anteriormente");
+            } else {
+              setDuplicateInterestError("Nome do interesse não encontrado");
+            }
             continue;
           }
 
@@ -174,6 +190,10 @@ export default function UserMainPage() {
     } finally {
       setIsSyncing(false);
     }
+  };
+
+  const clearDuplicateError = () => {
+    setDuplicateInterestError(null);
   };
 
   // Navigation functions
@@ -253,6 +273,30 @@ export default function UserMainPage() {
               {isSyncing ? "Enviando..." : "Enviar Interesses"}
             </Button>
           </div>
+
+          {/* Duplicate interest error*/}
+          {duplicateInterestError && (
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 text-orange-700 mt-4">
+              <div className="flex justify-between items-start">
+                <p className="text-sm">{duplicateInterestError}</p>
+                <button
+                  onClick={clearDuplicateError}
+                  className="text-orange-500 hover:text-orange-700 text-lg font-bold ml-2"
+                  aria-label="Fechar aviso"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="mt-2">
+                <button
+                  onClick={clearDuplicateError}
+                  className="text-sm text-orange-600 hover:text-orange-800 underline"
+                >
+                  Entendi
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Success message */}
           {syncSuccess && (
