@@ -40,7 +40,7 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
       case "destructive":
         return {
           close: "text-white hover:text-gray-2",
-          retry: "text-white hover:text-gray-2"
+          retry: "text-white hover:text-gray-2",
         };
     }
   };
@@ -50,7 +50,9 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
   const buttonStyles = getButtonStyles();
 
   return (
-    <div className={`${variantStyles} border rounded-lg p-4 mt-4 mb-4 ${className}`}>
+    <div
+      className={`${variantStyles} border rounded-lg p-4 mt-4 mb-4 ${className}`}
+    >
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-2">
           {icon}
