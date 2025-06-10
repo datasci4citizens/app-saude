@@ -11,7 +11,7 @@ import { FullPersonService } from "@/api/services/FullPersonService";
 import type { FullPersonCreate } from "@/api/models/FullPersonCreate";
 import type { AddressFormData } from "@/pages/patient/onboarding/UserInfoForm2";
 import { SuccessMessage } from "@/components/ui/success-message";
-import {ErrorMessage} from "@/components/ui/error-message";
+import { ErrorMessage } from "@/components/ui/error-message";
 
 // Define types for the incoming data from each form
 interface PersonData {
@@ -136,10 +136,10 @@ export default function UserOnboarding() {
 
           {/* Error message display */}
           {error && (
-            <ErrorMessage 
-            message={error} 
-            onClose={clearError}
-            variant="destructive"
+            <ErrorMessage
+              message={error}
+              onClose={clearError}
+              variant="destructive"
             />
           )}
 

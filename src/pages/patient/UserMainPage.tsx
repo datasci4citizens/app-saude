@@ -236,8 +236,6 @@ export default function UserMainPage() {
     setSyncError(null);
   };
 
-
-
   // Navigation functions
   const handleEmergencyClick = () => {
     navigate("/emergency-user");
@@ -278,7 +276,7 @@ export default function UserMainPage() {
   const handleCreateCustomInterest = () => {
     navigate("/user-create-interest");
   };
-  
+
   return (
     <div className="bg-primary min-h-screen pb-24 flex flex-col justify-between">
       <div>
@@ -318,31 +316,33 @@ export default function UserMainPage() {
 
           {/* Duplicate interest error*/}
           {duplicateInterestError && (
-            <ErrorMessage 
-            message={duplicateInterestError}
-            variant="destructive"
-            onClose={clearDuplicateError}/>
+            <ErrorMessage
+              message={duplicateInterestError}
+              variant="destructive"
+              onClose={clearDuplicateError}
+            />
           )}
 
           {/* Success message */}
           {syncSuccess && (
-            <SuccessMessage message="Interesses salvos com sucesso!"/>
+            <SuccessMessage message="Interesses salvos com sucesso!" />
           )}
 
           {/* Error handling for interest areas */}
           {interestAreasError && (
             <ErrorMessage
-            message="Erro ao carregar áreas de interesse. Tente novamente mais tarde."
-            variant="destructive"
+              message="Erro ao carregar áreas de interesse. Tente novamente mais tarde."
+              variant="destructive"
             />
           )}
 
           {/* Error handling for syncing */}
           {syncError && (
-            <ErrorMessage 
-            message={syncError} 
-            variant="destructive"
-            onClose={clearSyncError}/>
+            <ErrorMessage
+              message={syncError}
+              variant="destructive"
+              onClose={clearSyncError}
+            />
           )}
         </div>
 

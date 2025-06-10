@@ -137,16 +137,16 @@ export default function ViewDiaryEntry() {
   if (error || !diary) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-8">
-
         <Header
           title="Visualizar Diário"
           onBackClick={() => navigate("/diary")}
         />
 
-        <ErrorMessage 
-        message={error || "Diário não encontrado"} 
-        variant="destructive"
-        onClose={clearError}/>
+        <ErrorMessage
+          message={error || "Diário não encontrado"}
+          variant="destructive"
+          onClose={clearError}
+        />
 
         <div className="mt-6 text-center">
           <button
