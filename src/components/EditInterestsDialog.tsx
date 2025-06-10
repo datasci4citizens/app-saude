@@ -88,10 +88,9 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
             {initialData ? "Editar interesse" : "Novo interesse"}
           </DialogTitle>
           <DialogDescription className="text-sm text-gray-500">
-            {initialData 
+            {initialData
               ? "Altere o nome ou as perguntas desta área de interesse."
-              : "Crie um novo interesse personalizado com suas próprias perguntas."
-            }
+              : "Crie um novo interesse personalizado com suas próprias perguntas."}
           </DialogDescription>
         </DialogHeader>
 
@@ -114,7 +113,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
                   value={newQuestion}
                   onChange={(e) => setNewQuestion(e.target.value)}
                   onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
+                    if (e.key === "Enter") {
                       e.preventDefault();
                       handleAddQuestion();
                     }
@@ -148,7 +147,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
                 </span>
               ))}
             </div>
-            
+
             {questions.length === 0 && (
               <p className="text-xs text-gray-500 mt-2 italic">
                 Adicione pelo menos uma pergunta para continuar

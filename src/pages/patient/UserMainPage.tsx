@@ -17,21 +17,27 @@ interface InterestAreaResponse extends InterestArea {
   interest_area_id: number;
   concept_id?: number;
   is_temporary?: boolean; // Flag para identificar criados localmente
-  is_deleted?: boolean;   // Flag para identificar deletados localmente
+  is_deleted?: boolean; // Flag para identificar deletados localmente
 }
 
 export default function UserMainPage() {
   const navigate = useNavigate();
-  
+
   // Estados principais
-  const [userInterestObjects, setUserInterestObjects] = useState<InterestAreaResponse[]>([]);
-  const [originalInterests, setOriginalInterests] = useState<InterestAreaResponse[]>([]); // Para comparar mudanças
+  const [userInterestObjects, setUserInterestObjects] = useState<
+    InterestAreaResponse[]
+  >([]);
+  const [originalInterests, setOriginalInterests] = useState<
+    InterestAreaResponse[]
+  >([]); // Para comparar mudanças
   const [editionMode, setEditionMode] = useState(false);
-  const [editingInterest, setEditingInterest] = useState<InterestAreaResponse | null>(null);
+  const [editingInterest, setEditingInterest] =
+    useState<InterestAreaResponse | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [interestToDelete, setInterestToDelete] = useState<InterestAreaResponse | null>(null);
+  const [interestToDelete, setInterestToDelete] =
+    useState<InterestAreaResponse | null>(null);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-  
+
   // Estados de sincronização
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
@@ -49,7 +55,8 @@ export default function UserMainPage() {
   useEffect(() => {
     const loadExistingInterests = async () => {
       try {
-        const userInterests = (await InterestAreasService.personInterestAreasList()) as InterestAreaResponse[];
+        const userInterests =
+          (await InterestAreasService.personInterestAreasList()) as InterestAreaResponse[];
         setUserInterestObjects(userInterests);
         setOriginalInterests([...userInterests]); // Cópia para comparação
         setHasChanges(false);
@@ -69,7 +76,7 @@ export default function UserMainPage() {
     if (interest.is_temporary) {
       // Se é temporário, apenas remove da lista
       setUserInterestObjects((prev) =>
-        prev.filter((i) => i.interest_area_id !== interest.interest_area_id)
+        prev.filter((i) => i.interest_area_id !== interest.interest_area_id),
       );
     } else {
       // Se existe no servidor, marca como deletado
@@ -77,14 +84,14 @@ export default function UserMainPage() {
         prev.map((i) =>
           i.interest_area_id === interest.interest_area_id
             ? { ...i, is_deleted: true }
-            : i
-        )
+            : i,
+        ),
       );
     }
     setHasChanges(true);
   };
 
-  // Função para salvar interesse APENAS LOCALMENTE  
+  // Função para salvar interesse APENAS LOCALMENTE
   const saveInterestLocally = (interestData: {
     id?: string;
     interest_name: string;
@@ -100,10 +107,12 @@ export default function UserMainPage() {
             ? {
                 ...interest,
                 interest_name: interestData.interest_name,
-                triggers: interestData.triggers.map((t) => ({ trigger_name: t })),
+                triggers: interestData.triggers.map((t) => ({
+                  trigger_name: t,
+                })),
               }
-            : interest
-        )
+            : interest,
+        ),
       );
     } else {
       // Criando novo interesse temporário
@@ -114,7 +123,7 @@ export default function UserMainPage() {
         triggers: interestData.triggers.map((t) => ({ trigger_name: t })),
         is_temporary: true, // Flag para identificar que é temporário
       };
-      
+
       setUserInterestObjects((prev) => [...prev, tempInterest]);
     }
 
@@ -129,26 +138,34 @@ export default function UserMainPage() {
 
     try {
       // 1. Deletar interesses marcados como deletados
-      const toDelete = userInterestObjects.filter(i => i.is_deleted && !i.is_temporary);
+      const toDelete = userInterestObjects.filter(
+        (i) => i.is_deleted && !i.is_temporary,
+      );
       for (const interest of toDelete) {
-        await InterestAreasService.personInterestAreasDestroy(interest.interest_area_id);
+        await InterestAreasService.personInterestAreasDestroy(
+          interest.interest_area_id,
+        );
       }
 
       // 2. Criar novos interesses temporários
-      const toCreate = userInterestObjects.filter(i => i.is_temporary && !i.is_deleted);
+      const toCreate = userInterestObjects.filter(
+        (i) => i.is_temporary && !i.is_deleted,
+      );
       const createdInterests = [];
-      
+
       for (const interest of toCreate) {
         const newInterestArea: InterestArea = {
           interest_name: interest.interest_name,
           observation_concept_id: 2000201,
-          triggers: interest.triggers?.map((t) => ({
-            trigger_name: t.trigger_name,
-            observation_concept_id: 2000301,
-          })) || [],
+          triggers:
+            interest.triggers?.map((t) => ({
+              trigger_name: t.trigger_name,
+              observation_concept_id: 2000301,
+            })) || [],
         };
 
-        const result = await InterestAreasService.personInterestAreasCreate(newInterestArea);
+        const result =
+          await InterestAreasService.personInterestAreasCreate(newInterestArea);
         if (result && "interest_area_id" in result) {
           createdInterests.push({
             ...result,
@@ -159,28 +176,40 @@ export default function UserMainPage() {
       }
 
       // 3. Atualizar interesses modificados (deletar e recriar)
-      const toUpdate = userInterestObjects.filter(i => 
-        !i.is_temporary && 
-        !i.is_deleted && 
-        hasInterestChanged(i, originalInterests.find(o => o.interest_area_id === i.interest_area_id))
+      const toUpdate = userInterestObjects.filter(
+        (i) =>
+          !i.is_temporary &&
+          !i.is_deleted &&
+          hasInterestChanged(
+            i,
+            originalInterests.find(
+              (o) => o.interest_area_id === i.interest_area_id,
+            ),
+          ),
       );
 
       const updatedInterests = [];
       for (const interest of toUpdate) {
         // Deletar versão antiga
-        await InterestAreasService.personInterestAreasDestroy(interest.interest_area_id);
-        
+        await InterestAreasService.personInterestAreasDestroy(
+          interest.interest_area_id,
+        );
+
         // Criar versão nova
         const updatedInterestArea: InterestArea = {
           interest_name: interest.interest_name,
           observation_concept_id: 2000201,
-          triggers: interest.triggers?.map((t) => ({
-            trigger_name: t.trigger_name,
-            observation_concept_id: 2000301,
-          })) || [],
+          triggers:
+            interest.triggers?.map((t) => ({
+              trigger_name: t.trigger_name,
+              observation_concept_id: 2000301,
+            })) || [],
         };
 
-        const result = await InterestAreasService.personInterestAreasCreate(updatedInterestArea);
+        const result =
+          await InterestAreasService.personInterestAreasCreate(
+            updatedInterestArea,
+          );
         if (result && "interest_area_id" in result) {
           updatedInterests.push({
             ...result,
@@ -192,7 +221,9 @@ export default function UserMainPage() {
 
       // 4. Atualizar estado local com dados finais do servidor
       const finalInterests = [
-        ...userInterestObjects.filter(i => !i.is_temporary && !i.is_deleted && !toUpdate.includes(i)),
+        ...userInterestObjects.filter(
+          (i) => !i.is_temporary && !i.is_deleted && !toUpdate.includes(i),
+        ),
         ...createdInterests,
         ...updatedInterests,
       ];
@@ -202,7 +233,6 @@ export default function UserMainPage() {
       setHasChanges(false);
       setSyncSuccess(true);
       setTimeout(() => setSyncSuccess(false), 3000);
-
     } catch (error) {
       console.error("Error syncing with server:", error);
       setSyncError("Erro ao salvar interesses. Tente novamente.");
@@ -212,14 +242,21 @@ export default function UserMainPage() {
   };
 
   // Helper para verificar se interesse foi modificado
-  const hasInterestChanged = (current: InterestAreaResponse, original?: InterestAreaResponse) => {
+  const hasInterestChanged = (
+    current: InterestAreaResponse,
+    original?: InterestAreaResponse,
+  ) => {
     if (!original) return false;
-    
-    const currentTriggers = current.triggers?.map(t => t.trigger_name).sort() || [];
-    const originalTriggers = original.triggers?.map(t => t.trigger_name).sort() || [];
-    
-    return current.interest_name !== original.interest_name ||
-           JSON.stringify(currentTriggers) !== JSON.stringify(originalTriggers);
+
+    const currentTriggers =
+      current.triggers?.map((t) => t.trigger_name).sort() || [];
+    const originalTriggers =
+      original.triggers?.map((t) => t.trigger_name).sort() || [];
+
+    return (
+      current.interest_name !== original.interest_name ||
+      JSON.stringify(currentTriggers) !== JSON.stringify(originalTriggers)
+    );
   };
 
   // Navigation functions
@@ -293,7 +330,7 @@ export default function UserMainPage() {
   };
 
   // Filtrar interesses para exibição (excluir os marcados como deletados)
-  const visibleInterests = userInterestObjects.filter(i => !i.is_deleted);
+  const visibleInterests = userInterestObjects.filter((i) => !i.is_deleted);
 
   return (
     <div className="min-h-screen bg-primary relative">
@@ -304,25 +341,34 @@ export default function UserMainPage() {
           subtitle="Adicione seus interesses e acompanhe seu progresso"
           onIconClick={handleBannerIconClick}
         />
-        <h2 className="text-xl font-semibold pl-4 pb-2 mt-4 text-typography">Meus Interesses</h2>
+        <h2 className="text-xl font-semibold pl-4 pb-2 mt-4 text-typography">
+          Meus Interesses
+        </h2>
       </div>
 
       {/* Debug info - remover depois */}
-      {process.env.NODE_ENV === 'development' && (
+      {process.env.NODE_ENV === "development" && (
         <div className="fixed top-4 right-4 bg-black text-white p-2 rounded text-xs z-50">
           hasChanges: {hasChanges.toString()}
         </div>
       )}
 
       {/* ÁREA SCROLLÁVEL - Lista de Interesses */}
-      <div className="px-4 overflow-y-auto" style={{ paddingBottom: '180px', maxHeight: 'calc(100vh - 140px)' }}>
+      <div
+        className="px-4 overflow-y-auto"
+        style={{ paddingBottom: "180px", maxHeight: "calc(100vh - 140px)" }}
+      >
         {visibleInterests.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mb-4">
               <span className="text-2xl">📋</span>
             </div>
-            <p className="text-foreground text-lg font-medium mb-2">Nenhum interesse selecionado</p>
-            <p className="text-sm text-muted-foreground">Adicione seus interesses para começar!</p>
+            <p className="text-foreground text-lg font-medium mb-2">
+              Nenhum interesse selecionado
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Adicione seus interesses para começar!
+            </p>
           </div>
         ) : (
           <div className="flex flex-col gap-4">
@@ -357,23 +403,31 @@ export default function UserMainPage() {
 
                 <h3 className="font-bold text-lg text-card-foreground mb-2 flex items-center gap-2 flex-wrap">
                   <span className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex-shrink-0"></span>
-                  <span className="break-words min-w-0">{interest.interest_name}</span>
+                  <span className="break-words min-w-0">
+                    {interest.interest_name}
+                  </span>
                   {interest.is_temporary && (
                     <span className="ml-2 text-xs bg-orange-500 text-white px-2 py-1 rounded-full font-medium flex-shrink-0">
                       Não salvo
                     </span>
                   )}
-                  {interest.observation_concept_id === 2000201 && !interest.is_temporary && (
-                    <span className="ml-2 text-xs bg-violet-600 text-white dark:bg-purple-900/50 dark:text-purple-200 px-2 py-1 rounded-full font-medium border border-violet-700 dark:border-purple-700 flex-shrink-0">
-                      Personalizado
-                    </span>
-                  )}
+                  {interest.observation_concept_id === 2000201 &&
+                    !interest.is_temporary && (
+                      <span className="ml-2 text-xs bg-violet-600 text-white dark:bg-purple-900/50 dark:text-purple-200 px-2 py-1 rounded-full font-medium border border-violet-700 dark:border-purple-700 flex-shrink-0">
+                        Personalizado
+                      </span>
+                    )}
                 </h3>
                 <div className="space-y-1">
                   {interest.triggers?.map((t, index) => (
-                    <div key={`${t.trigger_name}-${index}`} className="flex items-start gap-2 text-sm text-muted-foreground">
+                    <div
+                      key={`${t.trigger_name}-${index}`}
+                      className="flex items-start gap-2 text-sm text-muted-foreground"
+                    >
                       <span className="w-1 h-1 bg-muted-foreground rounded-full flex-shrink-0 mt-2"></span>
-                      <span className="break-words min-w-0">{t.trigger_name}</span>
+                      <span className="break-words min-w-0">
+                        {t.trigger_name}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -387,8 +441,8 @@ export default function UserMainPage() {
       <div className="fixed bottom-36 left-0 right-0 px-4 z-20">
         {syncSuccess && (
           <div className="flex justify-center">
-            <SuccessMessage 
-              message="Interesses salvos com sucesso!" 
+            <SuccessMessage
+              message="Interesses salvos com sucesso!"
               className="animate-in slide-in-from-bottom-5 duration-300 shadow-lg backdrop-blur-sm"
             />
           </div>
@@ -410,8 +464,8 @@ export default function UserMainPage() {
       <div className="fixed bottom-24 left-0 right-0 px-4 py-3 bg-gradient-to-t from-primary via-primary to-transparent backdrop-blur-sm border-t border-gray-200/20 z-20">
         {editionMode ? (
           <div className="flex justify-center gap-2 max-w-md mx-auto">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={handleCancelChanges}
               className="flex-1 bg-background/50 border-border/30 text-foreground hover:bg-background/70 transition-all duration-200 backdrop-blur-sm text-sm py-2"
               disabled={isSyncing}
@@ -421,11 +475,15 @@ export default function UserMainPage() {
             <Button
               onClick={handleSaveChanges}
               className={`flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-200 border-0 text-sm py-2 ${
-                !hasChanges ? 'opacity-50 cursor-not-allowed' : ''
+                !hasChanges ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={isSyncing || !hasChanges}
             >
-              {isSyncing ? "..." : hasChanges ? "✓ Salvar Mudanças" : "✓ Salvar"}
+              {isSyncing
+                ? "..."
+                : hasChanges
+                  ? "✓ Salvar Mudanças"
+                  : "✓ Salvar"}
             </Button>
             <Button
               onClick={handleCreateNewInterest}
@@ -460,11 +518,16 @@ export default function UserMainPage() {
       {/* DIALOGS */}
       <EditInterestDialog
         open={dialogOpen}
-        initialData={editingInterest ? {
-          id: editingInterest.interest_area_id.toString(),
-          interest_name: editingInterest.interest_name || '',
-          triggers: editingInterest.triggers?.map(t => t.trigger_name) || []
-        } : undefined}
+        initialData={
+          editingInterest
+            ? {
+                id: editingInterest.interest_area_id.toString(),
+                interest_name: editingInterest.interest_name || "",
+                triggers:
+                  editingInterest.triggers?.map((t) => t.trigger_name) || [],
+              }
+            : undefined
+        }
         onClose={() => {
           setDialogOpen(false);
           setEditingInterest(null);
