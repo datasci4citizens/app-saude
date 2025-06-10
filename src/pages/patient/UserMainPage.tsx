@@ -153,8 +153,12 @@ export default function UserMainPage() {
 
           // Se o interesse já existe, pula para o próximo usando continue
           if (interestExists) {
-            if(existingInterestName !== "") {
-              setDuplicateInterestError("O interesse "+ existingInterestName + " já foi adicionado anteriormente");
+            if (existingInterestName !== "") {
+              setDuplicateInterestError(
+                "O interesse " +
+                  existingInterestName +
+                  " já foi adicionado anteriormente",
+              );
             } else {
               setDuplicateInterestError("Nome do interesse não encontrado");
             }
