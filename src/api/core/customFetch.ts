@@ -55,24 +55,28 @@ export const customFetch: typeof fetch = async (input, init = {}) => {
 
   const doRequest = () => {
     let isJson = false;
-    
+
     // Check if body should be treated as JSON
     if (init.body) {
       // If it's already a string that looks like JSON
-      if (typeof init.body === "string" && 
-          (init.body.trim().startsWith("{") || init.body.trim().startsWith("["))) {
+      if (
+        typeof init.body === "string" &&
+        (init.body.trim().startsWith("{") || init.body.trim().startsWith("["))
+      ) {
         isJson = true;
       }
       // If it's an object (not FormData, not Blob, etc.)
-      else if (typeof init.body === "object" && 
-              !(init.body instanceof FormData) && 
-              !(init.body instanceof Blob) &&
-              !(init.body instanceof URLSearchParams)) {
+      else if (
+        typeof init.body === "object" &&
+        !(init.body instanceof FormData) &&
+        !(init.body instanceof Blob) &&
+        !(init.body instanceof URLSearchParams)
+      ) {
         isJson = true;
         // Stringify the object if it's not already a string
-        init = { 
-          ...init, 
-          body: JSON.stringify(init.body) 
+        init = {
+          ...init,
+          body: JSON.stringify(init.body),
         };
       }
     }
@@ -86,7 +90,7 @@ export const customFetch: typeof fetch = async (input, init = {}) => {
         ...(isJson ? { "Content-Type": "application/json" } : {}),
       },
     });
-};
+  };
 
   let response = await doRequest();
 
