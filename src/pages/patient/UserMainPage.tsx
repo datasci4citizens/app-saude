@@ -119,7 +119,7 @@ export default function UserMainPage() {
       const tempInterest: InterestAreaResponse = {
         interest_area_id: Date.now(), // ID temporário único
         interest_name: interestData.interest_name,
-        observation_concept_id: 2000201,
+        observation_concept_id: 2000000201,
         triggers: interestData.triggers.map((t) => ({ trigger_name: t })),
         is_temporary: true, // Flag para identificar que é temporário
       };
@@ -156,11 +156,11 @@ export default function UserMainPage() {
       for (const interest of toCreate) {
         const newInterestArea: InterestArea = {
           interest_name: interest.interest_name,
-          observation_concept_id: 2000201,
+          observation_concept_id: 2000000201,
           triggers:
             interest.triggers?.map((t) => ({
               trigger_name: t.trigger_name,
-              observation_concept_id: 2000301,
+              observation_concept_id: 2000000301,
             })) || [],
         };
 
@@ -198,11 +198,11 @@ export default function UserMainPage() {
         // Criar versão nova
         const updatedInterestArea: InterestArea = {
           interest_name: interest.interest_name,
-          observation_concept_id: 2000201,
+          observation_concept_id: 2000000201,
           triggers:
             interest.triggers?.map((t) => ({
               trigger_name: t.trigger_name,
-              observation_concept_id: 2000301,
+              observation_concept_id: 2000000301,
             })) || [],
         };
 
@@ -404,7 +404,7 @@ export default function UserMainPage() {
                       Não salvo
                     </span>
                   )}
-                  {interest.observation_concept_id === 2000201 &&
+                  {interest.observation_concept_id === 2000000201 &&
                     !interest.is_temporary && (
                       <span className="ml-2 text-xs bg-violet-600 text-white dark:bg-purple-900/50 dark:text-purple-200 px-2 py-1 rounded-full font-medium border border-violet-700 dark:border-purple-700 flex-shrink-0">
                         Personalizado

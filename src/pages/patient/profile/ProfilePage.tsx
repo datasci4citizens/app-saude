@@ -151,7 +151,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
           localStorage.removeItem("refreshToken");
           navigate("/welcome");
         } catch (error) {
-          alert("Erro ao excluir conta. Tente novamente.");
+          setError("Erro ao excluir conta. Tente novamente.");
           console.error(error);
         }
       },
