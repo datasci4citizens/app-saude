@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileBanner from "@/components/ui/profile-banner";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
@@ -6,7 +6,6 @@ import { AccountService } from "@/api/services/AccountService";
 import { LogoutService } from "@/api/services/LogoutService";
 import { SuccessMessage } from "@/components/ui/success-message";
 import { ErrorMessage } from "@/components/ui/error-message";
-import { ApiService } from "@/api/services/ApiService";
 
 interface AcsProfileMenuItem {
   title: string;
@@ -26,30 +25,12 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
   onEditProfile,
 }) => {
   const navigate = useNavigate();
-  const [providerId, setProviderId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchProviderId = async () => {
-      try {
-        const userEntity = await ApiService.apiUserEntityRetrieve();
-        setProviderId(userEntity.provider_id);
-      } catch (error) {
-        console.error("Erro ao buscar provider_id:", error);
-        setError("Erro ao carregar informações do profissional.");
-      }
-    };
-    fetchProviderId();
-  }, []);
-
   const clearError = () => {
     setError(null);
-  };
-
-  const clearSuccess = () => {
-    setSuccess(null);
   };
 
   const handleLogout = async () => {
@@ -77,39 +58,6 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
         ? `Erro ao fazer logout: ${error.message}`
         : "Erro ao fazer logout. Tente novamente.";
       setError(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDeleteAccount = async () => {
-    if (!providerId) {
-      setError("ID do profissional não encontrado. Tente recarregar a página.");
-      return;
-    }
-
-    const confirmed = window.confirm(
-      `Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.`,
-    );
-
-    if (!confirmed) return;
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      await AccountService.apiAccountDestroy(providerId);
-      setSuccess("Conta excluída com sucesso!");
-
-      // Clear tokens and navigate after showing success message
-      setTimeout(() => {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        navigate("/welcome");
-      }, 1500);
-    } catch (error) {
-      setError("Erro ao excluir conta. Tente novamente.");
-      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -174,52 +122,60 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
       />
 
       {/* Menu Items */}
-      <div className="z-10 h-[calc(100vh-12rem)] pt-2">
-        <div className="px-4 bg-white rounded-xl shadow-sm h-full pt-4">
-          {/* Success Message */}
-          {success && <SuccessMessage message={success} className="mb-4" />}
+      <div className="flex-1 px-8 py-6 pb-24">
+        {/* Success Message */}
+        {success && (
+          <SuccessMessage 
+            message={success} 
+            className="mb-6" 
+          />
+        )}
 
-          {/* Error Message */}
-          {error && (
-            <ErrorMessage
-              message={error}
-              onClose={clearError}
-              onRetry={clearError}
-              variant="destructive"
-              className="mb-4"
-            />
-          )}
+        {/* Error Message */}
+        {error && (
+          <ErrorMessage
+            message={error}
+            onClose={clearError}
+            variant="destructive"
+            className="mb-6"
+          />
+        )}
 
-          {/* Loading State */}
-          {isLoading && (
-            <div className="flex justify-center items-center py-4 mb-4">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-selected mr-2"></div>
-              <span className="text-typography text-sm">Processando...</span>
-            </div>
-          )}
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex justify-center items-center py-8 mb-6">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mr-3"></div>
+            <span className="text-muted-foreground text-sm">Processando...</span>
+          </div>
+        )}
 
-          <ul className="overflow-hidden">
-            {menuItems.map((item, index) => (
-              <React.Fragment key={index}>
-                <li
-                  className={`px-4 py-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 transition-colors rounded-md ${
-                    isLoading ? "opacity-50 pointer-events-none" : ""
-                  }`}
-                  onClick={item.onClick}
-                >
-                  <span className="text-gray-800 font-inter text-sm">
-                    {item.title}
-                  </span>
-                  {item.hasArrow && (
-                    <span className="mgc_right_line text-md"></span>
-                  )}
-                </li>
-                {index < menuItems.length - 1 && (
-                  <div className="border-b border-gray-100 mx-4"></div>
+        <div className="space-y-3">
+          {menuItems.map((item, index) => {
+            const isDestructiveAction = item.title === "Excluir conta";
+            const baseClasses = `w-full px-6 py-4 flex justify-between items-center cursor-pointer transition-all duration-200 rounded-lg border font-medium text-sm ${
+              isLoading ? "opacity-50 pointer-events-none" : ""
+            }`;
+            
+            const variantClasses = isDestructiveAction
+              ? "border-destructive/20 bg-destructive/5 hover:bg-destructive/10 active:bg-destructive/15 text-destructive"
+              : "border-border bg-card hover:bg-muted/50 active:bg-muted/70 text-card-foreground";
+            
+            return (
+              <button
+                key={index}
+                className={`${baseClasses} ${variantClasses}`}
+                onClick={item.onClick}
+                disabled={isLoading}
+              >
+                <span>
+                  {item.title}
+                </span>
+                {item.hasArrow && (
+                  <span className="mgc_right_line text-muted-foreground text-lg"></span>
                 )}
-              </React.Fragment>
-            ))}
-          </ul>
+              </button>
+            );
+          })}
         </div>
       </div>
 
