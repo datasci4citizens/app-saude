@@ -124,12 +124,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
       {/* Menu Items */}
       <div className="flex-1 px-8 py-6 pb-24">
         {/* Success Message */}
-        {success && (
-          <SuccessMessage 
-            message={success} 
-            className="mb-6" 
-          />
-        )}
+        {success && <SuccessMessage message={success} className="mb-6" />}
 
         {/* Error Message */}
         {error && (
@@ -145,7 +140,9 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
         {isLoading && (
           <div className="flex justify-center items-center py-8 mb-6">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mr-3"></div>
-            <span className="text-muted-foreground text-sm">Processando...</span>
+            <span className="text-muted-foreground text-sm">
+              Processando...
+            </span>
           </div>
         )}
 
@@ -155,11 +152,11 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
             const baseClasses = `w-full px-6 py-4 flex justify-between items-center cursor-pointer transition-all duration-200 rounded-lg border font-medium text-sm ${
               isLoading ? "opacity-50 pointer-events-none" : ""
             }`;
-            
+
             const variantClasses = isDestructiveAction
               ? "border-destructive/20 bg-destructive/5 hover:bg-destructive/10 active:bg-destructive/15 text-destructive"
               : "border-border bg-card hover:bg-muted/50 active:bg-muted/70 text-card-foreground";
-            
+
             return (
               <button
                 key={index}
@@ -167,9 +164,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
                 onClick={item.onClick}
                 disabled={isLoading}
               >
-                <span>
-                  {item.title}
-                </span>
+                <span>{item.title}</span>
                 {item.hasArrow && (
                   <span className="mgc_right_line text-muted-foreground text-lg"></span>
                 )}
