@@ -5,6 +5,7 @@ interface HabitCardProps {
   className?: string;
   isAttentionPoint?: boolean;
   providerName?: string;
+  isOpen?: boolean;
 }
 
 /**
@@ -18,48 +19,65 @@ const HabitCard: React.FC<HabitCardProps> = ({
   className = "",
   isAttentionPoint = false,
   providerName = "",
+  isOpen,
 }) => {
-  return (
-    <div
-      className={`
-          relative
-          ${isAttentionPoint ? "bg-red-600 border-2 border-yellow-300 animate-pulse" : "bg-selection"}
-          text-primary-foreground
-          font-inter
-          font-bold
-          text-lg
-          py-2.5
-          px-4
-          rounded-xl
-          flex
-          items-center
-          gap-2
-          shadow-sm
-          mb-1
-          mt-3 ml-2
-          ${className}
-        `}
-    >
-      {/* Ícone de informação no canto superior direito */}
-      {isAttentionPoint && (
-        <div className="absolute -top-2 -right-2 group cursor-help z-10">
-          <div className="bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold shadow-md">
-            i
-          </div>
-          <div className="absolute bottom-full right-0 mb-1 w-56 bg-black text-white text-xs rounded p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg z-20">
-            Essa área foi marcada como ponto de atenção por {providerName}.
-            Preencha com mais detalhes ou atenção especial.
-            <div className="absolute top-full right-2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-black"></div>
-          </div>
-        </div>
-      )}
+  const baseClasses = `
+    relative
+    font-inter
+    font-bold
+    text-lg
+    py-2.5
+    px-4
+    rounded-xl
+    flex
+    items-center
+    justify-between
+    shadow-sm
+    w-full
+    space-y-1
+    transition-colors
+  `;
 
-      {isAttentionPoint && (
-        <span className="text-yellow-200 text-base flex items-center justify-center">
-          ⚠️
-        </span>
-      )}
-      <span className="leading-none">{title}</span>
+  const colorClasses = isAttentionPoint
+    ? "bg-destructive border-2 border-yellow text-white"
+    : "bg-selection text-white dark:bg-selection";
+
+  return (
+    <div className={`${baseClasses} ${colorClasses} ${className}`}>
+      <div className="flex items-center justify-between w-full">
+        {/* Área da esquerda: ⚠️ + título */}
+        <div className="flex items-center gap-2">
+          {isAttentionPoint && providerName && (
+            <div className="group relative">
+              <span className="text-yellow cursor-help">⚠️</span>
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 max-w-xs bg-black text-white text-xs rounded p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg z-20">
+                Essa área foi marcada como ponto de atenção por {providerName}.
+              </div>
+            </div>
+          )}
+
+          <span className="font-semibold">{title}</span>
+        </div>
+
+        {/* Seta colapsável (alinhada à direita sempre) */}
+        {isOpen !== undefined && (
+          <svg
+            className={`w-4 h-4 transition-transform ${
+              isOpen ? "rotate-90" : "rotate-0"
+            }`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        )}
+      </div>
     </div>
   );
 };

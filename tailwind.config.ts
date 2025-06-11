@@ -1,3 +1,4 @@
+import { text } from 'stream/consumers';
 import type { Config } from 'tailwindcss';
 import tailwindcssAnimate from 'tailwindcss-animate';
 
@@ -81,22 +82,21 @@ export default {
         success: {
           DEFAULT: 'var(--success)',
           foreground: 'var(--success-foreground)',
+          text: 'var(--success-text)',
         },
-		homeblob1:{
-			DEFAULT: 'var(--homeblob1)',
-			foreground: 'var(--homeblob1-foreground)',
-		}
-		,
-		homeblob2:{
-			DEFAULT: 'var(--homeblob2)',
-			foreground: 'var(--homeblob2-foreground)',
-		}
+        yellow: {
+          DEFAULT: 'var(--yellow)',
+        },
+        homeblob1:{
+          DEFAULT: 'var(--homeblob1)',
+          foreground: 'var(--homeblob1-foreground)',
+        },
+        homeblob2:{
+          DEFAULT: 'var(--homeblob2)',
+          foreground: 'var(--homeblob2-foreground)',
+        },
       },
     },
-  },
-  destructive: {
-    DEFAULT: 'var(--destructive)',
-    foreground: 'var(--destructive-foreground)',
   },
   plugins: [tailwindcssAnimate],
 } satisfies Config;

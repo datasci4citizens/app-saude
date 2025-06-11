@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { ApiRequestOptions } from "./ApiRequestOptions";
 import { Capacitor } from "@capacitor/core";
+import { customFetch } from "./customFetch";
 
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 type Headers = Record<string, string>;
@@ -46,4 +47,5 @@ export const OpenAPI: OpenAPIConfig = {
   PASSWORD: undefined,
   HEADERS: undefined,
   ENCODE_PATH: undefined,
+  fetch: customFetch,
 };

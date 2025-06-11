@@ -12,6 +12,7 @@ export type ProviderRetrieve = {
   readonly updated_at: string;
   social_name?: string | null;
   birth_datetime?: string | null;
+  profile_picture?: string | null;
   professional_registration?: number;
   user: number;
   specialty_concept?: number | null;
