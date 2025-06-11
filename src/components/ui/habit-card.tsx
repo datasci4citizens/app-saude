@@ -39,8 +39,8 @@ const HabitCard: React.FC<HabitCardProps> = ({
   `;
 
   const colorClasses = isAttentionPoint
-    ? "bg-red-600 border-2 border-yellow-300 text-white"
-    : "bg-orange-400 text-white dark:bg-orange-500";
+    ? "bg-destructive border-2 border-yellow text-white"
+    : "bg-selection text-white dark:bg-selection";
 
   return (
     <div className={`${baseClasses} ${colorClasses} ${className}`}>
@@ -49,7 +49,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
         <div className="flex items-center gap-2">
           {isAttentionPoint && providerName && (
             <div className="group relative">
-              <span className="text-yellow-200 cursor-help">⚠️</span>
+              <span className="text-yellow cursor-help">⚠️</span>
               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 max-w-xs bg-black text-white text-xs rounded p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg z-20">
                 Essa área foi marcada como ponto de atenção por {providerName}.
               </div>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
 import { DiaryService } from "@/api/services/DiaryService";
-import HabitCard from "@/components/ui/habit-card";
+import CollapsibleInterestCard from "@/components/ui/CollapsibleInterestCard";
 import { ErrorMessage } from "@/components/ui/error-message";
 
 // Updated interfaces to match actual server response structure
@@ -11,6 +11,8 @@ interface DiaryTrigger {
   trigger_name: string;
   observation_concept_id: number;
   value_as_string: string | null;
+  response?: string;
+  shared?: boolean;
 }
 
 interface DiaryInterestArea {
@@ -45,6 +47,7 @@ export default function ViewDiaryEntry() {
   const [isLoading, setIsLoading] = useState(true);
   const [diary, setDiary] = useState<DiaryData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [expandedInterests, setExpandedInterests] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const fetchDiaryData = async () => {
@@ -65,6 +68,13 @@ export default function ViewDiaryEntry() {
 
         if (response && response.diary_id) {
           setDiary(response);
+          // Auto-expand interests that have responses
+          const interestsWithResponses = response.interest_areas
+            ?.filter(area => 
+              area.triggers?.some(t => t.value_as_string && t.value_as_string.trim() !== "")
+            )
+            .map(area => area.interest_area_id) || [];
+          setExpandedInterests(new Set(interestsWithResponses));
         } else {
           console.error(
             "Diary not found or invalid response format:",
@@ -119,6 +129,37 @@ export default function ViewDiaryEntry() {
     return null;
   };
 
+  // Toggle interest expansion
+  const toggleInterest = (interestId: number) => {
+    setExpandedInterests(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(interestId)) {
+        newSet.delete(interestId);
+      } else {
+        newSet.add(interestId);
+      }
+      return newSet;
+    });
+  };
+
+  // Convert DiaryInterestArea to UserInterest format for CollapsibleInterestCard
+  const convertToUserInterest = (diaryInterest: DiaryInterestArea) => {
+    return {
+      interest_area_id: diaryInterest.interest_area_id,
+      interest_name: diaryInterest.interest_name,
+      shared: diaryInterest.shared_with_provider,
+      triggers: diaryInterest.triggers?.map(trigger => ({
+        trigger_id: trigger.trigger_id,
+        trigger_name: trigger.trigger_name,
+        custom_trigger_name: null,
+        observation_concept_id: trigger.observation_concept_id,
+        value_as_string: trigger.value_as_string,
+        response: trigger.value_as_string || "",
+        shared: diaryInterest.shared_with_provider
+      })) || []
+    };
+  };
+
   const clearError = () => {
     setError(null);
   };
@@ -128,7 +169,7 @@ export default function ViewDiaryEntry() {
       <div className="max-w-3xl mx-auto px-4 py-8">
         <Header title="Visualizar Diário" />
         <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-selection"></div>
         </div>
       </div>
     );
@@ -151,7 +192,7 @@ export default function ViewDiaryEntry() {
         <div className="mt-6 text-center">
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-2 bg-gray12 hover:bg-gray2 rounded-full text-white"
+            className="px-6 py-2 bg-gray1 hover:bg-gray2 rounded-full text-white transition-colors"
           >
             Voltar
           </button>
@@ -177,8 +218,8 @@ export default function ViewDiaryEntry() {
       />
 
       {!hasContent && (
-        <div className="bg-gray-50 p-6 rounded-lg text-center my-8">
-          <p className="text-gray-500 text-lg">
+        <div className="bg-gray1 p-6 rounded-lg text-center my-8">
+          <p className="text-gray1 text-lg">
             Este diário não possui conteúdo.
           </p>
         </div>
@@ -186,65 +227,61 @@ export default function ViewDiaryEntry() {
 
       {/* Time Range Section */}
       <div className="space-y-3 mb-6 mt-6">
-        <h3 className="font-semibold text-lg text-neutral-700 mb-1">
+        <h3 className="font-semibold text-lg text-typography mb-1">
           Período de tempo
         </h3>
-        <div className="bg-gray-50 p-4 rounded-lg">
+        <div className="bg-primary p-4 rounded-lg">
           <p>{diary.scope === "today" ? "Hoje" : "Desde o último diário"}</p>
         </div>
       </div>
 
-      {/* Interest Areas Section - Only show if there are interests with responses */}
+      {/* Interest Areas Section - Using CollapsibleInterestCard */}
       {diary.interest_areas && diary.interest_areas.length > 0 && (
         <div className="space-y-4 mb-6">
           <div className="flex flex-col gap-1">
-            <h3 className="font-semibold text-lg text-neutral-700 mb-1">
+            <h3 className="font-semibold text-lg text-typography mb-1">
               Seus Interesses
             </h3>
+            <p className="text-sm text-typography">
+              Clique nos interesses para ver as respostas detalhadas
+            </p>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             {diary.interest_areas.map((interest) => {
-              // Only show triggers that have responses
-              const triggersWithResponses = interest.triggers.filter(
-                (t) => t.value_as_string && t.value_as_string.trim() !== "",
+              // Only show interests that have at least one trigger with a response
+              const hasResponses = interest.triggers?.some(
+                (t) => t.value_as_string && t.value_as_string.trim() !== ""
               );
 
-              if (triggersWithResponses.length === 0) return null;
+              if (!hasResponses) return null;
 
               return (
-                <div key={interest.interest_area_id} className="space-y-3">
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center justify-between">
-                      <HabitCard
-                        title={
-                          interest.interest_name ||
-                          `Interesse ${interest.interest_area_id}`
+                <div key={interest.interest_area_id} className="bg-white border border-gray1 rounded-lg p-4">
+                  <CollapsibleInterestCard
+                    interest={convertToUserInterest(interest)}
+                    isOpen={expandedInterests.has(interest.interest_area_id)}
+                    onToggle={() => toggleInterest(interest.interest_area_id)}
+                    onResponseChange={() => {}} // Read-only mode
+                    onSharingToggle={() => {}} // Read-only mode
+                    onTriggerResponseChange={() => {}} // Read-only mode
+                  />
+                  
+                  {/* Sharing status */}
+                  <div className="mt-3 pt-3 border-t border-gray1">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray2">Status de compartilhamento:</span>
+                      <span className={`font-medium ${
+                        interest.shared_with_provider 
+                          ? "text-sucess" 
+                          : "text-selection"
+                      }`}>
+                        {interest.shared_with_provider 
+                          ? "✓ Compartilhado com profissionais" 
+                          : "○ Não compartilhado"
                         }
-                        className="inline-block w-auto min-w-fit max-w-full"
-                      />
-                      <span className="text-sm text-gray-500">
-                        Compartilhado:{" "}
-                        {interest.shared_with_provider ? "Sim" : "Não"}
                       </span>
                     </div>
-                  </div>
-
-                  <div className="ml-4 border-l-2 border-gray-200 pl-4">
-                    {triggersWithResponses.map((trigger) => (
-                      <div key={trigger.trigger_id} className="mt-3 space-y-2">
-                        {/* Trigger title as question */}
-                        <div className="font-medium text-sm text-neutral-700 mb-1">
-                          {trigger.trigger_name ||
-                            `Pergunta ${trigger.trigger_id}`}
-                        </div>
-
-                        {/* Removed HabitCard for triggers, showing full question instead */}
-                        <div className="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap">
-                          {trigger.value_as_string}
-                        </div>
-                      </div>
-                    ))}
                   </div>
                 </div>
               );
@@ -257,22 +294,36 @@ export default function ViewDiaryEntry() {
       {textEntry && textEntry.text && (
         <div className="space-y-3">
           <div className="flex flex-col gap-1">
-            <h3 className="font-semibold text-lg text-neutral-700 mb-1">
+            <h3 className="font-semibold text-lg text-typography mb-1">
               Observações Gerais
             </h3>
             <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-500">
-                Compartilhado com profissionais:{" "}
-                {textEntry.shared ? "Sim" : "Não"}
+              <span className={`text-sm font-medium ${
+                textEntry.shared ? "text-success" : "text-selection"
+              }`}>
+                {textEntry.shared 
+                  ? "✓ Compartilhado com profissionais" 
+                  : "○ Não compartilhado"
+                }
               </span>
             </div>
           </div>
 
-          <div className="bg-gray-50 p-4 rounded-lg whitespace-pre-wrap min-h-[150px]">
+          <div className="bg-primary p-4 rounded-lg whitespace-pre-wrap min-h-[150px] border border-gray2">
             {textEntry.text}
           </div>
         </div>
       )}
+
+      {/* Action button */}
+      <div className="mt-8 text-center">
+        <button
+          onClick={() => navigate("/diary")}
+          className="px-6 py-3 bg-selection text-white rounded-lg transition-colors font-medium"
+        >
+          Voltar aos Diários
+        </button>
+      </div>
     </div>
   );
 }

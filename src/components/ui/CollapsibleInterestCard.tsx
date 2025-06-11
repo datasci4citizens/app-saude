@@ -75,7 +75,7 @@ const CollapsibleInterestCard: React.FC<CollapsibleInterestCardProps> = ({
 
       {/* Toggle de compartilhamento */}
       <div className="flex items-center justify-end gap-2 pr-2">
-        <span className="text-sm text-gray-600 italic">
+        <span className="text-sm text-gray-2 italic">
           Compartilhar com profissionais
         </span>
         <Switch
@@ -122,7 +122,7 @@ const CollapsibleInterestCard: React.FC<CollapsibleInterestCardProps> = ({
             className="overflow-hidden ml-4 pl-4 border-l-2 border-gray2"
           >
             <div className="py-4 text-center">
-              <p className="text-sm text-gray-500 italic">
+              <p className="text-sm text-gray2 italic">
                 Nenhuma pergunta específica para este interesse
               </p>
             </div>
@@ -149,7 +149,7 @@ const TriggerItem: React.FC<{
       {/* Título do trigger */}
       <HabitCard
         title={triggerTitle}
-        className="inline-block w-auto min-w-fit max-w-full text-sm bg-secondary/20"
+        className="bg-selection inline-block w-auto min-w-fit max-w-full text-sm"
       />
 
       {/* Campo de texto para resposta */}

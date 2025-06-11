@@ -66,7 +66,7 @@ export default function ViewDiary() {
           );
           setPatient(patientData);
 
-          // Buscar o diário específico diretamente
+          // Buscar o diário espehcífico diretamente
           const diaryData =
             await ProviderService.providerPatientsDiariesRetrieve(
               diaryId,
