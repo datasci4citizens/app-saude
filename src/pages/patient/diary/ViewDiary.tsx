@@ -27,7 +27,7 @@ interface DiaryInterestArea {
 
 interface DiaryEntry {
   observation_id: number;
-  value_as_string: string;
+  text: string;
   shared_with_provider: boolean;
   created_at: string;
   observation_concept: number;
@@ -48,7 +48,7 @@ export default function ViewDiaryEntry() {
   const [diary, setDiary] = useState<DiaryData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [expandedInterests, setExpandedInterests] = useState<Set<number>>(
-    new Set(),
+    new Set()
   );
 
   useEffect(() => {
@@ -75,15 +75,15 @@ export default function ViewDiaryEntry() {
             response.interest_areas
               ?.filter((area) =>
                 area.triggers?.some(
-                  (t) => t.value_as_string && t.value_as_string.trim() !== "",
-                ),
+                  (t) => t.value_as_string && t.value_as_string.trim() !== ""
+                )
               )
               .map((area) => area.interest_area_id) || [];
           setExpandedInterests(new Set(interestsWithResponses));
         } else {
           console.error(
             "Diary not found or invalid response format:",
-            response,
+            response
           );
           setError("Diário não encontrado ou formato inválido.");
         }
@@ -115,18 +115,32 @@ export default function ViewDiaryEntry() {
   };
 
   // Get general text entry if available
+  // Get general text entry if available
   const getGeneralTextEntry = (): { text: string; shared: boolean } | null => {
+    console.log("Getting general text entry from diary:", diary?.entries);
     if (!diary || !diary.entries || diary.entries.length === 0) {
+      console.warn("No diary entries found.");
       return null;
     }
 
-    // Find the general text entry (usually observation_concept = 999002)
+    // Find the general text entry
     for (const entry of diary.entries) {
-      // If we have text content, return it regardless of concept ID
-      if (entry.value_as_string && entry.value_as_string.trim() !== "") {
+      // Handle the new format where entry is {text: 'content', text_shared: boolean}
+      if (
+        entry.text &&
+        typeof entry.text === "string" &&
+        entry.text.trim() !== ""
+      ) {
+        return {
+          text: entry.text,
+          shared: entry.text_shared || false,
+        };
+      }
+      // Handle legacy format with value_as_string
+      else if (entry.value_as_string && entry.value_as_string.trim() !== "") {
         return {
           text: entry.value_as_string,
-          shared: entry.shared_with_provider,
+          shared: entry.shared_with_provider || false,
         };
       }
     }
@@ -208,11 +222,12 @@ export default function ViewDiaryEntry() {
   }
 
   const textEntry = getGeneralTextEntry();
+  console.log("Text entry:", textEntry);
   const hasContent =
     (textEntry && textEntry.text) ||
     (diary.interest_areas &&
       diary.interest_areas.some(
-        (area) => area.triggers && area.triggers.some((t) => t.value_as_string),
+        (area) => area.triggers && area.triggers.some((t) => t.value_as_string)
       ));
 
   return (
@@ -255,7 +270,7 @@ export default function ViewDiaryEntry() {
             {diary.interest_areas.map((interest) => {
               // Only show interests that have at least one trigger with a response
               const hasResponses = interest.triggers?.some(
-                (t) => t.value_as_string && t.value_as_string.trim() !== "",
+                (t) => t.value_as_string && t.value_as_string.trim() !== ""
               );
 
               if (!hasResponses) return null;
