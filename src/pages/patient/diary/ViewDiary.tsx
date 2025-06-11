@@ -283,9 +283,10 @@ export default function ViewDiaryEntry() {
                     interest={convertToUserInterest(interest)}
                     isOpen={expandedInterests.has(interest.interest_area_id)}
                     onToggle={() => toggleInterest(interest.interest_area_id)}
-                    onResponseChange={() => {}} // Read-only mode
-                    onSharingToggle={() => {}} // Read-only mode
-                    onTriggerResponseChange={() => {}} // Read-only mode
+                    readOnly={true}
+                    onResponseChange={() => {}}
+                    onSharingToggle={() => {}}
+                    onTriggerResponseChange={() => {}}
                   />
 
                   {/* Sharing status */}

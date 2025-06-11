@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import HabitCard from "@/components/ui/habit-card";
 import { Switch } from "@/components/ui/switch";
 import { TextField } from "@/components/forms/text_input";
+import { Eye } from "lucide-react";
 
 interface Trigger {
   trigger_name: string;
@@ -33,6 +34,7 @@ interface CollapsibleInterestCardProps {
   onResponseChange: (response: string) => void;
   onSharingToggle: (shared: boolean) => void;
   onTriggerResponseChange: (triggerId: number, response: string) => void;
+  readOnly?: boolean;
 }
 
 const CollapsibleInterestCard: React.FC<CollapsibleInterestCardProps> = ({
@@ -42,6 +44,7 @@ const CollapsibleInterestCard: React.FC<CollapsibleInterestCardProps> = ({
   onResponseChange,
   onSharingToggle,
   onTriggerResponseChange,
+  readOnly = false,
 }) => {
   const interestName =
     interest.interest_name ||
@@ -50,7 +53,6 @@ const CollapsibleInterestCard: React.FC<CollapsibleInterestCardProps> = ({
     "Interesse";
 
   const handleCardClick = (e: React.MouseEvent) => {
-    // Evita toggle quando clica em elementos interativos
     if (
       (e.target as HTMLElement).closest("button") ||
       (e.target as HTMLElement).closest("input") ||
@@ -64,25 +66,39 @@ const CollapsibleInterestCard: React.FC<CollapsibleInterestCardProps> = ({
   return (
     <div className="space-y-3">
       {/* Card principal clicável */}
-      <div onClick={handleCardClick} className="cursor-pointer">
+      <div onClick={handleCardClick} className={readOnly ? "cursor-default" : "cursor-pointer"}>
         <HabitCard
           title={interestName}
           isAttentionPoint={interest.is_attention_point}
           providerName={interest.provider_name}
           isOpen={isOpen}
+          readOnly={readOnly}
         />
       </div>
 
       {/* Toggle de compartilhamento */}
       <div className="flex items-center justify-end gap-2 pr-2">
-        <span className="text-sm text-gray-2 italic">
-          Compartilhar com profissionais
-        </span>
-        <Switch
-          checked={interest.shared || false}
-          onCheckedChange={onSharingToggle}
-          size="sm"
-        />
+        {readOnly ? (
+          // Modo read-only: mostra status como texto
+          <div className="flex items-center gap-2">
+            <Eye size={16} className="text-gray-500" />
+            <span className="text-sm text-gray-600">
+              {interest.shared ? "Compartilhado com profissionais" : "Não compartilhado"}
+            </span>
+          </div>
+        ) : (
+          
+          // Modo editável: switch normal
+          <>
+            <span className="text-sm text-gray-500 italic">
+              Compartilhar com profissionais
+            </span>
+            <Switch
+              checked={interest.shared || false}
+              onCheckedChange={onSharingToggle}
+            />
+          </>
+        )}
       </div>
 
       {/* Área collapsible com triggers */}
@@ -104,6 +120,7 @@ const CollapsibleInterestCard: React.FC<CollapsibleInterestCardProps> = ({
                 onResponseChange={(response) =>
                   onTriggerResponseChange(trigger.trigger_id, response)
                 }
+                readOnly={readOnly}
               />
             ))}
           </motion.div>
@@ -138,7 +155,8 @@ const TriggerItem: React.FC<{
   trigger: Trigger;
   interestId: number;
   onResponseChange: (response: string) => void;
-}> = ({ trigger, interestId, onResponseChange }) => {
+  readOnly?: boolean;
+}> = ({ trigger, interestId, onResponseChange, readOnly = false }) => {
   const triggerTitle =
     trigger.trigger_name ||
     trigger.custom_trigger_name ||
@@ -150,19 +168,32 @@ const TriggerItem: React.FC<{
       <HabitCard
         title={triggerTitle}
         className="bg-selection inline-block w-auto min-w-fit max-w-full text-sm"
+        readOnly={readOnly}
       />
 
       {/* Campo de texto para resposta */}
-      <TextField
-        id={`trigger-${interestId}-${trigger.trigger_id}`}
-        name={`trigger-${interestId}-${trigger.trigger_id}`}
-        value={trigger.response || ""}
-        onChange={(e) => onResponseChange(e.target.value)}
-        placeholder={`Responda sobre: ${triggerTitle}`}
-        className="border-gray2 border-2 focus:border-selection"
-        multiline={true}
-        rows={2}
-      />
+      {readOnly ? (
+        // ✨ Modo read-only: exibe resposta como texto simples se existe, ou mensagem apropriada
+        <div className="p-3 bg-gray-50 rounded-lg border-2 border-gray-200 min-h-[60px]">
+          {trigger.response ? (
+            <p className="text-gray-700 whitespace-pre-wrap">{trigger.response}</p>
+          ) : (
+            <p className="text-gray-400 italic">Sem resposta registrada</p>
+          )}
+        </div>
+      ) : (
+        // Modo editável: campo de texto normal
+        <TextField
+          id={`trigger-${interestId}-${trigger.trigger_id}`}
+          name={`trigger-${interestId}-${trigger.trigger_id}`}
+          value={trigger.response || ""}
+          onChange={(e) => onResponseChange(e.target.value)}
+          placeholder={`Responda sobre: ${triggerTitle}`}
+          className="border-gray-300 border-2 focus:border-orange-400"
+          multiline={true}
+          rows={2}
+        />
+      )}
     </div>
   );
 };

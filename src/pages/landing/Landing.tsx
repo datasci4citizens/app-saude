@@ -6,8 +6,7 @@ import { AuthService } from "@/api/services/AuthService";
 import { Capacitor } from "@capacitor/core";
 import { useGoogleLogin } from "@react-oauth/google";
 import { type AuthTokenResponse } from "@/api";
-import { setDefaultResultOrder } from "dns";
-import { set } from "react-hook-form";
+import { type Auth } from "@/api/models/Auth";
 
 const isMobile = Capacitor.isNativePlatform();
 
@@ -28,16 +27,16 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
       const googleUser = await GoogleAuth.signIn();
       const idToken = googleUser.authentication.idToken;
       localStorage.removeItem("accessToken");
-      const loginResponse = await AuthService.authLoginGoogleCreate({
+
+      const tokenRequest = {
         token: idToken,
-      });
+      };
+      const loginResponse = await AuthService.authLoginGoogleCreate(tokenRequest);
 
       handleLoginSuccess(loginResponse);
     } catch (err: any) {
-      const message = err?.message || err;
       const full = JSON.stringify(err, Object.getOwnPropertyNames(err));
-      console.error("Erro ao logar (mobile):", err);
-
+      console.error("Erro ao logar (mobile):", full);
       setError("Falha ao fazer login. Por favor, tente novamente.");
     } finally {
       setIsLoading(false);
@@ -49,9 +48,10 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
     onSuccess: async ({ code }) => {
       try {
         localStorage.removeItem("accessToken");
-        const loginResponse = await AuthService.authLoginGoogleCreate({
+        const codeRequest: Auth = {
           code: code,
-        });
+        };
+        const loginResponse = await AuthService.authLoginGoogleCreate(codeRequest);
 
         handleLoginSuccess(loginResponse);
       } catch (err) {

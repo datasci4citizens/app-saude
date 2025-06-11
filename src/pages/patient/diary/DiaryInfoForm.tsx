@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
 import { DiaryService } from "@/api/services/DiaryService";
-import { DateRangeTypeEnum } from "@/api";
+import { DateRangeTypeEnum } from "@/api/models/DateRangeTypeEnum";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
 import { SuccessMessage } from "@/components/ui/success-message";
@@ -56,7 +56,7 @@ export default function DiaryInfoForm() {
       setIsLoadingInterests(true);
 
       try {
-        const interests = await InterestAreasService.personInterestAreasList();
+        const interests = await InterestAreasService.personInterestAreasList(false);
         console.log("Interesses recebidos:", interests);
 
         if (!interests || interests.length === 0) {
@@ -71,8 +71,23 @@ export default function DiaryInfoForm() {
             ...interest,
             interest_area_id:
               (interest as any).interest_area_id || Math.random(),
+            interest_name:
+              interest.interest_name === null
+                ? undefined
+                : interest.interest_name,
             response: "",
             shared: false,
+            triggers: interest.triggers
+              ? interest.triggers.map((trigger: any) => ({
+                  trigger_name: trigger.trigger_name,
+                  custom_trigger_name: trigger.custom_trigger_name ?? null,
+                  observation_concept_id: trigger.observation_concept_id,
+                  trigger_id: trigger.trigger_id,
+                  value_as_string: trigger.value_as_string ?? null,
+                  response: "",
+                  shared: false,
+                }))
+              : [],
           }),
         );
 
@@ -85,10 +100,10 @@ export default function DiaryInfoForm() {
           {
             interest_area_id: 1,
             observation_concept_id: null,
-            custom_interest_name: "Teste Interesse 1",
             value_as_string: "Teste Interesse 1",
             response: "",
             shared: false,
+            provider_name: "Teste Provider",
             triggers: [
               {
                 trigger_name: "Como você se sentiu hoje?",
@@ -267,14 +282,12 @@ export default function DiaryInfoForm() {
               label="Hoje"
               checked={timeRange === "today"}
               onCheckedChange={() => setTimeRange("today")}
-              className="py-2"
             />
             <RadioCheckbox
               id="sinceLast"
               label="Desde o último diário"
               checked={timeRange === "sinceLast"}
               onCheckedChange={() => setTimeRange("sinceLast")}
-              className="py-2"
             />
           </div>
         </section>
@@ -306,7 +319,7 @@ export default function DiaryInfoForm() {
               </p>
               <Button
                 type="button"
-                variant="outline"
+                variant="outlineWhite"
                 size="sm"
                 onClick={() => navigate("/user-main")}
               >
@@ -318,7 +331,10 @@ export default function DiaryInfoForm() {
               {userInterests.map((interest) => (
                 <CollapsibleInterestCard
                   key={interest.interest_area_id}
-                  interest={interest}
+                  interest={{
+                    ...interest,
+                    value_as_string: interest.value_as_string ?? undefined,
+                  }}
                   isOpen={openTriggers[interest.interest_area_id] || false}
                   onToggle={() => toggleInterest(interest.interest_area_id)}
                   onResponseChange={(response) =>
@@ -359,7 +375,6 @@ export default function DiaryInfoForm() {
               <Switch
                 checked={shareText}
                 onCheckedChange={setShareText}
-                size="sm"
               />
             </div>
           </div>

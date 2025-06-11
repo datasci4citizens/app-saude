@@ -55,8 +55,7 @@ export default function UserMainPage() {
   useEffect(() => {
     const loadExistingInterests = async () => {
       try {
-        const userInterests =
-          (await InterestAreasService.personInterestAreasList()) as InterestAreaResponse[];
+        const userInterests = (await InterestAreasService.personInterestAreasList(false)) as InterestAreaResponse[];
         setUserInterestObjects(userInterests);
         setOriginalInterests([...userInterests]); // Cópia para comparação
         setHasChanges(false);

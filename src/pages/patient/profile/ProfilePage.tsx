@@ -99,7 +99,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     setError(null);
 
     try {
-      await AccountService.apiAccountDestroy(personId);
+      await AccountService.accountsDestroy();
       setSuccess("Conta excluída com sucesso!");
 
       // Clear tokens and navigate after showing success message
