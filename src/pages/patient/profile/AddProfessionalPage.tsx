@@ -15,7 +15,16 @@ import { useNavigate } from "react-router-dom";
 const AddProfessionalPage = () => {
   const navigate = useNavigate();  // ← This is missing!
 
-    const handleNavigationClick = (itemId: string) => {
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
       case "home":
         navigate("/user-main-page");
@@ -218,13 +227,13 @@ return (
     </div>
 
     {/* Bottom Navigation - Fixed position */}
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200">
-      <BottomNavigationBar
-        variant="user"
-        initialActiveId="home"
-        onItemClick={handleNavigationClick}
-      />
-    </div>
+      <div className="fixed bottom-0 left-0 right-0 z-30">
+        <BottomNavigationBar
+          variant="user"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
+      </div>
   </div>
 );
 };

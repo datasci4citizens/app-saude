@@ -3,7 +3,7 @@ import { TextField } from "@/components/forms/text_input";
 import PatientButton from "@/components/ui/patient-button";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { ProviderService } from "@/api/services/ProviderService";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderService";
 import useSWR from "swr";
 import Header from "@/components/ui/header";
@@ -202,18 +202,34 @@ export default function EmergencyPage() {
           })
       : filteredBySearch;
 
-  const handleNavigation = (itemId: string) => {
+  const location = useLocation();
+
+  // Get active navigation item based on current route
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
       case "home":
-        navigate("/acs-main-page");
+        navigate("/user-main-page");
         break;
-      case "patients":
-        navigate("/patients");
+      case "meds":
+        navigate("/reminders");
         break;
-      case "emergencies":
+      case "diary":
+        navigate("/diary");
+        break;
+      case "emergency":
+        navigate("/emergency-user");
         break;
       case "profile":
-        navigate("/acs-profile");
+        navigate("/profile");
         break;
     }
   };
@@ -293,12 +309,13 @@ export default function EmergencyPage() {
         )}
       </div>
 
-      {/* Bottom navigation using BottomNavigationBar component */}
-      <BottomNavigationBar
-        variant="acs"
-        initialActiveId="emergency"
-        onItemClick={handleNavigation}
-      />
+      <div className="fixed bottom-0 left-0 right-0 z-30">
+        <BottomNavigationBar
+          variant="user"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
+      </div>
     </div>
   );
 }

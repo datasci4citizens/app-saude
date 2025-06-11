@@ -77,28 +77,12 @@ const router = createBrowserRouter([
     element: <ViewDiaryEntry />,
   },
   {
-    path: "/view-diary-user",
-    element: <ViewDiaryUser />,
-  },
-  {
-    path: "/view-diary-provider",
-    element: <ViewPatientDiaries />,
-  },
-  {
-    path: "/diary/:diaryId",
-    element: <ViewDiaryEntry />,
-  },
-  {
     path: "/reminders",
     element: <Reminders />,
   },
   {
     path: "/new-reminder",
     element: <NewReminder />,
-  },
-  {
-    path: "/view-diary-user",
-    element: <ViewDiaryUser />,
   },
   {
     path: "/reminder",

@@ -100,7 +100,16 @@ export default function ViewDiaryEntry() {
     }
   };
 
-    const handleNavigationClick = (itemId: string) => {
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
       case "home":
         navigate("/user-main-page");
@@ -119,7 +128,6 @@ export default function ViewDiaryEntry() {
         break;
     }
   };
-
   // Get general text entry if available
   const getGeneralTextEntry = (): { text: string; shared: boolean } | null => {
     if (!diary || !diary.entries || diary.entries.length === 0) {
@@ -153,7 +161,7 @@ export default function ViewDiaryEntry() {
           <div className="fixed bottom-0 left-0 right-0 z-30">
       <BottomNavigationBar
         variant="user"
-        initialActiveId="home"
+        initialActiveId="diary"
         onItemClick={handleNavigationClick}
       />
     </div>
@@ -181,11 +189,11 @@ export default function ViewDiaryEntry() {
         </div>
       <div className="fixed bottom-0 left-0 right-0 z-30">
         <BottomNavigationBar
-        variant="user"
-        initialActiveId="home"
-        onItemClick={handleNavigationClick}
-      />
-    </div>
+          variant="user"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
+      </div>
       </div>
     );
   }
@@ -304,13 +312,13 @@ export default function ViewDiaryEntry() {
         </div>
       )}
 
-          <div className="fixed bottom-0 left-0 right-0 z-30">
-      <BottomNavigationBar
-        variant="user"
-        initialActiveId="home"
-        onItemClick={handleNavigationClick}
-      />
-    </div>
+       <div className="fixed bottom-0 left-0 right-0 z-30">
+        <BottomNavigationBar
+          variant="user"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
+      </div>
     </div>
   );
 }

@@ -99,8 +99,16 @@ export default function PatientsPage() {
 
   const navigate = useNavigate();
 
-  const handleNavigation = (itemId: string) => {
-    console.log(`Navigated to ${itemId}`);
+    const getActiveNavId = () => {
+    if (location.pathname.startsWith("/acs-main-page")) return "home";
+    if (location.pathname.startsWith("/appointments")) return "consults";
+    if (location.pathname.startsWith("/patients")) return "patients";
+    if (location.pathname.startsWith("/emergencies")) return "emergency";
+    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
       case "home":
         navigate("/acs-main-page");
@@ -108,9 +116,9 @@ export default function PatientsPage() {
       case "patients":
         navigate("/patients");
         break;
-      //case "emergency":
-      //  navigate("/emergencies");
-      //  break;
+      case "emergency":
+        navigate("/emergencies");
+        break;
       case "profile":
         navigate("/acs-profile");
         break;
@@ -273,12 +281,13 @@ export default function PatientsPage() {
         )}
       </div>
 
-      {/* Bottom navigation using BottomNavigationBar component */}
-      <BottomNavigationBar
-        variant="acs"
-        initialActiveId="patients"
-        onItemClick={handleNavigation}
-      />
+      <div className="fixed bottom-0 left-0 right-0 z-30">
+        <BottomNavigationBar
+          variant="acs"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
+      </div>
     </div>
   );
 }

@@ -123,6 +123,15 @@ export default function EmergencyScreen() {
   }
 
   
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
       case "home":
@@ -142,7 +151,6 @@ export default function EmergencyScreen() {
         break;
     }
   };
-
 
   // Handle no linked providers
   if (providers && providers.length === 0) {
@@ -165,14 +173,14 @@ export default function EmergencyScreen() {
           </Button>
         </div>
 
-              <div className="fixed bottom-0 left-0 right-0 z-30">
-      <BottomNavigationBar
-        variant="user"
-        initialActiveId="home"
-        onItemClick={handleNavigationClick}
-      />
-    </div>
-    
+      <div className="fixed bottom-0 left-0 right-0 z-30">
+        <BottomNavigationBar
+          variant="user"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
+      </div>
+
       </div>
     );
   }
@@ -271,12 +279,12 @@ export default function EmergencyScreen() {
       </form>
 
       <div className="fixed bottom-0 left-0 right-0 z-30">
-      <BottomNavigationBar
-        variant="user"
-        initialActiveId="home"
-        onItemClick={handleNavigationClick}
-      />
-    </div>
+        <BottomNavigationBar
+          variant="user"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
+      </div>
     </div>
   );
 }
