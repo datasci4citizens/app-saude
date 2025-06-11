@@ -3,9 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
 import { PersonService } from "@/api/services/PersonService";
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
-import type { PatchedMarkAttentionPoint } from "@/api/models/PatchedMarkAttentionPoint";
 import { ProviderService } from "@/api/services/ProviderService";
-import { InterestAreasService } from "@/api/services/InterestAreasService";
 import { ErrorMessage } from "@/components/ui/error-message";
 
 // Interface para as entradas do diário
@@ -58,6 +56,40 @@ export default function ViewDiary() {
   const [expandedInterests, setExpandedInterests] = useState<Set<number>>(
     new Set(),
   );
+  const [localAttentionPoints, setLocalAttentionPoints] = useState<Set<number>>(new Set());
+
+  // Funções para gerenciar pontos de atenção no localStorage
+  const getAttentionPointsKey = () => `attentionPoints_provider_${localStorage.getItem('provider_id') || 'unknown'}`;
+  
+  const loadLocalAttentionPoints = () => {
+    try {
+      const stored = localStorage.getItem(getAttentionPointsKey());
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return new Set(Array.isArray(parsed) ? parsed : []);
+      }
+    } catch (error) {
+      console.warn('Erro ao carregar pontos de atenção do localStorage:', error);
+    }
+    return new Set<number>();
+  };
+
+  const saveLocalAttentionPoints = (points: Set<number>) => {
+    try {
+      localStorage.setItem(getAttentionPointsKey(), JSON.stringify([...points]));
+    } catch (error) {
+      console.warn('Erro ao salvar pontos de atenção no localStorage:', error);
+    }
+  };
+
+  const isAttentionPoint = (areaId: number) => {
+    return localAttentionPoints.has(areaId);
+  };
+
+  // Carregar pontos de atenção quando o componente for montado
+  useEffect(() => {
+    setLocalAttentionPoints(loadLocalAttentionPoints());
+  }, []);
 
   useEffect(() => {
     if (diaryId && personId) {
@@ -168,42 +200,28 @@ export default function ViewDiary() {
     return null;
   };
 
-  const handleAttentionToggle = async (
+  const handleAttentionToggle = (
     areaId: number,
     isCurrentlyFlagged: boolean,
   ) => {
-    try {
-      console.log(
-        "Toggling flag for area:",
-        areaId,
-        "Current state:",
-        isCurrentlyFlagged,
-      );
-      const updatedArea: PatchedMarkAttentionPoint = {
-        area_id: areaId,
-        is_attention_point: !isCurrentlyFlagged,
-      };
-      await InterestAreasService.markObservationAsAttentionPoint(updatedArea);
-
-      setDiary((prevDiary) => {
-        if (!prevDiary) return prevDiary;
-        return {
-          ...prevDiary,
-          interest_areas: (prevDiary.interest_areas ?? []).map((area) =>
-            area.interest_area_id === areaId
-              ? {
-                  ...area,
-                  is_attention_point: updatedArea.is_attention_point,
-                  provider_name: updatedArea.is_attention_point ? "Você" : null,
-                }
-              : area,
-          ),
-        };
-      });
-    } catch (error) {
-      console.error("Erro ao atualizar área de interesse:", error);
-      setError("Não foi possível atualizar a área de interesse.");
+    const newAttentionPoints = new Set(localAttentionPoints);
+    
+    if (isCurrentlyFlagged) {
+      newAttentionPoints.delete(areaId);
+    } else {
+      newAttentionPoints.add(areaId);
     }
+    
+    setLocalAttentionPoints(newAttentionPoints);
+    saveLocalAttentionPoints(newAttentionPoints);
+    
+    console.log(
+      "Toggling flag for area:",
+      areaId,
+      "New state:",
+      !isCurrentlyFlagged,
+      "Saved to localStorage"
+    );
   };
 
   return (
@@ -291,6 +309,7 @@ export default function ViewDiary() {
                   const hasResponses =
                     interest.triggers &&
                     interest.triggers.some((t) => t.value_as_string);
+                  const isAttentionPointFlag = isAttentionPoint(interest.interest_area_id);
 
                   return (
                     <div
@@ -309,7 +328,7 @@ export default function ViewDiary() {
                             <h4 className="font-bold text-lg text-card-foreground">
                               {interest.interest_name}
                             </h4>
-                            {interest.is_attention_point && (
+                            {isAttentionPointFlag && (
                               <span className="text-destructive text-lg">
                                 ⚠️
                               </span>
@@ -329,7 +348,7 @@ export default function ViewDiary() {
                           </div>
                         </div>
 
-                        {interest.is_attention_point &&
+                        {isAttentionPointFlag &&
                           interest.provider_name && (
                             <div className="mt-2">
                               <span className="text-xs text-destructive italic">
@@ -350,16 +369,16 @@ export default function ViewDiary() {
                                   e.stopPropagation();
                                   handleAttentionToggle(
                                     interest.interest_area_id!,
-                                    interest.is_attention_point || false,
+                                    isAttentionPointFlag,
                                   );
                                 }}
                                 className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                                  interest.is_attention_point
+                                  isAttentionPointFlag
                                     ? "bg-destructive text-white hover:bg-destructive/80"
                                     : "bg-orange-500 text-white hover:bg-orange-600"
                                 }`}
                               >
-                                {interest.is_attention_point
+                                {isAttentionPointFlag
                                   ? "Remover atenção ⚠️"
                                   : "Marcar atenção ⚠️"}
                               </button>
