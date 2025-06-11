@@ -103,7 +103,7 @@ export default function ProfessionalOnboarding() {
     const provider: ProviderCreate = {
       social_name: data.social_name,
       birth_datetime: data.birth_datetime,
-      professional_registration: data.professional_registration,
+      professional_registration: data.professional_registration ?? undefined,
       specialty_concept: data.specialty_concept,
       care_site: null,
       profile_picture: localStorage.getItem("profileImage") || "",

@@ -32,7 +32,7 @@ export default function ViewSelectedInterests() {
 
       try {
         const interests =
-          (await InterestAreasService.personInterestAreasList()) as InterestAreaResponse[];
+          (await InterestAreasService.personInterestAreasList(false)) as InterestAreaResponse[];
         console.log("Loaded interests:", interests);
         setUserInterests(interests);
       } catch (err) {

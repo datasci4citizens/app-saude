@@ -49,7 +49,7 @@ export default function UserMainPage() {
   useEffect(() => {
     const loadExistingInterests = async () => {
       try {
-        const userInterests = (await InterestAreasService.personInterestAreasList()) as InterestAreaResponse[];
+        const userInterests = (await InterestAreasService.personInterestAreasList(false)) as InterestAreaResponse[];
         setUserInterestObjects(userInterests);
         setOriginalInterests([...userInterests]); // Cópia para comparação
         setHasChanges(false);
@@ -306,13 +306,6 @@ export default function UserMainPage() {
         />
         <h2 className="text-xl font-semibold pl-4 pb-2 mt-4 text-typography">Meus Interesses</h2>
       </div>
-
-      {/* Debug info - remover depois */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="fixed top-4 right-4 bg-black text-white p-2 rounded text-xs z-50">
-          hasChanges: {hasChanges.toString()}
-        </div>
-      )}
 
       {/* ÁREA SCROLLÁVEL - Lista de Interesses */}
       <div className="px-4 overflow-y-auto" style={{ paddingBottom: '180px', maxHeight: 'calc(100vh - 140px)' }}>

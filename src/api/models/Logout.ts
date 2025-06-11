@@ -3,8 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Logout = {
-  /**
-   * Refresh token for logout
-   */
-  refresh: string;
+    /**
+     * Refresh token for logout
+     */
+    refresh: string;
 };
+

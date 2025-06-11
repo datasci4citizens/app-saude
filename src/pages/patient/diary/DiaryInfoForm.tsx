@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
 import { DiaryService } from "@/api/services/DiaryService";
-import { DateRangeTypeEnum } from "@/api";
+import { type DateRangeTypeEnum } from "@/api/models/DateRangeTypeEnum";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
 import { SuccessMessage } from "@/components/ui/success-message";
@@ -54,7 +54,7 @@ export default function DiaryInfoForm() {
       setIsLoadingInterests(true);
 
       try {
-        const interests = await InterestAreasService.personInterestAreasList();
+        const interests = await InterestAreasService.personInterestAreasList(false);
         console.log("Interesses recebidos:", interests);
 
         if (!interests || interests.length === 0) {
