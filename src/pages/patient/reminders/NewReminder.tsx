@@ -5,6 +5,8 @@ import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
 import { DateField } from "@/components/forms/date_input";
 import { Checkbox } from "@/components/forms/checkbox";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
+
 
 const NewReminder: React.FC = () => {
   const hours = Array.from({ length: 24 }, (_, i) =>
@@ -44,13 +46,34 @@ const NewReminder: React.FC = () => {
     setSelectedDate(formattedValue);
   };
 
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/user-main-page");
+        break;
+      case "meds":
+        navigate("/reminders");
+        break;
+      case "diary":
+        navigate("/diary");
+        break;
+      case "emergency":
+        navigate("/emergency-user");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+    }
+  };
+
+
   const handleCheckboxChange = (day: keyof typeof repeatDays) => {
     setRepeatDays((prev) => ({
       ...prev,
       [day]: !prev[day],
     }));
   };
-
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const reminderData = {

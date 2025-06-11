@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Header from "@/components/ui/header";
 import { Button } from "@/components/forms/button";
 import { DiaryService } from "@/api/services/DiaryService";
 import { ChevronRight, PlusCircle } from "lucide-react";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 // Updated interface to match server response structure
 interface DiaryTrigger {
@@ -38,10 +39,43 @@ interface DiaryData {
   interest_areas: DiaryInterestArea[];
 }
 
+
 export default function DiaryListPage() {
   const [diaries, setDiaries] = useState<DiaryData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get active navigation item based on current route
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/user-main-page");
+        break;
+      case "meds":
+        navigate("/reminders");
+        break;
+      case "diary":
+        navigate("/diary");
+        break;
+      case "emergency":
+        navigate("/emergency-user");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+    }
+  };
+
 
   useEffect(() => {
     const fetchDiaries = async () => {
@@ -250,7 +284,7 @@ export default function DiaryListPage() {
               {entries.map((entry) => (
                 <div
                   key={entry.diary_id}
-                  className="bg-card rounded-lg p-4 shadow-sm"
+                  className="bg-card rounded-lg p-4 shadow-sm cursor-pointer hover:bg-card-hover transition-colors"
                   onClick={() => handleViewDiary(entry.diary_id)}
                 >
                   <div className="flex justify-between items-center mb-2">
@@ -269,6 +303,15 @@ export default function DiaryListPage() {
           ))}
         </div>
       )}
+
+      <div className="fixed bottom-0 left-0 right-0 z-30">
+        <BottomNavigationBar
+          variant="user"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
+      </div>
     </div>
   );
 }
+

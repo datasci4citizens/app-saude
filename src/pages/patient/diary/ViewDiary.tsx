@@ -4,6 +4,7 @@ import Header from "@/components/ui/header";
 import { DiaryService } from "@/api/services/DiaryService";
 import CollapsibleInterestCard from "@/components/ui/CollapsibleInterestCard";
 import { ErrorMessage } from "@/components/ui/error-message";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 // Updated interfaces to match actual server response structure
 interface DiaryTrigger {
@@ -114,6 +115,34 @@ export default function ViewDiaryEntry() {
     }
   };
 
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/user-main-page");
+        break;
+      case "meds":
+        navigate("/reminders");
+        break;
+      case "diary":
+        navigate("/diary");
+        break;
+      case "emergency":
+        navigate("/emergency-user");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+    }
+  };
   // Get general text entry if available
   const getGeneralTextEntry = (): { text: string; shared: boolean } | null => {
     console.log("Getting general text entry from diary:", diary?.entries);
@@ -185,12 +214,22 @@ export default function ViewDiaryEntry() {
 
   if (isLoading) {
     return (
+      <>
       <div className="max-w-3xl mx-auto px-4 py-8">
         <Header title="Visualizar Diário" />
         <div className="flex justify-center items-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-selection"></div>
         </div>
       </div>
+
+          <div className="fixed bottom-0 left-0 right-0 z-30">
+      <BottomNavigationBar
+        variant="user"
+        initialActiveId="diary"
+        onItemClick={handleNavigationClick}
+      />
+    </div>
+    </>
     );
   }
 
@@ -216,6 +255,13 @@ export default function ViewDiaryEntry() {
             Voltar
           </button>
         </div>
+      <div className="fixed bottom-0 left-0 right-0 z-30">
+        <BottomNavigationBar
+          variant="user"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
+      </div>
       </div>
     );
   }
@@ -340,14 +386,12 @@ export default function ViewDiaryEntry() {
         </div>
       )}
 
-      {/* Action button */}
-      <div className="mt-8 text-center">
-        <button
-          onClick={() => navigate("/diary")}
-          className="px-6 py-3 bg-selection text-primary rounded-lg transition-colors font-medium"
-        >
-          Voltar aos Diários
-        </button>
+       <div className="fixed bottom-0 left-0 right-0 z-30">
+        <BottomNavigationBar
+          variant="user"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
       </div>
     </div>
   );
