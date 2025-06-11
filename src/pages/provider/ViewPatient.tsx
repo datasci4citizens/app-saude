@@ -7,6 +7,8 @@ import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
 import ViewButton from "@/components/ui/ViewButton"; // Import ViewButton
 import { ProviderService } from "@/api";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
+
 
 // Define a basic interface for Diary Entries based on actual API response
 interface DiaryEntry {
@@ -41,6 +43,27 @@ export default function ViewPatient() {
   const [helpRequestsError, setHelpRequestsError] = useState<string | null>(
     null,
   );
+
+    const handleNavigationClick = (itemId: string) => {
+    // Implementar navegação baseada no item clicado
+    switch (itemId) {
+      case "home":
+        navigate("/acs-main-page");
+        break;
+      //case 'consults':
+      //    navigate('/appointments');
+      //    break;
+      case "patients":
+        navigate("/patients");
+        break;
+      case "emergency":
+        navigate("/emergencies");
+        break;
+      case "profile":
+        navigate("/acs-profile");
+        break;
+    }
+  };
 
   const [activeTab, setActiveTab] = useState("diarios");
 
@@ -304,6 +327,11 @@ export default function ViewPatient() {
           </>
         )}
       </div>
+            <BottomNavigationBar
+        variant="acs"
+        initialActiveId="home"
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

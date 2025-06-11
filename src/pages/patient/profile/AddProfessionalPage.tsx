@@ -7,8 +7,34 @@ import type { PersonLinkProviderRequest } from "@/api/models/PersonLinkProviderR
 import type { ProviderRetrieve } from "@/api/models/ProviderRetrieve";
 import errorImage from "@/lib/images/error.png";
 import { AccountService } from "@/api";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
+import { useNavigate } from "react-router-dom";
+
+
 
 const AddProfessionalPage = () => {
+  const navigate = useNavigate();  // ← This is missing!
+
+    const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/user-main-page");
+        break;
+      case "meds":
+        navigate("/reminders");
+        break;
+      case "diary":
+        navigate("/diary");
+        break;
+      case "emergency":
+        navigate("/emergency-user");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+    }
+  };
+
   const [providerCode, setProviderCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLinking, setIsLinking] = useState(false);
@@ -17,12 +43,14 @@ const AddProfessionalPage = () => {
   const [provider, setProvider] = useState<ProviderRetrieve | null>(null);
   const [showVisualError, setShowVisualError] = useState(false);
 
+  
   const fetchProviderByCode = async () => {
     if (!providerCode || providerCode.length !== 6) {
       setError("O código deve ter 6 dígitos");
       setShowVisualError(true);
       return;
     }
+    
 
     setIsLoading(true);
     setError(null);
@@ -46,6 +74,7 @@ const AddProfessionalPage = () => {
       setIsLoading(false);
     }
   };
+
 
   const handleAddProvider = async () => {
     if (!providerCode || providerCode.length !== 6) {
@@ -78,96 +107,77 @@ const AddProfessionalPage = () => {
     } finally {
       setIsLinking(false);
     }
+  
   };
 
-  return (
-    <div className="flex flex-col min-h-screen bg-primary font-inter">
-      {/* Top content */}
-      <div className="px-[24px] pt-[24px]">
-        <Header
-          title="Adicionar profissional"
-          subtitle="Peça para o profissional de saúde ou ACS te fornecer o ID dele"
+return (
+  <div className="flex flex-col min-h-screen bg-primary font-inter pb-20"> {/* Added pb-20 for bottom padding */}
+    {/* Main content area */}
+    <div className="px-6 pt-6 flex-1"> {/* flex-1 makes this take remaining space */}
+      <Header
+        title="Adicionar profissional"
+        subtitle="Peça para o profissional de saúde ou ACS te fornecer o ID dele"
+      />
+
+      <div className="mt-6">
+        <TextField
+          id="providerCode"
+          name="providerCode"
+          label="Inserir código do profissional"
+          value={providerCode}
+          onChange={(e) => setProviderCode(e.target.value)}
+          placeholder="Código de 6 dígitos"
+          error={error && !showVisualError ? error : undefined}
         />
 
-        <div className="mt-6">
-          <TextField
-            id="providerCode"
-            name="providerCode"
-            label="Inserir código do profissional"
-            value={providerCode}
-            onChange={(e) => setProviderCode(e.target.value)}
-            placeholder="Código de 6 dígitos"
-            error={error && !showVisualError ? error : undefined}
-          />
-
-          {showVisualError && !provider && !linkSuccess && (
-            <div className="text-center flex flex-col items-center mt-6">
-              <img
-                src={errorImage}
-                alt="Erro ao buscar"
-                className="w-64 h-64 mb-4"
-              />
-              <div className="text-[#141B36]">{error}</div>
-            </div>
-          )}
-        </div>
-
-        {provider && !linkSuccess && (
-          <div className="mt-6">
-            <div className="bg-gray-50 p-4 rounded-xl flex items-center space-x-4">
-              <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-r from-blue-500 to-purple-500">
-                <div className="w-full h-full rounded-full overflow-hidden">
-                  <img
-                    src={provider.profile_picture || "/default-profile.png"}
-                    alt={provider.social_name || "Profissional de Saúde"}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <h3 className="font-semibold text-gray-800 text-lg">
-                  {provider.social_name}
-                </h3>
-                <p className="text-gray-500 text-sm">
-                  {provider.professional_registration}
-                </p>
-              </div>
-            </div>
-            <p className="mt-4 text-gray-500 text-sm text-center">
-              Certifique-se que este é o profissional correto antes de
-              confirmar.
-            </p>
-          </div>
-        )}
-
-        {linkSuccess && (
-          <div className="mt-6 p-4 bg-green-50 border border-green-100 text-green-700 rounded-lg flex items-center">
-            <svg
-              className="w-6 h-6 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-            <div>
-              <p className="font-medium">Profissional vinculado com sucesso!</p>
-              <p className="text-sm">
-                Você agora tem acesso aos serviços deste profissional.
-              </p>
-            </div>
+        {/* Error display */}
+        {showVisualError && !provider && !linkSuccess && (
+          <div className="text-center flex flex-col items-center mt-6">
+            <img src={errorImage} alt="Erro ao buscar" className="w-64 h-64 mb-4" />
+            <div className="text-[#141B36]">{error}</div>
           </div>
         )}
       </div>
 
-      {/* Bottom buttons */}
-      <div className="mt-auto mb-[44px] px-6">
+      {/* Provider info */}
+      {provider && !linkSuccess && (
+        <div className="mt-6">
+          <div className="bg-gray-50 p-4 rounded-xl flex items-center space-x-4">
+            <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-r from-blue-500 to-purple-500">
+              <div className="w-full h-full rounded-full overflow-hidden">
+                <img
+                  src={provider.profile_picture || "/default-profile.png"}
+                  alt={provider.social_name || "Profissional de Saúde"}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-800 text-lg">{provider.social_name}</h3>
+              <p className="text-gray-500 text-sm">{provider.professional_registration}</p>
+            </div>
+          </div>
+          <p className="mt-4 text-gray-500 text-sm text-center">
+            Certifique-se que este é o profissional correto antes de confirmar.
+          </p>
+        </div>
+      )}
+
+      {/* Success message */}
+      {linkSuccess && (
+        <div className="mt-6 p-4 bg-green-50 border border-green-100 text-green-700 rounded-lg flex items-center">
+          <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <div>
+            <p className="font-medium">Profissional vinculado com sucesso!</p>
+            <p className="text-sm">Você agora tem acesso aos serviços deste profissional.</p>
+          </div>
+        </div>
+      )}
+
+      {/* Action buttons */}
+      <div className="mt-8 mb-6">
         {provider && !linkSuccess ? (
           <div className="flex gap-3">
             <Button
@@ -198,7 +208,7 @@ const AddProfessionalPage = () => {
           <Button
             onClick={fetchProviderByCode}
             variant="white"
-            className="w-full mt-4"
+            className="w-full"
             disabled={isLoading || providerCode.length !== 6}
           >
             {isLoading ? "Buscando..." : "Buscar profissional"}
@@ -206,7 +216,17 @@ const AddProfessionalPage = () => {
         )}
       </div>
     </div>
-  );
+
+    {/* Bottom Navigation - Fixed position */}
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200">
+      <BottomNavigationBar
+        variant="user"
+        initialActiveId="home"
+        onItemClick={handleNavigationClick}
+      />
+    </div>
+  </div>
+);
 };
 
 export default AddProfessionalPage;

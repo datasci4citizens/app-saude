@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
 import Card from "@/components/ui/reminder-card";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
+
 
 interface Reminder {
   title: string;
@@ -25,6 +27,26 @@ const Reminders: React.FC = () => {
       startDate: "2023-04-19",
     },
   ];
+    const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/user-main-page");
+        break;
+      case "meds":
+        navigate("/reminders");
+        break;
+      case "diary":
+        navigate("/diary");
+        break;
+      case "emergency":
+        navigate("/emergency-user");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+    }
+  };
+
 
   const medicines: Reminder[] = [
     {
@@ -222,7 +244,17 @@ const Reminders: React.FC = () => {
       >
         <span className="mgc_add_line text-2xl text-typography" />
       </button>
+
+          <div className="fixed bottom-0 left-0 right-0 z-30">
+      <BottomNavigationBar
+        variant="user"
+        initialActiveId="home"
+        onItemClick={handleNavigationClick}
+      />
     </div>
+    </div>
+
+    
   );
 };
 

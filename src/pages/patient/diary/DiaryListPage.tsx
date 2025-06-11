@@ -4,6 +4,7 @@ import Header from "@/components/ui/header";
 import { Button } from "@/components/forms/button";
 import { DiaryService } from "@/api/services/DiaryService";
 import { ChevronRight, PlusCircle } from "lucide-react";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 // Updated interface to match server response structure
 interface DiaryTrigger {
@@ -42,6 +43,26 @@ export default function DiaryListPage() {
   const [diaries, setDiaries] = useState<DiaryData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+
+    const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/user-main-page");
+        break;
+      case "meds":
+        navigate("/reminders");
+        break;
+      case "diary":
+        navigate("/diary");
+        break;
+      case "emergency":
+        navigate("/emergency-user");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+    }
+  };
 
   useEffect(() => {
     const fetchDiaries = async () => {
@@ -269,6 +290,14 @@ export default function DiaryListPage() {
           ))}
         </div>
       )}
+
+    <div className="fixed bottom-0 left-0 right-0 z-30">
+      <BottomNavigationBar
+        variant="user"
+        initialActiveId="home"
+        onItemClick={handleNavigationClick}
+      />
+    </div>
     </div>
   );
 }

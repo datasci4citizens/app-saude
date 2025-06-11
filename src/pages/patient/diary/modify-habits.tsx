@@ -10,6 +10,7 @@ import {
 } from "@/components/forms/select_input";
 import { TextField } from "@/components/forms/text_input";
 import Header from "@/components/ui/header";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 const ModifyHabits = () => {
   const navigate = useNavigate();
@@ -30,6 +31,26 @@ const ModifyHabits = () => {
       },
     });
   };
+    const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/user-main-page");
+        break;
+      case "meds":
+        navigate("/reminders");
+        break;
+      case "diary":
+        navigate("/diary");
+        break;
+      case "emergency":
+        navigate("/emergency-user");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+    }
+  };
+
 
   // Define measurement type options
   const measurementTypeOptions = [
@@ -75,6 +96,13 @@ const ModifyHabits = () => {
           Criar Hábito
         </Button>
       </form>
+          <div className="fixed bottom-0 left-0 right-0 z-30">
+      <BottomNavigationBar
+        variant="user"
+        initialActiveId="home"
+        onItemClick={handleNavigationClick}
+      />
+    </div>
     </div>
   );
 };

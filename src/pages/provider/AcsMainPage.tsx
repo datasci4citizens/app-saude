@@ -46,7 +46,7 @@ export default function AcsMainPage() {
     // Implementar navegação baseada no item clicado
     switch (itemId) {
       case "home":
-        // Já estamos na home
+        navigate("/acs-main-page");
         break;
       //case 'consults':
       //    navigate('/appointments');

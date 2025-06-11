@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
 import { DiaryService } from "@/api/services/DiaryService";
 import HabitCard from "@/components/ui/habit-card";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
+
 
 // Updated interfaces to match actual server response structure
 interface DiaryTrigger {
@@ -98,6 +100,26 @@ export default function ViewDiaryEntry() {
     }
   };
 
+    const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/user-main-page");
+        break;
+      case "meds":
+        navigate("/reminders");
+        break;
+      case "diary":
+        navigate("/diary");
+        break;
+      case "emergency":
+        navigate("/emergency-user");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+    }
+  };
+
   // Get general text entry if available
   const getGeneralTextEntry = (): { text: string; shared: boolean } | null => {
     if (!diary || !diary.entries || diary.entries.length === 0) {
@@ -120,12 +142,22 @@ export default function ViewDiaryEntry() {
 
   if (isLoading) {
     return (
+      <>
       <div className="max-w-3xl mx-auto px-4 py-8">
         <Header title="Visualizar Diário" />
         <div className="flex justify-center items-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
         </div>
       </div>
+
+          <div className="fixed bottom-0 left-0 right-0 z-30">
+      <BottomNavigationBar
+        variant="user"
+        initialActiveId="home"
+        onItemClick={handleNavigationClick}
+      />
+    </div>
+    </>
     );
   }
 
@@ -147,6 +179,13 @@ export default function ViewDiaryEntry() {
             Voltar
           </button>
         </div>
+      <div className="fixed bottom-0 left-0 right-0 z-30">
+        <BottomNavigationBar
+        variant="user"
+        initialActiveId="home"
+        onItemClick={handleNavigationClick}
+      />
+    </div>
       </div>
     );
   }
@@ -264,6 +303,14 @@ export default function ViewDiaryEntry() {
           </div>
         </div>
       )}
+
+          <div className="fixed bottom-0 left-0 right-0 z-30">
+      <BottomNavigationBar
+        variant="user"
+        initialActiveId="home"
+        onItemClick={handleNavigationClick}
+      />
+    </div>
     </div>
   );
 }

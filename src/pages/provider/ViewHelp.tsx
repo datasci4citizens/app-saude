@@ -5,6 +5,8 @@ import { PersonService } from "@/api/services/PersonService";
 import { HelpService } from "@/api/services/HelpService";
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
+
 
 export default function ViewHelp() {
   const { personId, helpId } = useParams<{
@@ -19,6 +21,26 @@ export default function ViewHelp() {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+    const handleNavigationClick = (itemId: string) => {
+    // Implementar navegação baseada no item clicado
+    switch (itemId) {
+      case "home":
+        navigate("/acs-main-page");
+        break;
+      //case 'consults':
+      //    navigate('/appointments');
+      //    break;
+      case "patients":
+        navigate("/patients");
+        break;
+      case "emergency":
+        navigate("/emergencies");
+        break;
+      case "profile":
+        navigate("/acs-profile");
+        break;
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -184,6 +206,11 @@ export default function ViewHelp() {
           </div>
         )}
       </div>
+          <BottomNavigationBar
+        variant="acs"
+        initialActiveId="home"
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

@@ -6,6 +6,10 @@ import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import type { PatchedMarkAttentionPoint } from "@/api/models/PatchedMarkAttentionPoint";
 import { ProviderService } from "@/api/services/ProviderService";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
+import { useNavigate } from "react-router-dom";
+
+
 
 // Interface para as entradas do diário
 interface DiaryEntryDetail {
@@ -53,6 +57,29 @@ export default function ViewDiary() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const navigate = useNavigate(); 
+  const handleNavigationClick = (itemId: string) => {
+    // Implementar navegação baseada no item clicado
+    switch (itemId) {
+      case "home":
+        navigate("/acs-main-page");
+        break;
+      //case 'consults':
+      //    navigate('/appointments');
+      //    break;
+      case "patients":
+        navigate("/patients");
+        break;
+      case "emergency":
+        navigate("/emergencies");
+        break;
+      case "profile":
+        navigate("/acs-profile");
+        break;
+    }
+  };
+
+  
   useEffect(() => {
     if (diaryId && personId) {
       const fetchData = async () => {
@@ -359,6 +386,11 @@ export default function ViewDiary() {
           </div>
         )}
       </div>
+            <BottomNavigationBar
+        variant="acs"
+        initialActiveId="home"
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }
