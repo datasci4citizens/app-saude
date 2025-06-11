@@ -346,13 +346,6 @@ export default function UserMainPage() {
         </h2>
       </div>
 
-      {/* Debug info - remover depois */}
-      {process.env.NODE_ENV === "development" && (
-        <div className="fixed top-4 right-4 bg-black text-white p-2 rounded text-xs z-50">
-          hasChanges: {hasChanges.toString()}
-        </div>
-      )}
-
       {/* ÁREA SCROLLÁVEL - Lista de Interesses */}
       <div
         className="px-4 overflow-y-auto"
@@ -402,7 +395,7 @@ export default function UserMainPage() {
                 )}
 
                 <h3 className="font-bold text-lg text-card-foreground mb-2 flex items-center gap-2 flex-wrap">
-                  <span className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex-shrink-0"></span>
+                  <span className="w-2 h-2 bg-gradient-interest-indicator rounded-full flex-shrink-0"></span>
                   <span className="break-words min-w-0">
                     {interest.interest_name}
                   </span>
@@ -461,7 +454,7 @@ export default function UserMainPage() {
       </div>
 
       {/* BOTÕES FIXOS - Sempre visíveis acima da navegação */}
-      <div className="fixed bottom-24 left-0 right-0 px-4 py-3 bg-gradient-to-t from-primary via-primary to-transparent backdrop-blur-sm border-t border-gray-200/20 z-20">
+      <div className="fixed bottom-24 left-0 right-0 px-4 py-3 bg-gradient-button-background backdrop-blur-sm border-t border-gray-200/20 z-20">
         {editionMode ? (
           <div className="flex justify-center gap-2 max-w-md mx-auto">
             <Button
@@ -474,7 +467,7 @@ export default function UserMainPage() {
             </Button>
             <Button
               onClick={handleSaveChanges}
-              className={`flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 shadow-lg hover:shadow-xl transition-all duration-200 border-0 text-sm py-2 ${
+              className={`flex-1 bg-gradient-button-save hover:bg-gradient-button-save-hover text-white shadow-lg hover:shadow-xl transition-all duration-200 border-0 text-sm py-2 ${
                 !hasChanges ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={isSyncing || !hasChanges}
@@ -487,7 +480,7 @@ export default function UserMainPage() {
             </Button>
             <Button
               onClick={handleCreateNewInterest}
-              className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-lg hover:shadow-xl transition-all duration-200 border-0 text-sm py-2"
+              className="flex-1 bg-gradient-button-new hover:bg-gradient-button-new-hover text-white shadow-lg hover:shadow-xl transition-all duration-200 border-0 text-sm py-2"
               disabled={isSyncing}
             >
               + Novo
@@ -497,7 +490,7 @@ export default function UserMainPage() {
           <div className="w-full flex justify-center px-2">
             <Button
               onClick={() => setEditionMode(true)}
-              className="bg-gradient-to-r from-selection to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white w-full max-w-xs shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 py-2.5 rounded-xl font-semibold text-sm"
+              className="bg-gradient-button-edit hover:bg-gradient-button-edit-hover text-white w-full max-w-xs shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 py-2.5 rounded-xl font-semibold text-sm"
               disabled={isSyncing}
             >
               ✏️ Editar Interesses
