@@ -75,10 +75,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
           {/* ✨ Ícone de read-only */}
           {readOnly && (
             <div className="group relative">
-              <Lock 
-                size={16} 
-                className="text-white/70 cursor-help" 
-              />
+              <Lock size={16} className="text-white/70 cursor-help" />
               <div className="absolute bottom-full right-0 mb-1 max-w-xs bg-black text-white text-xs rounded p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg z-20 whitespace-nowrap">
                 Modo somente leitura
               </div>
@@ -107,11 +104,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
       </div>
 
       {/* Conteúdo adicional (se fornecido) */}
-      {children && (
-        <div className="mt-2 w-full">
-          {children}
-        </div>
-      )}
+      {children && <div className="mt-2 w-full">{children}</div>}
     </div>
   );
 };

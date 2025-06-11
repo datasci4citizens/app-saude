@@ -31,7 +31,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
       const tokenRequest = {
         token: idToken,
       };
-      const loginResponse = await AuthService.authLoginGoogleCreate(tokenRequest);
+      const loginResponse =
+        await AuthService.authLoginGoogleCreate(tokenRequest);
 
       handleLoginSuccess(loginResponse);
     } catch (err: any) {
@@ -51,7 +52,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
         const codeRequest: Auth = {
           code: code,
         };
-        const loginResponse = await AuthService.authLoginGoogleCreate(codeRequest);
+        const loginResponse =
+          await AuthService.authLoginGoogleCreate(codeRequest);
 
         handleLoginSuccess(loginResponse);
       } catch (err) {

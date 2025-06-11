@@ -1,6 +1,17 @@
-import React, { useState, useEffect, type ButtonHTMLAttributes, type ReactNode } from "react";
+import React, {
+  useState,
+  useEffect,
+  type ButtonHTMLAttributes,
+  type ReactNode,
+} from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight, PlusCircle, Calendar, FileText, MessageSquare } from "lucide-react";
+import {
+  ChevronRight,
+  PlusCircle,
+  Calendar,
+  FileText,
+  MessageSquare,
+} from "lucide-react";
 import { DiaryService } from "@/api";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 
@@ -12,7 +23,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ title, onBackClick }) => (
   <div className="flex items-center gap-4 mb-6">
-    <button 
+    <button
       onClick={onBackClick}
       className="text-typography hover:text-accent transition-colors"
     >
@@ -28,7 +39,12 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
 }
 
-const Button: React.FC<ButtonProps> = ({ children, onClick, className = "", ...props }) => (
+const Button: React.FC<ButtonProps> = ({
+  children,
+  onClick,
+  className = "",
+  ...props
+}) => (
   <button
     onClick={onClick}
     className={`px-4 py-2 rounded-lg font-medium transition-colors ${className}`}
@@ -77,7 +93,7 @@ export default function DiaryListPage() {
       try {
         setIsLoading(true);
         setError(null);
-        
+
         const response = await DiaryService.personDiariesList();
         console.log("API response:", response);
 
@@ -132,7 +148,7 @@ export default function DiaryListPage() {
       return "Data inválida";
     }
   };
-// Group diaries by date for display
+  // Group diaries by date for display
   const groupedDiaries: Record<string, DiaryRetrieve[]> = {};
 
   diaries.forEach((diary) => {
@@ -146,22 +162,28 @@ export default function DiaryListPage() {
   // ✨ Updated helper function for new structure
   const getDiarySummary = (diary: DiaryRetrieve): string => {
     // First, try to get text from entries
-    if (diary.entries && Array.isArray(diary.entries) && diary.entries.length > 0) {
+    if (
+      diary.entries &&
+      Array.isArray(diary.entries) &&
+      diary.entries.length > 0
+    ) {
       const textEntry = diary.entries.find(
         (e) => e.text && e.text.trim() !== "",
       );
       if (textEntry && textEntry.text) {
         const summary = textEntry.text;
-        
+
         // Check if we also have trigger responses
-        const hasTriggerResponses = diary.interest_areas?.some((area) =>
-          Array.isArray(area.triggers) && area.triggers.some(
-            (t) => t.value_as_string && t.value_as_string.trim() !== "",
-          ),
+        const hasTriggerResponses = diary.interest_areas?.some(
+          (area) =>
+            Array.isArray(area.triggers) &&
+            area.triggers.some(
+              (t) => t.value_as_string && t.value_as_string.trim() !== "",
+            ),
         );
 
-        return hasTriggerResponses 
-          ? `${summary} (+ respostas de interesses)` 
+        return hasTriggerResponses
+          ? `${summary} (+ respostas de interesses)`
           : summary;
       }
     }
@@ -169,11 +191,11 @@ export default function DiaryListPage() {
     // If no text entry, try to get trigger responses
     if (diary.interest_areas && Array.isArray(diary.interest_areas)) {
       const triggersWithResponses = diary.interest_areas.flatMap((area) =>
-        Array.isArray(area.triggers) 
+        Array.isArray(area.triggers)
           ? area.triggers.filter(
               (t) => t.value_as_string && t.value_as_string.trim() !== "",
             )
-          : []
+          : [],
       );
 
       if (
@@ -200,29 +222,41 @@ export default function DiaryListPage() {
 
     if (hasTextEntry) {
       components.push("Texto");
-      icons.push(<FileText key="text" size={14} className="text-blue-500 dark:text-blue-400" />);
+      icons.push(
+        <FileText
+          key="text"
+          size={14}
+          className="text-blue-500 dark:text-blue-400"
+        />,
+      );
     }
 
     // Check for triggers with responses
-    const triggerCount = diary.interest_areas?.reduce(
-      (count, area) =>
-        count +
-        (Array.isArray(area.triggers) 
-          ? area.triggers.filter(
-              (t) => t.value_as_string && t.value_as_string.trim() !== "",
-            ).length
-          : 0),
-      0,
-    ) || 0;
+    const triggerCount =
+      diary.interest_areas?.reduce(
+        (count, area) =>
+          count +
+          (Array.isArray(area.triggers)
+            ? area.triggers.filter(
+                (t) => t.value_as_string && t.value_as_string.trim() !== "",
+              ).length
+            : 0),
+        0,
+      ) || 0;
 
     if (triggerCount > 0) {
       components.push(`${triggerCount} resposta${triggerCount > 1 ? "s" : ""}`);
-      icons.push(<MessageSquare key="triggers" size={14} className="text-green-500 dark:text-green-400" />);
+      icons.push(
+        <MessageSquare
+          key="triggers"
+          size={14}
+          className="text-green-500 dark:text-green-400"
+        />,
+      );
     }
 
-    const title = components.length > 0
-      ? `Diário (${components.join(", ")})`
-      : "Diário";
+    const title =
+      components.length > 0 ? `Diário (${components.join(", ")})` : "Diário";
 
     return { title, icons };
   };
@@ -231,9 +265,9 @@ export default function DiaryListPage() {
   const getTimeFromDate = (dateString: string): string => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleTimeString('pt-BR', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
+      return date.toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
       });
     } catch (error) {
       return "";
@@ -262,10 +296,15 @@ export default function DiaryListPage() {
   if (error) {
     return (
       <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-white dark:bg-gray-900 min-h-screen pb-24">
-        <Header title="Diário" onBackClick={() => navigate("/user-main-page")} />
-        
+        <Header
+          title="Diário"
+          onBackClick={() => navigate("/user-main-page")}
+        />
+
         <div className="flex flex-col items-center justify-center h-64">
-          <p className="text-center text-red-500 dark:text-red-400 mb-4">{error}</p>
+          <p className="text-center text-red-500 dark:text-red-400 mb-4">
+            {error}
+          </p>
           <Button
             onClick={() => window.location.reload()}
             className="bg-gray-500 dark:bg-gray-600 text-white hover:bg-gray-600 dark:hover:bg-gray-700"
@@ -296,17 +335,23 @@ export default function DiaryListPage() {
         <div className="flex justify-center items-center h-64">
           <div className="flex flex-col items-center gap-3">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 dark:border-blue-400"></div>
-            <p className="text-gray-600 dark:text-gray-300">Carregando diários...</p>
+            <p className="text-gray-600 dark:text-gray-300">
+              Carregando diários...
+            </p>
           </div>
         </div>
       ) : Object.keys(groupedDiaries).length === 0 ? (
         <div className="flex flex-col items-center justify-center h-64">
-          <Calendar size={48} className="text-gray-300 dark:text-gray-600 mb-4" />
+          <Calendar
+            size={48}
+            className="text-gray-300 dark:text-gray-600 mb-4"
+          />
           <p className="text-center text-gray-600 dark:text-gray-300 mb-4 text-lg">
             Você ainda não possui diários.
           </p>
           <p className="text-center text-gray-500 dark:text-gray-400 mb-6 text-sm max-w-md">
-            Comece a registrar seus pensamentos, experiências e respostas aos seus interesses.
+            Comece a registrar seus pensamentos, experiências e respostas aos
+            seus interesses.
           </p>
           <Button
             onClick={handleCreateDiary}
@@ -320,57 +365,74 @@ export default function DiaryListPage() {
         <div className="mt-4 space-y-6">
           {Object.entries(groupedDiaries)
             .sort(([a], [b]) => {
-              const [dayA = 0, monthA = 0] = a.split('/').map((v) => Number(v) || 0);
-              const [dayB = 0, monthB = 0] = b.split('/').map((v) => Number(v) || 0);
+              const [dayA = 0, monthA = 0] = a
+                .split("/")
+                .map((v) => Number(v) || 0);
+              const [dayB = 0, monthB = 0] = b
+                .split("/")
+                .map((v) => Number(v) || 0);
               return (monthB ?? 0) - (monthA ?? 0) || (dayB ?? 0) - (dayA ?? 0);
             })
             .map(([date, entries]) => (
-            <div key={date} className="space-y-3">
-              <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
-                <Calendar size={16} className="text-blue-500 dark:text-blue-400" />
-                <h3 className="font-medium text-gray-800 dark:text-gray-200">Dia {date}</h3>
-                <span className="text-xs text-gray-500 dark:text-gray-400 ml-auto">
-                  {entries.length} entrada{entries.length > 1 ? "s" : ""}
-                </span>
-              </div>
+              <div key={date} className="space-y-3">
+                <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+                  <Calendar
+                    size={16}
+                    className="text-blue-500 dark:text-blue-400"
+                  />
+                  <h3 className="font-medium text-gray-800 dark:text-gray-200">
+                    Dia {date}
+                  </h3>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 ml-auto">
+                    {entries.length} entrada{entries.length > 1 ? "s" : ""}
+                  </span>
+                </div>
 
-              {entries
-                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                .map((entry) => {
-                const { title, icons } = getDiaryCardInfo(entry);
-                const time = getTimeFromDate(entry.date);
-                
-                return (
-                  <div
-                    key={entry.diary_id}
-                    className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-transparent hover:border-blue-200 dark:hover:border-blue-600"
-                    onClick={() => handleViewDiary(entry.diary_id)}
-                  >
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1">
-                          {icons}
+                {entries
+                  .sort(
+                    (a, b) =>
+                      new Date(b.date).getTime() - new Date(a.date).getTime(),
+                  )
+                  .map((entry) => {
+                    const { title, icons } = getDiaryCardInfo(entry);
+                    const time = getTimeFromDate(entry.date);
+
+                    return (
+                      <div
+                        key={entry.diary_id}
+                        className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-transparent hover:border-blue-200 dark:hover:border-blue-600"
+                        onClick={() => handleViewDiary(entry.diary_id)}
+                      >
+                        <div className="flex justify-between items-start mb-3">
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1">
+                              {icons}
+                            </div>
+                            <h4 className="font-medium text-gray-800 dark:text-gray-200 text-sm">
+                              {title}
+                            </h4>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {time && (
+                              <span className="text-xs text-gray-500 dark:text-gray-400">
+                                {time}
+                              </span>
+                            )}
+                            <ChevronRight
+                              size={16}
+                              className="text-gray-400 dark:text-gray-500"
+                            />
+                          </div>
                         </div>
-                        <h4 className="font-medium text-gray-800 dark:text-gray-200 text-sm">
-                          {title}
-                        </h4>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {time && (
-                          <span className="text-xs text-gray-500 dark:text-gray-400">{time}</span>
-                        )}
-                        <ChevronRight size={16} className="text-gray-400 dark:text-gray-500" />
-                      </div>
-                    </div>
 
-                    <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 leading-relaxed">
-                      {getDiarySummary(entry)}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          ))}
+                        <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 leading-relaxed">
+                          {getDiarySummary(entry)}
+                        </p>
+                      </div>
+                    );
+                  })}
+              </div>
+            ))}
         </div>
       )}
 
@@ -382,7 +444,6 @@ export default function DiaryListPage() {
           onItemClick={handleNavigationClick}
         />
       </div>
-
     </div>
   );
 }

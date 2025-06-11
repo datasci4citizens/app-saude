@@ -56,7 +56,8 @@ export default function DiaryInfoForm() {
       setIsLoadingInterests(true);
 
       try {
-        const interests = await InterestAreasService.personInterestAreasList(false);
+        const interests =
+          await InterestAreasService.personInterestAreasList(false);
         console.log("Interesses recebidos:", interests);
 
         if (!interests || interests.length === 0) {
@@ -372,10 +373,7 @@ export default function DiaryInfoForm() {
               <span className="text-sm text-gray-600 italic">
                 Compartilhar com profissionais
               </span>
-              <Switch
-                checked={shareText}
-                onCheckedChange={setShareText}
-              />
+              <Switch checked={shareText} onCheckedChange={setShareText} />
             </div>
           </div>
           <TextField

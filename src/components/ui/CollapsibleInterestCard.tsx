@@ -66,7 +66,10 @@ const CollapsibleInterestCard: React.FC<CollapsibleInterestCardProps> = ({
   return (
     <div className="space-y-3">
       {/* Card principal clicável */}
-      <div onClick={handleCardClick} className={readOnly ? "cursor-default" : "cursor-pointer"}>
+      <div
+        onClick={handleCardClick}
+        className={readOnly ? "cursor-default" : "cursor-pointer"}
+      >
         <HabitCard
           title={interestName}
           isAttentionPoint={interest.is_attention_point}
@@ -83,11 +86,12 @@ const CollapsibleInterestCard: React.FC<CollapsibleInterestCardProps> = ({
           <div className="flex items-center gap-2">
             <Eye size={16} className="text-gray-500" />
             <span className="text-sm text-gray-600">
-              {interest.shared ? "Compartilhado com profissionais" : "Não compartilhado"}
+              {interest.shared
+                ? "Compartilhado com profissionais"
+                : "Não compartilhado"}
             </span>
           </div>
         ) : (
-          
           // Modo editável: switch normal
           <>
             <span className="text-sm text-gray-500 italic">
@@ -176,7 +180,9 @@ const TriggerItem: React.FC<{
         // ✨ Modo read-only: exibe resposta como texto simples se existe, ou mensagem apropriada
         <div className="p-3 bg-gray-50 rounded-lg border-2 border-gray-200 min-h-[60px]">
           {trigger.response ? (
-            <p className="text-gray-700 whitespace-pre-wrap">{trigger.response}</p>
+            <p className="text-gray-700 whitespace-pre-wrap">
+              {trigger.response}
+            </p>
           ) : (
             <p className="text-gray-400 italic">Sem resposta registrada</p>
           )}
