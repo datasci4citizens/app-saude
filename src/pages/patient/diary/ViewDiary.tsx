@@ -47,7 +47,9 @@ export default function ViewDiaryEntry() {
   const [isLoading, setIsLoading] = useState(true);
   const [diary, setDiary] = useState<DiaryData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [expandedInterests, setExpandedInterests] = useState<Set<number>>(new Set());
+  const [expandedInterests, setExpandedInterests] = useState<Set<number>>(
+    new Set(),
+  );
 
   useEffect(() => {
     const fetchDiaryData = async () => {
@@ -69,11 +71,14 @@ export default function ViewDiaryEntry() {
         if (response && response.diary_id) {
           setDiary(response);
           // Auto-expand interests that have responses
-          const interestsWithResponses = response.interest_areas
-            ?.filter(area => 
-              area.triggers?.some(t => t.value_as_string && t.value_as_string.trim() !== "")
-            )
-            .map(area => area.interest_area_id) || [];
+          const interestsWithResponses =
+            response.interest_areas
+              ?.filter((area) =>
+                area.triggers?.some(
+                  (t) => t.value_as_string && t.value_as_string.trim() !== "",
+                ),
+              )
+              .map((area) => area.interest_area_id) || [];
           setExpandedInterests(new Set(interestsWithResponses));
         } else {
           console.error(
@@ -131,7 +136,7 @@ export default function ViewDiaryEntry() {
 
   // Toggle interest expansion
   const toggleInterest = (interestId: number) => {
-    setExpandedInterests(prev => {
+    setExpandedInterests((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(interestId)) {
         newSet.delete(interestId);
@@ -148,15 +153,16 @@ export default function ViewDiaryEntry() {
       interest_area_id: diaryInterest.interest_area_id,
       interest_name: diaryInterest.interest_name,
       shared: diaryInterest.shared_with_provider,
-      triggers: diaryInterest.triggers?.map(trigger => ({
-        trigger_id: trigger.trigger_id,
-        trigger_name: trigger.trigger_name,
-        custom_trigger_name: null,
-        observation_concept_id: trigger.observation_concept_id,
-        value_as_string: trigger.value_as_string,
-        response: trigger.value_as_string || "",
-        shared: diaryInterest.shared_with_provider
-      })) || []
+      triggers:
+        diaryInterest.triggers?.map((trigger) => ({
+          trigger_id: trigger.trigger_id,
+          trigger_name: trigger.trigger_name,
+          custom_trigger_name: null,
+          observation_concept_id: trigger.observation_concept_id,
+          value_as_string: trigger.value_as_string,
+          response: trigger.value_as_string || "",
+          shared: diaryInterest.shared_with_provider,
+        })) || [],
     };
   };
 
@@ -219,9 +225,7 @@ export default function ViewDiaryEntry() {
 
       {!hasContent && (
         <div className="bg-gray1 p-6 rounded-lg text-center my-8">
-          <p className="text-gray1 text-lg">
-            Este diário não possui conteúdo.
-          </p>
+          <p className="text-gray1 text-lg">Este diário não possui conteúdo.</p>
         </div>
       )}
 
@@ -251,13 +255,16 @@ export default function ViewDiaryEntry() {
             {diary.interest_areas.map((interest) => {
               // Only show interests that have at least one trigger with a response
               const hasResponses = interest.triggers?.some(
-                (t) => t.value_as_string && t.value_as_string.trim() !== ""
+                (t) => t.value_as_string && t.value_as_string.trim() !== "",
               );
 
               if (!hasResponses) return null;
 
               return (
-                <div key={interest.interest_area_id} className="bg-white border border-gray1 rounded-lg p-4">
+                <div
+                  key={interest.interest_area_id}
+                  className="bg-white border border-gray1 rounded-lg p-4"
+                >
                   <CollapsibleInterestCard
                     interest={convertToUserInterest(interest)}
                     isOpen={expandedInterests.has(interest.interest_area_id)}
@@ -266,20 +273,23 @@ export default function ViewDiaryEntry() {
                     onSharingToggle={() => {}} // Read-only mode
                     onTriggerResponseChange={() => {}} // Read-only mode
                   />
-                  
+
                   {/* Sharing status */}
                   <div className="mt-3 pt-3 border-t border-gray1">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray2">Status de compartilhamento:</span>
-                      <span className={`font-medium ${
-                        interest.shared_with_provider 
-                          ? "text-sucess" 
-                          : "text-selection"
-                      }`}>
-                        {interest.shared_with_provider 
-                          ? "✓ Compartilhado com profissionais" 
-                          : "○ Não compartilhado"
-                        }
+                      <span className="text-gray2">
+                        Status de compartilhamento:
+                      </span>
+                      <span
+                        className={`font-medium ${
+                          interest.shared_with_provider
+                            ? "text-sucess"
+                            : "text-selection"
+                        }`}
+                      >
+                        {interest.shared_with_provider
+                          ? "✓ Compartilhado com profissionais"
+                          : "○ Não compartilhado"}
                       </span>
                     </div>
                   </div>
@@ -298,13 +308,14 @@ export default function ViewDiaryEntry() {
               Observações Gerais
             </h3>
             <div className="flex items-center gap-3">
-              <span className={`text-sm font-medium ${
-                textEntry.shared ? "text-success" : "text-selection"
-              }`}>
-                {textEntry.shared 
-                  ? "✓ Compartilhado com profissionais" 
-                  : "○ Não compartilhado"
-                }
+              <span
+                className={`text-sm font-medium ${
+                  textEntry.shared ? "text-success" : "text-selection"
+                }`}
+              >
+                {textEntry.shared
+                  ? "✓ Compartilhado com profissionais"
+                  : "○ Não compartilhado"}
               </span>
             </div>
           </div>
