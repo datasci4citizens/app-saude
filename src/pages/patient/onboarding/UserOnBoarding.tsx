@@ -104,7 +104,7 @@ export default function UserOnboarding() {
       setStep(step - 1);
     } else {
       // Handle back on first screen (could redirect or show confirmation)
-      console.log("On first step, nowhere to go back");
+      router("/welcome");
     }
   };
 
