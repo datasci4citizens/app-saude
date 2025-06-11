@@ -20,8 +20,6 @@ import AddProfessionalPage from "./pages/patient/profile/AddProfessionalPage";
 import ModifyHabits from "./pages/patient/diary/modify-habits";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { ThemeToggle } from "./components/ui/ThemeToggle";
-import ViewDiaryUser from "./pages/patient/diary/ViewDiaryUser";
-import ViewPatientDiaries from "./pages/patient/diary/ViewDiaryProvider";
 import ViewDiaryEntry from "./pages/patient/diary/ViewDiary";
 import ProfilePage from "./pages/patient/profile/ProfilePage";
 import AcsProfilePage from "./pages/provider/profile/AcsProfilePage";
@@ -76,14 +74,7 @@ const router = createBrowserRouter([
     path: "/diary/:diaryId",
     element: <ViewDiaryEntry />,
   },
-  {
-    path: "/view-diary-user",
-    element: <ViewDiaryUser />,
-  },
-  {
-    path: "/view-diary-provider",
-    element: <ViewPatientDiaries />,
-  },
+
   {
     path: "/diary/:diaryId",
     element: <ViewDiaryEntry />,
@@ -96,10 +87,7 @@ const router = createBrowserRouter([
     path: "/new-reminder",
     element: <NewReminder />,
   },
-  {
-    path: "/view-diary-user",
-    element: <ViewDiaryUser />,
-  },
+
   {
     path: "/reminder",
     element: (
