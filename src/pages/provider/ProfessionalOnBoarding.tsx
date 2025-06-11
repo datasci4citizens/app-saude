@@ -156,7 +156,7 @@ export default function ProfessionalOnboarding() {
 
   // Handle back button click
   const handleBackClick = (): void => {
-    navigate(-1); // Go back to previous page
+    navigate("/welcome"); // Go back to previous page
   };
 
   return (
