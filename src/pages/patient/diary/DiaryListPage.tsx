@@ -1,74 +1,10 @@
 import React, { useState, useEffect, type ButtonHTMLAttributes, type ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 import { ChevronRight, PlusCircle, Calendar, FileText, MessageSquare } from "lucide-react";
+import { DiaryService } from "@/api";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 // Mock services and components for demonstration
-const DiaryService = {
-  personDiariesList: async () => {
-    // Simulate API call with mock data
-    return [
-      {
-        diary_id: 1,
-        date: "2025-06-11T14:30:00.000Z",
-        entries: JSON.stringify([
-          {
-            observation_id: 1,
-            value_as_string: "Hoje foi um dia produtivo. Consegui finalizar o projeto que estava trabalhando.",
-            shared_with_provider: true,
-            created_at: "2025-06-11T14:30:00.000Z"
-          }
-        ]),
-        interest_areas: JSON.stringify([
-          {
-            interest_name: "Produtividade",
-            interest_area_id: 1,
-            observation_concept_id: 1001,
-            value_as_string: null,
-            value_as_concept: 999,
-            shared_with_provider: false,
-            triggers: [
-              {
-                trigger_name: "Como foi seu dia de trabalho?",
-                trigger_id: 1,
-                observation_concept_id: 1002,
-                value_as_string: "Muito bom, consegui focar bem nas tarefas"
-              }
-            ]
-          }
-        ])
-      },
-      {
-        diary_id: 2,
-        date: "2025-06-10T16:45:00.000Z",
-        entries: JSON.stringify([]),
-        interest_areas: JSON.stringify([
-          {
-            interest_name: "Saúde Mental",
-            interest_area_id: 2,
-            observation_concept_id: 2001,
-            value_as_string: null,
-            value_as_concept: 998,
-            shared_with_provider: true,
-            triggers: [
-              {
-                trigger_name: "Como está se sentindo hoje?",
-                trigger_id: 2,
-                observation_concept_id: 2002,
-                value_as_string: "Me sinto mais calmo e equilibrado hoje"
-              },
-              {
-                trigger_name: "Praticou algum exercício?",
-                trigger_id: 3,
-                observation_concept_id: 2003,
-                value_as_string: "Sim, fiz uma caminhada de 30 minutos"
-              }
-            ]
-          }
-        ])
-      }
-    ];
-  }
-};
-
 interface HeaderProps {
   title: string;
   onBackClick: () => void;
@@ -102,40 +38,27 @@ const Button: React.FC<ButtonProps> = ({ children, onClick, className = "", ...p
   </button>
 );
 
-// Type definitions
-interface DiaryRetrieve {
-  diary_id: number;
-  date: string;
-  readonly entries: string;
-  readonly interest_areas: string;
+interface DiaryEntry {
+  text: string;
+  text_shared: boolean;
 }
 
-// Interfaces for parsed data
 interface DiaryTrigger {
-  trigger_name: string;
   trigger_id: number;
-  observation_concept_id: number;
-  value_as_string: string | null;
+  value_as_string: string;
+  trigger_name: string;
 }
 
 interface DiaryInterestArea {
-  interest_name: string;
   interest_area_id: number;
-  observation_concept_id: number;
   value_as_string: string | null;
-  value_as_concept: number | null;
   shared_with_provider: boolean;
   triggers: DiaryTrigger[];
+  interest_name: string;
+  provider_name: string | null;
 }
 
-interface DiaryEntry {
-  observation_id: number;
-  value_as_string: string;
-  shared_with_provider: boolean;
-  created_at: string;
-}
-
-interface ParsedDiaryData {
+interface DiaryRetrieve {
   diary_id: number;
   date: string;
   entries: DiaryEntry[];
@@ -143,37 +66,11 @@ interface ParsedDiaryData {
 }
 
 export default function DiaryListPage() {
-  const [diaries, setDiaries] = useState<ParsedDiaryData[]>([]);
+  const [diaries, setDiaries] = useState<DiaryRetrieve[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const navigate = (path: string) => {
-    console.log(`Navigating to: ${path}`);
-    // In real app, use actual navigation
-  };
-
-  // Helper function to safely parse JSON strings
-  const safeJsonParse = (jsonString: string, fallback: any = []) => {
-    try {
-      return JSON.parse(jsonString);
-    } catch (error) {
-      console.warn("Failed to parse JSON:", jsonString, error);
-      return fallback;
-    }
-  };
-
-  // Helper function to parse diary data
-  const parseDiaryData = (rawDiary: DiaryRetrieve): ParsedDiaryData => {
-    const entries = safeJsonParse(rawDiary.entries, []);
-    const interest_areas = safeJsonParse(rawDiary.interest_areas, []);
-
-    return {
-      diary_id: rawDiary.diary_id,
-      date: rawDiary.date,
-      entries,
-      interest_areas,
-    };
-  };
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDiaries = async () => {
@@ -185,8 +82,19 @@ export default function DiaryListPage() {
         console.log("API response:", response);
 
         if (Array.isArray(response)) {
-          const parsedDiaries = response.map(parseDiaryData);
-          setDiaries(parsedDiaries);
+          // Transform API response to match local DiaryRetrieve type if needed
+          const mapped = response.map((item: any) => ({
+            ...item,
+            entries: Array.isArray(item.entries)
+              ? item.entries
+              : typeof item.entries === "string" && item.entries.trim() !== ""
+                ? [{ text: item.entries, text_shared: false }]
+                : [],
+            interest_areas: Array.isArray(item.interest_areas)
+              ? item.interest_areas
+              : [],
+          }));
+          setDiaries(mapped);
         } else {
           console.error("Unexpected API response format:", response);
           setError("Formato de resposta inesperado da API");
@@ -224,9 +132,8 @@ export default function DiaryListPage() {
       return "Data inválida";
     }
   };
-
-  // Group diaries by date for display
-  const groupedDiaries: Record<string, ParsedDiaryData[]> = {};
+// Group diaries by date for display
+  const groupedDiaries: Record<string, DiaryRetrieve[]> = {};
 
   diaries.forEach((diary) => {
     const dateKey = formatDate(diary.date);
@@ -236,15 +143,15 @@ export default function DiaryListPage() {
     groupedDiaries[dateKey].push(diary);
   });
 
-  // Helper function to get summary text
-  const getDiarySummary = (diary: ParsedDiaryData): string => {
+  // ✨ Updated helper function for new structure
+  const getDiarySummary = (diary: DiaryRetrieve): string => {
     // First, try to get text from entries
     if (diary.entries && Array.isArray(diary.entries) && diary.entries.length > 0) {
       const textEntry = diary.entries.find(
-        (e) => e.value_as_string && e.value_as_string.trim() !== "",
+        (e) => e.text && e.text.trim() !== "",
       );
-      if (textEntry && textEntry.value_as_string) {
-        const summary = textEntry.value_as_string;
+      if (textEntry && textEntry.text) {
+        const summary = textEntry.text;
         
         // Check if we also have trigger responses
         const hasTriggerResponses = diary.interest_areas?.some((area) =>
@@ -281,19 +188,19 @@ export default function DiaryListPage() {
     return "Sem conteúdo";
   };
 
-  // Helper function to get card title with icons
-  const getDiaryCardInfo = (diary: ParsedDiaryData) => {
+  // ✨ Updated helper function for new structure
+  const getDiaryCardInfo = (diary: DiaryRetrieve) => {
     const components = [];
     const icons = [];
 
     // Check for text entry
     const hasTextEntry = diary.entries?.some(
-      (e) => e.value_as_string && e.value_as_string.trim() !== "",
+      (e) => e.text && e.text.trim() !== "",
     );
 
     if (hasTextEntry) {
       components.push("Texto");
-      icons.push(<FileText key="text" size={14} className="text-blue-500" />);
+      icons.push(<FileText key="text" size={14} className="text-blue-500 dark:text-blue-400" />);
     }
 
     // Check for triggers with responses
@@ -310,7 +217,7 @@ export default function DiaryListPage() {
 
     if (triggerCount > 0) {
       components.push(`${triggerCount} resposta${triggerCount > 1 ? "s" : ""}`);
-      icons.push(<MessageSquare key="triggers" size={14} className="text-green-500" />);
+      icons.push(<MessageSquare key="triggers" size={14} className="text-green-500 dark:text-green-400" />);
     }
 
     const title = components.length > 0
@@ -333,16 +240,35 @@ export default function DiaryListPage() {
     }
   };
 
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/user-main-page");
+        break;
+      case "meds":
+        navigate("/reminders");
+        break;
+      case "diary":
+        break;
+      case "emergency":
+        navigate("/emergency-user");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+    }
+  };
+
   if (error) {
     return (
-      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-primary min-h-screen pb-24">
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-white dark:bg-gray-900 min-h-screen pb-24">
         <Header title="Diário" onBackClick={() => navigate("/user-main-page")} />
         
         <div className="flex flex-col items-center justify-center h-64">
-          <p className="text-center text-red-500 mb-4">{error}</p>
+          <p className="text-center text-red-500 dark:text-red-400 mb-4">{error}</p>
           <Button
             onClick={() => window.location.reload()}
-            className="bg-gray-500 text-white hover:bg-gray-600"
+            className="bg-gray-500 dark:bg-gray-600 text-white hover:bg-gray-600 dark:hover:bg-gray-700"
           >
             Tentar Novamente
           </Button>
@@ -352,14 +278,14 @@ export default function DiaryListPage() {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-4 bg-gray-50 min-h-screen">
+    <div className="w-full max-w-4xl mx-auto px-4 py-4 bg-white dark:bg-gray-900 min-h-screen pb-24">
       <Header title="Diário" onBackClick={() => navigate("/user-main-page")} />
 
       {/* Create new diary button */}
       <div className="flex justify-end my-4">
         <Button
           onClick={handleCreateDiary}
-          className="bg-blue-500 text-white flex items-center gap-2 hover:bg-blue-600 transition-colors"
+          className="bg-blue-500 dark:bg-blue-600 text-white flex items-center gap-2 hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
         >
           <PlusCircle size={16} />
           Novo Diário
@@ -369,22 +295,22 @@ export default function DiaryListPage() {
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
           <div className="flex flex-col items-center gap-3">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-            <p className="text-gray-600">Carregando diários...</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 dark:border-blue-400"></div>
+            <p className="text-gray-600 dark:text-gray-300">Carregando diários...</p>
           </div>
         </div>
       ) : Object.keys(groupedDiaries).length === 0 ? (
         <div className="flex flex-col items-center justify-center h-64">
-          <Calendar size={48} className="text-gray-300 mb-4" />
-          <p className="text-center text-gray-600 mb-4 text-lg">
+          <Calendar size={48} className="text-gray-300 dark:text-gray-600 mb-4" />
+          <p className="text-center text-gray-600 dark:text-gray-300 mb-4 text-lg">
             Você ainda não possui diários.
           </p>
-          <p className="text-center text-gray-500 mb-6 text-sm max-w-md">
+          <p className="text-center text-gray-500 dark:text-gray-400 mb-6 text-sm max-w-md">
             Comece a registrar seus pensamentos, experiências e respostas aos seus interesses.
           </p>
           <Button
             onClick={handleCreateDiary}
-            className="bg-green-500 text-white flex items-center gap-2 px-6 py-3 hover:bg-green-600"
+            className="bg-green-500 dark:bg-green-600 text-white flex items-center gap-2 px-6 py-3 hover:bg-green-600 dark:hover:bg-green-700"
           >
             <PlusCircle size={16} />
             Criar Primeiro Diário
@@ -400,10 +326,10 @@ export default function DiaryListPage() {
             })
             .map(([date, entries]) => (
             <div key={date} className="space-y-3">
-              <div className="flex items-center gap-2 border-b border-gray-200 pb-2">
-                <Calendar size={16} className="text-blue-500" />
-                <h3 className="font-medium text-gray-800">Dia {date}</h3>
-                <span className="text-xs text-gray-500 ml-auto">
+              <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+                <Calendar size={16} className="text-blue-500 dark:text-blue-400" />
+                <h3 className="font-medium text-gray-800 dark:text-gray-200">Dia {date}</h3>
+                <span className="text-xs text-gray-500 dark:text-gray-400 ml-auto">
                   {entries.length} entrada{entries.length > 1 ? "s" : ""}
                 </span>
               </div>
@@ -417,7 +343,7 @@ export default function DiaryListPage() {
                 return (
                   <div
                     key={entry.diary_id}
-                    className="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-transparent hover:border-blue-200"
+                    className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-transparent hover:border-blue-200 dark:hover:border-blue-600"
                     onClick={() => handleViewDiary(entry.diary_id)}
                   >
                     <div className="flex justify-between items-start mb-3">
@@ -425,19 +351,19 @@ export default function DiaryListPage() {
                         <div className="flex items-center gap-1">
                           {icons}
                         </div>
-                        <h4 className="font-medium text-gray-800 text-sm">
+                        <h4 className="font-medium text-gray-800 dark:text-gray-200 text-sm">
                           {title}
                         </h4>
                       </div>
                       <div className="flex items-center gap-2">
                         {time && (
-                          <span className="text-xs text-gray-500">{time}</span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">{time}</span>
                         )}
-                        <ChevronRight size={16} className="text-gray-400" />
+                        <ChevronRight size={16} className="text-gray-400 dark:text-gray-500" />
                       </div>
                     </div>
 
-                    <p className="text-sm text-gray-700 line-clamp-2 leading-relaxed">
+                    <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 leading-relaxed">
                       {getDiarySummary(entry)}
                     </p>
                   </div>
@@ -447,6 +373,16 @@ export default function DiaryListPage() {
           ))}
         </div>
       )}
+
+      {/* NAVEGAÇÃO INFERIOR - Sempre no fundo */}
+      <div className="fixed bottom-0 left-0 right-0 z-30">
+        <BottomNavigationBar
+          variant="user"
+          initialActiveId="diary"
+          onItemClick={handleNavigationClick}
+        />
+      </div>
+
     </div>
   );
 }

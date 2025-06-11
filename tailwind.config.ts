@@ -1,4 +1,3 @@
-import { text } from 'stream/consumers';
 import type { Config } from 'tailwindcss';
 import tailwindcssAnimate from 'tailwindcss-animate';
 
@@ -84,6 +83,9 @@ export default {
           foreground: 'var(--success-foreground)',
           text: 'var(--success-text)',
         },
+        yellow: {
+          DEFAULT: 'var(--yellow)',
+        },
         homeblob1:{
           DEFAULT: 'var(--homeblob1)',
           foreground: 'var(--homeblob1-foreground)',
@@ -92,6 +94,16 @@ export default {
           DEFAULT: 'var(--homeblob2)',
           foreground: 'var(--homeblob2-foreground)',
         },
+      },
+      backgroundImage: {
+        'gradient-interest-indicator': 'var(--gradient-interest-indicator)',
+        'gradient-button-background': 'var(--gradient-button-background)',
+        'gradient-button-save': 'var(--gradient-button-save)',
+        'gradient-button-save-hover': 'var(--gradient-button-save-hover)',
+        'gradient-button-new': 'var(--gradient-button-new)',
+        'gradient-button-new-hover': 'var(--gradient-button-new-hover)',
+        'gradient-button-edit': 'var(--gradient-button-edit)',
+        'gradient-button-edit-hover': 'var(--gradient-button-edit-hover)',
       },
     },
   },
