@@ -64,7 +64,9 @@ export default function EmergencyScreen() {
     }
 
     if (selectedProviders.length === 0) {
-      setError("Selecione pelo menos um profissional para enviar o pedido de ajuda.");
+      setError(
+        "Selecione pelo menos um profissional para enviar o pedido de ajuda.",
+      );
       return;
     }
 
@@ -89,8 +91,11 @@ export default function EmergencyScreen() {
 
       // Show success message
       const providerCount = selectedProviders.length;
-      const providerText = providerCount === 1 ? "profissional" : "profissionais";
-      setSuccess(`Pedido de ajuda enviado com sucesso para ${providerCount} ${providerText}!`);
+      const providerText =
+        providerCount === 1 ? "profissional" : "profissionais";
+      setSuccess(
+        `Pedido de ajuda enviado com sucesso para ${providerCount} ${providerText}!`,
+      );
 
       // Clear form
       setSelectedProviders([]);
@@ -100,13 +105,14 @@ export default function EmergencyScreen() {
       setTimeout(() => {
         navigate("/user-main-page");
       }, 2000);
-
     } catch (error: any) {
       console.error("Erro ao enviar pedido de ajuda:", error);
-      
+
       // Handle different types of errors
       if (error?.response?.status === 400) {
-        setError("Dados inválidos. Verifique as informações e tente novamente.");
+        setError(
+          "Dados inválidos. Verifique as informações e tente novamente.",
+        );
       } else if (error?.response?.status === 404) {
         setError("Profissional não encontrado. Tente atualizar a página.");
       } else if (error?.response?.status >= 500) {
@@ -114,7 +120,9 @@ export default function EmergencyScreen() {
       } else if (error?.message) {
         setError(`Erro ao enviar pedido de ajuda: ${error.message}`);
       } else {
-        setError("Erro ao enviar pedido de ajuda. Verifique sua conexão e tente novamente.");
+        setError(
+          "Erro ao enviar pedido de ajuda. Verifique sua conexão e tente novamente.",
+        );
       }
     } finally {
       setIsSubmitting(false);
@@ -202,12 +210,7 @@ export default function EmergencyScreen() {
       <Header title="Pedido de Ajuda" />
 
       {/* Success Message */}
-      {success && (
-        <SuccessMessage 
-          message={success} 
-          className="mb-4"
-        />
-      )}
+      {success && <SuccessMessage message={success} className="mb-4" />}
 
       {/* Error Message */}
       {error && (
