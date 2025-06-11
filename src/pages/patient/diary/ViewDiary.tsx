@@ -211,7 +211,7 @@ export default function ViewDiaryEntry() {
         <div className="mt-6 text-center">
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-2 bg-gray1 hover:bg-gray2 rounded-full text-white transition-colors"
+            className="px-6 py-2 bg-gray1 hover:bg-gray2 rounded-full text-primary transition-colors"
           >
             Voltar
           </button>
@@ -239,7 +239,7 @@ export default function ViewDiaryEntry() {
 
       {!hasContent && (
         <div className="bg-gray1 p-6 rounded-lg text-center my-8">
-          <p className="text-gray1 text-lg">Este diário não possui conteúdo.</p>
+          <p className="text-gray2 text-lg">Este diário não possui conteúdo.</p>
         </div>
       )}
 
@@ -277,7 +277,7 @@ export default function ViewDiaryEntry() {
               return (
                 <div
                   key={interest.interest_area_id}
-                  className="bg-white border border-gray1 rounded-lg p-4"
+                  className="bg-primary border border-gray1 rounded-lg p-4"
                 >
                   <CollapsibleInterestCard
                     interest={convertToUserInterest(interest)}
@@ -297,7 +297,7 @@ export default function ViewDiaryEntry() {
                       <span
                         className={`font-medium ${
                           interest.shared_with_provider
-                            ? "text-sucess"
+                            ? "text-success"
                             : "text-selection"
                         }`}
                       >
@@ -344,7 +344,7 @@ export default function ViewDiaryEntry() {
       <div className="mt-8 text-center">
         <button
           onClick={() => navigate("/diary")}
-          className="px-6 py-3 bg-selection text-white rounded-lg transition-colors font-medium"
+          className="px-6 py-3 bg-selection text-primary rounded-lg transition-colors font-medium"
         >
           Voltar aos Diários
         </button>
