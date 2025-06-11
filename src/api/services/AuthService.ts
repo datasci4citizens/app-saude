@@ -11,6 +11,31 @@ import { OpenAPI } from "../core/OpenAPI";
 import { request as __request } from "../core/request";
 export class AuthService {
   /**
+   * Admin login endpoint.
+   * Passes admin user and pass to authenticate, and a email to get the user data.
+   * Returns a JWT token for the email if successful.
+   * @param email Email of the user
+   * @param password Admin password
+   * @param username Admin username
+   * @returns any No response body
+   * @throws ApiError
+   */
+  public static authLoginAdminRetrieve(
+    email?: string,
+    password?: string,
+    username?: string,
+  ): CancelablePromise<any> {
+    return __request(OpenAPI, {
+      method: "GET",
+      url: "/auth/login/admin/",
+      query: {
+        email: email,
+        password: password,
+        username: username,
+      },
+    });
+  }
+  /**
    * @param requestBody
    * @returns any No response body
    * @throws ApiError

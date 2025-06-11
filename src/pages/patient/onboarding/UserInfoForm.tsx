@@ -102,8 +102,6 @@ export function UserInfoForm({
     const newErrors: FormErrors = {};
 
     // Required fields - add as needed
-    if (!formData.social_name)
-      newErrors.social_name = "Nome social é obrigatório";
     if (formData.gender_concept === null)
       newErrors.gender_concept = "Gênero é obrigatório";
     if (formData.race_concept === null)

@@ -9,7 +9,7 @@
 		"check": "biome check",
 		"check:write": "biome check --write",
 		"preview": "vite preview",
-		"generate-api": "npx openapi-typescript-codegen --input http://localhost:8000/api/schema --output src/api --client fetch"
+		"generate-api": "node generate-api.js"
 	},
 	"dependencies": {
 		"@capacitor/android": "^6.1.2",
@@ -42,6 +42,7 @@
 		"clsx": "^2.1.1",
 		"dotenv": "^16.5.0",
 		"embla-carousel-react": "^8.2.0",
+		"framer-motion": "^12.16.0",
 		"lucide-react": "^0.436.0",
 		"mingcute_icon": "^2.9.6",
 		"next": "^15.3.1",

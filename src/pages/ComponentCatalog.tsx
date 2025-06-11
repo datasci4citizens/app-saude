@@ -84,14 +84,14 @@ export default function ComponentCatalog() {
           <InfoCard
             variant="emergency"
             count={5}
-            onClick={() => alert("Ver Pedidos de Ajuda")}
+            // onClick={() => alert("Ver Pedidos de Ajuda")}
           />
           <InfoCard
             variant="appointment"
             name="Amanda de Souza"
             date="15/05/2023"
             time="14:30"
-            onClick={() => alert("Ver Consulta")}
+            // onClick={() => alert("Ver Consulta")}
           />
         </div>
         <div>

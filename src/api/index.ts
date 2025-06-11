@@ -89,7 +89,6 @@ export type { RecurrenceRuleCreate } from "./models/RecurrenceRuleCreate";
 export type { RecurrenceRuleRetrieve } from "./models/RecurrenceRuleRetrieve";
 export type { RecurrenceRuleUpdate } from "./models/RecurrenceRuleUpdate";
 export type { TokenRefresh } from "./models/TokenRefresh";
-export type { UserRetrieve } from "./models/UserRetrieve";
 export type { VisitDetails } from "./models/VisitDetails";
 export type { VisitOccurrenceCreate } from "./models/VisitOccurrenceCreate";
 export type { VisitOccurrenceRetrieve } from "./models/VisitOccurrenceRetrieve";

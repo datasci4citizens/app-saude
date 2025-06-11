@@ -12,6 +12,7 @@ export type PersonRetrieve = {
   readonly updated_at: string;
   social_name?: string | null;
   birth_datetime?: string | null;
+  profile_picture?: string | null;
   year_of_birth?: number | null;
   user: number;
   gender_concept?: number | null;

@@ -10,15 +10,21 @@ import { OpenAPI } from "../core/OpenAPI";
 import { request as __request } from "../core/request";
 export class InterestAreasService {
   /**
+   * Get interest areas for the authenticated user
+   * Retrieve the interest areas for the authenticated user. Optionally, can return crowd-sourced interest areas.
+   * @param crowdSource If true, returns interest areas that are crowd-sourced (not linked to a specific person).
    * @returns InterestArea
    * @throws ApiError
    */
-  public static personInterestAreasList(): CancelablePromise<
-    Array<InterestArea>
-  > {
+  public static personInterestAreasList(
+    crowdSource?: boolean,
+  ): CancelablePromise<Array<InterestArea>> {
     return __request(OpenAPI, {
       method: "GET",
       url: "/person/interest-areas/",
+      query: {
+        crowd_source: crowdSource,
+      },
     });
   }
   /**
