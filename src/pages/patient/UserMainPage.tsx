@@ -346,13 +346,6 @@ export default function UserMainPage() {
         </h2>
       </div>
 
-      {/* Debug info - remover depois */}
-      {process.env.NODE_ENV === "development" && (
-        <div className="fixed top-4 right-4 bg-black text-white p-2 rounded text-xs z-50">
-          hasChanges: {hasChanges.toString()}
-        </div>
-      )}
-
       {/* ÁREA SCROLLÁVEL - Lista de Interesses */}
       <div
         className="px-4 overflow-y-auto"
