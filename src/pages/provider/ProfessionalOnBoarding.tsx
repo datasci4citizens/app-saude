@@ -35,7 +35,7 @@ export default function ProfessionalOnboarding() {
       };
       console.log("Submitting full provider data:", fullData);
       return await FullProviderService.apiFullProviderCreate(fullData);
-    }
+    },
   );
 
   const clearError = () => {
@@ -122,11 +122,11 @@ export default function ProfessionalOnboarding() {
 
         if (result.person_id) {
           setSuccess(
-            `Cadastro realizado com sucesso! Seu Person ID é: ${result.person_id}`
+            `Cadastro realizado com sucesso! Seu Person ID é: ${result.person_id}`,
           );
         } else if (result.provider_id) {
           setSuccess(
-            `Cadastro realizado com sucesso! Seu Provider ID é: ${result.provider_id}`
+            `Cadastro realizado com sucesso! Seu Provider ID é: ${result.provider_id}`,
           );
         } else {
           setSuccess("Cadastro realizado com sucesso!");
@@ -162,7 +162,7 @@ export default function ProfessionalOnboarding() {
     } catch (err) {
       console.error("Registration error:", err);
       setError(
-        "Erro ao realizar cadastro profissional. Verifique os dados e tente novamente."
+        "Erro ao realizar cadastro profissional. Verifique os dados e tente novamente.",
       );
     } finally {
       setIsSubmitting(false);
