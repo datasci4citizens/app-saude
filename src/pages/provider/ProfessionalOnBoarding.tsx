@@ -29,12 +29,13 @@ export default function ProfessionalOnboarding() {
   // Setup SWR mutation
   const { trigger, isMutating } = useSWRMutation(
     "fullProviderOnboarding",
-    async () => {
+    async (key, { arg }: { arg: ProviderCreate }) => {
       const fullData: FullProviderCreate = {
-        provider,
+        provider: arg,
       };
+      console.log("Submitting full provider data:", fullData);
       return await FullProviderService.apiFullProviderCreate(fullData);
-    },
+    }
   );
 
   const clearError = () => {
@@ -110,6 +111,7 @@ export default function ProfessionalOnboarding() {
     };
 
     // Save provider data
+    console.log("Setting provider data:", provider);
     setProvider(provider);
 
     // Function to fetch user entity and show success
@@ -120,11 +122,11 @@ export default function ProfessionalOnboarding() {
 
         if (result.person_id) {
           setSuccess(
-            `Cadastro realizado com sucesso! Seu Person ID é: ${result.person_id}`,
+            `Cadastro realizado com sucesso! Seu Person ID é: ${result.person_id}`
           );
         } else if (result.provider_id) {
           setSuccess(
-            `Cadastro realizado com sucesso! Seu Provider ID é: ${result.provider_id}`,
+            `Cadastro realizado com sucesso! Seu Provider ID é: ${result.provider_id}`
           );
         } else {
           setSuccess("Cadastro realizado com sucesso!");
@@ -140,14 +142,27 @@ export default function ProfessionalOnboarding() {
     };
 
     try {
-      // Trigger the SWR mutation with form data
-      const result = await trigger();
+      // Create provider data
+      const providerData: ProviderCreate = {
+        social_name: data.social_name,
+        birth_datetime: data.birth_datetime,
+        professional_registration: data.professional_registration,
+        specialty_concept: data.specialty_concept,
+        care_site: null,
+        profile_picture: localStorage.getItem("profileImage") || "",
+      };
+
+      // Save provider data to state (for other purposes if needed)
+      setProvider(providerData);
+
+      // Pass the data directly to trigger
+      const result = await trigger(providerData);
       console.log("Submission result:", result);
       await fetchUserEntity();
     } catch (err) {
       console.error("Registration error:", err);
       setError(
-        "Erro ao realizar cadastro profissional. Verifique os dados e tente novamente.",
+        "Erro ao realizar cadastro profissional. Verifique os dados e tente novamente."
       );
     } finally {
       setIsSubmitting(false);
