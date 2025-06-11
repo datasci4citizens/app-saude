@@ -39,15 +39,24 @@
     --success-foreground: #065f19;
     --success-text: #006924;
     --yellow: #ffc97e;
-    
+
     /* Gradientes UserMainPage */
     --gradient-interest-indicator: linear-gradient(to right, #3b82f6, #a855f7);
-    --gradient-button-background: linear-gradient(to top, var(--primary), var(--primary), transparent);
+    --gradient-button-background: linear-gradient(
+      to top,
+      var(--primary),
+      var(--primary),
+      transparent
+    );
     --gradient-button-save: linear-gradient(to right, #22c55e, #16a34a);
     --gradient-button-save-hover: linear-gradient(to right, #16a34a, #15803d);
     --gradient-button-new: linear-gradient(to right, #3b82f6, #2563eb);
     --gradient-button-new-hover: linear-gradient(to right, #2563eb, #1d4ed8);
-    --gradient-button-edit: linear-gradient(to right, var(--selection), #2563eb);
+    --gradient-button-edit: linear-gradient(
+      to right,
+      var(--selection),
+      #2563eb
+    );
     --gradient-button-edit-hover: linear-gradient(to right, #2563eb, #1d4ed8);
   }
 
@@ -86,15 +95,24 @@
     --success-foreground: #065f19;
     --success-text: #006924;
     --yellow: #ffc97e;
-    
+
     /* Gradientes UserMainPage - Tema Dark */
     --gradient-interest-indicator: linear-gradient(to right, #3b82f6, #a855f7);
-    --gradient-button-background: linear-gradient(to top, var(--primary), var(--primary), transparent);
+    --gradient-button-background: linear-gradient(
+      to top,
+      var(--primary),
+      var(--primary),
+      transparent
+    );
     --gradient-button-save: linear-gradient(to right, #22c55e, #16a34a);
     --gradient-button-save-hover: linear-gradient(to right, #16a34a, #15803d);
     --gradient-button-new: linear-gradient(to right, #3b82f6, #2563eb);
     --gradient-button-new-hover: linear-gradient(to right, #2563eb, #1d4ed8);
-    --gradient-button-edit: linear-gradient(to right, var(--selection), #2563eb);
+    --gradient-button-edit: linear-gradient(
+      to right,
+      var(--selection),
+      #2563eb
+    );
     --gradient-button-edit-hover: linear-gradient(to right, #2563eb, #1d4ed8);
   }
 
