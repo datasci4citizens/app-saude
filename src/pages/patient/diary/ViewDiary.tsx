@@ -48,7 +48,7 @@ export default function ViewDiaryEntry() {
   const [diary, setDiary] = useState<DiaryData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [expandedInterests, setExpandedInterests] = useState<Set<number>>(
-    new Set()
+    new Set(),
   );
 
   useEffect(() => {
@@ -75,15 +75,15 @@ export default function ViewDiaryEntry() {
             response.interest_areas
               ?.filter((area) =>
                 area.triggers?.some(
-                  (t) => t.value_as_string && t.value_as_string.trim() !== ""
-                )
+                  (t) => t.value_as_string && t.value_as_string.trim() !== "",
+                ),
               )
               .map((area) => area.interest_area_id) || [];
           setExpandedInterests(new Set(interestsWithResponses));
         } else {
           console.error(
             "Diary not found or invalid response format:",
-            response
+            response,
           );
           setError("Diário não encontrado ou formato inválido.");
         }
@@ -226,7 +226,7 @@ export default function ViewDiaryEntry() {
     (textEntry && textEntry.text) ||
     (diary.interest_areas &&
       diary.interest_areas.some(
-        (area) => area.triggers && area.triggers.some((t) => t.value_as_string)
+        (area) => area.triggers && area.triggers.some((t) => t.value_as_string),
       ));
 
   return (
@@ -269,7 +269,7 @@ export default function ViewDiaryEntry() {
             {diary.interest_areas.map((interest) => {
               // Only show interests that have at least one trigger with a response
               const hasResponses = interest.triggers?.some(
-                (t) => t.value_as_string && t.value_as_string.trim() !== ""
+                (t) => t.value_as_string && t.value_as_string.trim() !== "",
               );
 
               if (!hasResponses) return null;
