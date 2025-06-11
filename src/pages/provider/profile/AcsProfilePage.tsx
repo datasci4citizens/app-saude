@@ -6,6 +6,7 @@ import { AccountService } from "@/api/services/AccountService";
 import { LogoutService } from "@/api/services/LogoutService";
 import { SuccessMessage } from "@/components/ui/success-message";
 import { ErrorMessage } from "@/components/ui/error-message";
+import { ApiService } from "@/api/services/ApiService";
 
 interface AcsProfileMenuItem {
   title: string;
