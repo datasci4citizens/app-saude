@@ -26,7 +26,7 @@ const EntryOptionsScreen: React.FC<EntryOptionsScreenProps> = ({
       <div className="content">
         <h1>Entrar como:</h1>
 
-        <div className="options-container flex flex-col items-center gap-3 w-full bg-offwhite">
+        <div className="options-container flex flex-col items-center gap-3 w-full">
           <SelectableOption
             label="Usuário/paciente"
             selected={userType === "patient"}

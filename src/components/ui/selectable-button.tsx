@@ -15,7 +15,7 @@ export const SelectableOption: React.FC<SelectableOptionProps> = ({
     <div className="w-full flex justify-center">
       <button
         onClick={onClick}
-        className="w-full max-w-[400px] h-[56px] bg-background flex items-center rounded-2xl px-6 shadow-sm"
+        className="w-full max-w-[400px] h-[56px] bg-background flex items-center rounded-2xl px-6 shadow-sm bg-offwhite"
       >
         <div className="relative flex-shrink-0">
           <div
