@@ -84,6 +84,9 @@ export default {
           foreground: 'var(--success-foreground)',
           text: 'var(--success-text)',
         },
+        yellow: {
+          DEFAULT: 'var(--yellow)',
+        },
         homeblob1:{
           DEFAULT: 'var(--homeblob1)',
           foreground: 'var(--homeblob1-foreground)',
