@@ -56,11 +56,14 @@ export default function ViewDiary() {
   const [expandedInterests, setExpandedInterests] = useState<Set<number>>(
     new Set(),
   );
-  const [localAttentionPoints, setLocalAttentionPoints] = useState<Set<number>>(new Set());
+  const [localAttentionPoints, setLocalAttentionPoints] = useState<Set<number>>(
+    new Set(),
+  );
 
   // Funções para gerenciar pontos de atenção no localStorage
-  const getAttentionPointsKey = () => `attentionPoints_provider_${localStorage.getItem('provider_id') || 'unknown'}`;
-  
+  const getAttentionPointsKey = () =>
+    `attentionPoints_provider_${localStorage.getItem("provider_id") || "unknown"}`;
+
   const loadLocalAttentionPoints = () => {
     try {
       const stored = localStorage.getItem(getAttentionPointsKey());
@@ -69,16 +72,22 @@ export default function ViewDiary() {
         return new Set(Array.isArray(parsed) ? parsed : []);
       }
     } catch (error) {
-      console.warn('Erro ao carregar pontos de atenção do localStorage:', error);
+      console.warn(
+        "Erro ao carregar pontos de atenção do localStorage:",
+        error,
+      );
     }
     return new Set<number>();
   };
 
   const saveLocalAttentionPoints = (points: Set<number>) => {
     try {
-      localStorage.setItem(getAttentionPointsKey(), JSON.stringify([...points]));
+      localStorage.setItem(
+        getAttentionPointsKey(),
+        JSON.stringify([...points]),
+      );
     } catch (error) {
-      console.warn('Erro ao salvar pontos de atenção no localStorage:', error);
+      console.warn("Erro ao salvar pontos de atenção no localStorage:", error);
     }
   };
 
@@ -205,22 +214,22 @@ export default function ViewDiary() {
     isCurrentlyFlagged: boolean,
   ) => {
     const newAttentionPoints = new Set(localAttentionPoints);
-    
+
     if (isCurrentlyFlagged) {
       newAttentionPoints.delete(areaId);
     } else {
       newAttentionPoints.add(areaId);
     }
-    
+
     setLocalAttentionPoints(newAttentionPoints);
     saveLocalAttentionPoints(newAttentionPoints);
-    
+
     console.log(
       "Toggling flag for area:",
       areaId,
       "New state:",
       !isCurrentlyFlagged,
-      "Saved to localStorage"
+      "Saved to localStorage",
     );
   };
 
@@ -309,7 +318,9 @@ export default function ViewDiary() {
                   const hasResponses =
                     interest.triggers &&
                     interest.triggers.some((t) => t.value_as_string);
-                  const isAttentionPointFlag = isAttentionPoint(interest.interest_area_id);
+                  const isAttentionPointFlag = isAttentionPoint(
+                    interest.interest_area_id,
+                  );
 
                   return (
                     <div
@@ -348,15 +359,14 @@ export default function ViewDiary() {
                           </div>
                         </div>
 
-                        {isAttentionPointFlag &&
-                          interest.provider_name && (
-                            <div className="mt-2">
-                              <span className="text-xs text-destructive italic">
-                                Marcado como ponto de atenção por{" "}
-                                {interest.provider_name}
-                              </span>
-                            </div>
-                          )}
+                        {isAttentionPointFlag && interest.provider_name && (
+                          <div className="mt-2">
+                            <span className="text-xs text-destructive italic">
+                              Marcado como ponto de atenção por{" "}
+                              {interest.provider_name}
+                            </span>
+                          </div>
+                        )}
                       </div>
 
                       {isExpanded && (
