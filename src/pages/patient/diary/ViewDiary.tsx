@@ -115,7 +115,6 @@ export default function ViewDiaryEntry() {
   };
 
   // Get general text entry if available
-  // Get general text entry if available
   const getGeneralTextEntry = (): { text: string; shared: boolean } | null => {
     console.log("Getting general text entry from diary:", diary?.entries);
     if (!diary || !diary.entries || diary.entries.length === 0) {
