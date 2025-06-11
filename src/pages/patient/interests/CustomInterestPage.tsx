@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { Button } from "@/components/forms/button";
 import { RadioCheckbox } from "@/components/forms/radio-checkbox";
 import { TextField } from "@/components/forms/text_input";
+import { useNavigate } from "react-router-dom";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 interface CustomInterestFormProps {
   onSubmit: (interest: {
@@ -25,6 +27,35 @@ const CustomInterestForm: React.FC<CustomInterestFormProps> = ({
     e.preventDefault();
     if (title.trim()) {
       onSubmit({ title, category, impact });
+    }
+  };
+  const navigate = useNavigate();
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/user-main-page");
+        break;
+      case "meds":
+        navigate("/reminders");
+        break;
+      case "diary":
+        navigate("/diary");
+        break;
+      case "emergency":
+        navigate("/emergency-user");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
     }
   };
 
@@ -136,6 +167,13 @@ const CustomInterestForm: React.FC<CustomInterestFormProps> = ({
         >
           Adicionar
         </Button>
+      </div>
+      <div className="fixed bottom-0 left-0 right-0 z-30">
+        <BottomNavigationBar
+          variant="user"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
       </div>
     </form>
   );

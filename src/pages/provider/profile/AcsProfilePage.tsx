@@ -96,6 +96,16 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
     },
   ];
 
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/acs-main-page")) return "home";
+    if (location.pathname.startsWith("/appointments")) return "consults";
+    if (location.pathname.startsWith("/patients")) return "patients";
+    if (location.pathname.startsWith("/emergencies")) return "emergency";
+    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    return null;
+  };
+
+
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
       case "home":
@@ -108,6 +118,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
         navigate("/emergencies");
         break;
       case "profile":
+        navigate("/acs-profile");
         break;
     }
   };
@@ -174,11 +185,11 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
         </div>
       </div>
 
-      <BottomNavigationBar
-        variant="acs"
-        initialActiveId="profile"
-        onItemClick={handleNavigationClick}
-      />
+        <BottomNavigationBar
+          variant="acs"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
     </div>
   );
 };

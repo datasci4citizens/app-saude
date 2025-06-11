@@ -9,8 +9,43 @@ import errorImage from "@/lib/images/error.png";
 import { AccountService } from "@/api";
 import { SuccessMessage } from "@/components/ui/success-message";
 import { ErrorMessage } from "@/components/ui/error-message";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
+import { useNavigate } from "react-router-dom";
+
+
 
 const AddProfessionalPage = () => {
+  const navigate = useNavigate();  // ← This is missing!
+
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/user-main-page");
+        break;
+      case "meds":
+        navigate("/reminders");
+        break;
+      case "diary":
+        navigate("/diary");
+        break;
+      case "emergency":
+        navigate("/emergency-user");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+    }
+  };
+
   const [providerCode, setProviderCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isLinking, setIsLinking] = useState(false);
@@ -20,12 +55,14 @@ const AddProfessionalPage = () => {
   const [provider, setProvider] = useState<ProviderRetrieve | null>(null);
   const [showVisualError, setShowVisualError] = useState(false);
 
+  
   const fetchProviderByCode = async () => {
     if (!providerCode || providerCode.length !== 6) {
       setError("O código deve ter 6 dígitos");
       setShowVisualError(true);
       return;
     }
+    
 
     setIsLoading(true);
     setError(null);
@@ -50,6 +87,7 @@ const AddProfessionalPage = () => {
       setIsLoading(false);
     }
   };
+
 
   const handleAddProvider = async () => {
     if (!providerCode || providerCode.length !== 6) {
@@ -109,16 +147,16 @@ const AddProfessionalPage = () => {
           />
         )}
 
-        <div className="mt-6">
-          <TextField
-            id="providerCode"
-            name="providerCode"
-            label="Inserir código do profissional"
-            value={providerCode}
-            onChange={(e) => setProviderCode(e.target.value)}
-            placeholder="Código de 6 dígitos"
-            error={error && !showVisualError ? error : undefined}
-          />
+      <div className="mt-6">
+        <TextField
+          id="providerCode"
+          name="providerCode"
+          label="Inserir código do profissional"
+          value={providerCode}
+          onChange={(e) => setProviderCode(e.target.value)}
+          placeholder="Código de 6 dígitos"
+          error={error && !showVisualError ? error : undefined}
+        />
 
           {showVisualError && !provider && !linkSuccess && (
             <div className="text-center flex flex-col items-center mt-6">
@@ -168,8 +206,8 @@ const AddProfessionalPage = () => {
         )}
       </div>
 
-      {/* Bottom buttons */}
-      <div className="mt-auto mb-[44px] px-6">
+      {/* Action buttons */}
+      <div className="mt-8 mb-6">
         {provider && !linkSuccess ? (
           <div className="flex gap-3">
             <Button
@@ -200,7 +238,7 @@ const AddProfessionalPage = () => {
           <Button
             onClick={fetchProviderByCode}
             variant="white"
-            className="w-full mt-4"
+            className="w-full"
             disabled={isLoading || providerCode.length !== 6}
           >
             {isLinking ? "Buscando..." : "Buscar profissional"}
@@ -208,7 +246,17 @@ const AddProfessionalPage = () => {
         )}
       </div>
     </div>
-  );
+
+    {/* Bottom Navigation - Fixed position */}
+      <div className="fixed bottom-0 left-0 right-0 z-30">
+        <BottomNavigationBar
+          variant="user"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
+      </div>
+  </div>
+);
 };
 
 export default AddProfessionalPage;

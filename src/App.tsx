@@ -74,11 +74,14 @@ const router = createBrowserRouter([
     path: "/diary/:diaryId",
     element: <ViewDiaryEntry />,
   },
+<<<<<<< HEAD
 
   {
     path: "/diary/:diaryId",
     element: <ViewDiaryEntry />,
   },
+=======
+>>>>>>> add-home-bar
   {
     path: "/reminders",
     element: <Reminders />,
@@ -87,7 +90,6 @@ const router = createBrowserRouter([
     path: "/new-reminder",
     element: <NewReminder />,
   },
-
   {
     path: "/reminder",
     element: (

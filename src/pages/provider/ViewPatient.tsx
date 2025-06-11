@@ -7,6 +7,8 @@ import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
 import ViewButton from "@/components/ui/ViewButton"; // Import ViewButton
 import { ProviderService } from "@/api";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
+
 
 // Define a basic interface for Diary Entries based on actual API response
 interface DiaryEntry {
@@ -41,6 +43,44 @@ export default function ViewPatient() {
   const [helpRequestsError, setHelpRequestsError] = useState<string | null>(
     null,
   );
+
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/acs-main-page")) return "home";
+    if (location.pathname.startsWith("/appointments")) return "consults";
+    if (location.pathname.startsWith("/patients")) return "patients";
+    if (location.pathname.startsWith("/emergencies")) return "emergency";
+    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    return null;
+  };
+
+  const handleEmergencyClick = () => {
+    navigate("/patients");
+  };
+
+  const handleAppointmentClick = () => {
+    navigate("/appointments/amanda");
+  };
+
+  const handleBannerIconClick = () => {
+    navigate("/patient-registry");
+  };
+
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/acs-main-page");
+        break;
+      case "patients":
+        navigate("/patients");
+        break;
+      case "emergency":
+        navigate("/emergencies");
+        break;
+      case "profile":
+        navigate("/acs-profile");
+        break;
+    }
+  };
 
   const [activeTab, setActiveTab] = useState("diarios");
 
@@ -303,6 +343,13 @@ export default function ViewPatient() {
               )}
           </>
         )}
+      </div>
+      <div className="fixed bottom-0 left-0 right-0 z-30">
+        <BottomNavigationBar
+          variant="acs"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
       </div>
     </div>
   );

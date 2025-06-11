@@ -8,6 +8,7 @@ import type { InterestArea } from "@/api/models/InterestArea";
 import type { InterestAreaTriggerCreate } from "@/api/models/InterestAreaTriggerCreate";
 import { SuccessMessage } from "@/components/ui/success-message";
 import { ErrorMessage } from "@/components/ui/error-message";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 // Extended interface for API response that includes the ID
 interface InterestAreaResponse extends InterestArea {
@@ -15,6 +16,36 @@ interface InterestAreaResponse extends InterestArea {
 }
 
 export default function EditInterest() {
+  // Get active navigation item based on current route
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/user-main-page");
+        break;
+      case "meds":
+        navigate("/reminders");
+        break;
+      case "diary":
+        navigate("/diary");
+        break;
+      case "emergency":
+        navigate("/emergency-user");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+    }
+  };
+
   const navigate = useNavigate();
   const { interestId } = useParams<{ interestId: string }>();
 
@@ -208,6 +239,7 @@ export default function EditInterest() {
                         {trigger.trigger_name || "Sem descrição"}
                       </span>
                       <Button
+
                         variant="default"
                         size="sm"
                         className="p-1 h-8 w-8 rounded-full text-red-500"
@@ -274,6 +306,14 @@ export default function EditInterest() {
             <p className="text-typography">Interesse não encontrado.</p>
           </div>
         )}
+      </div>
+          <div className="fixed bottom-0 left-0 right-0 z-30">
+      <div className="fixed bottom-0 left-0 right-0 z-30">
+        <BottomNavigationBar
+          variant="user"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
       </div>
     </div>
   );
