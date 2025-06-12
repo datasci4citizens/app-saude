@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import HomeBanner from "@/components/ui/home-banner";
 import InfoCard from "@/components/ui/info-card";
@@ -41,16 +41,20 @@ export default function AcsMainPage() {
   const handleBannerIconClick = () => {
     navigate("/patient-registry");
   };
-
+  const location = useLocation();
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/acs-main-page")) return "home";
+    if (location.pathname.startsWith("/appointments")) return "consults";
+    if (location.pathname.startsWith("/patients")) return "patients";
+    if (location.pathname.startsWith("/emergencies")) return "emergency";
+    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    return null;
+  };
   const handleNavigationClick = (itemId: string) => {
-    // Implementar navegação baseada no item clicado
     switch (itemId) {
       case "home":
-        // Já estamos na home
+        navigate("/acs-main-page");
         break;
-      //case 'consults':
-      //    navigate('/appointments');
-      //    break;
       case "patients":
         navigate("/patients");
         break;
@@ -95,7 +99,7 @@ export default function AcsMainPage() {
       {/* Barra de navegação */}
       <BottomNavigationBar
         variant="acs"
-        initialActiveId="home"
+        forceActiveId={getActiveNavId()} // Controlled active state
         onItemClick={handleNavigationClick}
       />
     </div>

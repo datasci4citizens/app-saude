@@ -273,9 +273,19 @@ export default function UserMainPage() {
     navigate("/diary");
   };
 
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
       case "home":
+        navigate("/user-main-page");
         break;
       case "meds":
         navigate("/reminders");
@@ -537,6 +547,7 @@ export default function UserMainPage() {
         <BottomNavigationBar
           variant="user"
           initialActiveId="home"
+          forceActiveId={getActiveNavId()} // Controlled active state
           onItemClick={handleNavigationClick}
         />
       </div>

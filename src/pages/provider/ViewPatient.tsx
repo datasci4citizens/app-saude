@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Header from "@/components/ui/header";
 import { PersonService } from "@/api/services/PersonService";
 import { HelpService } from "@/api/services/HelpService"; // Import HelpService
@@ -7,6 +7,7 @@ import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
 import ViewButton from "@/components/ui/ViewButton"; // Import ViewButton
 import { ProviderService } from "@/api";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 // Define a basic interface for Diary Entries based on actual API response
 interface DiaryEntry {
@@ -148,6 +149,43 @@ export default function ViewPatient() {
       })}`;
     } catch (e) {
       return "Data inválida";
+    }
+  };
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/acs-main-page")) return "home";
+    if (location.pathname.startsWith("/appointments")) return "consults";
+    if (location.pathname.startsWith("/patients")) return "patients";
+    if (location.pathname.startsWith("/emergencies")) return "emergency";
+    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    return null;
+  };
+
+  const handleEmergencyClick = () => {
+    navigate("/patients");
+  };
+
+  const handleAppointmentClick = () => {
+    navigate("/appointments/amanda");
+  };
+
+  const handleBannerIconClick = () => {
+    navigate("/patient-registry");
+  };
+
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/acs-main-page");
+        break;
+      case "patients":
+        navigate("/patients");
+        break;
+      case "emergency":
+        navigate("/emergencies");
+        break;
+      case "profile":
+        navigate("/acs-profile");
+        break;
     }
   };
 
@@ -304,6 +342,11 @@ export default function ViewPatient() {
           </>
         )}
       </div>
+      <BottomNavigationBar
+        variant="acs"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

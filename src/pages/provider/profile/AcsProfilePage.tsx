@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ProfileBanner from "@/components/ui/profile-banner";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { AccountService } from "@/api/services/AccountService";
@@ -148,6 +148,15 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
     },
   ];
 
+  const location = useLocation();
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/acs-main-page")) return "home";
+    if (location.pathname.startsWith("/appointments")) return "consults";
+    if (location.pathname.startsWith("/patients")) return "patients";
+    if (location.pathname.startsWith("/emergencies")) return "emergency";
+    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    return null;
+  };
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
       case "home":
@@ -160,6 +169,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
         navigate("/emergencies");
         break;
       case "profile":
+        navigate("/acs-profile");
         break;
     }
   };
@@ -225,7 +235,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
 
       <BottomNavigationBar
         variant="acs"
-        initialActiveId="profile"
+        forceActiveId={getActiveNavId()} // Controlled active state
         onItemClick={handleNavigationClick}
       />
     </div>

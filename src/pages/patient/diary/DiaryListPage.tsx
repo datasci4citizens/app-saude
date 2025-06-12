@@ -4,7 +4,7 @@ import React, {
   type ButtonHTMLAttributes,
   type ReactNode,
 } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   ChevronRight,
   PlusCircle,
@@ -87,6 +87,7 @@ export default function DiaryListPage() {
   const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchDiaries = async () => {
@@ -274,6 +275,16 @@ export default function DiaryListPage() {
     }
   };
 
+  // Get active navigation item based on current route
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
       case "home":
@@ -283,6 +294,7 @@ export default function DiaryListPage() {
         navigate("/reminders");
         break;
       case "diary":
+        navigate("/diary");
         break;
       case "emergency":
         navigate("/emergency-user");
@@ -440,7 +452,7 @@ export default function DiaryListPage() {
       <div className="fixed bottom-0 left-0 right-0 z-30">
         <BottomNavigationBar
           variant="user"
-          initialActiveId="diary"
+          forceActiveId={getActiveNavId()} // Controlled active state
           onItemClick={handleNavigationClick}
         />
       </div>
