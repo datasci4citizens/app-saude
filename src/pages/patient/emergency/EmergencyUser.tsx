@@ -300,7 +300,7 @@ export default function EmergencyScreen() {
           </div>
         )}
 
-        <div className="px-4 mt-auto pb-4">
+        <div className="px-4 mt-auto pb-4 flex justify-center">
           <Button
             variant="orange"
             size="responsive"

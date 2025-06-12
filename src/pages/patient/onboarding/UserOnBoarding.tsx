@@ -129,7 +129,7 @@ export default function UserOnboarding() {
         {/* Progress indicator*/}
         <ProgressIndicator currentStep={step} totalSteps={2} />
 
-        <div className="pl-9 pr-4">
+        <div className="pl-4 pr-4">
           {/* Success message - show above error */}
           {success && (
             <SuccessMessage message="Cadastro realizado com sucesso!" />

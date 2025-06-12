@@ -14,24 +14,7 @@ import {
 } from "lucide-react";
 import { DiaryService } from "@/api";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
-
-// Mock services and components for demonstration
-interface HeaderProps {
-  title: string;
-  onBackClick: () => void;
-}
-
-const Header: React.FC<HeaderProps> = ({ title, onBackClick }) => (
-  <div className="flex items-center gap-4 mb-6">
-    <button
-      onClick={onBackClick}
-      className="text-typography hover:text-accent transition-colors"
-    >
-      ←
-    </button>
-    <h1 className="text-xl font-semibold text-typography">{title}</h1>
-  </div>
-);
+import Header from "@/components/ui/header";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
@@ -295,7 +278,7 @@ export default function DiaryListPage() {
 
   if (error) {
     return (
-      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-white dark:bg-gray-900 min-h-screen pb-24">
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-primary dark:bg-gray-900 min-h-screen pb-24">
         <Header
           title="Diário"
           onBackClick={() => navigate("/user-main-page")}
@@ -317,7 +300,7 @@ export default function DiaryListPage() {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-4 bg-white dark:bg-gray-900 min-h-screen pb-24">
+    <div className="w-full max-w-4xl mx-auto px-4 py-4 bg-primary dark:bg-gray-900 min-h-screen pb-24">
       <Header title="Diário" onBackClick={() => navigate("/user-main-page")} />
 
       {/* Create new diary button */}
