@@ -169,11 +169,11 @@ const CustomInterestForm: React.FC<CustomInterestFormProps> = ({
           Adicionar
         </Button>
       </div>
-    <BottomNavigationBar
-          variant="user"
-          forceActiveId={getActiveNavId()} // Controlled active state
-          onItemClick={handleNavigationClick}
-        />
+      <BottomNavigationBar
+        variant="user"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </form>
   );
 };

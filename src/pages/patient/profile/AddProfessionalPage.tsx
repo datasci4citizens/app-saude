@@ -13,7 +13,7 @@ import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { useNavigate } from "react-router-dom";
 
 const AddProfessionalPage = () => {
-   const navigate = useNavigate();  // ← This is missing!
+  const navigate = useNavigate(); // ← This is missing!
 
   const getActiveNavId = () => {
     if (location.pathname.startsWith("/user-main-page")) return "home";
@@ -239,11 +239,11 @@ const AddProfessionalPage = () => {
           </Button>
         )}
       </div>
-    <BottomNavigationBar
-          variant="user"
-          forceActiveId={getActiveNavId()} // Controlled active state
-          onItemClick={handleNavigationClick}
-        />
+      <BottomNavigationBar
+        variant="user"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 };

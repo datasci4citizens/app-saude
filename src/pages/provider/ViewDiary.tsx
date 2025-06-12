@@ -7,7 +7,6 @@ import { ProviderService } from "@/api/services/ProviderService";
 import { ErrorMessage } from "@/components/ui/error-message";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 
-
 // Interface para as entradas do diário
 interface DiaryEntryDetail {
   id?: number;
@@ -234,32 +233,31 @@ export default function ViewDiary() {
       "Saved to localStorage",
     );
   };
-    const location = useLocation();
-    const getActiveNavId = () => {
-      if (location.pathname.startsWith("/acs-main-page")) return "home";
-      if (location.pathname.startsWith("/appointments")) return "consults";
-      if (location.pathname.startsWith("/patients")) return "patients";
-      if (location.pathname.startsWith("/emergencies")) return "emergency";
-      if (location.pathname.startsWith("/acs-profile")) return "profile";
-      return null;
-    };
-    const handleNavigationClick = (itemId: string) => {
-      switch (itemId) {
-        case "home":
-          navigate("/acs-main-page");
-          break;
-        case "patients":
-          navigate("/patients");
-          break;
-        case "emergency":
-          navigate("/emergencies");
-          break;
-        case "profile":
-          navigate("/acs-profile");
-          break;
-      }
-    };
-  
+  const location = useLocation();
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/acs-main-page")) return "home";
+    if (location.pathname.startsWith("/appointments")) return "consults";
+    if (location.pathname.startsWith("/patients")) return "patients";
+    if (location.pathname.startsWith("/emergencies")) return "emergency";
+    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    return null;
+  };
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/acs-main-page");
+        break;
+      case "patients":
+        navigate("/patients");
+        break;
+      case "emergency":
+        navigate("/emergencies");
+        break;
+      case "profile":
+        navigate("/acs-profile");
+        break;
+    }
+  };
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
@@ -496,11 +494,11 @@ export default function ViewDiary() {
           </div>
         </>
       )}
-                <BottomNavigationBar
-            variant="acs"
-            forceActiveId={getActiveNavId()} // Controlled active state
-            onItemClick={handleNavigationClick}
-          />
+      <BottomNavigationBar
+        variant="acs"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

@@ -60,7 +60,6 @@ const ModifyHabits = () => {
     }
   };
 
-
   // Define measurement type options
   const measurementTypeOptions = [
     { value: "scale", label: "Escala (1-10)" },

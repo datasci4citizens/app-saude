@@ -207,7 +207,7 @@ export default function EmergencyScreen() {
             Voltar para tela inicial
           </Button>
         </div>
-                <BottomNavigationBar
+        <BottomNavigationBar
           variant="user"
           forceActiveId={getActiveNavId()} // Controlled active state
           onItemClick={handleNavigationClick}
@@ -356,11 +356,11 @@ export default function EmergencyScreen() {
           </Button>
         </div>
       </form>
-    <BottomNavigationBar
-          variant="user"
-          forceActiveId={getActiveNavId()} // Controlled active state
-          onItemClick={handleNavigationClick}
-        />
+      <BottomNavigationBar
+        variant="user"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

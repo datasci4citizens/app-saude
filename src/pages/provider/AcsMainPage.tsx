@@ -62,8 +62,8 @@ export default function AcsMainPage() {
         navigate("/emergencies");
         break;
       case "profile":
-          navigate("/acs-profile");
-          break;
+        navigate("/acs-profile");
+        break;
     }
   };
 
@@ -97,11 +97,11 @@ export default function AcsMainPage() {
       </div>
 
       {/* Barra de navegação */}
-        <BottomNavigationBar
-          variant="acs"
-          forceActiveId={getActiveNavId()} // Controlled active state
-          onItemClick={handleNavigationClick}
-        />
+      <BottomNavigationBar
+        variant="acs"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

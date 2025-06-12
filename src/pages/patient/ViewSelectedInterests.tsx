@@ -74,7 +74,7 @@ export default function ViewSelectedInterests() {
     navigate("/user-main-page");
   };
 
-    const getActiveNavId = () => {
+  const getActiveNavId = () => {
     if (location.pathname.startsWith("/user-main-page")) return "home";
     if (location.pathname.startsWith("/reminders")) return "meds";
     if (location.pathname.startsWith("/diary")) return "diary";
@@ -215,11 +215,11 @@ export default function ViewSelectedInterests() {
       </div>
 
       {/* Navigation bar */}
-        <BottomNavigationBar
-          variant="user"
-          forceActiveId={getActiveNavId()} // Controlled active state
-          onItemClick={handleNavigationClick}
-        />
+      <BottomNavigationBar
+        variant="user"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

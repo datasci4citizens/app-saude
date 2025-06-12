@@ -18,7 +18,7 @@ const defaultItemsList = [
 ];
 
 export default function InterestPage() {
-      const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const getActiveNavId = () => {
     if (location.pathname.startsWith("/user-main-page")) return "home";
@@ -141,11 +141,11 @@ export default function InterestPage() {
           onCancel={handleCloseModal}
         />
       </BottomSheet>
-              <BottomNavigationBar
-          variant="user"
-          forceActiveId={getActiveNavId()} // Controlled active state
-          onItemClick={handleNavigationClick}
-        />
+      <BottomNavigationBar
+        variant="user"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

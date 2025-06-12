@@ -151,7 +151,7 @@ export default function ViewPatient() {
       return "Data inválida";
     }
   };
-    const getActiveNavId = () => {
+  const getActiveNavId = () => {
     if (location.pathname.startsWith("/acs-main-page")) return "home";
     if (location.pathname.startsWith("/appointments")) return "consults";
     if (location.pathname.startsWith("/patients")) return "patients";
@@ -342,11 +342,11 @@ export default function ViewPatient() {
           </>
         )}
       </div>
-              <BottomNavigationBar
-          variant="acs"
-          forceActiveId={getActiveNavId()} // Controlled active state
-          onItemClick={handleNavigationClick}
-        />
+      <BottomNavigationBar
+        variant="acs"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

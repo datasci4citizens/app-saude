@@ -37,7 +37,11 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
         id: "emergency",
         label: "Ajuda",
         icon: (
-          <span role="img" aria-label="warning" className="mgc_alert_line"></span>
+          <span
+            role="img"
+            aria-label="warning"
+            className="mgc_alert_line"
+          ></span>
         ),
       },
       {
@@ -60,7 +64,11 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
         id: "patients",
         label: "Pacientes",
         icon: (
-          <span role="img" aria-label="patients" className="mgc_group_3_line"></span>
+          <span
+            role="img"
+            aria-label="patients"
+            className="mgc_group_3_line"
+          ></span>
         ),
       },
       {

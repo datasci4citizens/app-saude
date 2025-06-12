@@ -306,11 +306,11 @@ export default function EmergencyPage() {
       </div>
 
       {/* Bottom navigation using BottomNavigationBar component */}
-        <BottomNavigationBar
-          variant="user"
-          forceActiveId={getActiveNavId()} // Controlled active state
-          onItemClick={handleNavigationClick}
-        />
+      <BottomNavigationBar
+        variant="user"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

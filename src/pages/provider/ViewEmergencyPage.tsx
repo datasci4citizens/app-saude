@@ -2,7 +2,7 @@ import React from "react";
 import Header from "@/components/ui/header";
 import { FaTrash } from "react-icons/fa"; // FontAwesome trash icon for delete
 import BottomNavigationBar from "@/components/ui/navigator-bar";
-import {useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface Emergency {
   title: string;
@@ -13,32 +13,32 @@ interface Emergency {
 interface ViewEmergencyProps {
   emergency: Emergency;
 }
-  const navigate = useNavigate();
-  const location = useLocation();
-  const getActiveNavId = () => {
-    if (location.pathname.startsWith("/acs-main-page")) return "home";
-    if (location.pathname.startsWith("/appointments")) return "consults";
-    if (location.pathname.startsWith("/patients")) return "patients";
-    if (location.pathname.startsWith("/emergencies")) return "emergency";
-    if (location.pathname.startsWith("/acs-profile")) return "profile";
-    return null;
-  };
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case "home":
-        navigate("/acs-main-page");
-        break;
-      case "patients":
-        navigate("/patients");
-        break;
-      case "emergency":
-        navigate("/emergencies");
-        break;
-      case "profile":
-          navigate("/acs-profile");
-          break;
-    }
-  };
+const navigate = useNavigate();
+const location = useLocation();
+const getActiveNavId = () => {
+  if (location.pathname.startsWith("/acs-main-page")) return "home";
+  if (location.pathname.startsWith("/appointments")) return "consults";
+  if (location.pathname.startsWith("/patients")) return "patients";
+  if (location.pathname.startsWith("/emergencies")) return "emergency";
+  if (location.pathname.startsWith("/acs-profile")) return "profile";
+  return null;
+};
+const handleNavigationClick = (itemId: string) => {
+  switch (itemId) {
+    case "home":
+      navigate("/acs-main-page");
+      break;
+    case "patients":
+      navigate("/patients");
+      break;
+    case "emergency":
+      navigate("/emergencies");
+      break;
+    case "profile":
+      navigate("/acs-profile");
+      break;
+  }
+};
 
 const ViewReminder: React.FC<ViewEmergencyProps> = ({ emergency }) => {
   return (
@@ -62,11 +62,11 @@ const ViewReminder: React.FC<ViewEmergencyProps> = ({ emergency }) => {
         <FaTrash style={styles.trashIcon} />
         Delete Reminder
       </button>
-    <BottomNavigationBar
-          variant="acs"
-          forceActiveId={getActiveNavId()} // Controlled active state
-          onItemClick={handleNavigationClick}
-        />
+      <BottomNavigationBar
+        variant="acs"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 };

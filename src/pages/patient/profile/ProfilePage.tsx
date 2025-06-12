@@ -159,7 +159,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     },
   ];
 
-    const getActiveNavId = () => {
+  const getActiveNavId = () => {
     if (location.pathname.startsWith("/user-main-page")) return "home";
     if (location.pathname.startsWith("/reminders")) return "meds";
     if (location.pathname.startsWith("/diary")) return "diary";
@@ -245,11 +245,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
         </div>
       </div>
 
-        <BottomNavigationBar
-          variant="user"
-          forceActiveId={getActiveNavId()} // Controlled active state
-          onItemClick={handleNavigationClick}
-        />
+      <BottomNavigationBar
+        variant="user"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 };

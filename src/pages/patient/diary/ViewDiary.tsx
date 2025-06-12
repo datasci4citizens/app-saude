@@ -148,7 +148,7 @@ export default function ViewDiaryEntry() {
     return null;
   };
 
-    const getActiveNavId = () => {
+  const getActiveNavId = () => {
     if (location.pathname.startsWith("/user-main-page")) return "home";
     if (location.pathname.startsWith("/reminders")) return "meds";
     if (location.pathname.startsWith("/diary")) return "diary";
@@ -380,11 +380,11 @@ export default function ViewDiaryEntry() {
           Voltar aos Diários
         </button>
       </div>
-        <BottomNavigationBar
-          variant="user"
-          forceActiveId={getActiveNavId()} // Controlled active state
-          onItemClick={handleNavigationClick}
-        />
+      <BottomNavigationBar
+        variant="user"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

@@ -30,8 +30,8 @@ export default function EditInterest() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  
-    const getActiveNavId = () => {
+
+  const getActiveNavId = () => {
     if (location.pathname.startsWith("/user-main-page")) return "home";
     if (location.pathname.startsWith("/reminders")) return "meds";
     if (location.pathname.startsWith("/diary")) return "diary";
@@ -306,10 +306,10 @@ export default function EditInterest() {
         )}
       </div>
       <BottomNavigationBar
-          variant="user"
-          forceActiveId={getActiveNavId()} // Controlled active state
-          onItemClick={handleNavigationClick}
-        />
+        variant="user"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

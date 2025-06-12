@@ -265,7 +265,7 @@ export default function UserMainPage() {
   const handleBannerIconClick = () => {
     navigate("/diary");
   };
-  
+
   const getActiveNavId = () => {
     if (location.pathname.startsWith("/user-main-page")) return "home";
     if (location.pathname.startsWith("/reminders")) return "meds";
@@ -513,7 +513,7 @@ export default function UserMainPage() {
 
       {/* NAVEGAÇÃO INFERIOR - Sempre no fundo */}
       <div className="fixed bottom-0 left-0 right-0 z-30">
-      <BottomNavigationBar
+        <BottomNavigationBar
           variant="user"
           initialActiveId="home"
           forceActiveId={getActiveNavId()} // Controlled active state

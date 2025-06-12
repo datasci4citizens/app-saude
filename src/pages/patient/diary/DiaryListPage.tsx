@@ -4,7 +4,7 @@ import React, {
   type ButtonHTMLAttributes,
   type ReactNode,
 } from "react";
-import { useNavigate, useLocation} from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   ChevronRight,
   PlusCircle,
@@ -88,7 +88,6 @@ export default function DiaryListPage() {
 
   const navigate = useNavigate();
   const location = useLocation();
-
 
   useEffect(() => {
     const fetchDiaries = async () => {

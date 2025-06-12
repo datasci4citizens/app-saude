@@ -119,8 +119,8 @@ export default function PatientsPage() {
         navigate("/emergencies");
         break;
       case "profile":
-          navigate("/acs-profile");
-          break;
+        navigate("/acs-profile");
+        break;
     }
   };
 
@@ -281,11 +281,11 @@ export default function PatientsPage() {
       </div>
 
       {/* Bottom navigation using BottomNavigationBar component */}
-        <BottomNavigationBar
-          variant="acs"
-          forceActiveId={getActiveNavId()} // Controlled active state
-          onItemClick={handleNavigationClick}
-        />
+      <BottomNavigationBar
+        variant="acs"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

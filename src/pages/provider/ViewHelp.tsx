@@ -115,7 +115,7 @@ export default function ViewHelp() {
         <div className="flex-1 px-4 py-8 flex justify-center items-center">
           <p className="text-campos-preenchimento2 text-gray2">Carregando...</p>
         </div>
-                <BottomNavigationBar
+        <BottomNavigationBar
           variant="acs"
           forceActiveId={getActiveNavId()} // Controlled active state
           onItemClick={handleNavigationClick}
@@ -142,7 +142,7 @@ export default function ViewHelp() {
             Voltar
           </button>
         </div>
-                <BottomNavigationBar
+        <BottomNavigationBar
           variant="acs"
           forceActiveId={getActiveNavId()} // Controlled active state
           onItemClick={handleNavigationClick}
@@ -220,11 +220,11 @@ export default function ViewHelp() {
           </div>
         )}
       </div>
-              <BottomNavigationBar
-          variant="acs"
-          forceActiveId={getActiveNavId()} // Controlled active state
-          onItemClick={handleNavigationClick}
-        />
+      <BottomNavigationBar
+        variant="acs"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }
