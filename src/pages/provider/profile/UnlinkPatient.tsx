@@ -2,12 +2,43 @@ import { useEffect, useState } from "react";
 import Header from "@/components/ui/header";
 import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderService";
 import { ApiService } from "@/api/services/ApiService";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function UnlinkPatient() {
   const [patients, setPatients] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [providerId, setProviderId] = useState<number | null>(null);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/acs-main-page")) return "home";
+    if (location.pathname.startsWith("/appointments")) return "consults";
+    if (location.pathname.startsWith("/patients")) return "patients";
+    if (location.pathname.startsWith("/emergencies")) return "emergency";
+    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/acs-main-page");
+        break;
+      case "patients":
+        navigate("/patients");
+        break;
+      case "emergency":
+        navigate("/emergencies");
+        break;
+      case "profile":
+        navigate("/acs-profile");
+        break;
+    }
+  };
 
   useEffect(() => {
     const fetchProviderIdAndPatients = async () => {
@@ -70,14 +101,10 @@ export default function UnlinkPatient() {
                 onClick={() => handleUnlink(patient.person_id)}
                 title="Clique para desvincular este paciente"
               >
-                <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-r from-blue-500 to-purple-500">
-                  <div className="w-full h-full rounded-full overflow-hidden">
-                    <img
-                      src={patient.profile_picture || "/default-profile.png"}
-                      alt={patient.full_name || patient.name || "Paciente"}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                  <span className="w-full h-full flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-2xl font-bold text-gray-600 dark:text-gray-300">
+                    {(patient.full_name || patient.name || "P").charAt(0).toUpperCase()}
+                  </span>
                 </div>
                 <div>
                   <p className="font-bold text-gray-900 dark:text-white">
@@ -98,6 +125,11 @@ export default function UnlinkPatient() {
           </div>
         )}
       </div>
+      <BottomNavigationBar
+        variant="acs"
+        forceActiveId={getActiveNavId()}
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }
