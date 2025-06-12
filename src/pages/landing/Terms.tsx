@@ -5,8 +5,6 @@ import ContinueButton from "@/components/ui/ContinueButton";
 import Header from "@/components/ui/header";
 import { useNavigate, useLocation } from "react-router-dom";
 
-
-
 interface TermsScreenProps {
   onNext: () => void;
   onPrevious?: () => void;
@@ -72,8 +70,8 @@ const TermsScreen = ({
                 <ArrowLeft className="h-5 w-5 text-white" />
               </button>
             )}
-            <Header 
-              title="" 
+            <Header
+              title=""
               onBackClick={handleBackClick}
               headerClassName="bg-transparent"
               backButtonClassName="bg-transparent"
