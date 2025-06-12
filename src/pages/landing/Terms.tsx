@@ -10,11 +10,11 @@ interface TermsScreenProps {
   totalSteps: number;
 }
 
-const TermsScreen = ({ 
-  onNext, 
-  onPrevious, 
+const TermsScreen = ({
+  onNext,
+  onPrevious,
   currentStep,
-  totalSteps
+  totalSteps,
 }: TermsScreenProps) => {
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -55,7 +55,7 @@ const TermsScreen = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             {!isFirstStep && onPrevious && (
-              <button 
+              <button
                 onClick={onPrevious}
                 className="mr-3 p-2 hover:bg-white/10 rounded-full transition-colors"
                 aria-label="Voltar"
@@ -63,20 +63,24 @@ const TermsScreen = ({
                 <ArrowLeft className="h-5 w-5 text-white" />
               </button>
             )}
-            <h1 className="text-titulowindow font-work-sans text-white">Termos e condições</h1>
+            <h1 className="text-titulowindow font-work-sans text-white">
+              Termos e condições
+            </h1>
           </div>
-          
+
           {/* Progresso no header */}
           <div className="text-white/60 text-desc-titulo font-inter">
             {stepNumber} de {totalSteps}
           </div>
         </div>
       </div>
-      
+
       <div className="flex-1 flex flex-col min-h-0 px-4">
         {/* Container do conteúdo scrollável - altura reduzida */}
-        <div className="flex-1 min-h-0 mb-4 max-h-[calc(100vh-280px)]"> {/* ✅ max-height para limitar área */}
-          <div 
+        <div className="flex-1 min-h-0 mb-4 max-h-[calc(100vh-280px)]">
+          {" "}
+          {/* ✅ max-height para limitar área */}
+          <div
             className="bg-primary/20 backdrop-blur-sm rounded-lg p-4 h-full overflow-y-auto 
                        scrollbar-thin scrollbar-thumb-white/30 scrollbar-track-transparent"
             onScroll={handleScroll}
@@ -84,21 +88,22 @@ const TermsScreen = ({
             <TermsText />
           </div>
         </div>
-        
+
         {/* Área fixa do botão com mais espaço */}
-        <div className="flex-shrink-0 pb-28"> {/* ✅ pb-28 para dar espaço à progress bar */}
+        <div className="flex-shrink-0 pb-28">
+          {" "}
+          {/* ✅ pb-28 para dar espaço à progress bar */}
           <div className="flex flex-col items-center space-y-4">
-            
             {/* Container do botão centralizado */}
             <div className="w-full max-w-xs mx-auto">
-              <ContinueButton 
+              <ContinueButton
                 isEnabled={isScrolledToBottom}
                 onClick={handleContinue}
                 text={isLastStep ? "FINALIZAR" : "CONTINUAR"}
                 successText="ACEITO E CONCORDO"
               />
             </div>
-            
+
             {/* Mensagem de instrução */}
             {!isScrolledToBottom && (
               <div className="flex items-center space-x-2 text-white/80 animate-bounce">
@@ -108,19 +113,18 @@ const TermsScreen = ({
                 </p>
               </div>
             )}
-            
+
             {/* Mensagem contextual baseada no step */}
             {isScrolledToBottom && !showSuccessMessage && (
               <div className="text-center">
                 <p className="text-white/80 text-desc-titulo font-inter">
-                  {isLastStep 
-                    ? "Pronto para finalizar o processo" 
-                    : "Pronto para o próximo passo"
-                  }
+                  {isLastStep
+                    ? "Pronto para finalizar o processo"
+                    : "Pronto para o próximo passo"}
                 </p>
               </div>
             )}
-            
+
             {/* Mensagem de sucesso */}
             {showSuccessMessage && (
               <div className="bg-success text-success-foreground px-6 py-3 rounded-lg shadow-lg">

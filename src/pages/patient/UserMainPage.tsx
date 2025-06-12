@@ -62,10 +62,10 @@ export default function UserMainPage() {
           (await InterestAreasService.personInterestAreasList(
             false,
           )) as InterestAreaResponse[];
-        
+
         // ✅ Log para debug
         console.log("Dados da API:", userInterests);
-        
+
         setUserInterestObjects(userInterests);
         setOriginalInterests([...userInterests]); // Cópia para comparação
         setHasChanges(false);
@@ -394,11 +394,12 @@ export default function UserMainPage() {
                 }}
                 className={`
                   bg-card border border-card-border rounded-xl p-5 shadow-sm transition-all duration-200 relative group
-                  ${interest.is_attention_point 
-                    ? 'border-orange-300 ring-2 ring-orange-100 dark:border-orange-400 dark:ring-orange-900/30' 
-                    : ''
+                  ${
+                    interest.is_attention_point
+                      ? "border-orange-300 ring-2 ring-orange-100 dark:border-orange-400 dark:ring-orange-900/30"
+                      : ""
                   }
-                  ${editionMode ? 'cursor-pointer hover:shadow-lg hover:scale-[1.02] hover:border-ring hover:bg-accent/50' : ''}
+                  ${editionMode ? "cursor-pointer hover:shadow-lg hover:scale-[1.02] hover:border-ring hover:bg-accent/50" : ""}
                 `}
               >
                 {/* botão de deletar */}
@@ -416,11 +417,13 @@ export default function UserMainPage() {
                 )}
 
                 <h3 className="font-work-sans text-topicos2 text-card-foreground mb-2 flex items-center gap-2 flex-wrap">
-                  <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                    interest.is_attention_point 
-                      ? 'bg-orange-400' 
-                      : 'bg-gradient-interest-indicator'
-                  }`}></span>
+                  <span
+                    className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                      interest.is_attention_point
+                        ? "bg-orange-400"
+                        : "bg-gradient-interest-indicator"
+                    }`}
+                  ></span>
                   <span className="break-words min-w-0">
                     {interest.interest_name}
                   </span>
@@ -438,20 +441,25 @@ export default function UserMainPage() {
 
                 {/* ✅ Provider Info - quando é attention point */}
                 {interest.is_attention_point && (
-                <div className="mb-3 p-3 bg-blue-50 dark:bg-orange-900/20 border border-blue-200 dark:border-orange-800 rounded-lg">
-                  <p className="text-desc-campos font-inter text-blue-700 dark:text-orange-300 flex items-center gap-2">
-                    <span className="text-blue-500 dark:text-orange-400">👤</span>
-                    <span className="font-medium">Marcado por:</span>
-                    <span className="font-semibold">
-                      {interest.provider_name || 'Profissional não informado'}
-                    </span>
-                  </p>
-                  {interest.attention_point_date && (
-                    <p className="text-desc-campos font-inter text-blue-600 dark:text-orange-400 mt-1 flex items-center gap-1">
-                      📅 {new Date(interest.attention_point_date).toLocaleDateString('pt-BR')}
+                  <div className="mb-3 p-3 bg-blue-50 dark:bg-orange-900/20 border border-blue-200 dark:border-orange-800 rounded-lg">
+                    <p className="text-desc-campos font-inter text-blue-700 dark:text-orange-300 flex items-center gap-2">
+                      <span className="text-blue-500 dark:text-orange-400">
+                        👤
+                      </span>
+                      <span className="font-medium">Marcado por:</span>
+                      <span className="font-semibold">
+                        {interest.provider_name || "Profissional não informado"}
+                      </span>
                     </p>
-                  )}
-                </div>
+                    {interest.attention_point_date && (
+                      <p className="text-desc-campos font-inter text-blue-600 dark:text-orange-400 mt-1 flex items-center gap-1">
+                        📅{" "}
+                        {new Date(
+                          interest.attention_point_date,
+                        ).toLocaleDateString("pt-BR")}
+                      </p>
+                    )}
+                  </div>
                 )}
 
                 <div className="space-y-1">

@@ -4,10 +4,10 @@ interface GoogleSigninProps {
   isLoading?: boolean;
 }
 
-const GoogleSignin: React.FC<GoogleSigninProps> = ({ 
-  onClick, 
-  disabled = false, 
-  isLoading = false 
+const GoogleSignin: React.FC<GoogleSigninProps> = ({
+  onClick,
+  disabled = false,
+  isLoading = false,
 }) => {
   const handleClick = () => {
     if (!disabled && !isLoading) {
@@ -22,9 +22,10 @@ const GoogleSignin: React.FC<GoogleSigninProps> = ({
       className={`
         relative group w-full max-w-sm mx-auto px-6 py-4 
         bg-offwhite rounded-xl shadow-lg transition-all duration-300 transform font-inter
-        ${disabled || isLoading 
-          ? 'opacity-50 cursor-not-allowed' 
-          : 'hover:scale-105 hover:shadow-xl active:scale-95 cursor-pointer hover:bg-offwhite-foreground'
+        ${
+          disabled || isLoading
+            ? "opacity-50 cursor-not-allowed"
+            : "hover:scale-105 hover:shadow-xl active:scale-95 cursor-pointer hover:bg-offwhite-foreground"
         }
         focus:outline-none focus:ring-4 focus:ring-primary/30
         overflow-hidden border border-gray2-border
@@ -32,11 +33,13 @@ const GoogleSignin: React.FC<GoogleSigninProps> = ({
     >
       {/* Efeito de brilho no hover */}
       {!disabled && !isLoading && (
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent 
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent 
                         opacity-0 group-hover:opacity-100 transition-opacity duration-500
-                        animate-shimmer" />
+                        animate-shimmer"
+        />
       )}
-      
+
       {/* Conteúdo do botão */}
       <div className="relative flex items-center justify-center space-x-3">
         {/* Ícone do Google */}
@@ -66,29 +69,39 @@ const GoogleSignin: React.FC<GoogleSigninProps> = ({
             </svg>
           )}
         </div>
-        
+
         {/* Texto usando typography personalizada */}
         <span className="text-typography font-inter font-semibold text-campos-preenchimento">
-          {isLoading ? 'Conectando...' : 'Entrar com Google'}
+          {isLoading ? "Conectando..." : "Entrar com Google"}
         </span>
-        
+
         {/* Seta indicativa (apenas quando não está carregando) */}
         {!isLoading && (
           <div className="flex-shrink-0 text-typography/60 group-hover:text-typography group-hover:translate-x-1 transition-all duration-300">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
             </svg>
           </div>
         )}
       </div>
-      
+
       {/* Barra de progresso quando carregando usando cores customizadas */}
       {isLoading && (
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray2 overflow-hidden rounded-b-xl">
           <div className="h-full bg-gradient-button-background animate-loading-progress rounded-b-xl" />
         </div>
       )}
-      
+
       {/* Ripple effect com cores customizadas */}
       <div className="absolute inset-0 rounded-xl overflow-hidden">
         <div className="absolute inset-0 bg-primary/10 scale-0 group-active:scale-100 transition-transform duration-200 rounded-xl" />

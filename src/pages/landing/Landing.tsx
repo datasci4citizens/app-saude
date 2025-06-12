@@ -16,10 +16,10 @@ interface LandingScreenProps {
   totalSteps: number;
 }
 
-export const LandingScreen: React.FC<LandingScreenProps> = ({ 
-  onNext, 
+export const LandingScreen: React.FC<LandingScreenProps> = ({
+  onNext,
   currentStep,
-  totalSteps
+  totalSteps,
 }) => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -153,12 +153,10 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
         </div>
 
         {/* Área do botão com espaçamento adequado */}
-        <div className="button-bottom mb-20"> {/* Adicionada margem bottom para evitar sobreposição */}
-          <GoogleSignin 
-            onClick={handleLogin} 
-            disabled={isLoading}
-          />
-          
+        <div className="button-bottom mb-20">
+          {" "}
+          {/* Adicionada margem bottom para evitar sobreposição */}
+          <GoogleSignin onClick={handleLogin} disabled={isLoading} />
           {/* Loading indicator melhorado */}
           {isLoading && (
             <div className="mt-6 text-center">
@@ -168,12 +166,12 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
                   <div className="animate-spin rounded-full h-8 w-8 border-3 border-white/30 border-t-white"></div>
                   <div className="absolute inset-0 rounded-full border-3 border-transparent border-t-white animate-pulse"></div>
                 </div>
-                
+
                 {/* Texto de loading */}
                 <div className="text-white/90 text-sm font-medium">
                   Fazendo login...
                 </div>
-                
+
                 {/* Barra de progresso animada */}
                 <div className="w-32 h-1 bg-white/20 rounded-full overflow-hidden">
                   <div className="h-full bg-white rounded-full animate-loading-bar"></div>
