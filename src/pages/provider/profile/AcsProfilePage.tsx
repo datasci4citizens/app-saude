@@ -116,6 +116,11 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
 
   const menuItems: AcsProfileMenuItem[] = [
     {
+      title: "Desvincular paciente",
+      onClick: () => navigate("/unlink-patient"),
+      hasArrow: true,
+    },
+    {
       title: "Termos e condições",
       onClick: () => navigate("/terms"),
       hasArrow: true,
@@ -133,7 +138,6 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
             `Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.`,
           );
           if (!confirmed) return;
-          // alert(`A conta com o ID ${providerId} será excluída.`);
           await AccountService.accountsDestroy();
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");

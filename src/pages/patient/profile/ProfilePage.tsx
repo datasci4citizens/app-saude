@@ -99,7 +99,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     setError(null);
 
     try {
-      await AccountService.apiAccountDestroy(personId);
+      await AccountService.accountsDestroy();
       setSuccess("Conta excluída com sucesso!");
 
       // Clear tokens and navigate after showing success message
@@ -125,6 +125,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     {
       title: "Adicionar profissional da saúde",
       onClick: () => navigate("/add-professional"),
+      hasArrow: true,
+    },
+    {
+      title: "Desvincular profissional da saúde",
+      onClick: () => navigate("/unlink-professional"),
       hasArrow: true,
     },
     {
