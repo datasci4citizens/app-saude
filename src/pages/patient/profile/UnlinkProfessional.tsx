@@ -37,11 +37,16 @@ export default function UnlinkProfessional() {
       alert("ID do usuário não encontrado.");
       return;
     }
-    const confirmed = window.confirm("Você tem certeza que quer remover este profissional?");
+    const confirmed = window.confirm(
+      "Você tem certeza que quer remover este profissional?",
+    );
     if (!confirmed) return;
 
     try {
-      await LinkPersonProviderService.personProviderUnlinkCreate(personId, providerId);
+      await LinkPersonProviderService.personProviderUnlinkCreate(
+        personId,
+        providerId,
+      );
       setProviders((prev) => prev.filter((p) => p.provider_id !== providerId));
       alert("Profissional desvinculado com sucesso.");
     } catch (err) {
@@ -104,14 +109,23 @@ export default function UnlinkProfessional() {
               >
                 <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
                   <span className="w-full h-full flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-2xl font-bold text-gray-600 dark:text-gray-300">
-                    {(provider.social_name || provider.full_name || provider.name || "P").charAt(0).toUpperCase()}
+                    {(
+                      provider.social_name ||
+                      provider.full_name ||
+                      provider.name ||
+                      "P"
+                    )
+                      .charAt(0)
+                      .toUpperCase()}
                   </span>
                 </div>
                 <div>
                   <p className="font-bold text-gray-900 dark:text-white">
                     Nome:{" "}
                     <span className="font-normal">
-                      {provider.social_name || provider.full_name || provider.name}
+                      {provider.social_name ||
+                        provider.full_name ||
+                        provider.name}
                     </span>
                   </p>
                   <p className="font-bold text-gray-900 dark:text-white mt-1">

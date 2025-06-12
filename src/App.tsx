@@ -182,7 +182,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/unlink-patient",
-    element: <UnlinkPatient />
+    element: <UnlinkPatient />,
   },
   {
     path: "/terms",

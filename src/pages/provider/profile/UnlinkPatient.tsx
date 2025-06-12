@@ -65,11 +65,16 @@ export default function UnlinkPatient() {
       alert("ID do profissional não encontrado.");
       return;
     }
-    const confirmed = window.confirm("Você tem certeza que quer remover este paciente?");
+    const confirmed = window.confirm(
+      "Você tem certeza que quer remover este paciente?",
+    );
     if (!confirmed) return;
 
     try {
-      await LinkPersonProviderService.personProviderUnlinkCreate(personId, providerId);
+      await LinkPersonProviderService.personProviderUnlinkCreate(
+        personId,
+        providerId,
+      );
       setPatients((prev) => prev.filter((p) => p.person_id !== personId));
       alert("Paciente desvinculado com sucesso.");
     } catch (err) {
@@ -103,7 +108,9 @@ export default function UnlinkPatient() {
               >
                 <div className="w-16 h-16 rounded-full p-0.5 bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
                   <span className="w-full h-full flex items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700 text-2xl font-bold text-gray-600 dark:text-gray-300">
-                    {(patient.full_name || patient.name || "P").charAt(0).toUpperCase()}
+                    {(patient.full_name || patient.name || "P")
+                      .charAt(0)
+                      .toUpperCase()}
                   </span>
                 </div>
                 <div>
