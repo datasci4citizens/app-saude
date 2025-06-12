@@ -5,8 +5,11 @@ interface HeaderProps {
   subtitle?: string;
   onBackClick?: () => void;
   rightIcon?: React.ReactNode;
-  subtitleClassName?: string; // Added subtitleClassName
-  centered?: boolean; // Added centered prop
+  subtitleClassName?: string;
+  centered?: boolean;
+  headerClassName?: string;      // New prop
+  backButtonClassName?: string;  // New prop
+  arrowClassName?: string;       // New prop
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -16,6 +19,9 @@ const Header: React.FC<HeaderProps> = ({
   rightIcon,
   subtitleClassName, // Added subtitleClassName
   centered = false, // Added centered prop with default false
+  headerClassName = '',
+  backButtonClassName = 'bg-primary',
+  arrowClassName = 'text-typography',
 }) => {
   const handleBackClick = () => {
     if (onBackClick) {
@@ -26,14 +32,12 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <div>
-      {/* Back Button */}
+    <div className={headerClassName}>
       <button
-        className="bg-primary border-none cursor-pointer flex items-center justify-center mr-3"
+        className={`border-none cursor-pointer flex items-center justify-center mr-3 ${backButtonClassName}`}
         onClick={handleBackClick}
       >
-        <span className="mgc_arrow_left_line w-7 h-7 text-titulo text-typography"></span>{" "}
-        {/* text-titulo for icon size */}
+        <span className={`mgc_arrow_left_line w-7 h-7 text-titulo ${arrowClassName}`}></span>
       </button>
 
       <div className="flex flex-nowrap items-between justify-between">

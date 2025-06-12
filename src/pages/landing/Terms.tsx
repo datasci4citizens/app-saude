@@ -2,6 +2,10 @@ import TermsText from "./TermsText";
 import { Check, ScrollText, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import ContinueButton from "@/components/ui/ContinueButton";
+import Header from "@/components/ui/header";
+import { useNavigate, useLocation } from "react-router-dom";
+
+
 
 interface TermsScreenProps {
   onNext: () => void;
@@ -48,6 +52,12 @@ const TermsScreen = ({
   const isLastStep = currentStep === totalSteps - 1;
   const stepNumber = currentStep + 1;
 
+  const navigate = useNavigate();
+  const handleBackClick = () => {
+    navigate("/diary");
+  };
+
+
   return (
     <div className="h-screen bg-homeblob2 flex flex-col overflow-hidden">
       {/* Header fixo */}
@@ -63,9 +73,17 @@ const TermsScreen = ({
                 <ArrowLeft className="h-5 w-5 text-white" />
               </button>
             )}
-            <h1 className="text-titulowindow font-work-sans text-white">
+            <Header 
+              title="" 
+              onBackClick={handleBackClick}
+              headerClassName="bg-transparent"
+              backButtonClassName="bg-transparent"
+              arrowClassName="text-white"
+            />
+
+            {/*<h1 className="text-titulowindow font-work-sans text-white">
               Termos e condições
-            </h1>
+            </h1>*/}
           </div>
 
           {/* Progresso no header */}
