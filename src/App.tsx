@@ -28,6 +28,8 @@ import ViewSelectedInterests from "./pages/patient/ViewSelectedInterests";
 import ViewPatient from "./pages/provider/ViewPatient"; // Import ViewPatient
 import ViewHelp from "./pages/provider/ViewHelp"; // Import ViewHelp
 import ViewDiary from "./pages/provider/ViewDiary"; // Import ViewDiary
+import UnlinkProfessional from "./pages/patient/profile/UnlinkProfessional";
+import UnlinkPatient from "./pages/provider/profile/UnlinkPatient";
 import TermsScreen from "./pages/landing/Terms";
 
 const NotFound = () => (
@@ -173,6 +175,14 @@ const router = createBrowserRouter([
   {
     path: "/provider/help/:personId/:helpId", // Route for viewing a help request
     element: <ViewHelp />,
+  },
+  {
+    path: "/unlink-professional",
+    element: <UnlinkProfessional />,
+  },
+  {
+    path: "/unlink-patient",
+    element: <UnlinkPatient />,
   },
   {
     path: "/terms",

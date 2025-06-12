@@ -128,6 +128,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       hasArrow: true,
     },
     {
+      title: "Desvincular profissional da saúde",
+      onClick: () => navigate("/unlink-professional"),
+      hasArrow: true,
+    },
+    {
       title: "Termos e condições",
       onClick: () => navigate("/terms"),
       hasArrow: true,
