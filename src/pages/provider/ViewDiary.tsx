@@ -5,6 +5,8 @@ import { PersonService } from "@/api/services/PersonService";
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import { ProviderService } from "@/api/services/ProviderService";
 import { ErrorMessage } from "@/components/ui/error-message";
+import { InterestAreasService } from "@/api/services/InterestAreasService";
+import { type PatchedMarkAttentionPoint } from "@/api/models/PatchedMarkAttentionPoint";
 
 // Interface para as entradas do diário
 interface DiaryEntryDetail {
@@ -82,10 +84,13 @@ export default function ViewDiary() {
 
   const saveLocalAttentionPoints = (points: Set<number>) => {
     try {
-      localStorage.setItem(
-        getAttentionPointsKey(),
-        JSON.stringify([...points]),
-      );
+      points.forEach((point) => {
+        const request: PatchedMarkAttentionPoint = {
+          area_id: point,
+          is_attention_point: true,
+        };
+        InterestAreasService.markObservationAsAttentionPoint(request);
+      });
     } catch (error) {
       console.warn("Erro ao salvar pontos de atenção no localStorage:", error);
     }
@@ -215,22 +220,31 @@ export default function ViewDiary() {
   ) => {
     const newAttentionPoints = new Set(localAttentionPoints);
 
-    if (isCurrentlyFlagged) {
-      newAttentionPoints.delete(areaId);
-    } else {
-      newAttentionPoints.add(areaId);
+    try {
+      const request: PatchedMarkAttentionPoint = {
+        area_id: areaId,
+        is_attention_point: !isCurrentlyFlagged,
+      };
+      InterestAreasService.markObservationAsAttentionPoint(request);
+
+      if (isCurrentlyFlagged) {
+        newAttentionPoints.delete(areaId);
+      } else {
+        newAttentionPoints.add(areaId);
+      }
+
+      console.log(
+        "Toggling flag for area:",
+        areaId,
+        "New state:",
+        !isCurrentlyFlagged,
+        "Saved to server",
+      );
+    } catch (error) {
+      console.warn("Erro ao salvar pontos de atenção no localStorage:", error);
     }
 
     setLocalAttentionPoints(newAttentionPoints);
-    saveLocalAttentionPoints(newAttentionPoints);
-
-    console.log(
-      "Toggling flag for area:",
-      areaId,
-      "New state:",
-      !isCurrentlyFlagged,
-      "Saved to localStorage",
-    );
   };
 
   return (

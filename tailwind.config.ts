@@ -94,6 +94,12 @@ export default {
           DEFAULT: 'var(--homeblob2)',
           foreground: 'var(--homeblob2-foreground)',
         },
+        card: {
+          DEFAULT: 'var(--card)',
+          foreground: 'var(--card-foreground)', 
+          border: 'var(--card-border)',
+          muted: 'var(--card-muted)',
+        },
       },
       backgroundImage: {
         'gradient-interest-indicator': 'var(--gradient-interest-indicator)',

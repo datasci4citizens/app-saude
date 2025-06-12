@@ -39,6 +39,10 @@
     --success-foreground: #065f19;
     --success-text: #006924;
     --yellow: #ffc97e;
+    --card: #ffffff;
+    --card-foreground: #1f2937; 
+    --card-border: #e5e7eb;
+    --card-muted: #f9fafb;
 
     /* Gradientes UserMainPage */
     --gradient-interest-indicator: linear-gradient(to right, #3b82f6, #a855f7);
@@ -95,6 +99,10 @@
     --success-foreground: #065f19;
     --success-text: #006924;
     --yellow: #ffc97e;
+    --card: #1e293b;           /* slate-800 - cinza azulado elegante */
+    --card-foreground: #f1f5f9; /* slate-100 - texto claro */
+    --card-border: #334155;     /* slate-700 - borda mais escura */
+    --card-muted: #0f172a;      /* slate-900 - background alternativo */
 
     /* Gradientes UserMainPage - Tema Dark */
     --gradient-interest-indicator: linear-gradient(to right, #3b82f6, #a855f7);
