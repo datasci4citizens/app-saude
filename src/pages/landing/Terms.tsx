@@ -54,9 +54,8 @@ const TermsScreen = ({
 
   const navigate = useNavigate();
   const handleBackClick = () => {
-    navigate("/diary");
+    navigate(-1); // This goes back one page in history
   };
-
 
   return (
     <div className="h-screen bg-homeblob2 flex flex-col overflow-hidden">
