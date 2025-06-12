@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ProfileBanner from "@/components/ui/profile-banner";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { AccountService } from "@/api/services/AccountService";
@@ -147,22 +147,33 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
       hasArrow: false,
     },
   ];
+  
 
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case "home":
-        navigate("/acs-main-page");
-        break;
-      case "patients":
-        navigate("/patients");
-        break;
-      case "emergency":
-        navigate("/emergencies");
-        break;
-      case "profile":
-        break;
-    }
-  };
+    const location = useLocation();
+    const getActiveNavId = () => {
+      if (location.pathname.startsWith("/acs-main-page")) return "home";
+      if (location.pathname.startsWith("/appointments")) return "consults";
+      if (location.pathname.startsWith("/patients")) return "patients";
+      if (location.pathname.startsWith("/emergencies")) return "emergency";
+      if (location.pathname.startsWith("/acs-profile")) return "profile";
+      return null;
+    };
+    const handleNavigationClick = (itemId: string) => {
+      switch (itemId) {
+        case "home":
+          navigate("/acs-main-page");
+          break;
+        case "patients":
+          navigate("/patients");
+          break;
+        case "emergency":
+          navigate("/emergencies");
+          break;
+        case "profile":
+          navigate("/acs-profile");
+          break;
+      }
+    };
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -223,11 +234,11 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
         </div>
       </div>
 
-      <BottomNavigationBar
-        variant="acs"
-        initialActiveId="profile"
-        onItemClick={handleNavigationClick}
-      />
+               <BottomNavigationBar
+          variant="acs"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
     </div>
   );
 };

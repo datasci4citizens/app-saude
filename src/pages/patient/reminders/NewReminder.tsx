@@ -5,6 +5,7 @@ import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
 import { DateField } from "@/components/forms/date_input";
 import { Checkbox } from "@/components/forms/checkbox";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 const NewReminder: React.FC = () => {
   const hours = Array.from({ length: 24 }, (_, i) =>

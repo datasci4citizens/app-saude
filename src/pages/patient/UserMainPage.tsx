@@ -265,10 +265,20 @@ export default function UserMainPage() {
   const handleBannerIconClick = () => {
     navigate("/diary");
   };
+  
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
 
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
       case "home":
+        navigate("/user-main-page");
         break;
       case "meds":
         navigate("/reminders");
@@ -503,9 +513,10 @@ export default function UserMainPage() {
 
       {/* NAVEGAÇÃO INFERIOR - Sempre no fundo */}
       <div className="fixed bottom-0 left-0 right-0 z-30">
-        <BottomNavigationBar
+      <BottomNavigationBar
           variant="user"
           initialActiveId="home"
+          forceActiveId={getActiveNavId()} // Controlled active state
           onItemClick={handleNavigationClick}
         />
       </div>

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Header from "@/components/ui/header";
 import { PersonService } from "@/api/services/PersonService";
 import { HelpService } from "@/api/services/HelpService";
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 export default function ViewHelp() {
   const { personId, helpId } = useParams<{
@@ -79,6 +80,31 @@ export default function ViewHelp() {
       return "Data inválida";
     }
   };
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/acs-main-page")) return "home";
+    if (location.pathname.startsWith("/appointments")) return "consults";
+    if (location.pathname.startsWith("/patients")) return "patients";
+    if (location.pathname.startsWith("/emergencies")) return "emergency";
+    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/acs-main-page");
+        break;
+      case "patients":
+        navigate("/patients");
+        break;
+      case "emergency":
+        navigate("/emergencies");
+        break;
+      case "profile":
+        navigate("/acs-profile");
+        break;
+    }
+  };
 
   if (loading) {
     return (
@@ -89,6 +115,11 @@ export default function ViewHelp() {
         <div className="flex-1 px-4 py-8 flex justify-center items-center">
           <p className="text-campos-preenchimento2 text-gray2">Carregando...</p>
         </div>
+                <BottomNavigationBar
+          variant="acs"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
       </div>
     );
   }
@@ -111,6 +142,11 @@ export default function ViewHelp() {
             Voltar
           </button>
         </div>
+                <BottomNavigationBar
+          variant="acs"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
       </div>
     );
   }
@@ -184,6 +220,11 @@ export default function ViewHelp() {
           </div>
         )}
       </div>
+              <BottomNavigationBar
+          variant="acs"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
     </div>
   );
 }

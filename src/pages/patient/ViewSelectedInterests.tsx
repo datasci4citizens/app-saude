@@ -74,6 +74,15 @@ export default function ViewSelectedInterests() {
     navigate("/user-main-page");
   };
 
+    const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
   // Handle main navigation
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
@@ -206,11 +215,11 @@ export default function ViewSelectedInterests() {
       </div>
 
       {/* Navigation bar */}
-      <BottomNavigationBar
-        variant="user"
-        initialActiveId="home"
-        onItemClick={handleNavigationClick}
-      />
+        <BottomNavigationBar
+          variant="user"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
     </div>
   );
 }
