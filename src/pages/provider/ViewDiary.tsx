@@ -5,6 +5,8 @@ import { PersonService } from "@/api/services/PersonService";
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import { ProviderService } from "@/api/services/ProviderService";
 import { ErrorMessage } from "@/components/ui/error-message";
+import { InterestAreasService } from "@/api/services/InterestAreasService";
+import { type PatchedMarkAttentionPoint } from "@/api/models/PatchedMarkAttentionPoint";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 // Interface para as entradas do diário
@@ -79,17 +81,6 @@ export default function ViewDiary() {
       );
     }
     return new Set<number>();
-  };
-
-  const saveLocalAttentionPoints = (points: Set<number>) => {
-    try {
-      localStorage.setItem(
-        getAttentionPointsKey(),
-        JSON.stringify([...points]),
-      );
-    } catch (error) {
-      console.warn("Erro ao salvar pontos de atenção no localStorage:", error);
-    }
   };
 
   const isAttentionPoint = (areaId: number) => {
@@ -216,22 +207,31 @@ export default function ViewDiary() {
   ) => {
     const newAttentionPoints = new Set(localAttentionPoints);
 
-    if (isCurrentlyFlagged) {
-      newAttentionPoints.delete(areaId);
-    } else {
-      newAttentionPoints.add(areaId);
+    try {
+      const request: PatchedMarkAttentionPoint = {
+        area_id: areaId,
+        is_attention_point: !isCurrentlyFlagged,
+      };
+      InterestAreasService.markObservationAsAttentionPoint(request);
+
+      if (isCurrentlyFlagged) {
+        newAttentionPoints.delete(areaId);
+      } else {
+        newAttentionPoints.add(areaId);
+      }
+
+      console.log(
+        "Toggling flag for area:",
+        areaId,
+        "New state:",
+        !isCurrentlyFlagged,
+        "Saved to server",
+      );
+    } catch (error) {
+      console.warn("Erro ao salvar pontos de atenção no localStorage:", error);
     }
 
     setLocalAttentionPoints(newAttentionPoints);
-    saveLocalAttentionPoints(newAttentionPoints);
-
-    console.log(
-      "Toggling flag for area:",
-      areaId,
-      "New state:",
-      !isCurrentlyFlagged,
-      "Saved to localStorage",
-    );
   };
   const location = useLocation();
   const getActiveNavId = () => {

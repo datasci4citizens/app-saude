@@ -12,9 +12,15 @@ const isMobile = Capacitor.isNativePlatform();
 
 interface LandingScreenProps {
   onNext: () => void;
+  currentStep: number;
+  totalSteps: number;
 }
 
-export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
+export const LandingScreen: React.FC<LandingScreenProps> = ({ 
+  onNext, 
+  currentStep,
+  totalSteps
+}) => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -86,11 +92,13 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
     localStorage.setItem("fullname", loginResponse.full_name || "");
     localStorage.setItem("profileImage", loginResponse.profile_picture || "");
 
+    // Usar o role para decidir navegação
     if (loginResponse.role === "provider") {
       window.location.href = "/acs-main-page";
     } else if (loginResponse.role === "person") {
       window.location.href = "/user-main-page";
     } else {
+      // Se o usuário não tem role definido, continua no onboarding
       onNext();
     }
   };
@@ -100,7 +108,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
   };
 
   return (
-    <div className="onboarding-screen landing-screen">
+    <div className="onboarding-screen landing-screen relative">
       <div className="content">
         <h1>SAÚDE</h1>
         <p className="subtitle">
@@ -144,16 +152,68 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
           />
         </div>
 
-        <div className="button-bottom">
-          <GoogleSignin onClick={handleLogin} />
-        </div>
-
-        <div className="progress-indicator">
-          <div className="indicator active" />
-          <div className="indicator" />
-          <div className="indicator" />
+        {/* Área do botão com espaçamento adequado */}
+        <div className="button-bottom mb-20"> {/* Adicionada margem bottom para evitar sobreposição */}
+          <GoogleSignin 
+            onClick={handleLogin} 
+            disabled={isLoading}
+          />
+          
+          {/* Loading indicator melhorado */}
+          {isLoading && (
+            <div className="mt-6 text-center">
+              <div className="inline-flex flex-col items-center space-y-3">
+                {/* Spinner melhorado */}
+                <div className="relative">
+                  <div className="animate-spin rounded-full h-8 w-8 border-3 border-white/30 border-t-white"></div>
+                  <div className="absolute inset-0 rounded-full border-3 border-transparent border-t-white animate-pulse"></div>
+                </div>
+                
+                {/* Texto de loading */}
+                <div className="text-white/90 text-sm font-medium">
+                  Fazendo login...
+                </div>
+                
+                {/* Barra de progresso animada */}
+                <div className="w-32 h-1 bg-white/20 rounded-full overflow-hidden">
+                  <div className="h-full bg-white rounded-full animate-loading-bar"></div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Animações CSS customizadas */}
+      <style>{`
+        @keyframes loading-bar {
+          0% {
+            transform: translateX(-100%);
+          }
+          50% {
+            transform: translateX(0%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
+        }
+        
+        .animate-loading-bar {
+          animation: loading-bar 2s ease-in-out infinite;
+        }
+        
+        /* Animação para os pontos do progress */
+        @keyframes pulse-dot {
+          0%, 100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.7;
+            transform: scale(1.1);
+          }
+        }
+      `}</style>
     </div>
   );
 };
