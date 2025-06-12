@@ -17,6 +17,7 @@ interface TextFieldProps {
   multiline?: boolean;
   rows?: number;
   className?: string;
+  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
 }
 
 export function TextField({

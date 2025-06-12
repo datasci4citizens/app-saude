@@ -1,27 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 
-// Interface para os itens de navegação
 interface NavItem {
   id: string;
   label: string;
   icon: React.ReactNode;
 }
 
-// Props do componente
 interface BottomNavigationBarProps {
   variant?: "user" | "acs";
-  initialActiveId?: string;
+  forceActiveId?: string | null;
   onItemClick?: (itemId: string) => void;
-  customItems?: NavItem[]; // Para permitir itens totalmente personalizados
 }
 
 const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   variant = "user",
-  initialActiveId,
+  forceActiveId = null,
   onItemClick,
-  customItems,
 }) => {
-  // Itens de navegação predefinidos por variante
   const navItemVariants = {
     user: [
       {
@@ -31,17 +26,6 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
           <span role="img" aria-label="home" className="mgc_home_4_line"></span>
         ),
       },
-      //{
-      //  id: "meds",
-      //  label: "Remédios",
-      //  icon: (
-      //    <span
-      //      role="img"
-      //      aria-label="calendar"
-      //      className="mgc_calendar_line"
-      //    ></span>
-      //  ),
-      //},
       {
         id: "diary",
         label: "Diário",
@@ -76,17 +60,6 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
           <span role="img" aria-label="home" className="mgc_home_4_line"></span>
         ),
       },
-      //{
-      //  id: "consults",
-      //  label: "Próximas consultas",
-      //  icon: (
-      //    <span
-      //      role="img"
-      //      aria-label="consults"
-      //      className="mgc_alarm_2_line"
-      //    ></span>
-      //  ),
-      //},
       {
         id: "patients",
         label: "Pacientes",
@@ -98,17 +71,6 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
           ></span>
         ),
       },
-      //{
-      //  id: "emergency",
-      //  label: "Checar pedidos de ajuda",
-      //  icon: (
-      //    <span
-      //      role="img"
-      //      aria-label="warning"
-      //      className="mgc_report_line"
-      //    ></span>
-      //  ),
-      //},
       {
         id: "profile",
         label: "Eu",
@@ -119,57 +81,47 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
     ],
   };
 
-  // Escolhe os itens de navegação com base na variante ou usa itens personalizados
-  const navItems = customItems || navItemVariants[variant];
-
-  // Define o ID ativo inicial com base nos itens disponíveis
-  const defaultActiveId = initialActiveId || navItems[0]?.id || "";
-
-  // Estado para controlar qual item está ativo
-  const [activeItemId, setActiveItemId] = useState<string>(defaultActiveId);
-
-  // Função para lidar com o clique nos itens
-  const handleItemClick = (itemId: string) => {
-    setActiveItemId(itemId);
-    // Chamar callback externo se fornecido
-    if (onItemClick) {
-      onItemClick(itemId);
-    }
-  };
+  const navItems = navItemVariants[variant];
 
   return (
     <div className="flex justify-around items-center py-2.5 bg-primary w-full fixed bottom-0 left-0 shadow-[0_-1px_5px_rgba(0,0,0,0.1)] border-t border-input z-50">
       {navItems.map((item) => {
-        const isActive = activeItemId === item.id;
+        const isActive = forceActiveId === item.id;
 
         return (
-          <div
+          <button
             key={item.id}
             className={`
-              flex flex-col items-center font-medium text-xs font-inter cursor-pointer
+              flex flex-col items-center font-medium text-xs font-inter
               ${navItems.length ? `w-[${100 / navItems.length}%]` : "w-1/5"}
+              focus:outline-none
             `}
-            onClick={() => handleItemClick(item.id)}
+            onClick={() => onItemClick?.(item.id)}
+            aria-current={isActive ? "page" : undefined}
           >
             <div
               className={`
                 flex justify-center items-center w-10 h-10 mb-1 text-2xl rounded-[10px]
                 transition-all duration-200 ease-in-out
-                ${isActive ? "bg-selection text-gray2" : "bg-primary text-gray2"}
+                ${
+                  isActive
+                    ? "bg-selection text-gray2"
+                    : "bg-primary text-gray2 hover:bg-primary-hover"
+                }
               `}
             >
               {item.icon}
             </div>
             <div
               className={`
-                flex justify-center items-center h-7 text-center text-[13px] leading-3
-                font-inter font-medium transition-colors duration-200
-                text-gray2
+                text-center text-[13px] leading-3
+                font-inter font-medium
+                ${isActive ? "text-gray2 font-semibold" : "text-gray2"}
               `}
             >
               {item.label}
             </div>
-          </div>
+          </button>
         );
       })}
     </div>

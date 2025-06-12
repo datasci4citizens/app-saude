@@ -18,6 +18,9 @@ interface InterestAreaResponse extends InterestArea {
   concept_id?: number;
   is_temporary?: boolean; // Flag para identificar criados localmente
   is_deleted?: boolean; // Flag para identificar deletados localmente
+  is_attention_point?: boolean; // ✅ Nova propriedade para pontos de atenção
+  attention_point_date?: string; // ✅ Data quando foi marcado como attention point
+  provider_name: string; // ✅ Nome do profissional que marcou
 }
 
 export default function UserMainPage() {
@@ -56,7 +59,13 @@ export default function UserMainPage() {
     const loadExistingInterests = async () => {
       try {
         const userInterests =
-          (await InterestAreasService.personInterestAreasList()) as InterestAreaResponse[];
+          (await InterestAreasService.personInterestAreasList(
+            false,
+          )) as InterestAreaResponse[];
+
+        // ✅ Log para debug
+        console.log("Dados da API:", userInterests);
+
         setUserInterestObjects(userInterests);
         setOriginalInterests([...userInterests]); // Cópia para comparação
         setHasChanges(false);
@@ -119,7 +128,7 @@ export default function UserMainPage() {
       const tempInterest: InterestAreaResponse = {
         interest_area_id: Date.now(), // ID temporário único
         interest_name: interestData.interest_name,
-        observation_concept_id: 2000201,
+        observation_concept_id: 2000000201,
         triggers: interestData.triggers.map((t) => ({ trigger_name: t })),
         is_temporary: true, // Flag para identificar que é temporário
       };
@@ -156,11 +165,11 @@ export default function UserMainPage() {
       for (const interest of toCreate) {
         const newInterestArea: InterestArea = {
           interest_name: interest.interest_name,
-          observation_concept_id: 2000201,
+          observation_concept_id: 2000000201,
           triggers:
             interest.triggers?.map((t) => ({
               trigger_name: t.trigger_name,
-              observation_concept_id: 2000301,
+              observation_concept_id: 2000000301,
             })) || [],
         };
 
@@ -198,11 +207,11 @@ export default function UserMainPage() {
         // Criar versão nova
         const updatedInterestArea: InterestArea = {
           interest_name: interest.interest_name,
-          observation_concept_id: 2000201,
+          observation_concept_id: 2000000201,
           triggers:
             interest.triggers?.map((t) => ({
               trigger_name: t.trigger_name,
-              observation_concept_id: 2000301,
+              observation_concept_id: 2000000301,
             })) || [],
         };
 
@@ -264,9 +273,19 @@ export default function UserMainPage() {
     navigate("/diary");
   };
 
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
       case "home":
+        navigate("/user-main-page");
         break;
       case "meds":
         navigate("/reminders");
@@ -333,15 +352,15 @@ export default function UserMainPage() {
   const visibleInterests = userInterestObjects.filter((i) => !i.is_deleted);
 
   return (
-    <div className="min-h-screen bg-primary relative">
+    <div className="min-h-screen bg-homeblob2 relative">
       {/* HEADER fixo */}
-      <div className="relative z-10 bg-primary">
+      <div className="relative z-10 bg-homeblob2">
         <HomeBanner
           title="Registro diário"
           subtitle="Adicione seus interesses e acompanhe seu progresso"
           onIconClick={handleBannerIconClick}
         />
-        <h2 className="text-xl font-semibold pl-4 pb-2 mt-4 text-typography">
+        <h2 className="text-titulowindow font-work-sans pl-4 pb-2 mt-4 text-typography">
           Meus Interesses
         </h2>
       </div>
@@ -353,13 +372,13 @@ export default function UserMainPage() {
       >
         {visibleInterests.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="w-16 h-16 bg-muted/50 rounded-full flex items-center justify-center mb-4">
+            <div className="w-16 h-16 bg-gray2/50 rounded-full flex items-center justify-center mb-4">
               <span className="text-2xl">📋</span>
             </div>
-            <p className="text-foreground text-lg font-medium mb-2">
+            <p className="text-typography text-lg font-medium mb-2">
               Nenhum interesse selecionado
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-desc-titulo text-typography/60">
               Adicione seus interesses para começar!
             </p>
           </div>
@@ -373,19 +392,22 @@ export default function UserMainPage() {
                     handleEditInterest(interest);
                   }
                 }}
-                className={
-                  "bg-card border-border rounded-xl p-5 shadow-sm transition-all duration-200 relative group" +
-                  (editionMode
-                    ? " cursor-pointer hover:shadow-lg hover:scale-[1.02] hover:border-ring hover:bg-accent/50"
-                    : "")
-                }
+                className={`
+                  bg-card border border-card-border rounded-xl p-5 shadow-sm transition-all duration-200 relative group
+                  ${
+                    interest.is_attention_point
+                      ? "border-orange-300 ring-2 ring-orange-100 dark:border-orange-400 dark:ring-orange-900/30"
+                      : ""
+                  }
+                  ${editionMode ? "cursor-pointer hover:shadow-lg hover:scale-[1.02] hover:border-ring hover:bg-accent/50" : ""}
+                `}
               >
                 {/* botão de deletar */}
                 {editionMode && (
                   <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                     <X
                       size={20}
-                      className="text-red-500 hover:text-red-600 cursor-pointer hover:scale-110 transition-all duration-200 bg-background rounded-full p-1 shadow-md border border-border"
+                      className="text-destructive hover:text-destructive/80 cursor-pointer hover:scale-110 transition-all duration-200 bg-card rounded-full p-1 shadow-md border border-card-border"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDeleteInterest(interest);
@@ -394,30 +416,59 @@ export default function UserMainPage() {
                   </div>
                 )}
 
-                <h3 className="font-bold text-lg text-card-foreground mb-2 flex items-center gap-2 flex-wrap">
-                  <span className="w-2 h-2 bg-gradient-interest-indicator rounded-full flex-shrink-0"></span>
+                <h3 className="font-work-sans text-topicos2 text-card-foreground mb-2 flex items-center gap-2 flex-wrap">
+                  <span
+                    className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                      interest.is_attention_point
+                        ? "bg-orange-400"
+                        : "bg-gradient-interest-indicator"
+                    }`}
+                  ></span>
                   <span className="break-words min-w-0">
                     {interest.interest_name}
                   </span>
                   {interest.is_temporary && (
-                    <span className="ml-2 text-xs bg-orange-500 text-white px-2 py-1 rounded-full font-medium flex-shrink-0">
+                    <span className="ml-2 text-desc-campos bg-yellow text-white px-2 py-1 rounded-full font-inter font-medium flex-shrink-0">
                       Não salvo
                     </span>
                   )}
-                  {interest.observation_concept_id === 2000201 &&
-                    !interest.is_temporary && (
-                      <span className="ml-2 text-xs bg-violet-600 text-white dark:bg-purple-900/50 dark:text-purple-200 px-2 py-1 rounded-full font-medium border border-violet-700 dark:border-purple-700 flex-shrink-0">
-                        Personalizado
-                      </span>
-                    )}
+                  {interest.is_attention_point && (
+                    <span className="ml-2 text-desc-campos typescriptbg-red-100 text-red-800 dark:bg-orange-900/30 dark:text-orange-300 px-2 py-1 rounded-full font-inter font-medium flex-shrink-0 border border-orange-200 dark:border-orange-700">
+                      ⚠️ Atenção
+                    </span>
+                  )}
                 </h3>
+
+                {/* ✅ Provider Info - quando é attention point */}
+                {interest.is_attention_point && (
+                  <div className="mb-3 p-3 bg-blue-50 dark:bg-orange-900/20 border border-blue-200 dark:border-orange-800 rounded-lg">
+                    <p className="text-desc-campos font-inter text-blue-700 dark:text-orange-300 flex items-center gap-2">
+                      <span className="text-blue-500 dark:text-orange-400">
+                        👤
+                      </span>
+                      <span className="font-medium">Marcado por:</span>
+                      <span className="font-semibold">
+                        {interest.provider_name || "Profissional não informado"}
+                      </span>
+                    </p>
+                    {interest.attention_point_date && (
+                      <p className="text-desc-campos font-inter text-blue-600 dark:text-orange-400 mt-1 flex items-center gap-1">
+                        📅{" "}
+                        {new Date(
+                          interest.attention_point_date,
+                        ).toLocaleDateString("pt-BR")}
+                      </p>
+                    )}
+                  </div>
+                )}
+
                 <div className="space-y-1">
                   {interest.triggers?.map((t, index) => (
                     <div
                       key={`${t.trigger_name}-${index}`}
-                      className="flex items-start gap-2 text-sm text-muted-foreground"
+                      className="flex items-start gap-2 text-campos-preenchimento2 font-inter text-card-foreground/70"
                     >
-                      <span className="w-1 h-1 bg-muted-foreground rounded-full flex-shrink-0 mt-2"></span>
+                      <span className="w-1 h-1 bg-card-foreground/40 rounded-full flex-shrink-0 mt-2"></span>
                       <span className="break-words min-w-0">
                         {t.trigger_name}
                       </span>
@@ -454,20 +505,20 @@ export default function UserMainPage() {
       </div>
 
       {/* BOTÕES FIXOS - Sempre visíveis acima da navegação */}
-      <div className="fixed bottom-24 left-0 right-0 px-4 py-3 bg-gradient-button-background backdrop-blur-sm border-t border-gray-200/20 z-20">
+      <div className="fixed bottom-24 left-0 right-0 px-4 py-3 bg-gradient-button-background backdrop-blur-sm border-t border-gray2-border/20 z-20">
         {editionMode ? (
           <div className="flex justify-center gap-2 max-w-md mx-auto">
             <Button
-              variant="outline"
+              variant="outlineWhite"
               onClick={handleCancelChanges}
-              className="flex-1 bg-background/50 border-border/30 text-foreground hover:bg-background/70 transition-all duration-200 backdrop-blur-sm text-sm py-2"
+              className="flex-1 bg-offwhite/50 border-gray2-border/30 text-typography hover:bg-offwhite/70 transition-all duration-200 backdrop-blur-sm text-desc-titulo py-2"
               disabled={isSyncing}
             >
               Cancelar
             </Button>
             <Button
               onClick={handleSaveChanges}
-              className={`flex-1 bg-gradient-button-save hover:bg-gradient-button-save-hover text-white shadow-lg hover:shadow-xl transition-all duration-200 border-0 text-sm py-2 ${
+              className={`flex-1 bg-gradient-button-save hover:bg-gradient-button-save-hover text-white shadow-lg hover:shadow-xl transition-all duration-200 border-0 text-desc-titulo py-2 ${
                 !hasChanges ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={isSyncing || !hasChanges}
@@ -480,7 +531,7 @@ export default function UserMainPage() {
             </Button>
             <Button
               onClick={handleCreateNewInterest}
-              className="flex-1 bg-gradient-button-new hover:bg-gradient-button-new-hover text-white shadow-lg hover:shadow-xl transition-all duration-200 border-0 text-sm py-2"
+              className="flex-1 bg-gradient-button-new hover:bg-gradient-button-new-hover text-white shadow-lg hover:shadow-xl transition-all duration-200 border-0 text-desc-titulo py-2"
               disabled={isSyncing}
             >
               + Novo
@@ -490,7 +541,7 @@ export default function UserMainPage() {
           <div className="w-full flex justify-center px-2">
             <Button
               onClick={() => setEditionMode(true)}
-              className="bg-gradient-button-edit hover:bg-gradient-button-edit-hover text-white w-full max-w-xs shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 py-2.5 rounded-xl font-semibold text-sm"
+              className="bg-gradient-button-edit hover:bg-gradient-button-edit-hover text-white w-full max-w-xs shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 py-2.5 rounded-xl font-semibold text-desc-titulo"
               disabled={isSyncing}
             >
               ✏️ Editar Interesses
@@ -504,6 +555,7 @@ export default function UserMainPage() {
         <BottomNavigationBar
           variant="user"
           initialActiveId="home"
+          forceActiveId={getActiveNavId()} // Controlled active state
           onItemClick={handleNavigationClick}
         />
       </div>

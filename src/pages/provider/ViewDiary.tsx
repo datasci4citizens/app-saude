@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Header from "@/components/ui/header";
 import { PersonService } from "@/api/services/PersonService";
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
-import type { PatchedMarkAttentionPoint } from "@/api/models/PatchedMarkAttentionPoint";
 import { ProviderService } from "@/api/services/ProviderService";
+import { ErrorMessage } from "@/components/ui/error-message";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
+import { type PatchedMarkAttentionPoint } from "@/api/models/PatchedMarkAttentionPoint";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 // Interface para as entradas do diário
 interface DiaryEntryDetail {
@@ -31,7 +33,8 @@ interface InterestAreaDetail {
   interest_name?: string;
   triggers?: ResponseDetail[];
   is_attention_point?: boolean;
-  provider_name?: string;
+  provider_name?: string | null; // Permitir null
+  shared_with_provider?: boolean;
 }
 
 // Interface para o diário completo
@@ -48,10 +51,46 @@ export default function ViewDiary() {
     diaryId: string;
     personId: string;
   }>();
+  const navigate = useNavigate();
   const [diary, setDiary] = useState<DiaryDetail | null>(null);
   const [patient, setPatient] = useState<PersonRetrieve | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedInterests, setExpandedInterests] = useState<Set<number>>(
+    new Set(),
+  );
+  const [localAttentionPoints, setLocalAttentionPoints] = useState<Set<number>>(
+    new Set(),
+  );
+
+  // Funções para gerenciar pontos de atenção no localStorage
+  const getAttentionPointsKey = () =>
+    `attentionPoints_provider_${localStorage.getItem("provider_id") || "unknown"}`;
+
+  const loadLocalAttentionPoints = () => {
+    try {
+      const stored = localStorage.getItem(getAttentionPointsKey());
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return new Set(Array.isArray(parsed) ? parsed : []);
+      }
+    } catch (error) {
+      console.warn(
+        "Erro ao carregar pontos de atenção do localStorage:",
+        error,
+      );
+    }
+    return new Set<number>();
+  };
+
+  const isAttentionPoint = (areaId: number) => {
+    return localAttentionPoints.has(areaId);
+  };
+
+  // Carregar pontos de atenção quando o componente for montado
+  useEffect(() => {
+    setLocalAttentionPoints(loadLocalAttentionPoints());
+  }, []);
 
   useEffect(() => {
     if (diaryId && personId) {
@@ -79,21 +118,21 @@ export default function ViewDiary() {
             const diaryWithResolvedNames: DiaryDetail = {
               ...diaryData,
               entries: diaryData.entries
-                .map((entry) => ({
+                .map((entry: any) => ({
                   ...entry,
                   text_content: entry.text || "",
                   text_shared: entry.text_shared || false,
                 }))
-                .filter((entry) => entry.text_shared),
+                .filter((entry: any) => entry.text_shared),
               interest_areas: diaryData.interest_areas
-                .map((area) => ({
+                .map((area: any) => ({
                   ...area,
                   provider_name:
                     area.provider_name === loggedProviderName
                       ? "Você"
                       : area.provider_name,
                 }))
-                .filter((area) => area.shared_with_provider),
+                .filter((area: any) => area.shared_with_provider),
             };
 
             setDiary(diaryWithResolvedNames);
@@ -112,253 +151,354 @@ export default function ViewDiary() {
     }
   }, [diaryId, personId]);
 
-  const formatDate = (dateString: string) => {
+  // Função para limpar erro
+  const clearError = () => {
+    setError(null);
+  };
+
+  // Format date for display
+  const formatDate = (dateString: string): string => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const year = date.getFullYear();
+
+      return `${day}/${month}/${year}`;
     } catch (e) {
-      return "Data inválida";
+      return dateString;
     }
   };
 
-  const formatTime = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } catch (e) {
-      return "Hora inválida";
-    }
+  // Toggle interest expansion
+  const toggleInterest = (interestId: number) => {
+    setExpandedInterests((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(interestId)) {
+        newSet.delete(interestId);
+      } else {
+        newSet.add(interestId);
+      }
+      return newSet;
+    });
   };
 
-  const handleToggleFlag = async (
+  // Get general text entry if available
+  const getGeneralTextEntry = (): { text: string; shared: boolean } | null => {
+    if (!diary || !diary.entries || diary.entries.length === 0) {
+      return null;
+    }
+
+    for (const entry of diary.entries) {
+      if (entry.text_content && entry.text_content.trim() !== "") {
+        return {
+          text: entry.text_content,
+          shared: true, // Provider only sees shared entries
+        };
+      }
+    }
+
+    return null;
+  };
+
+  const handleAttentionToggle = (
     areaId: number,
     isCurrentlyFlagged: boolean,
   ) => {
+    const newAttentionPoints = new Set(localAttentionPoints);
+
     try {
-      console.log(
-        "Toggling flag for area:",
-        areaId,
-        "Current state:",
-        isCurrentlyFlagged,
-      );
-      const updatedArea: PatchedMarkAttentionPoint = {
+      const request: PatchedMarkAttentionPoint = {
         area_id: areaId,
         is_attention_point: !isCurrentlyFlagged,
       };
-      await InterestAreasService.markObservationAsAttentionPoint(updatedArea);
+      InterestAreasService.markObservationAsAttentionPoint(request);
 
-      setDiary((prevDiary) => {
-        if (!prevDiary) return prevDiary;
-        return {
-          ...prevDiary,
-          interest_areas: (prevDiary.interest_areas ?? []).map((area) =>
-            area.interest_area_id === areaId
-              ? {
-                  ...area,
-                  is_attention_point: updatedArea.is_attention_point,
-                  provider_name: updatedArea.is_attention_point ? "Você" : null,
-                }
-              : area,
-          ),
-        };
-      });
+      if (isCurrentlyFlagged) {
+        newAttentionPoints.delete(areaId);
+      } else {
+        newAttentionPoints.add(areaId);
+      }
+
+      console.log(
+        "Toggling flag for area:",
+        areaId,
+        "New state:",
+        !isCurrentlyFlagged,
+        "Saved to server",
+      );
     } catch (error) {
-      console.error("Erro ao atualizar área de interesse:", error);
-      setError("Não foi possível atualizar a área de interesse.");
+      console.warn("Erro ao salvar pontos de atenção no localStorage:", error);
+    }
+
+    setLocalAttentionPoints(newAttentionPoints);
+  };
+  const location = useLocation();
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/acs-main-page")) return "home";
+    if (location.pathname.startsWith("/appointments")) return "consults";
+    if (location.pathname.startsWith("/patients")) return "patients";
+    if (location.pathname.startsWith("/emergencies")) return "emergency";
+    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    return null;
+  };
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/acs-main-page");
+        break;
+      case "patients":
+        navigate("/patients");
+        break;
+      case "emergency":
+        navigate("/emergencies");
+        break;
+      case "profile":
+        navigate("/acs-profile");
+        break;
     }
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-primary pb-24">
-      <div className="p-4">
-        <Header title="Visualizar Diário" centered={true} />
-      </div>
+    <div className="max-w-3xl mx-auto px-4 py-8">
+      <Header
+        title="Visualizar Diário do Paciente"
+        onBackClick={() => navigate(-1)}
+        subtitle={
+          diary?.date
+            ? formatDate(diary.date)
+            : patient?.first_name
+              ? `${patient.first_name} ${patient.last_name || ""}`.trim()
+              : "Visualização do Diário"
+        }
+      />
 
-      <div className="flex-1 px-4 overflow-auto m-4">
-        {loading && (
-          <p className="text-campos-preenchimento2 text-gray2">Carregando...</p>
-        )}
+      {loading && (
+        <div className="flex justify-center items-center py-16">
+          <p className="text-lg text-muted-foreground">Carregando diário...</p>
+        </div>
+      )}
 
-        {error && (
-          <p className="text-campos-preenchimento2 text-destructive">{error}</p>
-        )}
+      {error && (
+        <ErrorMessage
+          message={error || "Erro ao carregar diário"}
+          variant="destructive"
+          onClose={clearError}
+        />
+      )}
 
-        {!loading && !error && patient && diary && (
-          <div className="space-y-6">
-            {/* Informações do Paciente */}
-            <div className="bg-offwhite p-4 rounded-lg shadow-md">
-              <h2 className="text-topicos2 text-typography mb-3">
+      {!loading && !error && diary && (
+        <>
+          {/* Patient Info Section */}
+          {patient && (
+            <div className="bg-card p-4 rounded-lg border border-border mb-6">
+              <h3 className="font-semibold text-lg text-card-foreground mb-3">
                 Informações do Paciente
-              </h2>
-              <div className="space-y-2">
-                <p className="text-campos-preenchimento2 text-typography">
-                  <span className="text-topicos2 text-typography-foreground">
-                    Nome:
-                  </span>{" "}
+              </h3>
+              <div className="space-y-2 text-sm">
+                <p>
+                  <span className="font-medium">Nome:</span>{" "}
                   {patient.social_name ||
-                    patient.first_name + " " + patient.last_name ||
+                    `${patient.first_name} ${patient.last_name || ""}`.trim() ||
                     "Não informado"}
                 </p>
-                <p className="text-campos-preenchimento2 text-typography">
-                  <span className="text-topicos2 text-typography-foreground">
-                    ID:
-                  </span>{" "}
-                  {patient.person_id}
+                <p>
+                  <span className="font-medium">ID:</span> {patient.person_id}
                 </p>
+                {patient.email && (
+                  <p>
+                    <span className="font-medium">Email:</span> {patient.email}
+                  </p>
+                )}
               </div>
             </div>
+          )}
 
-            {/* Informações do Diário */}
-            <div className="bg-offwhite p-4 rounded-lg shadow-md">
-              <h2 className="text-topicos2 text-typography mb-3">
-                Informações do Diário
-              </h2>
-              <div className="space-y-2">
-                <p className="text-campos-preenchimento2 text-typography">
-                  <span className="text-topicos2 text-typography-foreground">
-                    Data:
-                  </span>{" "}
-                  {formatDate(diary.date)}
-                </p>
-              </div>
-            </div>
-
-            {/* Entradas do Diário */}
-            <div className="space-y-4">
-              <h2 className="text-topicos2 text-typography">
-                Observações (texto livre)
-              </h2>
-
-              {(!diary.entries || diary.entries.length === 0) && (
-                <div className="bg-offwhite p-4 rounded-lg shadow-md">
-                  <p className="text-campos-preenchimento2 text-gray2">
-                    Nenhuma entrada encontrada neste diário.
-                  </p>
-                </div>
-              )}
-
-              {diary.entries && diary.entries.length > 0 && (
-                <div className="space-y-3">
-                  {diary.entries.map((entry, index) => (
-                    <div
-                      key={entry.id || index}
-                      className="bg-offwhite p-4 rounded-lg shadow-md"
-                    >
-                      {entry.text_content && (
-                        <div className="mb-3">
-                          <p className="text-campos-preenchimento2 text-typography whitespace-pre-wrap">
-                            {entry.text_content}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Áreas de Interesse */}
-            <div className="space-y-4">
-              <h2 className="text-topicos2 text-typography">
-                Áreas de Interesse
-              </h2>
-
-              {(!diary.interest_areas || diary.interest_areas.length === 0) && (
-                <div className="bg-offwhite p-4 rounded-lg shadow-md">
-                  <p className="text-campos-preenchimento2 text-gray2">
-                    Nenhuma área de interesse encontrada neste diário.
-                  </p>
-                </div>
-              )}
-
-              {diary.interest_areas && diary.interest_areas.length > 0 && (
-                <div className="space-y-3">
-                  {diary.interest_areas.map((area, areaIndex) => (
-                    <div
-                      key={area.interest_area_id || areaIndex}
-                      className="bg-offwhite p-4 rounded-lg shadow-md"
-                    >
-                      <div className="flex justify-between items-center mb-2">
-                        <h3 className="text-topicos2 text-typography">
-                          {area.interest_name || `Área ${areaIndex + 1}`}
-                        </h3>
-
-                        <button
-                          className={`flex items-center text-sm font-medium rounded px-2 py-1 border 
-                            ${area.is_attention_point ? "text-destructive border-destructive" : "text-gray2 border-gray3"} 
-                            hover:bg-muted transition`}
-                          onClick={() =>
-                            handleToggleFlag(
-                              area.interest_area_id || areaIndex,
-                              area.is_attention_point || false,
-                            )
-                          }
-                        >
-                          {area.is_attention_point
-                            ? "Remover atenção ⚠️"
-                            : "Marcar atenção ⚠️"}
-                        </button>
-                      </div>
-
-                      {area.is_attention_point && area.provider_name && (
-                        <p className="text-xs text-destructive mb-2 italic">
-                          Marcado por {area.provider_name}
-                        </p>
-                      )}
-
-                      {area.triggers && area.triggers.length > 0 ? (
-                        <div className="space-y-2">
-                          <h4 className="text-topicos2 text-typography-foreground font-medium">
-                            Respostas:
-                          </h4>
-                          <div className="space-y-2">
-                            {area.triggers.map((response, responseIndex) => (
-                              <div
-                                key={response.trigger_id || responseIndex}
-                                className="bg-background p-3 rounded border-l-4 border-primary"
-                              >
-                                <div className="flex justify-between items-start mb-2">
-                                  <span className="text-topicos2 text-typography-foreground">
-                                    {response.trigger_name &&
-                                    response.value_as_string
-                                      ? `${response.trigger_name} : ${response.value_as_string}`
-                                      : `Resposta ${responseIndex + 1}`}
-                                  </span>
-                                  {response.created_at && (
-                                    <span className="text-desc-titulo text-gray2">
-                                      {formatTime(response.created_at)}
-                                    </span>
-                                  )}
-                                </div>
-                                {response.content && (
-                                  <p className="text-campos-preenchimento2 text-typography whitespace-pre-wrap">
-                                    {response.content}
-                                  </p>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      ) : (
-                        <p className="text-campos-preenchimento2 text-gray2">
-                          Nenhuma resposta encontrada para esta área.
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
+          {/* Time Range Section */}
+          <div className="space-y-3 mb-6">
+            <h3 className="font-semibold text-lg text-typography mb-1">
+              Período de tempo
+            </h3>
+            <div className="bg-primary p-4 rounded-lg border border-border">
+              <span className="text-sm text-muted-foreground">
+                {diary.scope === "today"
+                  ? "Registros do dia de hoje"
+                  : "Registros desde a última entrada"}
+              </span>
             </div>
           </div>
-        )}
-      </div>
+
+          {/* Interest Areas Section */}
+          {diary.interest_areas && diary.interest_areas.length > 0 && (
+            <div className="space-y-3 mb-6">
+              <h3 className="font-semibold text-lg text-typography mb-1">
+                Áreas de Interesse
+              </h3>
+              <div className="space-y-4">
+                {diary.interest_areas.map((interest) => {
+                  if (!interest.interest_area_id) return null;
+
+                  const isExpanded = expandedInterests.has(
+                    interest.interest_area_id,
+                  );
+                  const hasResponses =
+                    interest.triggers &&
+                    interest.triggers.some((t) => t.value_as_string);
+                  const isAttentionPointFlag = isAttentionPoint(
+                    interest.interest_area_id,
+                  );
+
+                  return (
+                    <div
+                      key={interest.interest_area_id}
+                      className="bg-card border border-border rounded-xl shadow-sm"
+                    >
+                      <div
+                        className="p-5 cursor-pointer"
+                        onClick={() =>
+                          toggleInterest(interest.interest_area_id!)
+                        }
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3 flex-1">
+                            <span className="w-2 h-2 bg-gradient-interest-indicator rounded-full flex-shrink-0"></span>
+                            <h4 className="font-bold text-lg text-card-foreground">
+                              {interest.interest_name}
+                            </h4>
+                            {isAttentionPointFlag && (
+                              <span className="text-destructive text-lg">
+                                ⚠️
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-success text-sm font-medium">
+                              ✓ Compartilhado
+                            </span>
+                            <span
+                              className={`transform transition-transform duration-200 ${
+                                isExpanded ? "rotate-180" : ""
+                              }`}
+                            >
+                              ▼
+                            </span>
+                          </div>
+                        </div>
+
+                        {isAttentionPointFlag && interest.provider_name && (
+                          <div className="mt-2">
+                            <span className="text-xs text-destructive italic">
+                              Marcado como ponto de atenção por{" "}
+                              {interest.provider_name}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {isExpanded && (
+                        <div className="px-5 pb-5">
+                          <div className="border-t border-border pt-4">
+                            {/* Attention Point Button */}
+                            <div className="mb-4">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleAttentionToggle(
+                                    interest.interest_area_id!,
+                                    isAttentionPointFlag,
+                                  );
+                                }}
+                                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                                  isAttentionPointFlag
+                                    ? "bg-destructive text-white hover:bg-destructive/80"
+                                    : "bg-orange-500 text-white hover:bg-orange-600"
+                                }`}
+                              >
+                                {isAttentionPointFlag
+                                  ? "Remover atenção ⚠️"
+                                  : "Marcar atenção ⚠️"}
+                              </button>
+                            </div>
+
+                            {/* Responses */}
+                            {hasResponses ? (
+                              <div className="space-y-3">
+                                <h5 className="font-medium text-sm text-muted-foreground mb-2">
+                                  Respostas:
+                                </h5>
+                                {interest.triggers?.map(
+                                  (trigger, index) =>
+                                    trigger.value_as_string && (
+                                      <div
+                                        key={trigger.trigger_id || index}
+                                        className="bg-background p-3 rounded-lg border-l-4 border-primary"
+                                      >
+                                        <div className="text-sm">
+                                          <span className="font-medium text-foreground">
+                                            {trigger.trigger_name}:
+                                          </span>
+                                          <span className="ml-2 text-muted-foreground">
+                                            {trigger.value_as_string}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    ),
+                                )}
+                              </div>
+                            ) : (
+                              <p className="text-sm text-muted-foreground italic">
+                                Nenhuma resposta registrada para esta área.
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* General Text Section */}
+          {(() => {
+            const textEntry = getGeneralTextEntry();
+            return textEntry && textEntry.text ? (
+              <div className="space-y-3">
+                <div className="flex flex-col gap-1">
+                  <h3 className="font-semibold text-lg text-typography mb-1">
+                    Observações Gerais
+                  </h3>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-success">
+                      ✓ Compartilhado com profissionais
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-primary p-4 rounded-lg whitespace-pre-wrap min-h-[150px] border border-border">
+                  {textEntry.text}
+                </div>
+              </div>
+            ) : null;
+          })()}
+
+          {/* Action button */}
+          <div className="mt-8 text-center">
+            <button
+              onClick={() => navigate(-1)}
+              className="px-6 py-3 bg-gradient-button-edit hover:bg-gradient-button-edit-hover text-white rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
+            >
+              Voltar
+            </button>
+          </div>
+        </>
+      )}
+      <BottomNavigationBar
+        variant="acs"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

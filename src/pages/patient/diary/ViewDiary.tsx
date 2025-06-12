@@ -4,6 +4,7 @@ import Header from "@/components/ui/header";
 import { DiaryService } from "@/api/services/DiaryService";
 import CollapsibleInterestCard from "@/components/ui/CollapsibleInterestCard";
 import { ErrorMessage } from "@/components/ui/error-message";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 // Updated interfaces to match actual server response structure
 interface DiaryTrigger {
@@ -147,6 +148,35 @@ export default function ViewDiaryEntry() {
     return null;
   };
 
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/user-main-page");
+        break;
+      case "meds":
+        navigate("/reminders");
+        break;
+      case "diary":
+        navigate("/diary");
+        break;
+      case "emergency":
+        navigate("/emergency-user");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+    }
+  };
+
   // Toggle interest expansion
   const toggleInterest = (interestId: number) => {
     setExpandedInterests((prev) => {
@@ -211,7 +241,7 @@ export default function ViewDiaryEntry() {
         <div className="mt-6 text-center">
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-2 bg-gray1 hover:bg-gray2 rounded-full text-white transition-colors"
+            className="px-6 py-2 bg-gray1 hover:bg-gray2 rounded-full text-primary transition-colors"
           >
             Voltar
           </button>
@@ -239,7 +269,7 @@ export default function ViewDiaryEntry() {
 
       {!hasContent && (
         <div className="bg-gray1 p-6 rounded-lg text-center my-8">
-          <p className="text-gray1 text-lg">Este diário não possui conteúdo.</p>
+          <p className="text-gray2 text-lg">Este diário não possui conteúdo.</p>
         </div>
       )}
 
@@ -277,15 +307,16 @@ export default function ViewDiaryEntry() {
               return (
                 <div
                   key={interest.interest_area_id}
-                  className="bg-white border border-gray1 rounded-lg p-4"
+                  className="bg-primary border border-gray1 rounded-lg p-4"
                 >
                   <CollapsibleInterestCard
                     interest={convertToUserInterest(interest)}
                     isOpen={expandedInterests.has(interest.interest_area_id)}
                     onToggle={() => toggleInterest(interest.interest_area_id)}
-                    onResponseChange={() => {}} // Read-only mode
-                    onSharingToggle={() => {}} // Read-only mode
-                    onTriggerResponseChange={() => {}} // Read-only mode
+                    readOnly={true}
+                    onResponseChange={() => {}}
+                    onSharingToggle={() => {}}
+                    onTriggerResponseChange={() => {}}
                   />
 
                   {/* Sharing status */}
@@ -297,7 +328,7 @@ export default function ViewDiaryEntry() {
                       <span
                         className={`font-medium ${
                           interest.shared_with_provider
-                            ? "text-sucess"
+                            ? "text-success"
                             : "text-selection"
                         }`}
                       >
@@ -344,11 +375,16 @@ export default function ViewDiaryEntry() {
       <div className="mt-8 text-center">
         <button
           onClick={() => navigate("/diary")}
-          className="px-6 py-3 bg-selection text-white rounded-lg transition-colors font-medium"
+          className="px-6 py-3 bg-selection text-primary rounded-lg transition-colors font-medium"
         >
           Voltar aos Diários
         </button>
       </div>
+      <BottomNavigationBar
+        variant="user"
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

@@ -30,6 +30,7 @@ import ViewHelp from "./pages/provider/ViewHelp"; // Import ViewHelp
 import ViewDiary from "./pages/provider/ViewDiary"; // Import ViewDiary
 import UnlinkProfessional from "./pages/patient/profile/UnlinkProfessional";
 import UnlinkPatient from "./pages/provider/profile/UnlinkPatient";
+import TermsScreen from "./pages/landing/Terms";
 
 const NotFound = () => (
   <div>
@@ -181,7 +182,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/unlink-patient",
-    element: <UnlinkPatient />,
+    element: <UnlinkPatient />
+  },
+  {
+    path: "/terms",
+    element: <TermsScreen onNext={() => {}} currentStep={1} totalSteps={1} />,
   },
   {
     path: "*",

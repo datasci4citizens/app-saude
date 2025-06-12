@@ -9,7 +9,7 @@
 		"check": "biome check",
 		"check:write": "biome check --write",
 		"preview": "vite preview",
-		"generate-api": "npx openapi-typescript-codegen --input http://localhost:8000/api/schema --output src/api --client fetch"
+		"generate-api": "node generate-api.js"
 	},
 	"dependencies": {
 		"@capacitor/android": "^6.1.2",

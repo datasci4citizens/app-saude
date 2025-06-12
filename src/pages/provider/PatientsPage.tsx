@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { TextField } from "@/components/forms/text_input";
 import PatientButton from "@/components/ui/patient-button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderService";
 import { Button } from "@/components/forms/button";
@@ -98,9 +98,16 @@ export default function PatientsPage() {
       : filteredBySearch;
 
   const navigate = useNavigate();
-
-  const handleNavigation = (itemId: string) => {
-    console.log(`Navigated to ${itemId}`);
+  const location = useLocation();
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/acs-main-page")) return "home";
+    if (location.pathname.startsWith("/appointments")) return "consults";
+    if (location.pathname.startsWith("/patients")) return "patients";
+    if (location.pathname.startsWith("/emergencies")) return "emergency";
+    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    return null;
+  };
+  const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
       case "home":
         navigate("/acs-main-page");
@@ -108,9 +115,9 @@ export default function PatientsPage() {
       case "patients":
         navigate("/patients");
         break;
-      //case "emergency":
-      //  navigate("/emergencies");
-      //  break;
+      case "emergency":
+        navigate("/emergencies");
+        break;
       case "profile":
         navigate("/acs-profile");
         break;
@@ -276,8 +283,8 @@ export default function PatientsPage() {
       {/* Bottom navigation using BottomNavigationBar component */}
       <BottomNavigationBar
         variant="acs"
-        initialActiveId="patients"
-        onItemClick={handleNavigation}
+        forceActiveId={getActiveNavId()} // Controlled active state
+        onItemClick={handleNavigationClick}
       />
     </div>
   );
