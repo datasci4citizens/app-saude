@@ -7,9 +7,9 @@ interface HeaderProps {
   rightIcon?: React.ReactNode;
   subtitleClassName?: string;
   centered?: boolean;
-  headerClassName?: string;      // New prop
-  backButtonClassName?: string;  // New prop
-  arrowClassName?: string;       // New prop
+  headerClassName?: string; // New prop
+  backButtonClassName?: string; // New prop
+  arrowClassName?: string; // New prop
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -19,9 +19,9 @@ const Header: React.FC<HeaderProps> = ({
   rightIcon,
   subtitleClassName, // Added subtitleClassName
   centered = false, // Added centered prop with default false
-  headerClassName = '',
-  backButtonClassName = 'bg-primary',
-  arrowClassName = 'text-typography',
+  headerClassName = "",
+  backButtonClassName = "bg-primary",
+  arrowClassName = "text-typography",
 }) => {
   const handleBackClick = () => {
     if (onBackClick) {
@@ -37,7 +37,9 @@ const Header: React.FC<HeaderProps> = ({
         className={`border-none cursor-pointer flex items-center justify-center mr-3 ${backButtonClassName}`}
         onClick={handleBackClick}
       >
-        <span className={`mgc_arrow_left_line w-7 h-7 text-titulo ${arrowClassName}`}></span>
+        <span
+          className={`mgc_arrow_left_line w-7 h-7 text-titulo ${arrowClassName}`}
+        ></span>
       </button>
 
       <div className="flex flex-nowrap items-between justify-between">
