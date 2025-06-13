@@ -150,10 +150,8 @@ const TermsScreen = ({
           <Header
             title={getPageTitle()}
             onBackClick={() => {
-              if (!isFirstStep && onPrevious && !isFromProfile)
-                onPrevious()
-              else
-                handleBackClick()
+              if (!isFirstStep && onPrevious && !isFromProfile) onPrevious();
+              else handleBackClick();
             }}
             variant="transparent"
             headerClassName="bg-transparent"
@@ -230,12 +228,12 @@ const TermsScreen = ({
               (!isFromProfile &&
                 isScrolledToBottom &&
                 !showSuccessMessage)) && (
-                <div className="text-center">
-                  <p className="text-white/80 text-sm font-inter">
-                    {getInstructionMessage()}
-                  </p>
-                </div>
-              )}
+              <div className="text-center">
+                <p className="text-white/80 text-sm font-inter">
+                  {getInstructionMessage()}
+                </p>
+              </div>
+            )}
 
             {/* Mensagem de sucesso - apenas no fluxo de cadastro */}
             {!isFromProfile && showSuccessMessage && (
