@@ -395,7 +395,7 @@ export default function DiaryInfoForm() {
             size="lg"
             type="submit"
             disabled={isSubmitting}
-            className="w-full max-w-[280px] text-typography mx-auto py-3 text-base"
+            className="w-full max-w-[280px] text-offwhite mx-auto py-3 text-base"
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">

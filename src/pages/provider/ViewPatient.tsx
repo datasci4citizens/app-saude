@@ -1,22 +1,24 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Header from "@/components/ui/header";
+import { Button } from "@/components/forms/button";
+import { TextField } from "@/components/forms/text_input";
 import { PersonService } from "@/api/services/PersonService";
-import { HelpService } from "@/api/services/HelpService"; // Import HelpService
+import { HelpService } from "@/api/services/HelpService";
+import { ProviderService } from "@/api";
+import { SuccessMessage } from "@/components/ui/success-message";
+import { ErrorMessage } from "@/components/ui/error-message";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
-import ViewButton from "@/components/ui/ViewButton"; // Import ViewButton
-import { ProviderService } from "@/api";
 
-// Define a basic interface for Diary Entries based on actual API response
 interface DiaryEntry {
   diary_id: number;
   date: string;
   scope: string;
-  entries: any[]; // The actual diary entries array
+  entries: any[];
 }
 
-// Define interface for Help Requests
 interface HelpRequest {
   id: number;
   created_at: string;
@@ -28,282 +30,547 @@ interface HelpRequest {
 export default function ViewPatient() {
   const { id, context } = useParams<{ id: string; context?: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Patient data states
   const [patient, setPatient] = useState<PersonRetrieve | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
+  // Diaries states
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
   const [diariesLoading, setDiariesLoading] = useState(true);
-  const [diariesError, setDiariesError] = useState<string | null>(null);
 
+  // Help requests states
   const [helpRequests, setHelpRequests] = useState<HelpRequest[]>([]);
   const [helpRequestsLoading, setHelpRequestsLoading] = useState(true);
-  const [helpRequestsError, setHelpRequestsError] = useState<string | null>(
-    null,
-  );
 
+  // UI states
   const [activeTab, setActiveTab] = useState("diarios");
+  const [searchValue, setSearchValue] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
-
-    const fetchPatientData = async () => {
-      try {
-        setLoading(true);
-        const patientData = await PersonService.apiPersonRetrieve(Number(id));
-        setPatient(patientData);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching patient data:", err);
-        setError("Não foi possível carregar os dados do paciente.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPatientData();
+    fetchAllData();
   }, [id]);
 
-  useEffect(() => {
-    if (!patient) return;
-
-    const fetchDiaries = async () => {
-      try {
-        setDiariesLoading(true);
-        const diariesData = await ProviderService.providerPatientsDiariesList(
-          patient.person_id,
-        );
-
-        const sortedDiaries = (diariesData as DiaryEntry[]).sort((a, b) => {
-          const dateA = new Date(a.date).getTime();
-          const dateB = new Date(b.date).getTime();
-          return dateB - dateA;
-        });
-
-        setDiaries(sortedDiaries);
-        setDiariesError(null);
-      } catch (err) {
-        console.error("Error fetching diaries:", err);
-        setDiariesError("Não foi possível carregar os diários do paciente.");
-      } finally {
-        setDiariesLoading(false);
-      }
-    };
-
-    fetchDiaries();
-  }, [patient]);
-
-  useEffect(() => {
+  const fetchAllData = async () => {
     if (!id) return;
 
-    const fetchHelpRequests = async () => {
-      try {
-        setHelpRequestsLoading(true);
-        // Buscar todos os pedidos de ajuda do provider
-        const allHelpRequests = await HelpService.providerHelpList();
+    setLoading(true);
+    setError(null);
 
-        // Filtrar apenas os pedidos de ajuda do paciente específico
-        const patientHelpRequests = allHelpRequests.filter(
-          (help: ObservationRetrieve) => help.person === Number(id),
-        );
+    try {
+      // Fetch patient data
+      const patientData = await PersonService.apiPersonRetrieve(Number(id));
+      setPatient(patientData);
 
-        // Mapear para o formato da interface HelpRequest
-        const formattedHelpRequests: HelpRequest[] = patientHelpRequests.map(
-          (help: ObservationRetrieve) => ({
-            id: help.observation_id,
-            created_at: help.created_at,
-            observation_date: help.observation_date,
-            value_as_string: help.value_as_string,
-            person: help.person,
-          }),
-        );
+      // Fetch diaries
+      await fetchDiaries(patientData.person_id);
 
-        // Ordenar do mais recente para o mais antigo
-        formattedHelpRequests.sort((a, b) => {
-          const dateA = new Date(a.observation_date || a.created_at).getTime();
-          const dateB = new Date(b.observation_date || b.created_at).getTime();
-          return dateB - dateA;
-        });
+      // Fetch help requests
+      await fetchHelpRequests();
+    } catch (err) {
+      console.error("Error fetching patient data:", err);
+      setError("Não foi possível carregar os dados do paciente.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        setHelpRequests(formattedHelpRequests);
-        setHelpRequestsError(null);
-      } catch (err) {
-        console.error("Error fetching help requests:", err);
-        setHelpRequestsError(
-          "Não foi possível carregar os pedidos de ajuda do paciente.",
-        );
-      } finally {
-        setHelpRequestsLoading(false);
-      }
-    };
-    fetchHelpRequests();
-  }, [id]);
+  const fetchDiaries = async (personId: number) => {
+    try {
+      setDiariesLoading(true);
+      const diariesData =
+        await ProviderService.providerPatientsDiariesList(personId);
+
+      const sortedDiaries = (diariesData as DiaryEntry[]).sort((a, b) => {
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        return dateB - dateA;
+      });
+
+      setDiaries(sortedDiaries);
+    } catch (err) {
+      console.error("Error fetching diaries:", err);
+    } finally {
+      setDiariesLoading(false);
+    }
+  };
+
+  const fetchHelpRequests = async () => {
+    if (!id) return;
+
+    try {
+      setHelpRequestsLoading(true);
+      const allHelpRequests = await HelpService.providerHelpList();
+
+      const patientHelpRequests = allHelpRequests.filter(
+        (help: ObservationRetrieve) => help.person === Number(id),
+      );
+
+      const formattedHelpRequests: HelpRequest[] = patientHelpRequests.map(
+        (help: ObservationRetrieve) => ({
+          id: help.observation_id,
+          created_at: help.created_at,
+          observation_date: help.observation_date,
+          value_as_string: help.value_as_string,
+          person: help.person,
+        }),
+      );
+
+      formattedHelpRequests.sort((a, b) => {
+        const dateA = new Date(a.observation_date || a.created_at).getTime();
+        const dateB = new Date(b.observation_date || b.created_at).getTime();
+        return dateB - dateA;
+      });
+
+      setHelpRequests(formattedHelpRequests);
+    } catch (err) {
+      console.error("Error fetching help requests:", err);
+    } finally {
+      setHelpRequestsLoading(false);
+    }
+  };
 
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return `Dia ${date.toLocaleDateString("pt-BR", {
+      return date.toLocaleDateString("pt-BR", {
         day: "2-digit",
         month: "2-digit",
-      })}`;
+        year: "numeric",
+      });
     } catch (e) {
       return "Data inválida";
     }
   };
 
+  const formatDateWithTime = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (e) {
+      return "Data inválida";
+    }
+  };
+
+  const getRelativeTime = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffInHours = Math.floor(
+        (now.getTime() - date.getTime()) / (1000 * 60 * 60),
+      );
+      const diffInDays = Math.floor(diffInHours / 24);
+
+      if (diffInHours < 1) return "Há poucos minutos";
+      if (diffInHours < 24) return `Há ${diffInHours}h`;
+      if (diffInDays === 1) return "Ontem";
+      if (diffInDays < 7) return `Há ${diffInDays} dias`;
+      return formatDate(dateString);
+    } catch (e) {
+      return "Data inválida";
+    }
+  };
+
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/acs-main-page")) return "home";
+    if (location.pathname.startsWith("/appointments")) return "consults";
+    if (location.pathname.startsWith("/patients")) return "patients";
+    if (location.pathname.startsWith("/emergencies")) return "emergency";
+    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/acs-main-page");
+        break;
+      case "patients":
+        navigate("/patients");
+        break;
+      case "emergency":
+        navigate("/emergencies");
+        break;
+      case "profile":
+        navigate("/acs-profile");
+        break;
+    }
+  };
+
+  // Filter data based on search
+  const filteredDiaries = diaries.filter(
+    (diary) =>
+      diary.scope?.toLowerCase().includes(searchValue.toLowerCase()) ||
+      formatDate(diary.date).includes(searchValue),
+  );
+
+  const filteredHelpRequests = helpRequests.filter(
+    (help) =>
+      help.value_as_string?.toLowerCase().includes(searchValue.toLowerCase()) ||
+      formatDate(help.observation_date || help.created_at).includes(
+        searchValue,
+      ),
+  );
+
+  const clearError = () => setError(null);
+  const clearSuccess = () => setSuccess(null);
+
+  const patientName =
+    patient?.social_name ||
+    `${patient?.first_name || ""} ${patient?.last_name || ""}`.trim() ||
+    "Paciente";
+
+  const urgentHelpRequests = helpRequests.filter((help) => {
+    const helpDate = new Date(help.observation_date || help.created_at);
+    const now = new Date();
+    const diffInDays = Math.floor(
+      (now.getTime() - helpDate.getTime()) / (1000 * 60 * 60 * 24),
+    );
+    return diffInDays <= 3;
+  });
+
   return (
-    <div className="flex flex-col min-h-screen bg-primary pb-24">
-      <div className="p-4">
-        <Header title="Histórico do Paciente" centered={true} />
-      </div>
-      <div className="flex-1 px-4 overflow-auto m-4">
-        {/* Informações do Paciente */}
+    <div className="flex flex-col min-h-screen bg-homebg">
+      <Header
+        title={`Paciente: ${patientName}`}
+        subtitle={
+          context === "emergency"
+            ? "🚨 Contexto: Emergência"
+            : `ID: ${patient?.person_id || id}`
+        }
+      />
+
+      <div className="flex-1 px-4 py-6 bg-background rounded-t-3xl mt-4 relative z-10 pb-24">
+        {/* Messages */}
+        <div className="space-y-4 mb-6">
+          {success && (
+            <SuccessMessage
+              message={success}
+              onClose={clearSuccess}
+              className="animate-in slide-in-from-top-2 duration-300"
+            />
+          )}
+
+          {error && (
+            <ErrorMessage
+              message={error}
+              onClose={clearError}
+              onRetry={() => fetchAllData()}
+              variant="destructive"
+              className="animate-in slide-in-from-top-2 duration-300"
+            />
+          )}
+        </div>
+
+        {/* Loading State */}
         {loading && (
-          <p className="text-campos-preenchimento2 text-gray2">Carregando...</p>
-        )}
-        {error && (
-          <p className="text-campos-preenchimento2 text-destructive">{error}</p>
-        )}
-        {patient && !loading && !error && (
-          <div className="space-y-3 mb-6 pb-4 border-b border-gray-200">
-            <p className="text-campos-preenchimento2 text-typography">
-              <span className="text-topicos2 text-typography-foreground">
-                ID do Paciente:
-              </span>{" "}
-              {patient.person_id}
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection mb-4"></div>
+            <p className="text-gray2 text-sm">
+              Carregando dados do paciente...
             </p>
-            <p className="text-campos-preenchimento2 text-typography">
-              <span className="text-topicos2 text-typography-foreground">
-                Nome:
-              </span>{" "}
-              {patient.social_name ||
-                patient.first_name + " " + patient.last_name ||
-                "Não informado"}
-            </p>
-            {context === "emergency" && (
-              <p className="text-topicos text-destructive">
-                Contexto: Emergência
-              </p>
-            )}
           </div>
         )}
 
-        {/* Tabs */}
-        <div className="flex border-b mb-4">
-          <button
-            className={`py-2 px-4 ${
-              activeTab === "diarios"
-                ? "border-b-2 border-selection text-selection font-medium"
-                : ""
-            }`}
-            onClick={() => setActiveTab("diarios")}
-          >
-            Diários
-          </button>
-          <button
-            className={`py-2 px-4 ${
-              activeTab === "ajuda"
-                ? "border-b-2 border-selection text-selection font-medium"
-                : ""
-            }`}
-            onClick={() => setActiveTab("ajuda")}
-          >
-            Pedidos de Ajuda
-          </button>
-        </div>
-
-        {/* Conteúdo baseado na aba ativa */}
-        {activeTab === "diarios" && (
+        {!loading && patient && (
           <>
-            {diariesLoading && (
-              <p className="text-campos-preenchimento2 text-gray2">
-                Carregando diários...
-              </p>
-            )}
-            {diariesError && (
-              <p className="text-campos-preenchimento2 text-destructive">
-                {diariesError}
-              </p>
-            )}
-            {!diariesLoading && !diariesError && diaries.length === 0 && (
-              <p className="text-campos-preenchimento2 text-gray2">
-                Nenhum diário encontrado para este paciente.
-              </p>
-            )}
-            {!diariesLoading && !diariesError && diaries.length > 0 && (
-              <div className="space-y-4">
-                {diaries.map((diary) => {
-                  const entriesCount = diary.entries?.length || 0;
-                  const entriesText =
-                    entriesCount > 0
-                      ? `${entriesCount} entrada${
-                          entriesCount > 1 ? "s" : ""
-                        } registrada${entriesCount > 1 ? "s" : ""}`
-                      : "Nenhuma entrada registrada";
+            {/* Patient Info Card */}
+            <div className="bg-card rounded-2xl p-5 border border-card-border mb-6">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-gradient-to-r from-selection to-accent1 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-xl">
+                    {patientName.charAt(0).toUpperCase()}
+                  </span>
+                </div>
 
-                  return (
-                    <ViewButton
-                      key={diary.diary_id}
-                      dateText={formatDate(diary.date)}
-                      mainText="Diário"
-                      subText={entriesText}
-                      onClick={() => {
-                        navigate(
-                          `/provider/patient/${id}/diary/${diary.diary_id}`,
-                        );
-                      }}
-                    />
-                  );
-                })}
+                <div className="flex-1">
+                  <h2 className="text-card-foreground font-semibold text-lg">
+                    {patientName}
+                  </h2>
+                  <p className="text-gray2 text-sm">ID: {patient.person_id}</p>
+                  {patient.age && (
+                    <p className="text-gray2 text-sm">{patient.age} anos</p>
+                  )}
+                </div>
+
+                {context === "emergency" && (
+                  <div className="bg-destructive/10 px-3 py-1 rounded-full">
+                    <span className="text-destructive text-xs font-medium">
+                      🚨 Emergência
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Quick Stats */}
+              <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-card-border">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-selection">
+                    {diaries.length}
+                  </p>
+                  <p className="text-gray2 text-xs">Diários</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-destructive">
+                    {helpRequests.length}
+                  </p>
+                  <p className="text-gray2 text-xs">Pedidos de ajuda</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Search */}
+            <div className="mb-6">
+              <TextField
+                id="search"
+                name="search"
+                label="Buscar registros"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                placeholder="Buscar por data, conteúdo..."
+                className="w-full"
+              />
+            </div>
+
+            {/* Tabs */}
+            <div className="flex bg-card rounded-xl p-1 mb-6 border border-card-border">
+              <button
+                className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  activeTab === "diarios"
+                    ? "bg-selection text-white shadow-sm"
+                    : "text-gray2 hover:text-card-foreground hover:bg-card-muted"
+                }`}
+                onClick={() => setActiveTab("diarios")}
+              >
+                📖 Diários ({filteredDiaries.length})
+              </button>
+              <button
+                className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 relative ${
+                  activeTab === "ajuda"
+                    ? "bg-destructive text-white shadow-sm"
+                    : "text-gray2 hover:text-card-foreground hover:bg-card-muted"
+                }`}
+                onClick={() => setActiveTab("ajuda")}
+              >
+                🚨 Pedidos de Ajuda ({filteredHelpRequests.length})
+                {urgentHelpRequests.length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full animate-pulse"></span>
+                )}
+              </button>
+            </div>
+
+            {/* Content based on active tab */}
+            {activeTab === "diarios" && (
+              <div className="space-y-4">
+                {diariesLoading && (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-6 w-6 border-2 border-selection/20 border-t-selection mr-2"></div>
+                    <span className="text-gray2 text-sm">
+                      Carregando diários...
+                    </span>
+                  </div>
+                )}
+
+                {!diariesLoading && filteredDiaries.length === 0 && (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-gray2/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <span className="text-2xl">📖</span>
+                    </div>
+                    <h3 className="text-typography font-semibold text-base mb-2">
+                      {searchValue
+                        ? "Nenhum diário encontrado"
+                        : "Nenhum diário registrado"}
+                    </h3>
+                    <p className="text-gray2 text-sm">
+                      {searchValue
+                        ? `Não encontramos diários com "${searchValue}"`
+                        : "Este paciente ainda não possui diários registrados"}
+                    </p>
+                  </div>
+                )}
+
+                {!diariesLoading && filteredDiaries.length > 0 && (
+                  <>
+                    {filteredDiaries.map((diary) => {
+                      const entriesCount = diary.entries?.length || 0;
+
+                      return (
+                        <div
+                          key={diary.diary_id}
+                          className="bg-card rounded-2xl p-4 border border-card-border hover:border-selection/20 transition-all duration-200 cursor-pointer hover:shadow-sm"
+                          onClick={() =>
+                            navigate(
+                              `/provider/patient/${id}/diary/${diary.diary_id}`,
+                            )
+                          }
+                        >
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-selection/10 rounded-full flex items-center justify-center">
+                                <span className="text-selection text-lg">
+                                  📖
+                                </span>
+                              </div>
+                              <div>
+                                <h4 className="text-card-foreground font-medium text-sm">
+                                  Diário - {formatDate(diary.date)}
+                                </h4>
+                                <p className="text-gray2 text-xs">
+                                  {getRelativeTime(diary.date)}
+                                </p>
+                              </div>
+                            </div>
+                            <span className="text-gray2 text-lg">
+                              <span className="mgc_right_line"></span>
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="bg-selection/10 text-selection text-xs px-2 py-1 rounded-full font-medium">
+                                {diary.scope || "Geral"}
+                              </span>
+                            </div>
+                            <p className="text-gray2 text-xs">
+                              {entriesCount}{" "}
+                              {entriesCount === 1 ? "entrada" : "entradas"}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
+              </div>
+            )}
+
+            {activeTab === "ajuda" && (
+              <div className="space-y-4">
+                {helpRequestsLoading && (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-6 w-6 border-2 border-destructive/20 border-t-destructive mr-2"></div>
+                    <span className="text-gray2 text-sm">
+                      Carregando pedidos de ajuda...
+                    </span>
+                  </div>
+                )}
+
+                {!helpRequestsLoading && filteredHelpRequests.length === 0 && (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-gray2/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <span className="text-2xl">🚨</span>
+                    </div>
+                    <h3 className="text-typography font-semibold text-base mb-2">
+                      {searchValue
+                        ? "Nenhum pedido encontrado"
+                        : "Nenhum pedido de ajuda"}
+                    </h3>
+                    <p className="text-gray2 text-sm">
+                      {searchValue
+                        ? `Não encontramos pedidos com "${searchValue}"`
+                        : "Este paciente não fez pedidos de ajuda ainda"}
+                    </p>
+                  </div>
+                )}
+
+                {!helpRequestsLoading && filteredHelpRequests.length > 0 && (
+                  <>
+                    {filteredHelpRequests.map((helpRequest) => {
+                      const isUrgent = urgentHelpRequests.some(
+                        (urgent) => urgent.id === helpRequest.id,
+                      );
+
+                      return (
+                        <div
+                          key={helpRequest.id}
+                          className={`bg-card rounded-2xl p-4 border transition-all duration-200 cursor-pointer hover:shadow-sm ${
+                            isUrgent
+                              ? "border-destructive/30 bg-destructive/5"
+                              : "border-card-border hover:border-destructive/20"
+                          }`}
+                          onClick={() =>
+                            navigate(`/provider/help/${id}/${helpRequest.id}`)
+                          }
+                        >
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div
+                                className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                                  isUrgent
+                                    ? "bg-destructive/20"
+                                    : "bg-destructive/10"
+                                }`}
+                              >
+                                <span className="text-destructive text-lg">
+                                  🚨
+                                </span>
+                              </div>
+                              <div>
+                                <h4 className="text-card-foreground font-medium text-sm flex items-center gap-2">
+                                  Pedido de Ajuda
+                                  {isUrgent && (
+                                    <span className="w-2 h-2 bg-destructive rounded-full animate-pulse"></span>
+                                  )}
+                                </h4>
+                                <p className="text-gray2 text-xs">
+                                  {formatDateWithTime(
+                                    helpRequest.observation_date ||
+                                      helpRequest.created_at,
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                            <span className="text-gray2 text-lg">
+                              <span className="mgc_right_line"></span>
+                            </span>
+                          </div>
+
+                          <div className="bg-gray2/5 rounded-lg p-3">
+                            <p className="text-card-foreground text-sm">
+                              {helpRequest.value_as_string ||
+                                "Pedido de ajuda sem descrição"}
+                            </p>
+                          </div>
+
+                          {isUrgent && (
+                            <div className="mt-3 flex items-center gap-2">
+                              <span className="bg-destructive/20 text-destructive text-xs px-2 py-1 rounded-full font-medium">
+                                ⚠️ Recente
+                              </span>
+                              <span className="text-gray2 text-xs">
+                                {getRelativeTime(
+                                  helpRequest.observation_date ||
+                                    helpRequest.created_at,
+                                )}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
               </div>
             )}
           </>
         )}
-
-        {activeTab === "ajuda" && (
-          <>
-            {helpRequestsLoading && (
-              <p className="text-campos-preenchimento2 text-gray2">
-                Carregando pedidos de ajuda...
-              </p>
-            )}
-            {helpRequestsError && (
-              <p className="text-campos-preenchimento2 text-destructive">
-                {helpRequestsError}
-              </p>
-            )}
-            {!helpRequestsLoading &&
-              !helpRequestsError &&
-              helpRequests.length === 0 && (
-                <p className="text-campos-preenchimento2 text-gray2">
-                  Nenhum pedido de ajuda encontrado para este paciente.
-                </p>
-              )}
-            {!helpRequestsLoading &&
-              !helpRequestsError &&
-              helpRequests.length > 0 && (
-                <div className="space-y-4">
-                  {helpRequests.map((helpRequest) => (
-                    <ViewButton
-                      key={helpRequest.id}
-                      dateText={formatDate(
-                        helpRequest.observation_date || helpRequest.created_at,
-                      )}
-                      mainText="Pedido de Ajuda"
-                      subText={
-                        helpRequest.value_as_string ||
-                        "Pedido de ajuda sem descrição"
-                      }
-                      onClick={() =>
-                        navigate(`/provider/help/${id}/${helpRequest.id}`)
-                      }
-                    />
-                  ))}
-                </div>
-              )}
-          </>
-        )}
       </div>
+
+      <BottomNavigationBar
+        variant="acs"
+        forceActiveId={getActiveNavId()}
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

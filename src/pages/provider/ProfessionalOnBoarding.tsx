@@ -176,7 +176,7 @@ export default function ProfessionalOnboarding() {
 
   return (
     <div
-      className="h-full bg-background overflow-y-auto"
+      className="h-full bg-homebg overflow-y-auto"
       style={{ height: "100vh" }}
     >
       <div className="max-w-md mx-auto">

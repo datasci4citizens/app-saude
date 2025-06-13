@@ -94,6 +94,31 @@ export default {
           DEFAULT: 'var(--homeblob2)',
           foreground: 'var(--homeblob2-foreground)',
         },
+        card: {
+          DEFAULT: 'var(--card)',
+          foreground: 'var(--card-foreground)', 
+          border: 'var(--card-border)',
+          muted: 'var(--card-muted)',
+        },
+        muted: {
+          DEFAULT: 'var(--muted)',
+          foreground: 'var(--muted-foreground)',
+        },
+        accent: {
+          DEFAULT: 'var(--accent)',
+          foreground: 'var(--accent-foreground)',
+        },
+        border: 'var(--border)',
+        input: 'var(--input)',
+        ring: 'var(--ring)',
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        'bottom-nav': {
+          DEFAULT: 'var(--bottom-nav)',
+          foreground: 'var(--bottom-nav-foreground)',
+          active: 'var(--bottom-nav-active)',
+          border: 'var(--bottom-nav-border)',
+        },
       },
       backgroundImage: {
         'gradient-interest-indicator': 'var(--gradient-interest-indicator)',
