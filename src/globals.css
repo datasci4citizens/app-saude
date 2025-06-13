@@ -7,121 +7,139 @@
 
 @layer base {
   :root {
-    /* Tema claro (padrão) */
-    --selection: #fa6e5a;
-    --selection-background: #fa6e5a;
-    --homebg: #5a96fa;
-    --homebg-background: #5a96fa;
-    --selected: #cefa5a;
-    --selected-background: #cefa5a;
-    --typography: #141b36;
-    --typography-foreground: #141b36;
-    --offwhite: #f9f9ff;
-    --offwhite-foreground: #f9f9ff;
-    --gray1: #e6e6e6;
-    --gray1-foreground: #e6e6e6;
-    --gray2: #a0a3b1;
-    --gray2-foreground: #a0a3b1;
-    --gray2-border: #a0a3b1;
-    --gray2-input: #a0a3b1;
-    --accent1: #ffc97e;
-    --accent1-background: #ffc97e;
-    --accent2: #464646;
-    --accent2-foreground: #464646;
-    --primary: #ffffff;
+    /* Tema claro (padrão) - MELHORADO */
+    --selection: #e11d48; /* Mudou de #fa6e5a para rosa mais vibrante */
+    --selection-background: #e11d48;
+    --homebg: #3b82f6; /* Mudou de #5a96fa para azul mais consistente */
+    --homebg-background: #3b82f6;
+    --selected: #22c55e; /* Mudou de #cefa5a para verde mais legível */
+    --selected-background: #22c55e;
+    --typography: #0f172a; /* Mudou de #141b36 para preto mais puro */
+    --typography-foreground: #0f172a;
+    --offwhite: #f8fafc; /* Mudou de #f9f9ff para branco mais neutro */
+    --offwhite-foreground: #0f172a; /* NOVO: texto escuro no fundo claro */
+    --gray1: #e2e8f0; /* Mudou de #e6e6e6 para cinza mais suave */
+    --gray1-foreground: #475569; /* NOVO: texto legível no cinza claro */
+    --gray2: #64748b; /* Mudou de #a0a3b1 para cinza mais neutro */
+    --gray2-foreground: #f8fafc; /* NOVO: texto claro no cinza médio */
+    --gray2-border: #cbd5e1; /* NOVO: borda mais suave */
+    --gray2-input: #f1f5f9; /* NOVO: input com fundo mais claro */
+    --accent1: #f59e0b; /* Mudou de #ffc97e para laranja mais vibrante */
+    --accent1-background: #fef3c7; /* NOVO: fundo mais suave para accent1 */
+    --accent2: #374151; /* Mudou de #464646 para cinza mais equilibrado */
+    --accent2-foreground: #f9fafb;
+    --primary: #3b82f6; /* Mudou de #ffffff para azul - branco como primary era confuso */
     --primary-foreground: #ffffff;
-    --homeblob1: #4288feff;
-    --homeblob1-background: #4288feff;
-    --homeblob2: #2c78f9ff;
-    --homeblob2-background: #2c78f9ff;
-    --destructive: #ff4d4f;
-    --success: #85e191;
-    --success-foreground: #065f19;
-    --success-text: #006924;
-    --yellow: #ffc97e;
+    --homeblob1: #1e40af; /* Azul médio para os blobs */
+    --homeblob1-background: #1e40af;
+    --homeblob2: #2563eb; /* Azul mais claro para contraste */
+    --homeblob2-background: #2563eb;
+    --destructive: #dc2626; /* Mudou de #ff4d4f para vermelho mais padrão */
+    --destructive-foreground: #ffffff; /* NOVO */
+    --success: #16a34a; /* Mudou de #85e191 para verde mais forte */
+    --success-foreground: #ffffff; /* Mudou de #065f19 para branco */
+    --success-text: #14532d; /* Melhorado contraste */
+    --yellow: #f59e0b; /* Consistente com accent1 */
     --card: #ffffff;
-    --card-foreground: #1f2937;
-    --card-border: #e5e7eb;
-    --card-muted: #f9fafb;
+    --card-foreground: #0f172a; /* Mudou de #1f2937 para mais consistência */
+    --card-border: #e2e8f0;
+    --card-muted: #f8fafc; /* Mudou de #f9fafb para mais consistência */
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    --accent: #f1f5f9;
+    --accent-foreground: #0f172a;
+    --border: #e2e8f0;
+    --input: #f8fafc; /* Input claro para modo claro */
+    --input-foreground: #0f172a; /* Texto escuro no input claro */
+    --input-placeholder: #64748b; /* Placeholder em cinza legível */
+    --input-border: #e2e8f0; /* Borda sutil */
+    --ring: #3b82f6;
+    --background: #ffffff;
+    --foreground: #0f172a;
+    
+    /* Bottom Navigation - Modo Claro */
+    --bottom-nav: #ffffff; /* Fundo branco limpo */
+    --bottom-nav-foreground: #64748b; /* Ícones inativos em cinza médio */
+    --bottom-nav-active: #e11d48; /* Ícone ativo em rosa vibrante */
+    --bottom-nav-border: #e2e8f0; /* Borda sutil no topo */
 
-    /* Gradientes UserMainPage */
-    --gradient-interest-indicator: linear-gradient(to right, #3b82f6, #a855f7);
-    --gradient-button-background: linear-gradient(
-      to top,
-      var(--primary),
-      var(--primary),
-      transparent
-    );
-    --gradient-button-save: linear-gradient(to right, #22c55e, #16a34a);
-    --gradient-button-save-hover: linear-gradient(to right, #16a34a, #15803d);
-    --gradient-button-new: linear-gradient(to right, #3b82f6, #2563eb);
-    --gradient-button-new-hover: linear-gradient(to right, #2563eb, #1d4ed8);
-    --gradient-button-edit: linear-gradient(
-      to right,
-      var(--selection),
-      #2563eb
-    );
-    --gradient-button-edit-hover: linear-gradient(to right, #2563eb, #1d4ed8);
+    /* Gradientes UserMainPage - MELHORADOS */
+    --gradient-interest-indicator: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    --gradient-button-background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    --gradient-button-save: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    --gradient-button-save-hover: linear-gradient(135deg, #15803d 0%, #166534 100%);
+    --gradient-button-new: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    --gradient-button-new-hover: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    --gradient-button-edit: linear-gradient(135deg, #e11d48 0%, #be185d 100%);
+    --gradient-button-edit-hover: linear-gradient(135deg, #be185d 0%, #9f1239 100%);
   }
 
   .theme-dark {
-    /* Tema escuro */
-    --selection: #fa6e5a;
-    --selection-background: #fa6e5a;
-    --homebg: #25406d;
-    --homebg-background: #25406d;
-    --selected: #97ce00;
-    --selected-background: #97ce00;
-    --typography: #f9f9ff;
-    --typography-foreground: #f9f9ff;
-    --offwhite: #737373;
-    --offwhite-foreground: #737373;
-    --gray1: #a0a3b1;
-    --gray1-foreground: #a0a3b1;
-    --gray2: #e6e6e6;
-    --gray2-foreground: #e6e6e6;
-    --gray2-border: #e6e6e6;
-    --gray2-input: #e6e6e6;
-    --accent1: #082e91;
-    --accent1-background: #082e91;
-    --accent2: #e6e6e6;
-    --accent2-foreground: #e6e6e6;
-    --card: #1a1f2d;
-    --card-foreground: #f9f9ff;
-    --primary: #212637;
-    --primary-foreground: #ffffff;
-    --homeblob1: #1b4182ff;
-    --homeblob1-background: #1b4182ff;
-    --homeblob2: #1f478cff;
-    --homeblob2-background: #1f478cff;
-    --destructive: #ff4d4f;
-    --success: #85e191;
-    --success-foreground: #065f19;
-    --success-text: #006924;
-    --yellow: #ffc97e;
-    --card: #1e293b; /* slate-800 - cinza azulado elegante */
-    --card-foreground: #f1f5f9; /* slate-100 - texto claro */
-    --card-border: #334155; /* slate-700 - borda mais escura */
-    --card-muted: #0f172a; /* slate-900 - background alternativo */
+    /* Tema escuro - MELHORADO */
+    --selection: #f43f5e; /* Rosa mais vibrante no escuro */
+    --selection-background: #f43f5e;
+    --homebg: #1e40af; /* Azul mais escuro e elegante */
+    --homebg-background: #1e40af;
+    --selected: #22c55e; /* Verde mantido - funcionava bem */
+    --selected-background: #22c55e;
+    --typography: #f8fafc; /* Mudou de #f9f9ff para branco mais puro */
+    --typography-foreground: #f8fafc;
+    --offwhite: #f1f5f9; /* Mudou para um cinza bem claro, quase branco */
+    --offwhite-foreground: #0f172a; /* Texto escuro no fundo claro */
+    --gray1: #475569; /* Mudou de #a0a3b1 para cinza mais escuro */
+    --gray1-foreground: #e2e8f0; /* NOVO: texto claro no cinza */
+    --gray2: #94a3b8; /* Melhorado para melhor contraste */
+    --gray2-foreground: #0f172a; /* NOVO: texto escuro no cinza claro */
+    --gray2-border: #475569; /* Borda mais escura */
+    --gray2-input: #334155; /* Input mais escuro */
+    --accent1: #f59e0b; /* Laranja mantido */
+    --accent1-background: #0f172a; /* Fundo escuro para accent1 */
+    --accent2: #e2e8f0; /* Mudou de #e6e6e6 para mais consistência */
+    --accent2-foreground: #0f172a;
+    --primary: #1e293b; /* Mudou de #212637 para slate mais elegante */
+    --primary-foreground: #f8fafc; /* Mudou de #ffffff para mais consistência */
+    --homeblob1: #1e40af; /* Azul médio para os blobs */
+    --homeblob1-background: #1e40af;
+    --homeblob2: #1e3a8a; /* Azul escuro para consistência */
+    --homeblob2-background: #1e3a8a;
+    --destructive: #ef4444; /* Vermelho mais vibrante no escuro */
+    --destructive-foreground: #ffffff;
+    --success: #22c55e; /* Verde mais vibrante */
+    --success-foreground: #ffffff;
+    --success-text: #bbf7d0; /* Verde claro para texto */
+    --yellow: #fbbf24; /* Amarelo mais vibrante no escuro */
+    --card: #1e293b; /* Mantido - funcionava bem */
+    --card-foreground: #f8fafc; /* Melhorado */
+    --card-border: #334155;
+    --card-muted: #0f172a;
+    --muted: #334155; /* Mudou de #1e293b para mais contraste */
+    --muted-foreground: #cbd5e1; /* Melhorado contraste */
+    --accent: #1e293b;
+    --accent-foreground: #f8fafc;
+    --border: #374151; /* Mudou de #334155 para mais suave */
+    --input: #334155; /* Input escuro para modo escuro */
+    --input-foreground: #f8fafc; /* Texto claro no input escuro */
+    --input-placeholder: #94a3b8; /* Placeholder claro e legível */
+    --input-border: #475569; /* Borda mais escura */
+    --ring: #60a5fa; /* Azul mais claro para foco */
+    --background: #0f172a;
+    --foreground: #f8fafc;
 
-    /* Gradientes UserMainPage - Tema Dark */
-    --gradient-interest-indicator: linear-gradient(to right, #3b82f6, #a855f7);
-    --gradient-button-background: linear-gradient(
-      to top,
-      var(--primary),
-      var(--primary),
-      transparent
-    );
-    --gradient-button-save: linear-gradient(to right, #22c55e, #16a34a);
-    --gradient-button-save-hover: linear-gradient(to right, #16a34a, #15803d);
-    --gradient-button-new: linear-gradient(to right, #3b82f6, #2563eb);
-    --gradient-button-new-hover: linear-gradient(to right, #2563eb, #1d4ed8);
-    --gradient-button-edit: linear-gradient(
-      to right,
-      var(--selection),
-      #2563eb
-    );
-    --gradient-button-edit-hover: linear-gradient(to right, #2563eb, #1d4ed8);
+    /* Bottom Navigation - Modo Escuro */
+    --bottom-nav: #1e293b; /* Mesmo tom dos cards para consistência */
+    --bottom-nav-foreground: #94a3b8; /* Ícones inativos em cinza claro */
+    --bottom-nav-active: #f43f5e; /* Ícone ativo em rosa vibrante */
+    --bottom-nav-border: #334155; /* Borda sutil no topo */
+
+    /* Gradientes UserMainPage - Tema Dark MELHORADOS */
+    --gradient-interest-indicator: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+    --gradient-button-background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+    --gradient-button-save: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    --gradient-button-save-hover: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    --gradient-button-new: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    --gradient-button-new-hover: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    --gradient-button-edit: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+    --gradient-button-edit-hover: linear-gradient(135deg, #e11d48 0%, #be185d 100%);
   }
 
   [class^="mgc_"]::before,
@@ -129,15 +147,74 @@
     color: inherit !important;
   }
 
-  /* Overriding browser autofill styling */
+  /* Overriding browser autofill styling - MELHORADO */
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px var(--primary) inset !important;
+    -webkit-box-shadow: 0 0 0 30px var(--input) inset !important;
     -webkit-text-fill-color: var(--typography) !important;
     transition:
       background-color 5000s ease-in-out 0s,
       color 5000s ease-in-out 0s;
+  }
+
+  /* Adicionado: Melhor suporte para modo escuro no autofill */
+  .theme-dark input:-webkit-autofill,
+  .theme-dark input:-webkit-autofill:hover,
+  .theme-dark input:-webkit-autofill:focus,
+  .theme-dark input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--input) inset !important;
+    -webkit-text-fill-color: var(--input-foreground) !important;
+  }
+
+  /* Estilos melhorados para inputs - adaptativos por tema */
+  input, textarea {
+    background-color: var(--input) !important;
+    color: var(--input-foreground) !important;
+    border: 1px solid var(--input-border) !important;
+    border-radius: 8px !important;
+  }
+  
+  input::placeholder, textarea::placeholder {
+    color: var(--input-placeholder) !important;
+    opacity: 0.8 !important;
+  }
+  
+  input:focus, textarea:focus {
+    background-color: var(--input) !important;
+    color: var(--input-foreground) !important;
+    border-color: var(--selection) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 2px var(--selection)/20 !important;
+  }
+
+  /* Autofill específico por tema */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--input) inset !important;
+    -webkit-text-fill-color: var(--input-foreground) !important;
+    transition: background-color 5000s ease-in-out 0s, color 5000s ease-in-out 0s;
+  }
+
+  /* Animações personalizadas para Google Signin */
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  @keyframes progress-bar {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  .animate-shimmer {
+    animation: shimmer 2s ease-in-out infinite;
+  }
+  
+  .animate-progress-bar {
+    animation: progress-bar 1.5s ease-in-out infinite;
   }
 }

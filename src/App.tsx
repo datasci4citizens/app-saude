@@ -16,7 +16,6 @@ import Reminders from "./pages/patient/reminders/Reminders";
 import NewReminder from "./pages/patient/reminders/NewReminder";
 import OnboardingSlider from "./pages/landing/OnboardingSlider";
 import { SWRConfig } from "swr";
-import AddProfessionalPage from "./pages/patient/profile/AddProfessionalPage";
 import ModifyHabits from "./pages/patient/diary/modify-habits";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { ThemeToggle } from "./components/ui/ThemeToggle";
@@ -28,8 +27,7 @@ import ViewSelectedInterests from "./pages/patient/ViewSelectedInterests";
 import ViewPatient from "./pages/provider/ViewPatient"; // Import ViewPatient
 import ViewHelp from "./pages/provider/ViewHelp"; // Import ViewHelp
 import ViewDiary from "./pages/provider/ViewDiary"; // Import ViewDiary
-import UnlinkProfessional from "./pages/patient/profile/UnlinkProfessional";
-import UnlinkPatient from "./pages/provider/profile/UnlinkPatient";
+import ManageProfessionals from "./pages/patient/profile/ManageProfessionals";
 import TermsScreen from "./pages/landing/Terms";
 
 const NotFound = () => (
@@ -137,10 +135,6 @@ const router = createBrowserRouter([
     element: <PatientsPage />,
   },
   {
-    path: "/add-professional",
-    element: <AddProfessionalPage />,
-  },
-  {
     path: "/emergency-user",
     element: <EmergencyUser />,
   },
@@ -177,12 +171,8 @@ const router = createBrowserRouter([
     element: <ViewHelp />,
   },
   {
-    path: "/unlink-professional",
-    element: <UnlinkProfessional />,
-  },
-  {
-    path: "/unlink-patient",
-    element: <UnlinkPatient />,
+    path: "/manage-professionals",
+    element: <ManageProfessionals />,
   },
   {
     path: "/terms",

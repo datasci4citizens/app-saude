@@ -43,7 +43,7 @@ export default function DiaryPage() {
 
   return (
     <>
-      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-primary pb-20">
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-homebg pb-24">
         {" "}
         {/* Added pb-20 for bottom spacing */}
         <Header title="Novo Diário" onBackClick={handleBackClick} />

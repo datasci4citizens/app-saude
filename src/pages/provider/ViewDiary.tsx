@@ -431,7 +431,7 @@ export default function ViewDiary() {
                                     trigger.value_as_string && (
                                       <div
                                         key={trigger.trigger_id || index}
-                                        className="bg-background p-3 rounded-lg border-l-4 border-primary"
+                                        className="bg-homebg p-3 rounded-lg border-l-4 border-primary"
                                       >
                                         <div className="text-sm">
                                           <span className="font-medium text-foreground">
