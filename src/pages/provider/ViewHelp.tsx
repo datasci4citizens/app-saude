@@ -20,8 +20,10 @@ export default function ViewHelp() {
 
   // Data states
   const [patient, setPatient] = useState<PersonRetrieve | null>(null);
-  const [helpRequest, setHelpRequest] = useState<ObservationRetrieve | null>(null);
-  
+  const [helpRequest, setHelpRequest] = useState<ObservationRetrieve | null>(
+    null,
+  );
+
   // UI states
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +46,9 @@ export default function ViewHelp() {
       setError(null);
 
       // Buscar dados do paciente
-      const patientData = await PersonService.apiPersonRetrieve(Number(personId));
+      const patientData = await PersonService.apiPersonRetrieve(
+        Number(personId),
+      );
       setPatient(patientData);
 
       // Buscar todos os pedidos de ajuda do provider
@@ -90,10 +94,12 @@ export default function ViewHelp() {
     try {
       const date = new Date(dateString);
       const now = new Date();
-      const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+      const diffInMinutes = Math.floor(
+        (now.getTime() - date.getTime()) / (1000 * 60),
+      );
       const diffInHours = Math.floor(diffInMinutes / 60);
       const diffInDays = Math.floor(diffInHours / 24);
-      
+
       if (diffInMinutes < 5) return "Agora há pouco";
       if (diffInMinutes < 60) return `Há ${diffInMinutes} minutos`;
       if (diffInHours < 24) return `Há ${diffInHours}h`;
@@ -109,8 +115,10 @@ export default function ViewHelp() {
     try {
       const date = new Date(dateString);
       const now = new Date();
-      const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-      
+      const diffInHours = Math.floor(
+        (now.getTime() - date.getTime()) / (1000 * 60 * 60),
+      );
+
       if (diffInHours < 1) return "critical"; // Menos de 1 hora
       if (diffInHours < 24) return "high"; // Menos de 24 horas
       if (diffInHours < 72) return "medium"; // Menos de 72 horas
@@ -129,7 +137,7 @@ export default function ViewHelp() {
           bgColor: "bg-destructive/10",
           borderColor: "border-destructive/30",
           label: "🚨 Crítico",
-          description: "Requer ação imediata"
+          description: "Requer ação imediata",
         };
       case "high":
         return {
@@ -138,7 +146,7 @@ export default function ViewHelp() {
           bgColor: "bg-yellow/10",
           borderColor: "border-yellow/30",
           label: "⚠️ Alto",
-          description: "Requer atenção urgente"
+          description: "Requer atenção urgente",
         };
       case "medium":
         return {
@@ -147,7 +155,7 @@ export default function ViewHelp() {
           bgColor: "bg-accent1/10",
           borderColor: "border-accent1/30",
           label: "🟡 Médio",
-          description: "Requer atenção"
+          description: "Requer atenção",
         };
       default:
         return {
@@ -156,7 +164,7 @@ export default function ViewHelp() {
           bgColor: "bg-gray2/10",
           borderColor: "border-gray2/30",
           label: "ℹ️ Baixo",
-          description: "Sem urgência"
+          description: "Sem urgência",
         };
     }
   };
@@ -167,7 +175,7 @@ export default function ViewHelp() {
     try {
       // Aqui você implementaria a lógica de resposta
       // await respondToHelpRequest(helpId);
-      
+
       setSuccess("Resposta enviada com sucesso!");
       setTimeout(() => {
         navigate(`/provider/patient/${personId}`);
@@ -224,20 +232,27 @@ export default function ViewHelp() {
   const clearError = () => setError(null);
   const clearSuccess = () => setSuccess(null);
 
-  const patientName = patient?.social_name || 
-    `${patient?.first_name || ''} ${patient?.last_name || ''}`.trim() || 
+  const patientName =
+    patient?.social_name ||
+    `${patient?.first_name || ""} ${patient?.last_name || ""}`.trim() ||
     "Paciente";
 
-  const urgencyLevel = helpRequest ? getUrgencyLevel(helpRequest.created_at) : "low";
+  const urgencyLevel = helpRequest
+    ? getUrgencyLevel(helpRequest.created_at)
+    : "low";
   const urgencyConfig = getUrgencyConfig(urgencyLevel);
 
   return (
     <div className="flex flex-col min-h-screen bg-homebg">
       <Header
         title="Pedido de Ajuda"
-        subtitle={patient ? `${patientName} • ID: ${patient.person_id}` : "Carregando..."}
+        subtitle={
+          patient
+            ? `${patientName} • ID: ${patient.person_id}`
+            : "Carregando..."
+        }
       />
-      
+
       <div className="flex-1 px-4 py-6 bg-background rounded-t-3xl mt-4 relative z-10 pb-24">
         {/* Messages */}
         <div className="space-y-4 mb-6">
@@ -248,7 +263,7 @@ export default function ViewHelp() {
               className="animate-in slide-in-from-top-2 duration-300"
             />
           )}
-          
+
           {error && (
             <ErrorMessage
               message={error}
@@ -283,9 +298,7 @@ export default function ViewHelp() {
                   <h2 className="text-card-foreground font-semibold text-base">
                     {patientName}
                   </h2>
-                  <p className="text-gray2 text-sm">
-                    ID: {patient.person_id}
-                  </p>
+                  <p className="text-gray2 text-sm">ID: {patient.person_id}</p>
                 </div>
               </div>
 

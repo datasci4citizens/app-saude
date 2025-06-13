@@ -18,36 +18,49 @@ const buttonVariants = cva(
           "bg-transparent text-offwhite border-2 border-offwhite hover:bg-offwhite/10",
         outlineOrange:
           "bg-transparent text-primary border-2 border-primary hover:bg-primary/10",
-        
+
         // New gradient variants
-        gradient: "bg-gradient-button-background text-offwhite hover:opacity-90 shadow-lg",
-        gradientNew: "bg-gradient-button-new text-offwhite hover:bg-gradient-button-new-hover shadow-lg transform hover:scale-[1.02]",
-        gradientSave: "bg-gradient-button-save text-offwhite hover:bg-gradient-button-save-hover shadow-md",
-        gradientEdit: "bg-gradient-button-edit text-offwhite hover:bg-gradient-button-edit-hover shadow-md",
-        
+        gradient:
+          "bg-gradient-button-background text-offwhite hover:opacity-90 shadow-lg",
+        gradientNew:
+          "bg-gradient-button-new text-offwhite hover:bg-gradient-button-new-hover shadow-lg transform hover:scale-[1.02]",
+        gradientSave:
+          "bg-gradient-button-save text-offwhite hover:bg-gradient-button-save-hover shadow-md",
+        gradientEdit:
+          "bg-gradient-button-edit text-offwhite hover:bg-gradient-button-edit-hover shadow-md",
+
         // Success/Error states
-        success: "bg-success text-success-foreground hover:bg-success/90 shadow-sm",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm",
-        
+        success:
+          "bg-success text-success-foreground hover:bg-success/90 shadow-sm",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm",
+
         // Ghost/subtle variants
-        ghost: "bg-transparent text-typography hover:bg-gray2/10 hover:text-typography",
+        ghost:
+          "bg-transparent text-typography hover:bg-gray2/10 hover:text-typography",
         ghostPrimary: "bg-transparent text-primary hover:bg-primary/10",
         subtle: "bg-gray2/20 text-typography hover:bg-gray2/30",
-        
+
         // Outlined variants
-        outlineGray: "bg-transparent text-typography border-2 border-gray2 hover:bg-gray2/5",
-        outlineSuccess: "bg-transparent text-success border-2 border-success hover:bg-success/10",
-        outlineDestructive: "bg-transparent text-destructive border-2 border-destructive hover:bg-destructive/10",
-        
+        outlineGray:
+          "bg-transparent text-typography border-2 border-gray2 hover:bg-gray2/5",
+        outlineSuccess:
+          "bg-transparent text-success border-2 border-success hover:bg-success/10",
+        outlineDestructive:
+          "bg-transparent text-destructive border-2 border-destructive hover:bg-destructive/10",
+
         // Special variants
-        glassy: "bg-offwhite/20 backdrop-blur-sm text-typography border border-offwhite/30 hover:bg-offwhite/30",
+        glassy:
+          "bg-offwhite/20 backdrop-blur-sm text-typography border border-offwhite/30 hover:bg-offwhite/30",
         neon: "bg-accent1 text-accent1-background hover:bg-accent1/90 shadow-lg shadow-accent1/25 hover:shadow-accent1/40",
         minimal: "bg-transparent text-typography hover:bg-gray2/5 rounded-lg",
-        
+
         // Interactive variants
-        floating: "bg-primary text-offwhite hover:bg-primary/90 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300",
+        floating:
+          "bg-primary text-offwhite hover:bg-primary/90 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300",
         pressed: "bg-gray2 text-typography active:scale-95 hover:bg-gray2/80",
-        toggle: "bg-transparent text-typography data-[state=on]:bg-primary data-[state=on]:text-offwhite hover:bg-gray2/10",
+        toggle:
+          "bg-transparent text-typography data-[state=on]:bg-primary data-[state=on]:text-offwhite hover:bg-gray2/10",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -68,7 +81,8 @@ const buttonVariants = cva(
         bottom: "fixed bottom-[44px] left-0 right-0 flex justify-center",
         topRight: "fixed top-4 right-4",
         topLeft: "fixed top-4 left-4",
-        center: "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2",
+        center:
+          "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2",
         floating: "fixed bottom-6 right-6 z-50",
       },
       loading: {

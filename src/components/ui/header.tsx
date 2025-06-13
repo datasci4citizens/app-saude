@@ -72,9 +72,10 @@ const Header: React.FC<HeaderProps> = ({
   // Dynamic button styles
   const getBackButtonStyles = () => {
     if (backButtonClassName) return backButtonClassName;
-    
-    const baseStyles = "rounded-full transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50";
-    
+
+    const baseStyles =
+      "rounded-full transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50";
+
     switch (variant) {
       case "transparent":
         return `${baseStyles} bg-white/10 backdrop-blur-sm hover:bg-white/20`;
@@ -88,7 +89,7 @@ const Header: React.FC<HeaderProps> = ({
   // Dynamic arrow styles
   const getArrowStyles = () => {
     if (arrowClassName) return arrowClassName;
-    
+
     switch (variant) {
       case "transparent":
         return "text-typography"; // Adapta ao tema
@@ -101,7 +102,7 @@ const Header: React.FC<HeaderProps> = ({
   // Dynamic title styles
   const getTitleStyles = () => {
     const baseStyles = `${sizeStyles[size].title} font-inter m-0`;
-    
+
     switch (variant) {
       case "transparent":
         return `${baseStyles} text-typography`; // Adapta ao tema atual
@@ -114,9 +115,9 @@ const Header: React.FC<HeaderProps> = ({
   // Dynamic subtitle styles
   const getSubtitleStyles = () => {
     if (subtitleClassName) return subtitleClassName;
-    
+
     const baseStyles = `${sizeStyles[size].subtitle} font-inter m-0`;
-    
+
     switch (variant) {
       case "transparent":
         return `${baseStyles} text-gray2`; // Adapta ao tema
@@ -127,7 +128,7 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header 
+    <header
       className={`
         ${variantStyles[variant]} 
         ${sizeStyles[size].container}
@@ -162,27 +163,23 @@ const Header: React.FC<HeaderProps> = ({
         )}
 
         {/* Title Section */}
-        <div 
+        <div
           className={`
             flex-1 flex flex-col justify-center
             ${centered ? "items-center text-center" : "items-start"}
             ${!showBackButton ? "ml-0" : ""}
           `}
         >
-          <h1 className={getTitleStyles()}>
-            {title}
-          </h1>
+          <h1 className={getTitleStyles()}>{title}</h1>
           {subtitle && (
-            <p className={`${getSubtitleStyles()} mt-0.5`}>
-              {subtitle}
-            </p>
+            <p className={`${getSubtitleStyles()} mt-0.5`}>{subtitle}</p>
           )}
         </div>
 
         {/* Right Icon */}
         <div className="flex items-center justify-center ml-3 flex-shrink-0">
           {rightIcon && (
-            <div 
+            <div
               className={`
                 ${sizeStyles[size].icon}
                 ${variant === "transparent" ? "text-typography" : "text-white"}

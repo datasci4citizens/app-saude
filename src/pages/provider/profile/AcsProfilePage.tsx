@@ -37,10 +37,10 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // Data states
   const [providerId, setProviderId] = useState<number | null>(null);
-  
+
   // UI states
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -99,14 +99,14 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
     }
 
     const confirmed = window.confirm(
-      "⚠️ ATENÇÃO: Esta ação irá excluir permanentemente sua conta e todos os dados associados.\n\nEsta ação NÃO PODE ser desfeita.\n\nTem certeza que deseja continuar?"
+      "⚠️ ATENÇÃO: Esta ação irá excluir permanentemente sua conta e todos os dados associados.\n\nEsta ação NÃO PODE ser desfeita.\n\nTem certeza que deseja continuar?",
     );
 
     if (!confirmed) return;
 
     // Segunda confirmação para ações críticas
     const doubleConfirmed = window.confirm(
-      "Digite 'EXCLUIR' para confirmar a exclusão da conta:"
+      "Digite 'EXCLUIR' para confirmar a exclusão da conta:",
     );
 
     if (!doubleConfirmed) return;
@@ -268,8 +268,9 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
   };
 
   const getItemStyles = (item: AcsProfileMenuItem) => {
-    const baseStyles = "p-4 rounded-xl transition-all duration-200 cursor-pointer border";
-    
+    const baseStyles =
+      "p-4 rounded-xl transition-all duration-200 cursor-pointer border";
+
     if (item.disabled || loadingItem) {
       return `${baseStyles} opacity-50 cursor-not-allowed bg-card border-card-border`;
     }
@@ -310,13 +311,13 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
           {/* Messages */}
           <div className="space-y-4 mb-6">
             {success && (
-              <SuccessMessage 
-                message={success} 
+              <SuccessMessage
+                message={success}
                 onClose={clearSuccess}
                 className="animate-in slide-in-from-top-2 duration-300"
               />
             )}
-            
+
             {error && (
               <ErrorMessage
                 message={error}
@@ -335,13 +336,15 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
                 <h3 className="text-card-foreground font-semibold text-sm uppercase tracking-wide opacity-70 px-2">
                   {section.title}
                 </h3>
-                
+
                 <div className="space-y-3">
                   {section.items.map((item) => (
                     <div
                       key={item.id}
                       className={getItemStyles(item)}
-                      onClick={item.disabled || loadingItem ? undefined : item.onClick}
+                      onClick={
+                        item.disabled || loadingItem ? undefined : item.onClick
+                      }
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
@@ -352,9 +355,11 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
                               item.icon
                             )}
                           </div>
-                          
+
                           <div className="flex-1">
-                            <h4 className={`font-medium text-sm ${getTextStyles(item)}`}>
+                            <h4
+                              className={`font-medium text-sm ${getTextStyles(item)}`}
+                            >
                               {item.title}
                             </h4>
                             {item.subtitle && (
@@ -366,7 +371,9 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
                         </div>
 
                         {item.hasArrow && !loadingItem && (
-                          <div className={`text-lg ${getTextStyles(item)} opacity-50`}>
+                          <div
+                            className={`text-lg ${getTextStyles(item)} opacity-50`}
+                          >
                             <span className="mgc_right_line"></span>
                           </div>
                         )}

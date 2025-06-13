@@ -10,12 +10,12 @@ import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderServ
 export default function AcsMainPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // Data states
   const [emergencyCount, setEmergencyCount] = useState<number>(0);
   const [patientsCount, setPatientsCount] = useState<number>(0);
   const [todayAppointments, setTodayAppointments] = useState<number>(0);
-  
+
   // UI states
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +23,7 @@ export default function AcsMainPage() {
 
   const userName = localStorage.getItem("fullname") || "ACS";
   const currentHour = new Date().getHours();
-  
+
   const getGreeting = () => {
     if (currentHour < 12) return "Bom dia";
     if (currentHour < 18) return "Boa tarde";
@@ -45,7 +45,8 @@ export default function AcsMainPage() {
 
       // Buscar contagem de pacientes
       try {
-        const patientsResponse = await LinkPersonProviderService.providerPersonsList();
+        const patientsResponse =
+          await LinkPersonProviderService.providerPersonsList();
         setPatientsCount(patientsResponse.length || 0);
       } catch {
         setPatientsCount(0);
@@ -53,7 +54,6 @@ export default function AcsMainPage() {
 
       // Simular consultas de hoje (placeholder)
       setTodayAppointments(Math.floor(Math.random() * 5));
-      
     } catch (err) {
       console.error("Erro ao buscar dados do dashboard:", err);
       setError("Erro ao carregar informações do dashboard.");
@@ -144,7 +144,7 @@ export default function AcsMainPage() {
               Como está o seu dia de trabalho?
             </p>
           </div>
-          
+
           <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
             <span className="text-white text-xl">🩺</span>
           </div>
@@ -158,14 +158,14 @@ export default function AcsMainPage() {
             </div>
             <div className="text-white/80 text-xs">Pacientes</div>
           </div>
-          
+
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
             <div className="text-white text-2xl font-bold">
               {loading ? "..." : emergencyCount}
             </div>
             <div className="text-white/80 text-xs">Pedidos</div>
           </div>
-          
+
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
             <div className="text-white text-2xl font-bold">
               {loading ? "..." : todayAppointments}
@@ -186,7 +186,7 @@ export default function AcsMainPage() {
               className="animate-in slide-in-from-top-2 duration-300"
             />
           )}
-          
+
           {error && (
             <ErrorMessage
               message={error}
@@ -203,7 +203,7 @@ export default function AcsMainPage() {
           <h2 className="text-typography font-semibold text-lg mb-4">
             Ações Rápidas
           </h2>
-          
+
           <div className="grid grid-cols-2 gap-4">
             {quickActions.map((action) => (
               <div
@@ -213,7 +213,7 @@ export default function AcsMainPage() {
               >
                 {/* Background decoration */}
                 <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10"></div>
-                
+
                 <div className="relative">
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-2xl">{action.icon}</span>
@@ -223,8 +223,10 @@ export default function AcsMainPage() {
                       </span>
                     )}
                   </div>
-                  
-                  <h3 className={`${action.textColor} font-semibold text-sm mb-1`}>
+
+                  <h3
+                    className={`${action.textColor} font-semibold text-sm mb-1`}
+                  >
                     {action.title}
                   </h3>
                   <p className={`${action.textColor} opacity-80 text-xs`}>
@@ -241,7 +243,7 @@ export default function AcsMainPage() {
           <h2 className="text-typography font-semibold text-lg mb-4">
             Foco de Hoje
           </h2>
-          
+
           <div className="space-y-3">
             <div className="bg-card rounded-2xl p-4 border border-card-border">
               <div className="flex items-center gap-3">
@@ -325,7 +327,7 @@ export default function AcsMainPage() {
                 Dica do Dia
               </h3>
               <p className="text-accent1/80 text-xs leading-relaxed">
-                Mantenha contato regular com seus pacientes. Um acompanhamento 
+                Mantenha contato regular com seus pacientes. Um acompanhamento
                 proativo pode prevenir situações de emergência.
               </p>
             </div>

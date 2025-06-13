@@ -23,50 +23,50 @@ const TermsScreen = ({
 }: TermsScreenProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  
+
   // Detectar se veio do perfil
   const [isFromProfile, setIsFromProfile] = useState(false);
 
   useEffect(() => {
     // Múltiplas formas de detectar se veio do perfil
     const urlParams = new URLSearchParams(location.search);
-    const fromQuery = urlParams.get('from');
-    
-    const fromProfile = 
+    const fromQuery = urlParams.get("from");
+
+    const fromProfile =
       // Via query parameter (mais confiável)
-      fromQuery === 'profile' ||
+      fromQuery === "profile" ||
       // Via state passado na navegação
-      location.state?.from === 'profile' ||
+      location.state?.from === "profile" ||
       // Via pathname atual
-      location.pathname.includes('/profile/terms') ||
+      location.pathname.includes("/profile/terms") ||
       // Via referrer
-      document.referrer.includes('/profile') ||
-      document.referrer.includes('/acs-profile') ||
-      document.referrer.includes('/user-profile') ||
+      document.referrer.includes("/profile") ||
+      document.referrer.includes("/acs-profile") ||
+      document.referrer.includes("/user-profile") ||
       // Via props
       isViewOnly ||
       // Via histórico do navegador
-      window.history.state?.from === 'profile' ||
+      window.history.state?.from === "profile" ||
       // Via localStorage (backup)
-      localStorage.getItem('navigatedFromProfile') === 'true';
-    
-    console.log('Terms Screen Debug:', {
+      localStorage.getItem("navigatedFromProfile") === "true";
+
+    console.log("Terms Screen Debug:", {
       fromQuery,
       locationState: location.state,
       pathname: location.pathname,
       referrer: document.referrer,
       isViewOnly,
-      fromProfile
+      fromProfile,
     });
-    
+
     setIsFromProfile(fromProfile);
-    
+
     // Limpar flag do localStorage se existir
-    if (localStorage.getItem('navigatedFromProfile')) {
-      localStorage.removeItem('navigatedFromProfile');
+    if (localStorage.getItem("navigatedFromProfile")) {
+      localStorage.removeItem("navigatedFromProfile");
     }
   }, [location, isViewOnly]);
 
@@ -111,10 +111,10 @@ const TermsScreen = ({
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === totalSteps - 1;
   const stepNumber = currentStep + 1;
-  
+
   // Determinar se deve mostrar o botão de aceitar
   const shouldShowAcceptButton = !isFromProfile;
-  
+
   // Título baseado no contexto
   const getPageTitle = () => {
     if (isFromProfile) return "Termos e Condições";
@@ -157,7 +157,7 @@ const TermsScreen = ({
                 <ArrowLeft className="h-5 w-5 text-white" />
               </button>
             )}
-            
+
             <Header
               title={getPageTitle()}
               onBackClick={handleBackClick}
@@ -174,7 +174,7 @@ const TermsScreen = ({
               {stepNumber} de {totalSteps}
             </div>
           )}
-          
+
           {/* Badge "Somente leitura" se for do perfil */}
           {isFromProfile && (
             <div className="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-medium">
@@ -232,7 +232,10 @@ const TermsScreen = ({
             )}
 
             {/* Mensagem contextual */}
-            {((isFromProfile) || (!isFromProfile && isScrolledToBottom && !showSuccessMessage)) && (
+            {(isFromProfile ||
+              (!isFromProfile &&
+                isScrolledToBottom &&
+                !showSuccessMessage)) && (
               <div className="text-center">
                 <p className="text-white/80 text-sm font-inter">
                   {getInstructionMessage()}
@@ -264,8 +267,8 @@ const TermsScreen = ({
                       Já aceito anteriormente
                     </h4>
                     <p className="text-white/70 text-xs leading-relaxed">
-                      Você já aceitou estes termos durante o cadastro. 
-                      Esta é apenas uma consulta para referência.
+                      Você já aceitou estes termos durante o cadastro. Esta é
+                      apenas uma consulta para referência.
                     </p>
                   </div>
                 </div>

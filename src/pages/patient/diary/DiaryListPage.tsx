@@ -1,7 +1,4 @@
-import {
-  useState,
-  useEffect,
-} from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   ChevronRight,
@@ -183,13 +180,7 @@ export default function DiaryListPage() {
 
     if (hasTextEntry) {
       components.push("Texto");
-      icons.push(
-        <FileText
-          key="text"
-          size={14}
-          className="text-accent2"
-        />,
-      );
+      icons.push(<FileText key="text" size={14} className="text-accent2" />);
     }
 
     // Check for triggers with responses
@@ -208,11 +199,7 @@ export default function DiaryListPage() {
     if (triggerCount > 0) {
       components.push(`${triggerCount} resposta${triggerCount > 1 ? "s" : ""}`);
       icons.push(
-        <MessageSquare
-          key="triggers"
-          size={14}
-          className="text-success"
-        />,
+        <MessageSquare key="triggers" size={14} className="text-success" />,
       );
     }
 
@@ -280,10 +267,7 @@ export default function DiaryListPage() {
           <p className="text-center text-destructive mb-4 font-inter text-campos-preenchimento">
             {error}
           </p>
-          <Button
-            onClick={() => window.location.reload()}
-            variant="default"
-          >
+          <Button onClick={() => window.location.reload()} variant="default">
             Tentar Novamente
           </Button>
         </div>
@@ -319,10 +303,7 @@ export default function DiaryListPage() {
         </div>
       ) : !hasDiaries ? (
         <div className="flex flex-col items-center justify-center h-64">
-          <Calendar
-            size={48}
-            className="text-gray2 mb-4"
-          />
+          <Calendar size={48} className="text-gray2 mb-4" />
           <p className="text-center text-typography mb-4 font-work-sans text-topicos2">
             Você ainda não possui diários.
           </p>
@@ -354,10 +335,7 @@ export default function DiaryListPage() {
             .map(([date, entries]) => (
               <div key={date} className="space-y-3">
                 <div className="flex items-center gap-2 border-b border-gray2-border pb-2">
-                  <Calendar
-                    size={16}
-                    className="text-accent2"
-                  />
+                  <Calendar size={16} className="text-accent2" />
                   <h3 className="font-work-sans text-topicos text-typography">
                     Dia {date}
                   </h3>

@@ -56,7 +56,7 @@
     --ring: #3b82f6;
     --background: #ffffff;
     --foreground: #0f172a;
-    
+
     /* Bottom Navigation - Modo Claro */
     --bottom-nav: #ffffff; /* Fundo branco limpo */
     --bottom-nav-foreground: #64748b; /* Ícones inativos em cinza médio */
@@ -64,14 +64,34 @@
     --bottom-nav-border: #e2e8f0; /* Borda sutil no topo */
 
     /* Gradientes UserMainPage - MELHORADOS */
-    --gradient-interest-indicator: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-    --gradient-button-background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    --gradient-interest-indicator: linear-gradient(
+      135deg,
+      #3b82f6 0%,
+      #8b5cf6 100%
+    );
+    --gradient-button-background: linear-gradient(
+      135deg,
+      #3b82f6 0%,
+      #1d4ed8 100%
+    );
     --gradient-button-save: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-    --gradient-button-save-hover: linear-gradient(135deg, #15803d 0%, #166534 100%);
+    --gradient-button-save-hover: linear-gradient(
+      135deg,
+      #15803d 0%,
+      #166534 100%
+    );
     --gradient-button-new: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    --gradient-button-new-hover: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    --gradient-button-new-hover: linear-gradient(
+      135deg,
+      #2563eb 0%,
+      #1e40af 100%
+    );
     --gradient-button-edit: linear-gradient(135deg, #e11d48 0%, #be185d 100%);
-    --gradient-button-edit-hover: linear-gradient(135deg, #be185d 0%, #9f1239 100%);
+    --gradient-button-edit-hover: linear-gradient(
+      135deg,
+      #be185d 0%,
+      #9f1239 100%
+    );
   }
 
   .theme-dark {
@@ -132,14 +152,34 @@
     --bottom-nav-border: #334155; /* Borda sutil no topo */
 
     /* Gradientes UserMainPage - Tema Dark MELHORADOS */
-    --gradient-interest-indicator: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
-    --gradient-button-background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);
+    --gradient-interest-indicator: linear-gradient(
+      135deg,
+      #60a5fa 0%,
+      #a78bfa 100%
+    );
+    --gradient-button-background: linear-gradient(
+      135deg,
+      #1e40af 0%,
+      #3730a3 100%
+    );
     --gradient-button-save: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
-    --gradient-button-save-hover: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    --gradient-button-save-hover: linear-gradient(
+      135deg,
+      #16a34a 0%,
+      #15803d 100%
+    );
     --gradient-button-new: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-    --gradient-button-new-hover: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+    --gradient-button-new-hover: linear-gradient(
+      135deg,
+      #2563eb 0%,
+      #1e40af 100%
+    );
     --gradient-button-edit: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
-    --gradient-button-edit-hover: linear-gradient(135deg, #e11d48 0%, #be185d 100%);
+    --gradient-button-edit-hover: linear-gradient(
+      135deg,
+      #e11d48 0%,
+      #be185d 100%
+    );
   }
 
   [class^="mgc_"]::before,
@@ -169,24 +209,27 @@
   }
 
   /* Estilos melhorados para inputs - adaptativos por tema */
-  input, textarea {
+  input,
+  textarea {
     background-color: var(--input) !important;
     color: var(--input-foreground) !important;
     border: 1px solid var(--input-border) !important;
     border-radius: 8px !important;
   }
-  
-  input::placeholder, textarea::placeholder {
+
+  input::placeholder,
+  textarea::placeholder {
     color: var(--input-placeholder) !important;
     opacity: 0.8 !important;
   }
-  
-  input:focus, textarea:focus {
+
+  input:focus,
+  textarea:focus {
     background-color: var(--input) !important;
     color: var(--input-foreground) !important;
     border-color: var(--selection) !important;
     outline: none !important;
-    box-shadow: 0 0 0 2px var(--selection)/20 !important;
+    box-shadow: 0 0 0 2px var(--selection) / 20 !important;
   }
 
   /* Autofill específico por tema */
@@ -196,24 +239,34 @@
   input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px var(--input) inset !important;
     -webkit-text-fill-color: var(--input-foreground) !important;
-    transition: background-color 5000s ease-in-out 0s, color 5000s ease-in-out 0s;
+    transition:
+      background-color 5000s ease-in-out 0s,
+      color 5000s ease-in-out 0s;
   }
 
   /* Animações personalizadas para Google Signin */
   @keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
   }
-  
+
   @keyframes progress-bar {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
   }
-  
+
   .animate-shimmer {
     animation: shimmer 2s ease-in-out infinite;
   }
-  
+
   .animate-progress-bar {
     animation: progress-bar 1.5s ease-in-out infinite;
   }

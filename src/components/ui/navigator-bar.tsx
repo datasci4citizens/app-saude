@@ -109,22 +109,22 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
             >
               {item.icon}
             </div>
-            
+
             {/* Label com melhor tipografia */}
             <div
               className={`
                 text-center text-[11px] leading-3
                 font-inter transition-all duration-200
                 ${
-                  isActive 
-                    ? "text-bottom-nav-active font-semibold" 
+                  isActive
+                    ? "text-bottom-nav-active font-semibold"
                     : "text-bottom-nav-foreground font-medium"
                 }
               `}
             >
               {item.label}
             </div>
-            
+
             {/* Indicador visual para item ativo */}
             {isActive && (
               <div className="w-1 h-1 bg-bottom-nav-active rounded-full mt-0.5 animate-pulse" />

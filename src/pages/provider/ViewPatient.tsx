@@ -31,19 +31,19 @@ export default function ViewPatient() {
   const { id, context } = useParams<{ id: string; context?: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // Patient data states
   const [patient, setPatient] = useState<PersonRetrieve | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
   // Diaries states
   const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
   const [diariesLoading, setDiariesLoading] = useState(true);
-  
+
   // Help requests states
   const [helpRequests, setHelpRequests] = useState<HelpRequest[]>([]);
   const [helpRequestsLoading, setHelpRequestsLoading] = useState(true);
-  
+
   // UI states
   const [activeTab, setActiveTab] = useState("diarios");
   const [searchValue, setSearchValue] = useState("");
@@ -57,7 +57,7 @@ export default function ViewPatient() {
 
   const fetchAllData = async () => {
     if (!id) return;
-    
+
     setLoading(true);
     setError(null);
 
@@ -68,10 +68,9 @@ export default function ViewPatient() {
 
       // Fetch diaries
       await fetchDiaries(patientData.person_id);
-      
+
       // Fetch help requests
       await fetchHelpRequests();
-      
     } catch (err) {
       console.error("Error fetching patient data:", err);
       setError("Não foi possível carregar os dados do paciente.");
@@ -83,8 +82,9 @@ export default function ViewPatient() {
   const fetchDiaries = async (personId: number) => {
     try {
       setDiariesLoading(true);
-      const diariesData = await ProviderService.providerPatientsDiariesList(personId);
-      
+      const diariesData =
+        await ProviderService.providerPatientsDiariesList(personId);
+
       const sortedDiaries = (diariesData as DiaryEntry[]).sort((a, b) => {
         const dateA = new Date(a.date).getTime();
         const dateB = new Date(b.date).getTime();
@@ -101,11 +101,11 @@ export default function ViewPatient() {
 
   const fetchHelpRequests = async () => {
     if (!id) return;
-    
+
     try {
       setHelpRequestsLoading(true);
       const allHelpRequests = await HelpService.providerHelpList();
-      
+
       const patientHelpRequests = allHelpRequests.filter(
         (help: ObservationRetrieve) => help.person === Number(id),
       );
@@ -166,9 +166,11 @@ export default function ViewPatient() {
     try {
       const date = new Date(dateString);
       const now = new Date();
-      const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+      const diffInHours = Math.floor(
+        (now.getTime() - date.getTime()) / (1000 * 60 * 60),
+      );
       const diffInDays = Math.floor(diffInHours / 24);
-      
+
       if (diffInHours < 1) return "Há poucos minutos";
       if (diffInHours < 24) return `Há ${diffInHours}h`;
       if (diffInDays === 1) return "Ontem";
@@ -206,27 +208,34 @@ export default function ViewPatient() {
   };
 
   // Filter data based on search
-  const filteredDiaries = diaries.filter(diary => 
-    diary.scope?.toLowerCase().includes(searchValue.toLowerCase()) ||
-    formatDate(diary.date).includes(searchValue)
+  const filteredDiaries = diaries.filter(
+    (diary) =>
+      diary.scope?.toLowerCase().includes(searchValue.toLowerCase()) ||
+      formatDate(diary.date).includes(searchValue),
   );
 
-  const filteredHelpRequests = helpRequests.filter(help =>
-    help.value_as_string?.toLowerCase().includes(searchValue.toLowerCase()) ||
-    formatDate(help.observation_date || help.created_at).includes(searchValue)
+  const filteredHelpRequests = helpRequests.filter(
+    (help) =>
+      help.value_as_string?.toLowerCase().includes(searchValue.toLowerCase()) ||
+      formatDate(help.observation_date || help.created_at).includes(
+        searchValue,
+      ),
   );
 
   const clearError = () => setError(null);
   const clearSuccess = () => setSuccess(null);
 
-  const patientName = patient?.social_name || 
-    `${patient?.first_name || ''} ${patient?.last_name || ''}`.trim() || 
+  const patientName =
+    patient?.social_name ||
+    `${patient?.first_name || ""} ${patient?.last_name || ""}`.trim() ||
     "Paciente";
 
-  const urgentHelpRequests = helpRequests.filter(help => {
+  const urgentHelpRequests = helpRequests.filter((help) => {
     const helpDate = new Date(help.observation_date || help.created_at);
     const now = new Date();
-    const diffInDays = Math.floor((now.getTime() - helpDate.getTime()) / (1000 * 60 * 60 * 24));
+    const diffInDays = Math.floor(
+      (now.getTime() - helpDate.getTime()) / (1000 * 60 * 60 * 24),
+    );
     return diffInDays <= 3;
   });
 
@@ -234,9 +243,13 @@ export default function ViewPatient() {
     <div className="flex flex-col min-h-screen bg-homebg">
       <Header
         title={`Paciente: ${patientName}`}
-        subtitle={context === "emergency" ? "🚨 Contexto: Emergência" : `ID: ${patient?.person_id || id}`}
+        subtitle={
+          context === "emergency"
+            ? "🚨 Contexto: Emergência"
+            : `ID: ${patient?.person_id || id}`
+        }
       />
-      
+
       <div className="flex-1 px-4 py-6 bg-background rounded-t-3xl mt-4 relative z-10 pb-24">
         {/* Messages */}
         <div className="space-y-4 mb-6">
@@ -247,7 +260,7 @@ export default function ViewPatient() {
               className="animate-in slide-in-from-top-2 duration-300"
             />
           )}
-          
+
           {error && (
             <ErrorMessage
               message={error}
@@ -263,7 +276,9 @@ export default function ViewPatient() {
         {loading && (
           <div className="flex flex-col items-center justify-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection mb-4"></div>
-            <p className="text-gray2 text-sm">Carregando dados do paciente...</p>
+            <p className="text-gray2 text-sm">
+              Carregando dados do paciente...
+            </p>
           </div>
         )}
 
@@ -277,7 +292,7 @@ export default function ViewPatient() {
                     {patientName.charAt(0).toUpperCase()}
                   </span>
                 </div>
-                
+
                 <div className="flex-1">
                   <h2 className="text-card-foreground font-semibold text-lg">
                     {patientName}
@@ -300,11 +315,15 @@ export default function ViewPatient() {
               {/* Quick Stats */}
               <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-card-border">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-selection">{diaries.length}</p>
+                  <p className="text-2xl font-bold text-selection">
+                    {diaries.length}
+                  </p>
                   <p className="text-gray2 text-xs">Diários</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-destructive">{helpRequests.length}</p>
+                  <p className="text-2xl font-bold text-destructive">
+                    {helpRequests.length}
+                  </p>
                   <p className="text-gray2 text-xs">Pedidos de ajuda</p>
                 </div>
               </div>
@@ -356,7 +375,9 @@ export default function ViewPatient() {
                 {diariesLoading && (
                   <div className="flex items-center justify-center py-8">
                     <div className="animate-spin rounded-full h-6 w-6 border-2 border-selection/20 border-t-selection mr-2"></div>
-                    <span className="text-gray2 text-sm">Carregando diários...</span>
+                    <span className="text-gray2 text-sm">
+                      Carregando diários...
+                    </span>
                   </div>
                 )}
 
@@ -366,10 +387,12 @@ export default function ViewPatient() {
                       <span className="text-2xl">📖</span>
                     </div>
                     <h3 className="text-typography font-semibold text-base mb-2">
-                      {searchValue ? "Nenhum diário encontrado" : "Nenhum diário registrado"}
+                      {searchValue
+                        ? "Nenhum diário encontrado"
+                        : "Nenhum diário registrado"}
                     </h3>
                     <p className="text-gray2 text-sm">
-                      {searchValue 
+                      {searchValue
                         ? `Não encontramos diários com "${searchValue}"`
                         : "Este paciente ainda não possui diários registrados"}
                     </p>
@@ -380,17 +403,23 @@ export default function ViewPatient() {
                   <>
                     {filteredDiaries.map((diary) => {
                       const entriesCount = diary.entries?.length || 0;
-                      
+
                       return (
                         <div
                           key={diary.diary_id}
                           className="bg-card rounded-2xl p-4 border border-card-border hover:border-selection/20 transition-all duration-200 cursor-pointer hover:shadow-sm"
-                          onClick={() => navigate(`/provider/patient/${id}/diary/${diary.diary_id}`)}
+                          onClick={() =>
+                            navigate(
+                              `/provider/patient/${id}/diary/${diary.diary_id}`,
+                            )
+                          }
                         >
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 bg-selection/10 rounded-full flex items-center justify-center">
-                                <span className="text-selection text-lg">📖</span>
+                                <span className="text-selection text-lg">
+                                  📖
+                                </span>
                               </div>
                               <div>
                                 <h4 className="text-card-foreground font-medium text-sm">
@@ -413,7 +442,8 @@ export default function ViewPatient() {
                               </span>
                             </div>
                             <p className="text-gray2 text-xs">
-                              {entriesCount} {entriesCount === 1 ? "entrada" : "entradas"}
+                              {entriesCount}{" "}
+                              {entriesCount === 1 ? "entrada" : "entradas"}
                             </p>
                           </div>
                         </div>
@@ -429,7 +459,9 @@ export default function ViewPatient() {
                 {helpRequestsLoading && (
                   <div className="flex items-center justify-center py-8">
                     <div className="animate-spin rounded-full h-6 w-6 border-2 border-destructive/20 border-t-destructive mr-2"></div>
-                    <span className="text-gray2 text-sm">Carregando pedidos de ajuda...</span>
+                    <span className="text-gray2 text-sm">
+                      Carregando pedidos de ajuda...
+                    </span>
                   </div>
                 )}
 
@@ -439,10 +471,12 @@ export default function ViewPatient() {
                       <span className="text-2xl">🚨</span>
                     </div>
                     <h3 className="text-typography font-semibold text-base mb-2">
-                      {searchValue ? "Nenhum pedido encontrado" : "Nenhum pedido de ajuda"}
+                      {searchValue
+                        ? "Nenhum pedido encontrado"
+                        : "Nenhum pedido de ajuda"}
                     </h3>
                     <p className="text-gray2 text-sm">
-                      {searchValue 
+                      {searchValue
                         ? `Não encontramos pedidos com "${searchValue}"`
                         : "Este paciente não fez pedidos de ajuda ainda"}
                     </p>
@@ -452,24 +486,34 @@ export default function ViewPatient() {
                 {!helpRequestsLoading && filteredHelpRequests.length > 0 && (
                   <>
                     {filteredHelpRequests.map((helpRequest) => {
-                      const isUrgent = urgentHelpRequests.some(urgent => urgent.id === helpRequest.id);
-                      
+                      const isUrgent = urgentHelpRequests.some(
+                        (urgent) => urgent.id === helpRequest.id,
+                      );
+
                       return (
                         <div
                           key={helpRequest.id}
                           className={`bg-card rounded-2xl p-4 border transition-all duration-200 cursor-pointer hover:shadow-sm ${
-                            isUrgent 
+                            isUrgent
                               ? "border-destructive/30 bg-destructive/5"
                               : "border-card-border hover:border-destructive/20"
                           }`}
-                          onClick={() => navigate(`/provider/help/${id}/${helpRequest.id}`)}
+                          onClick={() =>
+                            navigate(`/provider/help/${id}/${helpRequest.id}`)
+                          }
                         >
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-3">
-                              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                                isUrgent ? "bg-destructive/20" : "bg-destructive/10"
-                              }`}>
-                                <span className="text-destructive text-lg">🚨</span>
+                              <div
+                                className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                                  isUrgent
+                                    ? "bg-destructive/20"
+                                    : "bg-destructive/10"
+                                }`}
+                              >
+                                <span className="text-destructive text-lg">
+                                  🚨
+                                </span>
                               </div>
                               <div>
                                 <h4 className="text-card-foreground font-medium text-sm flex items-center gap-2">
@@ -479,7 +523,10 @@ export default function ViewPatient() {
                                   )}
                                 </h4>
                                 <p className="text-gray2 text-xs">
-                                  {formatDateWithTime(helpRequest.observation_date || helpRequest.created_at)}
+                                  {formatDateWithTime(
+                                    helpRequest.observation_date ||
+                                      helpRequest.created_at,
+                                  )}
                                 </p>
                               </div>
                             </div>
@@ -490,7 +537,8 @@ export default function ViewPatient() {
 
                           <div className="bg-gray2/5 rounded-lg p-3">
                             <p className="text-card-foreground text-sm">
-                              {helpRequest.value_as_string || "Pedido de ajuda sem descrição"}
+                              {helpRequest.value_as_string ||
+                                "Pedido de ajuda sem descrição"}
                             </p>
                           </div>
 
@@ -500,7 +548,10 @@ export default function ViewPatient() {
                                 ⚠️ Recente
                               </span>
                               <span className="text-gray2 text-xs">
-                                {getRelativeTime(helpRequest.observation_date || helpRequest.created_at)}
+                                {getRelativeTime(
+                                  helpRequest.observation_date ||
+                                    helpRequest.created_at,
+                                )}
                               </span>
                             </div>
                           )}

@@ -60,7 +60,9 @@ export default function EmergencyScreen() {
     }
 
     if (selectedProviders.length === 0) {
-      setError("Selecione pelo menos um profissional para enviar o pedido de ajuda.");
+      setError(
+        "Selecione pelo menos um profissional para enviar o pedido de ajuda.",
+      );
       return;
     }
 
@@ -82,8 +84,11 @@ export default function EmergencyScreen() {
       await HelpService.helpSendCreate(emergencyRequests);
 
       const providerCount = selectedProviders.length;
-      const providerText = providerCount === 1 ? "profissional" : "profissionais";
-      setSuccess(`Pedido de ajuda enviado com sucesso para ${providerCount} ${providerText}!`);
+      const providerText =
+        providerCount === 1 ? "profissional" : "profissionais";
+      setSuccess(
+        `Pedido de ajuda enviado com sucesso para ${providerCount} ${providerText}!`,
+      );
 
       setSelectedProviders([]);
       setFreeText("");
@@ -95,7 +100,9 @@ export default function EmergencyScreen() {
       console.error("Erro ao enviar pedido de ajuda:", error);
 
       if (error?.response?.status === 400) {
-        setError("Dados inválidos. Verifique as informações e tente novamente.");
+        setError(
+          "Dados inválidos. Verifique as informações e tente novamente.",
+        );
       } else if (error?.response?.status === 404) {
         setError("Profissional não encontrado. Tente atualizar a página.");
       } else if (error?.response?.status >= 500) {
@@ -103,7 +110,9 @@ export default function EmergencyScreen() {
       } else if (error?.message) {
         setError(`Erro ao enviar pedido de ajuda: ${error.message}`);
       } else {
-        setError("Erro ao enviar pedido de ajuda. Verifique sua conexão e tente novamente.");
+        setError(
+          "Erro ao enviar pedido de ajuda. Verifique sua conexão e tente novamente.",
+        );
       }
     } finally {
       setIsSubmitting(false);
@@ -161,7 +170,9 @@ export default function EmergencyScreen() {
               </div>
             </div>
             <div>
-              <p className="text-typography font-medium">Carregando profissionais...</p>
+              <p className="text-typography font-medium">
+                Carregando profissionais...
+              </p>
               <p className="text-gray2 text-sm mt-1">Aguarde um momento</p>
             </div>
           </div>
@@ -232,8 +243,8 @@ export default function EmergencyScreen() {
               Nenhum profissional vinculado
             </h3>
             <p className="text-gray2 text-sm leading-relaxed max-w-sm">
-              Para enviar pedidos de ajuda, você precisa primeiro adicionar um profissional 
-              de saúde ao seu perfil.
+              Para enviar pedidos de ajuda, você precisa primeiro adicionar um
+              profissional de saúde ao seu perfil.
             </p>
           </div>
           <div className="space-y-3 w-full max-w-sm">
@@ -265,13 +276,13 @@ export default function EmergencyScreen() {
   return (
     <div className="flex flex-col h-screen bg-homebg">
       <Header title="Pedido de Ajuda" />
-      
+
       <div className="flex-1 overflow-y-auto pb-24">
         <div className="px-4 py-6 space-y-6">
           {/* Success Message */}
           {success && (
-            <SuccessMessage 
-              message={success} 
+            <SuccessMessage
+              message={success}
               onClose={clearSuccess}
               className="animate-in slide-in-from-top-2 duration-300"
             />
@@ -299,7 +310,7 @@ export default function EmergencyScreen() {
                   ATENÇÃO: Resposta não imediata
                 </h4>
                 <p className="text-destructive/80 text-xs leading-relaxed mb-3">
-                  Este não é um serviço de emergência. Em situações urgentes, 
+                  Este não é um serviço de emergência. Em situações urgentes,
                   contate os serviços oficiais:
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -332,16 +343,17 @@ export default function EmergencyScreen() {
               <p className="text-gray2 text-sm mb-4">
                 Escolha quais profissionais devem receber seu pedido de ajuda:
               </p>
-              
+
               <div className="space-y-3">
                 {providers?.map((provider: ProviderRetrieve) => (
-                  <div 
+                  <div
                     key={provider.provider_id}
                     className={`
                       p-3 rounded-xl border-2 transition-all duration-200
-                      ${selectedProviders.includes(provider.provider_id)
-                        ? 'border-selection bg-selection/5 shadow-sm'
-                        : 'border-gray2/20 hover:border-gray2/40 hover:bg-gray2/5'
+                      ${
+                        selectedProviders.includes(provider.provider_id)
+                          ? "border-selection bg-selection/5 shadow-sm"
+                          : "border-gray2/20 hover:border-gray2/40 hover:bg-gray2/5"
                       }
                     `}
                   >
@@ -353,12 +365,14 @@ export default function EmergencyScreen() {
                         "Profissional sem nome"
                       }
                       checked={selectedProviders.includes(provider.provider_id)}
-                      onCheckedChange={() => handleProviderSelect(provider.provider_id)}
+                      onCheckedChange={() =>
+                        handleProviderSelect(provider.provider_id)
+                      }
                     />
                   </div>
                 ))}
               </div>
-              
+
               {selectedProviders.length > 0 && (
                 <div className="mt-4 p-3 bg-selection/10 rounded-lg">
                   <p className="text-selection text-sm font-medium">
@@ -376,7 +390,7 @@ export default function EmergencyScreen() {
                 </span>
                 Mensagem (opcional)
               </h3>
-              
+
               <TextField
                 id="help-message"
                 name="helpMessage"
@@ -387,7 +401,7 @@ export default function EmergencyScreen() {
                 maxLength={200}
                 className="mb-2"
               />
-              
+
               <div className="flex justify-between items-center text-xs">
                 <span className="text-gray2">
                   {freeText.length}/200 caracteres

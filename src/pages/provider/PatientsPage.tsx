@@ -52,24 +52,26 @@ const getDaysAgo = (dateString: string | undefined | null): number => {
 export default function PatientsPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // Search and filter states
   const [searchValue, setSearchValue] = useState("");
   const [activeTab, setActiveTab] = useState("todos");
-  
+
   // Link code states
   const [linkCode, setLinkCode] = useState<string | null>(null);
   const [isGeneratingCode, setIsGeneratingCode] = useState(false);
   const [showLinkSection, setShowLinkSection] = useState(false);
-  
+
   // Data states
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // UI states
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [unlinkingPatient, setUnlinkingPatient] = useState<string | number | null>(null);
+  const [unlinkingPatient, setUnlinkingPatient] = useState<
+    string | number | null
+  >(null);
 
   useEffect(() => {
     fetchPatients();
@@ -132,7 +134,7 @@ export default function PatientsPage() {
 
   const handleUnlinkPatient = async (patient: Patient) => {
     const confirmed = window.confirm(
-      `⚠️ Desvincular paciente?\n\n${patient.name}\n\nEsta ação irá:\n• Remover acesso aos dados do paciente\n• Cancelar notificações\n• Interromper compartilhamento\n\nTem certeza que deseja continuar?`
+      `⚠️ Desvincular paciente?\n\n${patient.name}\n\nEsta ação irá:\n• Remover acesso aos dados do paciente\n• Cancelar notificações\n• Interromper compartilhamento\n\nTem certeza que deseja continuar?`,
     );
 
     if (!confirmed) return;
@@ -143,9 +145,9 @@ export default function PatientsPage() {
     try {
       // Assumindo que existe uma API para desvincular
       // await LinkPersonProviderService.unlinkPatient(patient.id);
-      
+
       // Temporariamente removendo da lista local
-      setPatients(prev => prev.filter(p => p.id !== patient.id));
+      setPatients((prev) => prev.filter((p) => p.id !== patient.id));
       setSuccess(`${patient.name} foi desvinculado com sucesso.`);
     } catch (err) {
       console.error("Erro ao desvincular paciente:", err);
@@ -157,12 +159,14 @@ export default function PatientsPage() {
 
   // Filtros avançados
   const filteredPatients = patients.filter((patient) => {
-    const matchesSearch = patient.name.toLowerCase().includes(searchValue.toLowerCase());
-    
+    const matchesSearch = patient.name
+      .toLowerCase()
+      .includes(searchValue.toLowerCase());
+
     if (activeTab === "urgentes") {
       return matchesSearch && patient.urgent;
     }
-    
+
     return matchesSearch;
   });
 
@@ -202,15 +206,15 @@ export default function PatientsPage() {
   const clearError = () => setError(null);
   const clearSuccess = () => setSuccess(null);
 
-  const urgentCount = patients.filter(p => p.urgent).length;
+  const urgentCount = patients.filter((p) => p.urgent).length;
 
   return (
     <div className="flex flex-col min-h-screen bg-homebg">
       <Header
         title="Gerenciar Pacientes"
-        subtitle={`${patients.length} ${patients.length === 1 ? 'paciente' : 'pacientes'} vinculados`}
+        subtitle={`${patients.length} ${patients.length === 1 ? "paciente" : "pacientes"} vinculados`}
       />
-      
+
       <div className="flex-1 px-4 py-6 bg-background rounded-t-3xl mt-4 relative z-10">
         {/* Messages */}
         <div className="space-y-4 mb-6">
@@ -221,7 +225,7 @@ export default function PatientsPage() {
               className="animate-in slide-in-from-top-2 duration-300"
             />
           )}
-          
+
           {error && (
             <ErrorMessage
               message={error}
@@ -285,7 +289,7 @@ export default function PatientsPage() {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-2">
                   <Button
                     onClick={copyToClipboard}
@@ -384,15 +388,15 @@ export default function PatientsPage() {
               {searchValue
                 ? "Nenhum paciente encontrado"
                 : activeTab === "urgentes"
-                ? "Nenhum paciente precisa de ajuda"
-                : "Nenhum paciente vinculado"}
+                  ? "Nenhum paciente precisa de ajuda"
+                  : "Nenhum paciente vinculado"}
             </h3>
             <p className="text-gray2 text-sm mb-6 max-w-sm">
               {searchValue
                 ? `Não encontramos pacientes com "${searchValue}"`
                 : activeTab === "urgentes"
-                ? "Todos os pacientes estão bem no momento"
-                : "Você ainda não possui pacientes vinculados"}
+                  ? "Todos os pacientes estão bem no momento"
+                  : "Você ainda não possui pacientes vinculados"}
             </p>
             {!searchValue && activeTab === "todos" && (
               <Button
@@ -422,14 +426,16 @@ export default function PatientsPage() {
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
-                      patient.urgent
-                        ? "bg-destructive/20 text-destructive"
-                        : "bg-selection/20 text-selection"
-                    }`}>
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
+                        patient.urgent
+                          ? "bg-destructive/20 text-destructive"
+                          : "bg-selection/20 text-selection"
+                      }`}
+                    >
                       {patient.name.charAt(0).toUpperCase()}
                     </div>
-                    
+
                     <div>
                       <h3 className="text-card-foreground font-semibold text-base flex items-center gap-2">
                         {patient.name}
@@ -437,9 +443,7 @@ export default function PatientsPage() {
                           <span className="w-2 h-2 bg-destructive rounded-full animate-pulse"></span>
                         )}
                       </h3>
-                      <p className="text-gray2 text-sm">
-                        {patient.age} anos
-                      </p>
+                      <p className="text-gray2 text-sm">{patient.age} anos</p>
                     </div>
                   </div>
 
@@ -463,7 +467,9 @@ export default function PatientsPage() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-gray2 text-xs mb-1">Último pedido de ajuda</p>
+                    <p className="text-gray2 text-xs mb-1">
+                      Último pedido de ajuda
+                    </p>
                     <p className="text-card-foreground text-sm font-medium">
                       {patient.lastHelp || "Nenhum pedido"}
                     </p>

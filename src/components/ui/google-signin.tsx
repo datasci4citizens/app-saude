@@ -1,19 +1,19 @@
-import React from 'react';
+import React from "react";
 
 interface GoogleSigninProps {
   onClick: () => void;
   disabled?: boolean;
   isLoading?: boolean;
-  variant?: 'default' | 'outline' | 'minimal';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: "default" | "outline" | "minimal";
+  size?: "sm" | "md" | "lg";
 }
 
 const GoogleSignin: React.FC<GoogleSigninProps> = ({
   onClick,
   disabled = false,
   isLoading = false,
-  variant = 'default',
-  size = 'md',
+  variant = "default",
+  size = "md",
 }) => {
   const handleClick = () => {
     if (!disabled && !isLoading) {
@@ -24,50 +24,53 @@ const GoogleSignin: React.FC<GoogleSigninProps> = ({
   // Size variants
   const sizeStyles = {
     sm: {
-      button: 'px-4 py-2.5 text-sm',
-      icon: 'w-4 h-4',
-      arrow: 'w-3 h-3',
-      gap: 'space-x-2',
+      button: "px-4 py-2.5 text-sm",
+      icon: "w-4 h-4",
+      arrow: "w-3 h-3",
+      gap: "space-x-2",
     },
     md: {
-      button: 'px-6 py-4 text-base',
-      icon: 'w-5 h-5',
-      arrow: 'w-4 h-4',
-      gap: 'space-x-3',
+      button: "px-6 py-4 text-base",
+      icon: "w-5 h-5",
+      arrow: "w-4 h-4",
+      gap: "space-x-3",
     },
     lg: {
-      button: 'px-8 py-5 text-lg',
-      icon: 'w-6 h-6',
-      arrow: 'w-5 h-5',
-      gap: 'space-x-4',
+      button: "px-8 py-5 text-lg",
+      icon: "w-6 h-6",
+      arrow: "w-5 h-5",
+      gap: "space-x-4",
     },
   };
 
   // Variant styles
   const variantStyles = {
     default: {
-      button: 'bg-card border-card-border hover:bg-card-muted hover:border-selection/30 shadow-md hover:shadow-lg',
-      text: 'text-card-foreground',
-      spinner: 'border-gray2 border-t-selection',
-      arrow: 'text-gray2 group-hover:text-selection',
-      ripple: 'bg-selection/10',
-      shimmer: 'from-transparent via-selection/5 to-transparent',
+      button:
+        "bg-card border-card-border hover:bg-card-muted hover:border-selection/30 shadow-md hover:shadow-lg",
+      text: "text-card-foreground",
+      spinner: "border-gray2 border-t-selection",
+      arrow: "text-gray2 group-hover:text-selection",
+      ripple: "bg-selection/10",
+      shimmer: "from-transparent via-selection/5 to-transparent",
     },
     outline: {
-      button: 'bg-transparent border-2 border-card-border hover:border-selection hover:bg-selection/5',
-      text: 'text-card-foreground',
-      spinner: 'border-selection/30 border-t-selection',
-      arrow: 'text-gray2 group-hover:text-selection',
-      ripple: 'bg-selection/10',
-      shimmer: 'from-transparent via-selection/10 to-transparent',
+      button:
+        "bg-transparent border-2 border-card-border hover:border-selection hover:bg-selection/5",
+      text: "text-card-foreground",
+      spinner: "border-selection/30 border-t-selection",
+      arrow: "text-gray2 group-hover:text-selection",
+      ripple: "bg-selection/10",
+      shimmer: "from-transparent via-selection/10 to-transparent",
     },
     minimal: {
-      button: 'bg-gray2/5 border-transparent hover:bg-gray2/10 hover:border-gray2/20',
-      text: 'text-typography',
-      spinner: 'border-gray2/50 border-t-selection',
-      arrow: 'text-gray2 group-hover:text-typography',
-      ripple: 'bg-gray2/10',
-      shimmer: 'from-transparent via-gray2/5 to-transparent',
+      button:
+        "bg-gray2/5 border-transparent hover:bg-gray2/10 hover:border-gray2/20",
+      text: "text-typography",
+      spinner: "border-gray2/50 border-t-selection",
+      arrow: "text-gray2 group-hover:text-typography",
+      ripple: "bg-gray2/10",
+      shimmer: "from-transparent via-gray2/5 to-transparent",
     },
   };
 
@@ -106,18 +109,24 @@ const GoogleSignin: React.FC<GoogleSigninProps> = ({
       )}
 
       {/* Button content */}
-      <div className={`relative flex items-center justify-center ${currentSize.gap}`}>
+      <div
+        className={`relative flex items-center justify-center ${currentSize.gap}`}
+      >
         {/* Google icon or loading spinner */}
         <div className="flex-shrink-0">
           {isLoading ? (
-            <div 
+            <div
               className={`
                 ${currentSize.icon} border-2 rounded-full animate-spin
                 ${currentVariant.spinner}
-              `} 
+              `}
             />
           ) : (
-            <svg className={currentSize.icon} viewBox="0 0 24 24" aria-hidden="true">
+            <svg
+              className={currentSize.icon}
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -145,7 +154,7 @@ const GoogleSignin: React.FC<GoogleSigninProps> = ({
 
         {/* Arrow icon (hidden when loading) */}
         {!isLoading && (
-          <div 
+          <div
             className={`
               flex-shrink-0 transition-all duration-300 
               group-hover:translate-x-1 ${currentVariant.arrow}
@@ -178,12 +187,12 @@ const GoogleSignin: React.FC<GoogleSigninProps> = ({
 
       {/* Ripple effect on click */}
       <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
-        <div 
+        <div
           className={`
             absolute inset-0 scale-0 group-active:scale-100 
             transition-transform duration-200 rounded-2xl
             ${currentVariant.ripple}
-          `} 
+          `}
         />
       </div>
     </button>
