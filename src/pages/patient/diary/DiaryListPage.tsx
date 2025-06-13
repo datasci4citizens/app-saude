@@ -308,7 +308,6 @@ export default function DiaryListPage() {
           </Button>
         </div>
       )}
-
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
           <div className="flex flex-col items-center gap-3">
@@ -414,7 +413,6 @@ export default function DiaryListPage() {
             ))}
         </div>
       )}
-
       {/* NAVEGAÇÃO INFERIOR - Sempre no fundo */}
       <div className="fixed bottom-0 left-0 right-0 z-30">
         <BottomNavigationBar

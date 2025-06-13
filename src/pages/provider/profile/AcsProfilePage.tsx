@@ -115,7 +115,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
     setError(null);
 
     try {
-      await AccountService.apiAccountDestroy(providerId);
+      await AccountService.accountsDestroy();
       setSuccess("Conta excluída com sucesso!");
 
       setTimeout(() => {

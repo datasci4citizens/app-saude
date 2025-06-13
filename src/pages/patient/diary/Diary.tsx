@@ -8,7 +8,7 @@ export default function DiaryPage() {
   const location = useLocation();
 
   const handleBackClick = () => {
-    navigate("/diary");
+    navigate(-1); // This goes back one page in history
   };
 
   const handleNavigationClick = (itemId: string) => {
