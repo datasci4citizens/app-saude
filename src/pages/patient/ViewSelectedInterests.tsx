@@ -31,8 +31,9 @@ export default function ViewSelectedInterests() {
       setError(null);
 
       try {
-        const interests =
-          (await InterestAreasService.personInterestAreasList()) as InterestAreaResponse[];
+        const interests = (await InterestAreasService.personInterestAreasList(
+          false,
+        )) as InterestAreaResponse[];
         console.log("Loaded interests:", interests);
         setUserInterests(interests);
       } catch (err) {
@@ -73,6 +74,15 @@ export default function ViewSelectedInterests() {
     navigate("/user-main-page");
   };
 
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
   // Handle main navigation
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
@@ -89,7 +99,7 @@ export default function ViewSelectedInterests() {
         navigate("/emergency-user");
         break;
       case "profile":
-        navigate("/add-professional");
+        navigate("/profile");
         break;
     }
   };
@@ -207,7 +217,7 @@ export default function ViewSelectedInterests() {
       {/* Navigation bar */}
       <BottomNavigationBar
         variant="user"
-        initialActiveId="home"
+        forceActiveId={getActiveNavId()} // Controlled active state
         onItemClick={handleNavigationClick}
       />
     </div>

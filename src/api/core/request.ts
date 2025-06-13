@@ -1,14 +1,13 @@
-/* generated using openapi-typescript-codegen -- do not edit */
-/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
+/* enhanced request function with 401 retry logic */
 import { ApiError } from "./ApiError";
 import type { ApiRequestOptions } from "./ApiRequestOptions";
 import type { ApiResult } from "./ApiResult";
 import { CancelablePromise } from "./CancelablePromise";
 import type { OnCancel } from "./CancelablePromise";
 import type { OpenAPIConfig } from "./OpenAPI";
+import { AuthService } from "../services/AuthService";
 
+// Your existing utility functions remain the same
 export const isDefined = <T>(
   value: T | null | undefined,
 ): value is Exclude<T, null | undefined> => {
@@ -271,10 +270,47 @@ export const getResponseBody = async (response: Response): Promise<any> => {
   return undefined;
 };
 
-export const catchErrorCodes = (
+// 🔄 TOKEN REFRESH LOGIC
+interface TokenRefresh {
+  access: string;
+  refresh: string;
+}
+
+// Track if we're already refreshing to avoid multiple simultaneous refresh attempts
+let isRefreshing = false;
+let refreshPromise: Promise<string> | null = null;
+
+async function refreshToken(): Promise<string> {
+  console.log("Iniciando refresh de token...");
+  const refresh = localStorage.getItem("refreshToken");
+
+  if (!refresh) throw new Error("Refresh token não encontrado");
+
+  const tokenRefresh: TokenRefresh = {
+    access: localStorage.getItem("accessToken") || "",
+    refresh,
+  };
+
+  console.log("Token de refresh:", tokenRefresh);
+
+  localStorage.removeItem("accessToken");
+
+  const response = await AuthService.authTokenRefreshCreate(tokenRefresh);
+
+  localStorage.setItem("accessToken", response.access);
+  localStorage.setItem("refreshToken", response.refresh);
+
+  return response.access;
+}
+
+// Enhanced error handling with retry logic
+export const catchErrorCodes = async (
   options: ApiRequestOptions,
   result: ApiResult,
-): void => {
+  config: OpenAPIConfig,
+  onCancel: OnCancel,
+  isRetry: boolean = false,
+): Promise<ApiResult> => {
   const errors: Record<number, string> = {
     400: "Bad Request",
     401: "Unauthorized",
@@ -286,6 +322,87 @@ export const catchErrorCodes = (
     ...options.errors,
   };
 
+  // Handle 401 with token refresh and retry
+  const refresh = localStorage.getItem("refreshToken");
+  if (result.status === 401 && !isRetry && refresh) {
+    console.log("401 detectado, tentando refresh do token...");
+
+    try {
+      // Prevent multiple simultaneous refresh attempts
+      if (isRefreshing && refreshPromise) {
+        console.log("Refresh já em andamento, aguardando...");
+        await refreshPromise;
+      } else if (!isRefreshing) {
+        isRefreshing = true;
+        refreshPromise = refreshToken();
+        await refreshPromise;
+        isRefreshing = false;
+        refreshPromise = null;
+      }
+
+      console.log("Token refreshed, tentando requisição novamente...");
+
+      // Retry the original request with new token
+      const url = getUrl(config, options);
+      const formData = getFormData(options);
+      const body = getRequestBody(options);
+      const headers = await getHeaders(config, options); // This will get the new token
+
+      if (!onCancel.isCancelled) {
+        const retryResponse = await sendRequest(
+          config,
+          options,
+          url,
+          body,
+          formData,
+          headers,
+          onCancel,
+        );
+        const retryResponseBody = await getResponseBody(retryResponse);
+        const retryResponseHeader = getResponseHeader(
+          retryResponse,
+          options.responseHeader,
+        );
+
+        const retryResult: ApiResult = {
+          url,
+          ok: retryResponse.ok,
+          status: retryResponse.status,
+          statusText: retryResponse.statusText,
+          body: retryResponseHeader ?? retryResponseBody,
+        };
+
+        // Recursive call but with isRetry = true to prevent infinite loops
+        return await catchErrorCodes(
+          options,
+          retryResult,
+          config,
+          onCancel,
+          true,
+        );
+      }
+    } catch (refreshError) {
+      console.error("Erro no refresh do token:", refreshError);
+      isRefreshing = false;
+      refreshPromise = null;
+
+      // Clear tokens and potentially redirect to login
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+
+      // You might want to trigger a redirect to login page here
+      window.location.href = "/welcome";
+
+      console.log(refreshError);
+      throw new ApiError(
+        options,
+        result,
+        "Session expired - please login again",
+      );
+    }
+  }
+
+  // Handle other errors normally
   const error = errors[result.status];
   if (error) {
     throw new ApiError(options, result, error);
@@ -308,10 +425,12 @@ export const catchErrorCodes = (
       `Generic Error: status: ${errorStatus}; status text: ${errorStatusText}; body: ${errorBody}`,
     );
   }
+
+  return result;
 };
 
 /**
- * Request method
+ * Enhanced Request method with 401 retry logic
  * @param config The OpenAPI configuration object
  * @param options The request options from the service
  * @returns CancelablePromise<T>
@@ -352,9 +471,14 @@ export const request = <T>(
           body: responseHeader ?? responseBody,
         };
 
-        catchErrorCodes(options, result);
-
-        resolve(result.body);
+        // Use enhanced error handling with retry logic
+        const finalResult = await catchErrorCodes(
+          options,
+          result,
+          config,
+          onCancel,
+        );
+        resolve(finalResult.body);
       }
     } catch (error) {
       reject(error);

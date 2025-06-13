@@ -4,6 +4,7 @@ import Header from "@/components/ui/header";
 import { DiaryService } from "@/api/services/DiaryService";
 import CollapsibleInterestCard from "@/components/ui/CollapsibleInterestCard";
 import { ErrorMessage } from "@/components/ui/error-message";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 // Updated interfaces to match actual server response structure
 interface DiaryTrigger {
@@ -115,7 +116,6 @@ export default function ViewDiaryEntry() {
   };
 
   // Get general text entry if available
-  // Get general text entry if available
   const getGeneralTextEntry = (): { text: string; shared: boolean } | null => {
     console.log("Getting general text entry from diary:", diary?.entries);
     if (!diary || !diary.entries || diary.entries.length === 0) {
@@ -146,6 +146,35 @@ export default function ViewDiaryEntry() {
     }
 
     return null;
+  };
+
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/user-main-page");
+        break;
+      case "meds":
+        navigate("/reminders");
+        break;
+      case "diary":
+        navigate("/diary");
+        break;
+      case "emergency":
+        navigate("/emergency-user");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+    }
   };
 
   // Toggle interest expansion
@@ -186,7 +215,7 @@ export default function ViewDiaryEntry() {
 
   if (isLoading) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto">
         <Header title="Visualizar Diário" />
         <div className="flex justify-center items-center py-12">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-selection"></div>
@@ -197,7 +226,7 @@ export default function ViewDiaryEntry() {
 
   if (error || !diary) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="max-w-3xl mx-auto">
         <Header
           title="Visualizar Diário"
           onBackClick={() => navigate("/diary")}
@@ -212,7 +241,7 @@ export default function ViewDiaryEntry() {
         <div className="mt-6 text-center">
           <button
             onClick={() => navigate(-1)}
-            className="px-6 py-2 bg-gray1 hover:bg-gray2 rounded-full text-white transition-colors"
+            className="px-6 py-2 bg-gray1 hover:bg-gray2 rounded-full text-primary transition-colors"
           >
             Voltar
           </button>
@@ -231,124 +260,134 @@ export default function ViewDiaryEntry() {
       ));
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
+    <div className="max-w-3xl mx-auto pb-24">
       <Header
         title="Visualizar Diário"
         onBackClick={() => navigate(-1)}
         subtitle={diary.date ? formatDate(diary.date) : "Data não disponível"}
       />
 
-      {!hasContent && (
-        <div className="bg-gray1 p-6 rounded-lg text-center my-8">
-          <p className="text-gray1 text-lg">Este diário não possui conteúdo.</p>
-        </div>
-      )}
-
-      {/* Time Range Section */}
-      <div className="space-y-3 mb-6 mt-6">
-        <h3 className="font-semibold text-lg text-typography mb-1">
-          Período de tempo
-        </h3>
-        <div className="bg-primary p-4 rounded-lg">
-          <p>{diary.scope === "today" ? "Hoje" : "Desde o último diário"}</p>
-        </div>
-      </div>
-
-      {/* Interest Areas Section - Using CollapsibleInterestCard */}
-      {diary.interest_areas && diary.interest_areas.length > 0 && (
-        <div className="space-y-4 mb-6">
-          <div className="flex flex-col gap-1">
-            <h3 className="font-semibold text-lg text-typography mb-1">
-              Seus Interesses
-            </h3>
-            <p className="text-sm text-typography">
-              Clique nos interesses para ver as respostas detalhadas
+      <div className="px-4 py-8">
+        {!hasContent && (
+          <div className="bg-gray1 p-6 rounded-lg text-center my-8">
+            <p className="text-gray2 text-lg">
+              Este diário não possui conteúdo.
             </p>
           </div>
+        )}
 
-          <div className="space-y-4">
-            {diary.interest_areas.map((interest) => {
-              // Only show interests that have at least one trigger with a response
-              const hasResponses = interest.triggers?.some(
-                (t) => t.value_as_string && t.value_as_string.trim() !== "",
-              );
+        {/* Time Range Section */}
+        <div className="space-y-3 mb-6 mt-6">
+          <h3 className="font-semibold text-lg text-typography mb-1">
+            Período de tempo
+          </h3>
+          <div className="bg-primary p-4 rounded-lg">
+            <p>{diary.scope === "today" ? "Hoje" : "Desde o último diário"}</p>
+          </div>
+        </div>
 
-              if (!hasResponses) return null;
+        {/* Interest Areas Section - Using CollapsibleInterestCard */}
+        {diary.interest_areas && diary.interest_areas.length > 0 && (
+          <div className="space-y-4 mb-6">
+            <div className="flex flex-col gap-1">
+              <h3 className="font-semibold text-lg text-typography mb-1">
+                Seus Interesses
+              </h3>
+              <p className="text-sm text-typography">
+                Clique nos interesses para ver as respostas detalhadas
+              </p>
+            </div>
 
-              return (
-                <div
-                  key={interest.interest_area_id}
-                  className="bg-white border border-gray1 rounded-lg p-4"
-                >
-                  <CollapsibleInterestCard
-                    interest={convertToUserInterest(interest)}
-                    isOpen={expandedInterests.has(interest.interest_area_id)}
-                    onToggle={() => toggleInterest(interest.interest_area_id)}
-                    onResponseChange={() => {}} // Read-only mode
-                    onSharingToggle={() => {}} // Read-only mode
-                    onTriggerResponseChange={() => {}} // Read-only mode
-                  />
+            <div className="space-y-4">
+              {diary.interest_areas.map((interest) => {
+                // Only show interests that have at least one trigger with a response
+                const hasResponses = interest.triggers?.some(
+                  (t) => t.value_as_string && t.value_as_string.trim() !== "",
+                );
 
-                  {/* Sharing status */}
-                  <div className="mt-3 pt-3 border-t border-gray1">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray2">
-                        Status de compartilhamento:
-                      </span>
-                      <span
-                        className={`font-medium ${
-                          interest.shared_with_provider
-                            ? "text-sucess"
-                            : "text-selection"
-                        }`}
-                      >
-                        {interest.shared_with_provider
-                          ? "✓ Compartilhado com profissionais"
-                          : "○ Não compartilhado"}
-                      </span>
+                if (!hasResponses) return null;
+
+                return (
+                  <div
+                    key={interest.interest_area_id}
+                    className="bg-primary border border-gray1 rounded-lg p-4"
+                  >
+                    <CollapsibleInterestCard
+                      interest={convertToUserInterest(interest)}
+                      isOpen={expandedInterests.has(interest.interest_area_id)}
+                      onToggle={() => toggleInterest(interest.interest_area_id)}
+                      readOnly={true}
+                      onResponseChange={() => {}}
+                      onSharingToggle={() => {}}
+                      onTriggerResponseChange={() => {}}
+                    />
+
+                    {/* Sharing status */}
+                    <div className="mt-3 pt-3 border-t border-gray1">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray2">
+                          Status de compartilhamento:
+                        </span>
+                        <span
+                          className={`font-medium ${
+                            interest.shared_with_provider
+                              ? "text-success"
+                              : "text-selection"
+                          }`}
+                        >
+                          {interest.shared_with_provider
+                            ? "✓ Compartilhado com profissionais"
+                            : "○ Não compartilhado"}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Text Section - Only show if there's text */}
-      {textEntry && textEntry.text && (
-        <div className="space-y-3">
-          <div className="flex flex-col gap-1">
-            <h3 className="font-semibold text-lg text-typography mb-1">
-              Observações Gerais
-            </h3>
-            <div className="flex items-center gap-3">
-              <span
-                className={`text-sm font-medium ${
-                  textEntry.shared ? "text-success" : "text-selection"
-                }`}
-              >
-                {textEntry.shared
-                  ? "✓ Compartilhado com profissionais"
-                  : "○ Não compartilhado"}
-              </span>
+                );
+              })}
             </div>
           </div>
+        )}
 
-          <div className="bg-primary p-4 rounded-lg whitespace-pre-wrap min-h-[150px] border border-gray2">
-            {textEntry.text}
+        {/* Text Section - Only show if there's text */}
+        {textEntry && textEntry.text && (
+          <div className="space-y-3">
+            <div className="flex flex-col gap-1">
+              <h3 className="font-semibold text-lg text-typography mb-1">
+                Observações Gerais
+              </h3>
+              <div className="flex items-center gap-3">
+                <span
+                  className={`text-sm font-medium ${
+                    textEntry.shared ? "text-success" : "text-selection"
+                  }`}
+                >
+                  {textEntry.shared
+                    ? "✓ Compartilhado com profissionais"
+                    : "○ Não compartilhado"}
+                </span>
+              </div>
+            </div>
+
+            <div className="bg-primary p-4 rounded-lg whitespace-pre-wrap min-h-[150px] border border-gray2">
+              {textEntry.text}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Action button */}
-      <div className="mt-8 text-center">
-        <button
-          onClick={() => navigate("/diary")}
-          className="px-6 py-3 bg-selection text-white rounded-lg transition-colors font-medium"
-        >
-          Voltar aos Diários
-        </button>
+        {/* Action button */}
+        <div className="mt-8 text-center">
+          <button
+            onClick={() => navigate("/diary")}
+            className="px-6 py-3 bg-selection text-primary rounded-lg transition-colors font-medium"
+          >
+            Voltar aos Diários
+          </button>
+        </div>
+        <BottomNavigationBar
+          variant="user"
+          forceActiveId={getActiveNavId()} // Controlled active state
+          onItemClick={handleNavigationClick}
+        />
       </div>
     </div>
   );

@@ -9,9 +9,19 @@ import { ErrorMessage } from "@/components/ui/error-message";
 import { SuccessMessage } from "@/components/ui/success-message";
 
 interface ProfileMenuItem {
+  id: string;
   title: string;
+  subtitle?: string;
+  icon: string;
   onClick: () => void;
   hasArrow?: boolean;
+  variant?: "default" | "danger" | "warning";
+  disabled?: boolean;
+}
+
+interface ProfileMenuSection {
+  title: string;
+  items: ProfileMenuItem[];
 }
 
 interface ProfilePageProps {
@@ -21,7 +31,7 @@ interface ProfilePageProps {
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({
-  name = localStorage.getItem("fullname") ?? "undefined",
+  name = localStorage.getItem("fullname") ?? "Usuário",
   profileImage = localStorage.getItem("profileImage") ?? "",
   onEditProfile,
 }) => {
@@ -30,6 +40,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingItem, setLoadingItem] = useState<string | null>(null);
 
   // Fetch person_id on mount
   useEffect(() => {
@@ -45,13 +56,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     fetchPersonId();
   }, []);
 
-  const clearError = () => {
-    setError(null);
-  };
-
-  const clearSuccess = () => {
-    setSuccess(null);
-  };
+  const clearError = () => setError(null);
+  const clearSuccess = () => setSuccess(null);
 
   const handleLogout = async () => {
     const refresh = localStorage.getItem("refreshToken");
@@ -60,14 +66,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       return;
     }
 
-    setIsLoading(true);
+    setLoadingItem("logout");
     setError(null);
 
     try {
       await LogoutService.authLogoutCreate({ refresh });
       setSuccess("Logout realizado com sucesso!");
 
-      // Clear tokens and navigate after showing success message
       setTimeout(() => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
@@ -79,7 +84,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
         : "Erro ao fazer logout. Tente novamente.";
       setError(errorMessage);
     } finally {
-      setIsLoading(false);
+      setLoadingItem(null);
     }
   };
 
@@ -90,19 +95,25 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     }
 
     const confirmed = window.confirm(
-      `Tem certeza que deseja excluir a sua conta? Esta ação não pode ser desfeita.`,
+      "⚠️ ATENÇÃO: Esta ação irá excluir permanentemente sua conta e todos os dados associados.\n\nEsta ação NÃO PODE ser desfeita.\n\nTem certeza que deseja continuar?",
     );
 
     if (!confirmed) return;
 
-    setIsLoading(true);
+    // Segunda confirmação para ações críticas
+    const doubleConfirmed = window.confirm(
+      "Digite 'EXCLUIR' para confirmar a exclusão da conta:",
+    );
+
+    if (!doubleConfirmed) return;
+
+    setLoadingItem("delete");
     setError(null);
 
     try {
-      await AccountService.apiAccountDestroy(personId);
+      await AccountService.accountsDestroy();
       setSuccess("Conta excluída com sucesso!");
 
-      // Clear tokens and navigate after showing success message
       setTimeout(() => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
@@ -112,52 +123,99 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       setError("Erro ao excluir conta. Tente novamente.");
       console.error(error);
     } finally {
-      setIsLoading(false);
+      setLoadingItem(null);
     }
   };
 
-  const menuItems: ProfileMenuItem[] = [
+  const menuSections: ProfileMenuSection[] = [
     {
-      title: "Histórico de diários",
-      onClick: () => navigate("/my-diaries"),
-      hasArrow: true,
+      title: "Meus Dados",
+      items: [
+        {
+          id: "diary-history",
+          title: "Histórico de diários",
+          subtitle: "Visualizar entradas anteriores",
+          icon: "📖",
+          onClick: () => navigate("/my-diaries"),
+          hasArrow: true,
+        },
+        {
+          id: "edit-profile",
+          title: "Editar perfil",
+          subtitle: "Alterar informações pessoais",
+          icon: "✏️",
+          onClick: () => onEditProfile?.(),
+          hasArrow: true,
+        },
+      ],
     },
     {
-      title: "Adicionar profissional da saúde",
-      onClick: () => navigate("/add-professional"),
-      hasArrow: true,
+      title: "Profissionais de Saúde",
+      items: [
+        {
+          id: "manage-professionals",
+          title: "Gerenciar profissionais",
+          subtitle: "Visualizar e desvincular",
+          icon: "👨‍⚕️",
+          onClick: () => navigate("/manage-professionals"),
+          hasArrow: true,
+        },
+      ],
     },
     {
-      title: "Termos e condições",
-      onClick: () => navigate("/terms"),
-      hasArrow: true,
+      title: "Suporte e Informações",
+      items: [
+        {
+          id: "terms",
+          title: "Termos e condições",
+          subtitle: "Políticas de uso",
+          icon: "📋",
+          onClick: () => navigate("/terms?from=profile"),
+          hasArrow: true,
+        },
+        {
+          id: "help",
+          title: "Central de ajuda",
+          subtitle: "Dúvidas e suporte",
+          icon: "❓",
+          onClick: () => navigate("/help"),
+          hasArrow: true,
+        },
+      ],
     },
     {
-      title: "Logout",
-      onClick: handleLogout,
-      hasArrow: false,
-    },
-    {
-      title: "Excluir conta",
-      onClick: async () => {
-        try {
-          const confirmed = window.confirm(
-            `Tem certeza que deseja excluir a sua conta? Esta ação não pode ser desfeita.`,
-          );
-          if (!confirmed) return;
-          // alert(`A conta com o ID ${personId} será excluída.`);
-          await AccountService.accountsDestroy();
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
-          navigate("/welcome");
-        } catch (error) {
-          alert("Erro ao excluir conta. Tente novamente.");
-          console.error(error);
-        }
-      },
-      hasArrow: false,
+      title: "Conta",
+      items: [
+        {
+          id: "logout",
+          title: "Sair da conta",
+          subtitle: "Fazer logout do aplicativo",
+          icon: "🚪",
+          onClick: handleLogout,
+          variant: "warning" as const,
+          disabled: loadingItem === "logout",
+        },
+        {
+          id: "delete",
+          title: "Excluir conta",
+          subtitle: "Remover conta permanentemente",
+          icon: "🗑️",
+          onClick: handleDeleteAccount,
+          variant: "danger" as const,
+          disabled: loadingItem === "delete",
+        },
+      ],
     },
   ];
+
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
 
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
@@ -178,8 +236,37 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     }
   };
 
+  const getItemStyles = (item: ProfileMenuItem) => {
+    const baseStyles =
+      "p-4 rounded-xl transition-all duration-200 cursor-pointer border";
+
+    if (item.disabled || loadingItem) {
+      return `${baseStyles} opacity-50 cursor-not-allowed bg-card border-card-border`;
+    }
+
+    switch (item.variant) {
+      case "danger":
+        return `${baseStyles} bg-destructive/5 border-destructive/20 hover:bg-destructive/10 hover:border-destructive/30`;
+      case "warning":
+        return `${baseStyles} bg-yellow/5 border-yellow/20 hover:bg-yellow/10 hover:border-yellow/30`;
+      default:
+        return `${baseStyles} bg-card border-card-border hover:bg-card-muted hover:border-selection/20 hover:shadow-sm`;
+    }
+  };
+
+  const getTextStyles = (item: ProfileMenuItem) => {
+    switch (item.variant) {
+      case "danger":
+        return "text-destructive";
+      case "warning":
+        return "text-yellow-600";
+      default:
+        return "text-card-foreground";
+    }
+  };
+
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-homebg">
       {/* Profile Banner */}
       <ProfileBanner
         name={name}
@@ -187,59 +274,98 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
         onEditClick={onEditProfile}
       />
 
-      {/* Menu Items */}
-      <div className="z-10 h-[calc(100vh-12rem)] mt-[-15px]">
-        <div className="px-4 bg-primary rounded-xl shadow-sm h-full pt-4">
-          {/* Success Message */}
-          {success && <SuccessMessage message={success} className="mb-4" />}
+      {/* Content Area */}
+      <div className="flex-1 mt-[-20px] relative z-10">
+        <div className="bg-background rounded-t-3xl min-h-full px-4 pt-6 pb-20">
+          {/* Messages */}
+          <div className="space-y-4 mb-6">
+            {success && (
+              <SuccessMessage
+                message={success}
+                onClose={clearSuccess}
+                className="animate-in slide-in-from-top-2 duration-300"
+              />
+            )}
 
-          {/* Error Message */}
-          {error && (
-            <ErrorMessage
-              message={error}
-              onClose={clearError}
-              onRetry={clearError}
-              variant="destructive"
-              className="mb-4"
-            />
-          )}
+            {error && (
+              <ErrorMessage
+                message={error}
+                onClose={clearError}
+                onRetry={clearError}
+                variant="destructive"
+                className="animate-in slide-in-from-top-2 duration-300"
+              />
+            )}
+          </div>
 
-          {/* Loading State */}
-          {isLoading && (
-            <div className="flex justify-center items-center py-4 mb-4">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-selected mr-2"></div>
-              <span className="text-typography text-sm">Processando...</span>
-            </div>
-          )}
+          {/* Menu Sections */}
+          <div className="space-y-8">
+            {menuSections.map((section, sectionIndex) => (
+              <div key={sectionIndex} className="space-y-4">
+                <h3 className="text-card-foreground font-semibold text-sm uppercase tracking-wide opacity-70 px-2">
+                  {section.title}
+                </h3>
 
-          <ul className="overflow-hidden">
-            {menuItems.map((item, index) => (
-              <React.Fragment key={index}>
-                <li
-                  className={`px-4 py-4 flex justify-between items-center cursor-pointer hover:bg-gray1 transition-colors rounded-md ${
-                    isLoading ? "opacity-50 pointer-events-none" : ""
-                  }`}
-                  onClick={item.onClick}
-                >
-                  <span className="text-typography font-inter text-sm">
-                    {item.title}
-                  </span>
-                  {item.hasArrow && (
-                    <span className="mgc_right_line text-md"></span>
-                  )}
-                </li>
-                {index < menuItems.length - 1 && (
-                  <div className="border-b border-gray1 mx-4"></div>
-                )}
-              </React.Fragment>
+                <div className="space-y-3">
+                  {section.items.map((item) => (
+                    <div
+                      key={item.id}
+                      className={getItemStyles(item)}
+                      onClick={
+                        item.disabled || loadingItem ? undefined : item.onClick
+                      }
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 bg-selection/10 rounded-full flex items-center justify-center text-lg">
+                            {loadingItem === item.id ? (
+                              <div className="animate-spin rounded-full h-5 w-5 border-2 border-selection/20 border-t-selection"></div>
+                            ) : (
+                              item.icon
+                            )}
+                          </div>
+
+                          <div className="flex-1">
+                            <h4
+                              className={`font-medium text-sm ${getTextStyles(item)}`}
+                            >
+                              {item.title}
+                            </h4>
+                            {item.subtitle && (
+                              <p className="text-xs text-gray2 mt-0.5">
+                                {item.subtitle}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {item.hasArrow && !loadingItem && (
+                          <div
+                            className={`text-lg ${getTextStyles(item)} opacity-50`}
+                          >
+                            <span className="mgc_right_line"></span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
+
+          {/* App Info */}
+          <div className="mt-12 pt-6 border-t border-card-border text-center">
+            <p className="text-gray2 text-xs">
+              Versão 1.0.0 • Feito com ❤️ para sua saúde mental
+            </p>
+          </div>
         </div>
       </div>
 
       <BottomNavigationBar
         variant="user"
-        initialActiveId="profile"
+        forceActiveId={getActiveNavId()}
         onItemClick={handleNavigationClick}
       />
     </div>

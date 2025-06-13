@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Header from "@/components/ui/header";
+import { Button } from "@/components/forms/button";
 import { PersonService } from "@/api/services/PersonService";
 import { HelpService } from "@/api/services/HelpService";
+import { SuccessMessage } from "@/components/ui/success-message";
+import { ErrorMessage } from "@/components/ui/error-message";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
 
@@ -12,58 +16,64 @@ export default function ViewHelp() {
     helpId: string;
   }>();
   const navigate = useNavigate();
+  const location = useLocation();
 
+  // Data states
   const [patient, setPatient] = useState<PersonRetrieve | null>(null);
   const [helpRequest, setHelpRequest] = useState<ObservationRetrieve | null>(
     null,
   );
+
+  // UI states
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [isResponding, setIsResponding] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!personId || !helpId) {
-        setError("IDs do paciente ou pedido de ajuda não encontrados.");
-        setLoading(false);
+    fetchData();
+  }, [personId, helpId]);
+
+  const fetchData = async () => {
+    if (!personId || !helpId) {
+      setError("IDs do paciente ou pedido de ajuda não encontrados.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Buscar dados do paciente
+      const patientData = await PersonService.apiPersonRetrieve(
+        Number(personId),
+      );
+      setPatient(patientData);
+
+      // Buscar todos os pedidos de ajuda do provider
+      const allHelpRequests = await HelpService.providerHelpList();
+
+      // Encontrar o pedido específico
+      const specificHelpRequest = allHelpRequests.find(
+        (help: ObservationRetrieve) =>
+          help.observation_id === Number(helpId) &&
+          help.person === Number(personId),
+      );
+
+      if (!specificHelpRequest) {
+        setError("Pedido de ajuda não encontrado.");
         return;
       }
 
-      try {
-        setLoading(true);
-
-        // Buscar dados do paciente
-        const patientData = await PersonService.apiPersonRetrieve(
-          Number(personId),
-        );
-        setPatient(patientData);
-
-        // Buscar todos os pedidos de ajuda do provider
-        const allHelpRequests = await HelpService.providerHelpList();
-
-        // Encontrar o pedido específico
-        const specificHelpRequest = allHelpRequests.find(
-          (help: ObservationRetrieve) =>
-            help.observation_id === Number(helpId) &&
-            help.person === Number(personId),
-        );
-
-        if (!specificHelpRequest) {
-          setError("Pedido de ajuda não encontrado.");
-          return;
-        }
-
-        setHelpRequest(specificHelpRequest);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setError("Não foi possível carregar os dados.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [personId, helpId]);
+      setHelpRequest(specificHelpRequest);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError("Não foi possível carregar os dados.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatDateTime = (dateString: string) => {
     try {
@@ -80,110 +90,321 @@ export default function ViewHelp() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex flex-col min-h-screen bg-primary">
-        <div className="p-4">
-          <Header title="Pedido de Ajuda" centered={true} />
-        </div>
-        <div className="flex-1 px-4 py-8 flex justify-center items-center">
-          <p className="text-campos-preenchimento2 text-gray2">Carregando...</p>
-        </div>
-      </div>
-    );
-  }
+  const getRelativeTime = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffInMinutes = Math.floor(
+        (now.getTime() - date.getTime()) / (1000 * 60),
+      );
+      const diffInHours = Math.floor(diffInMinutes / 60);
+      const diffInDays = Math.floor(diffInHours / 24);
 
-  if (error) {
-    return (
-      <div className="flex flex-col min-h-screen bg-primary">
-        <div className="p-4">
-          <Header title="Pedido de Ajuda" centered={true} />
-        </div>
-        <div className="flex-1 px-4 py-8">
-          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-6">
-            <p className="text-destructive font-medium">Erro</p>
-            <p className="text-destructive/80">{error}</p>
-          </div>
-          <button
-            onClick={() => navigate(-1)}
-            className="bg-selection hover:bg-selection/90 text-primary px-4 py-2 rounded-md"
-          >
-            Voltar
-          </button>
-        </div>
-      </div>
-    );
-  }
+      if (diffInMinutes < 5) return "Agora há pouco";
+      if (diffInMinutes < 60) return `Há ${diffInMinutes} minutos`;
+      if (diffInHours < 24) return `Há ${diffInHours}h`;
+      if (diffInDays === 1) return "Ontem";
+      if (diffInDays < 7) return `Há ${diffInDays} dias`;
+      return formatDateTime(dateString);
+    } catch (e) {
+      return "Data inválida";
+    }
+  };
+
+  const getUrgencyLevel = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffInHours = Math.floor(
+        (now.getTime() - date.getTime()) / (1000 * 60 * 60),
+      );
+
+      if (diffInHours < 1) return "critical"; // Menos de 1 hora
+      if (diffInHours < 24) return "high"; // Menos de 24 horas
+      if (diffInHours < 72) return "medium"; // Menos de 72 horas
+      return "low"; // Mais de 72 horas
+    } catch (e) {
+      return "low";
+    }
+  };
+
+  const getUrgencyConfig = (level: string) => {
+    switch (level) {
+      case "critical":
+        return {
+          color: "bg-destructive",
+          textColor: "text-destructive",
+          bgColor: "bg-destructive/10",
+          borderColor: "border-destructive/30",
+          label: "🚨 Crítico",
+          description: "Requer ação imediata",
+        };
+      case "high":
+        return {
+          color: "bg-yellow",
+          textColor: "text-yellow-600",
+          bgColor: "bg-yellow/10",
+          borderColor: "border-yellow/30",
+          label: "⚠️ Alto",
+          description: "Requer atenção urgente",
+        };
+      case "medium":
+        return {
+          color: "bg-accent1",
+          textColor: "text-accent1",
+          bgColor: "bg-accent1/10",
+          borderColor: "border-accent1/30",
+          label: "🟡 Médio",
+          description: "Requer atenção",
+        };
+      default:
+        return {
+          color: "bg-gray2",
+          textColor: "text-gray2",
+          bgColor: "bg-gray2/10",
+          borderColor: "border-gray2/30",
+          label: "ℹ️ Baixo",
+          description: "Sem urgência",
+        };
+    }
+  };
+
+  const handleRespond = async () => {
+    // Placeholder para funcionalidade de resposta
+    setIsResponding(true);
+    try {
+      // Aqui você implementaria a lógica de resposta
+      // await respondToHelpRequest(helpId);
+
+      setSuccess("Resposta enviada com sucesso!");
+      setTimeout(() => {
+        navigate(`/provider/patient/${personId}`);
+      }, 1500);
+    } catch (err) {
+      setError("Erro ao enviar resposta. Tente novamente.");
+    } finally {
+      setIsResponding(false);
+    }
+  };
+
+  const handleMarkAsResolved = async () => {
+    // Placeholder para marcar como resolvido
+    const confirmed = window.confirm("Marcar este pedido como resolvido?");
+    if (!confirmed) return;
+
+    try {
+      // await markHelpRequestAsResolved(helpId);
+      setSuccess("Pedido marcado como resolvido!");
+      setTimeout(() => {
+        navigate(`/provider/patient/${personId}`);
+      }, 1500);
+    } catch (err) {
+      setError("Erro ao marcar como resolvido. Tente novamente.");
+    }
+  };
+
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/acs-main-page")) return "home";
+    if (location.pathname.startsWith("/appointments")) return "consults";
+    if (location.pathname.startsWith("/patients")) return "patients";
+    if (location.pathname.startsWith("/emergencies")) return "emergency";
+    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/acs-main-page");
+        break;
+      case "patients":
+        navigate("/patients");
+        break;
+      case "emergency":
+        navigate("/emergencies");
+        break;
+      case "profile":
+        navigate("/acs-profile");
+        break;
+    }
+  };
+
+  const clearError = () => setError(null);
+  const clearSuccess = () => setSuccess(null);
+
+  const patientName =
+    patient?.social_name ||
+    `${patient?.first_name || ""} ${patient?.last_name || ""}`.trim() ||
+    "Paciente";
+
+  const urgencyLevel = helpRequest
+    ? getUrgencyLevel(helpRequest.created_at)
+    : "low";
+  const urgencyConfig = getUrgencyConfig(urgencyLevel);
 
   return (
-    <div className="flex flex-col min-h-screen bg-primary">
-      <div className="p-4">
-        <Header title="Pedido de Ajuda" centered={true} />
-      </div>
+    <div className="flex flex-col min-h-screen bg-homebg">
+      <Header
+        title="Pedido de Ajuda"
+        subtitle={
+          patient
+            ? `${patientName} • ID: ${patient.person_id}`
+            : "Carregando..."
+        }
+      />
 
-      <div className="flex-1 px-4 overflow-auto">
-        {/* Informações do Paciente */}
-        {patient && (
-          <div className="bg-offwhite rounded-lg p-4 mb-6 shadow-sm">
-            <h2 className="text-topicos2 text-typography-foreground font-semibold mb-3">
-              Informações do Paciente
-            </h2>
-            <div className="space-y-2">
-              <p className="text-campos-preenchimento2 text-typography">
-                <span className="font-medium">ID:</span> {patient.person_id}
-              </p>
-              <p className="text-campos-preenchimento2 text-typography">
-                <span className="font-medium">Nome:</span>{" "}
-                {patient.social_name ||
-                  patient.first_name + " " + patient.last_name ||
-                  "Não informado"}
-              </p>
-            </div>
+      <div className="flex-1 px-4 py-6 bg-background rounded-t-3xl mt-4 relative z-10 pb-24">
+        {/* Messages */}
+        <div className="space-y-4 mb-6">
+          {success && (
+            <SuccessMessage
+              message={success}
+              onClose={clearSuccess}
+              className="animate-in slide-in-from-top-2 duration-300"
+            />
+          )}
+
+          {error && (
+            <ErrorMessage
+              message={error}
+              onClose={clearError}
+              onRetry={() => fetchData()}
+              variant="destructive"
+              className="animate-in slide-in-from-top-2 duration-300"
+            />
+          )}
+        </div>
+
+        {/* Loading State */}
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-destructive/20 border-t-destructive mb-4"></div>
+            <p className="text-gray2 text-sm">Carregando pedido de ajuda...</p>
           </div>
         )}
 
-        {/* Detalhes do Pedido de Ajuda */}
-        {helpRequest && (
-          <div className="bg-offwhite rounded-lg p-4 mb-6 shadow-sm">
-            <h2 className="text-topicos2 text-typography-foreground font-semibold mb-3">
-              Detalhes do Pedido
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <p className="text-campos-preenchimento2 text-typography font-medium mb-1">
-                  Data da Criação:
-                </p>
-                <p className="text-campos-preenchimento2 text-gray2">
-                  {formatDateTime(helpRequest.created_at)}
-                </p>
+        {/* Content */}
+        {!loading && patient && helpRequest && (
+          <div className="space-y-6">
+            {/* Patient Info */}
+            <div className="bg-card rounded-2xl p-5 border border-card-border">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-selection to-accent1 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">
+                    {patientName.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <div>
+                  <h2 className="text-card-foreground font-semibold text-base">
+                    {patientName}
+                  </h2>
+                  <p className="text-gray2 text-sm">ID: {patient.person_id}</p>
+                </div>
               </div>
 
-              <div>
-                <p className="text-campos-preenchimento2 text-typography font-medium mb-2">
-                  Mensagem do Paciente:
-                </p>
-                <div className="bg-gray1 border border-gray2-border rounded-lg p-4">
-                  <p className="text-campos-preenchimento2 text-typography whitespace-pre-wrap">
-                    {helpRequest.value_as_string ||
-                      "Nenhuma mensagem foi fornecida com este pedido de ajuda."}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate(`/provider/patient/${personId}`)}
+                className="w-full flex items-center gap-2"
+              >
+                <span className="text-sm">👤</span>
+                Ver perfil completo do paciente
+              </Button>
+            </div>
+
+            {/* Help Request Details */}
+            <div className="bg-card rounded-2xl p-5 border border-card-border">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-destructive/10 rounded-full flex items-center justify-center">
+                  <span className="text-destructive text-lg">🚨</span>
+                </div>
+                <div>
+                  <h3 className="text-card-foreground font-semibold text-base">
+                    Pedido de Ajuda
+                  </h3>
+                  <p className="text-gray2 text-sm">
+                    {formatDateTime(helpRequest.created_at)}
                   </p>
                 </div>
               </div>
 
+              {/* Message Content */}
+              <div className="bg-gray2/5 rounded-xl p-4 border border-gray2/10">
+                <h4 className="text-card-foreground font-medium text-sm mb-2">
+                  Mensagem do paciente:
+                </h4>
+                <div className="text-card-foreground text-sm leading-relaxed whitespace-pre-wrap">
+                  {helpRequest.value_as_string || (
+                    <span className="text-gray2 italic">
+                      Nenhuma mensagem foi fornecida com este pedido de ajuda.
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Additional Info */}
               {helpRequest.observation_source_value && (
-                <div>
-                  <p className="text-campos-preenchimento2 text-typography font-medium mb-1">
-                    Fonte da Observação:
-                  </p>
-                  <p className="text-campos-preenchimento2 text-gray2">
-                    {helpRequest.observation_source_value}
+                <div className="mt-4 pt-4 border-t border-card-border">
+                  <h4 className="text-card-foreground font-medium text-sm mb-2">
+                    Informações técnicas:
+                  </h4>
+                  <p className="text-gray2 text-sm">
+                    Fonte: {helpRequest.observation_source_value}
                   </p>
                 </div>
               )}
+
+              {/* Metadata */}
+              <div className="mt-4 pt-4 border-t border-card-border">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-gray2 text-xs">ID do Pedido</p>
+                    <p className="text-card-foreground font-medium">
+                      #{helpRequest.observation_id}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray2 text-xs">Tempo decorrido</p>
+                    <p className="text-card-foreground font-medium">
+                      {getRelativeTime(helpRequest.created_at)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-3">
+              <div className="flex gap-3">
+                <Button
+                  variant="success"
+                  className="flex-1 h-11"
+                  onClick={handleMarkAsResolved}
+                >
+                  <span className="mr-2">✅</span>
+                  Marcar como resolvido
+                </Button>
+              </div>
+
+              <Button
+                variant="ghost"
+                size="full"
+                onClick={() => navigate(-1)}
+                className="h-10 text-sm"
+              >
+                ← Voltar
+              </Button>
             </div>
           </div>
         )}
       </div>
+
+      <BottomNavigationBar
+        variant="acs"
+        forceActiveId={getActiveNavId()}
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }

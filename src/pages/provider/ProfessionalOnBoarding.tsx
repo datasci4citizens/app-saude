@@ -29,10 +29,11 @@ export default function ProfessionalOnboarding() {
   // Setup SWR mutation
   const { trigger, isMutating } = useSWRMutation(
     "fullProviderOnboarding",
-    async () => {
+    async (key, { arg }: { arg: ProviderCreate }) => {
       const fullData: FullProviderCreate = {
-        provider,
+        provider: arg,
       };
+      console.log("Submitting full provider data:", fullData);
       return await FullProviderService.apiFullProviderCreate(fullData);
     },
   );
@@ -103,13 +104,14 @@ export default function ProfessionalOnboarding() {
     const provider: ProviderCreate = {
       social_name: data.social_name,
       birth_datetime: data.birth_datetime,
-      professional_registration: data.professional_registration,
+      professional_registration: data.professional_registration ?? undefined,
       specialty_concept: data.specialty_concept,
       care_site: null,
       profile_picture: localStorage.getItem("profileImage") || "",
     };
 
     // Save provider data
+    console.log("Setting provider data:", provider);
     setProvider(provider);
 
     // Function to fetch user entity and show success
@@ -140,8 +142,21 @@ export default function ProfessionalOnboarding() {
     };
 
     try {
-      // Trigger the SWR mutation with form data
-      const result = await trigger();
+      // Create provider data
+      const providerData: ProviderCreate = {
+        social_name: data.social_name,
+        birth_datetime: data.birth_datetime,
+        professional_registration: data.professional_registration,
+        specialty_concept: data.specialty_concept,
+        care_site: null,
+        profile_picture: localStorage.getItem("profileImage") || "",
+      };
+
+      // Save provider data to state (for other purposes if needed)
+      setProvider(providerData);
+
+      // Pass the data directly to trigger
+      const result = await trigger(providerData);
       console.log("Submission result:", result);
       await fetchUserEntity();
     } catch (err) {
@@ -161,7 +176,7 @@ export default function ProfessionalOnboarding() {
 
   return (
     <div
-      className="h-full bg-background overflow-y-auto"
+      className="h-full bg-homebg overflow-y-auto"
       style={{ height: "100vh" }}
     >
       <div className="max-w-md mx-auto">

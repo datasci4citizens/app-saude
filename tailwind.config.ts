@@ -1,4 +1,3 @@
-import { text } from 'stream/consumers';
 import type { Config } from 'tailwindcss';
 import tailwindcssAnimate from 'tailwindcss-animate';
 
@@ -95,6 +94,41 @@ export default {
           DEFAULT: 'var(--homeblob2)',
           foreground: 'var(--homeblob2-foreground)',
         },
+        card: {
+          DEFAULT: 'var(--card)',
+          foreground: 'var(--card-foreground)', 
+          border: 'var(--card-border)',
+          muted: 'var(--card-muted)',
+        },
+        muted: {
+          DEFAULT: 'var(--muted)',
+          foreground: 'var(--muted-foreground)',
+        },
+        accent: {
+          DEFAULT: 'var(--accent)',
+          foreground: 'var(--accent-foreground)',
+        },
+        border: 'var(--border)',
+        input: 'var(--input)',
+        ring: 'var(--ring)',
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
+        'bottom-nav': {
+          DEFAULT: 'var(--bottom-nav)',
+          foreground: 'var(--bottom-nav-foreground)',
+          active: 'var(--bottom-nav-active)',
+          border: 'var(--bottom-nav-border)',
+        },
+      },
+      backgroundImage: {
+        'gradient-interest-indicator': 'var(--gradient-interest-indicator)',
+        'gradient-button-background': 'var(--gradient-button-background)',
+        'gradient-button-save': 'var(--gradient-button-save)',
+        'gradient-button-save-hover': 'var(--gradient-button-save-hover)',
+        'gradient-button-new': 'var(--gradient-button-new)',
+        'gradient-button-new-hover': 'var(--gradient-button-new-hover)',
+        'gradient-button-edit': 'var(--gradient-button-edit)',
+        'gradient-button-edit-hover': 'var(--gradient-button-edit-hover)',
       },
     },
   },
