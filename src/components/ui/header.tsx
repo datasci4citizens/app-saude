@@ -39,7 +39,7 @@ const Header: React.FC<HeaderProps> = ({
 
   // Variant styles
   const variantStyles = {
-    default: "bg-homebg border-b border-homebg/20", // Usa o azul do tema
+    default: "bg-homebg border-b border-homebg/20",
     transparent: "bg-transparent",
     gradient: "bg-gradient-to-r from-homebg to-homebg/80 text-white",
   };

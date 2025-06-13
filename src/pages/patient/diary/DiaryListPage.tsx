@@ -256,10 +256,9 @@ export default function DiaryListPage() {
 
   if (error) {
     return (
-      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-homebg min-h-screen pb-24">
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-background min-h-screen pb-24">
         <Header
           title="Diário"
-          variant="transparent"
           onBackClick={() => navigate("/user-main-page")}
         />
 
@@ -276,121 +275,123 @@ export default function DiaryListPage() {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-4 bg-homebg min-h-screen pb-24">
+    <div className="w-full max-w-4xl mx-auto bg-background min-h-screen pb-24">
       <Header title="Diário" onBackClick={() => navigate("/user-main-page")} />
 
-      {/* Create new diary button - only show if there are existing diaries */}
-      {hasDiaries && (
-        <div className="flex justify-end my-4">
-          <Button
-            onClick={handleCreateDiary}
-            variant="gradientNew"
-            className="flex items-center gap-2"
-          >
-            <PlusCircle size={16} />
-            Novo Diário
-          </Button>
-        </div>
-      )}
-      {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="flex flex-col items-center gap-3">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            <p className="text-typography/80 font-inter text-campos-preenchimento">
-              Carregando diários...
-            </p>
+      <div className="px-4 md:px-8 py-4">
+        {/* Create new diary button - only show if there are existing diaries */}
+        {hasDiaries && (
+          <div className="flex justify-end my-4">
+            <Button
+              onClick={handleCreateDiary}
+              variant="gradientNew"
+              className="flex items-center gap-2"
+            >
+              <PlusCircle size={16} />
+              Novo Diário
+            </Button>
           </div>
-        </div>
-      ) : !hasDiaries ? (
-        <div className="flex flex-col items-center justify-center h-64">
-          <Calendar size={48} className="text-gray2 mb-4" />
-          <p className="text-center text-typography mb-4 font-work-sans text-topicos2">
-            Você ainda não possui diários.
-          </p>
-          <p className="text-center text-typography/70 mb-6 font-inter text-desc-titulo max-w-md">
-            Comece a registrar seus pensamentos, experiências e respostas aos
-            seus interesses.
-          </p>
-          <Button
-            onClick={handleCreateDiary}
-            variant="outlineWhite"
-            className="flex items-center gap-2 px-6 py-3"
-          >
-            <PlusCircle size={16} />
-            Criar Primeiro Diário
-          </Button>
-        </div>
-      ) : (
-        <div className="mt-4 space-y-6">
-          {Object.entries(groupedDiaries)
-            .sort(([a], [b]) => {
-              const [dayA = 0, monthA = 0] = a
-                .split("/")
-                .map((v) => Number(v) || 0);
-              const [dayB = 0, monthB = 0] = b
-                .split("/")
-                .map((v) => Number(v) || 0);
-              return (monthB ?? 0) - (monthA ?? 0) || (dayB ?? 0) - (dayA ?? 0);
-            })
-            .map(([date, entries]) => (
-              <div key={date} className="space-y-3">
-                <div className="flex items-center gap-2 border-b border-gray2-border pb-2">
-                  <Calendar size={16} className="text-accent2" />
-                  <h3 className="font-work-sans text-topicos text-typography">
-                    Dia {date}
-                  </h3>
-                  <span className="text-desc-campos font-inter text-typography/60 ml-auto">
-                    {entries.length} entrada{entries.length > 1 ? "s" : ""}
-                  </span>
-                </div>
+        )}
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="flex flex-col items-center gap-3">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <p className="text-typography/80 font-inter text-campos-preenchimento">
+                Carregando diários...
+              </p>
+            </div>
+          </div>
+        ) : !hasDiaries ? (
+          <div className="flex flex-col items-center justify-center h-64">
+            <Calendar size={48} className="text-gray2 mb-4" />
+            <p className="text-center text-typography mb-4 font-work-sans text-topicos2">
+              Você ainda não possui diários.
+            </p>
+            <p className="text-center text-typography/70 mb-6 font-inter text-desc-titulo max-w-md">
+              Comece a registrar seus pensamentos, experiências e respostas aos
+              seus interesses.
+            </p>
+            <Button
+              onClick={handleCreateDiary}
+              variant="outlineWhite"
+              className="flex items-center gap-2 px-6 py-3"
+            >
+              <PlusCircle size={16} />
+              Criar Primeiro Diário
+            </Button>
+          </div>
+        ) : (
+          <div className="mt-4 space-y-6">
+            {Object.entries(groupedDiaries)
+              .sort(([a], [b]) => {
+                const [dayA = 0, monthA = 0] = a
+                  .split("/")
+                  .map((v) => Number(v) || 0);
+                const [dayB = 0, monthB = 0] = b
+                  .split("/")
+                  .map((v) => Number(v) || 0);
+                return (monthB ?? 0) - (monthA ?? 0) || (dayB ?? 0) - (dayA ?? 0);
+              })
+              .map(([date, entries]) => (
+                <div key={date} className="space-y-3">
+                  <div className="flex items-center gap-2 border-b border-gray2-border pb-2">
+                    <Calendar size={16} className="text-accent2" />
+                    <h3 className="font-work-sans text-topicos text-typography">
+                      Dia {date}
+                    </h3>
+                    <span className="text-desc-campos font-inter text-typography/60 ml-auto">
+                      {entries.length} entrada{entries.length > 1 ? "s" : ""}
+                    </span>
+                  </div>
 
-                {entries
-                  .sort(
-                    (a, b) =>
-                      new Date(b.date).getTime() - new Date(a.date).getTime(),
-                  )
-                  .map((entry) => {
-                    const { title, icons } = getDiaryCardInfo(entry);
-                    const time = getTimeFromDate(entry.date);
+                  {entries
+                    .sort(
+                      (a, b) =>
+                        new Date(b.date).getTime() - new Date(a.date).getTime(),
+                    )
+                    .map((entry) => {
+                      const { title, icons } = getDiaryCardInfo(entry);
+                      const time = getTimeFromDate(entry.date);
 
-                    return (
-                      <div
-                        key={entry.diary_id}
-                        className="bg-card border border-card-border rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:border-accent2/50 hover:bg-card/80"
-                        onClick={() => handleViewDiary(entry.diary_id)}
-                      >
-                        <div className="flex justify-between items-start mb-3">
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1">
-                              {icons}
+                      return (
+                        <div
+                          key={entry.diary_id}
+                          className="bg-card border border-card-border rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:border-accent2/50 hover:bg-card/80"
+                          onClick={() => handleViewDiary(entry.diary_id)}
+                        >
+                          <div className="flex justify-between items-start mb-3">
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1">
+                                {icons}
+                              </div>
+                              <h4 className="font-work-sans text-topicos text-card-foreground">
+                                {title}
+                              </h4>
                             </div>
-                            <h4 className="font-work-sans text-topicos text-card-foreground">
-                              {title}
-                            </h4>
+                            <div className="flex items-center gap-2">
+                              {time && (
+                                <span className="text-desc-campos font-inter text-card-foreground/60">
+                                  {time}
+                                </span>
+                              )}
+                              <ChevronRight
+                                size={16}
+                                className="text-card-foreground/40"
+                              />
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            {time && (
-                              <span className="text-desc-campos font-inter text-card-foreground/60">
-                                {time}
-                              </span>
-                            )}
-                            <ChevronRight
-                              size={16}
-                              className="text-card-foreground/40"
-                            />
-                          </div>
-                        </div>
 
-                        <p className="text-campos-preenchimento2 font-inter text-card-foreground/80 line-clamp-2 leading-relaxed">
-                          {getDiarySummary(entry)}
-                        </p>
-                      </div>
-                    );
-                  })}
-              </div>
-            ))}
-        </div>
-      )}
+                          <p className="text-campos-preenchimento2 font-inter text-card-foreground/80 line-clamp-2 leading-relaxed">
+                            {getDiarySummary(entry)}
+                          </p>
+                        </div>
+                      );
+                    })}
+                </div>
+              ))}
+          </div>
+        )}
+      </div>
       {/* NAVEGAÇÃO INFERIOR - Sempre no fundo */}
       <div className="fixed bottom-0 left-0 right-0 z-30">
         <BottomNavigationBar

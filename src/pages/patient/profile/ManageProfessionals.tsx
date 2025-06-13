@@ -461,9 +461,9 @@ export default function ManageProfessionalsPage() {
       {/* Add Professional Dialog */}
       {showAddDialog && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-background rounded-3xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-            {/* Dialog Header */}
-            <div className="sticky top-0 bg-background rounded-t-3xl border-b border-card-border p-6 pb-4">
+          <div className="bg-background rounded-3xl w-full max-w-md h-full max-h-[90vh] flex flex-col">
+            {/* Dialog Header - FIXO */}
+            <div className="flex-shrink-0 bg-background rounded-t-3xl border-b border-card-border p-6 pb-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-typography font-semibold text-lg">
                   Adicionar Profissional
@@ -522,8 +522,8 @@ export default function ManageProfessionalsPage() {
               </div>
             </div>
 
-            {/* Dialog Content */}
-            <div className="p-6">
+            {/* Dialog Content - SCROLLABLE */}
+            <div className="flex-1 overflow-y-auto p-6">
               {/* Error Message */}
               {addError && (
                 <ErrorMessage
