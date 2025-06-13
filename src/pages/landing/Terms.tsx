@@ -217,6 +217,7 @@ const TermsScreen = ({
                   onClick={handleContinue}
                   text={getButtonText()}
                   successText="ACEITO E CONCORDO"
+                  showShimmer={false}
                 />
               )}
             </div>
