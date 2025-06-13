@@ -147,26 +147,19 @@ const TermsScreen = ({
       {/* Header fixo */}
       <div className="flex-shrink-0 px-4 pt-6 pb-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            {!isFirstStep && onPrevious && !isFromProfile && (
-              <button
-                onClick={onPrevious}
-                className="mr-3 p-2 hover:bg-white/10 rounded-full transition-colors"
-                aria-label="Voltar"
-              >
-                <ArrowLeft className="h-5 w-5 text-white" />
-              </button>
-            )}
-
-            <Header
-              title={getPageTitle()}
-              onBackClick={handleBackClick}
-              variant="transparent"
-              headerClassName="bg-transparent"
-              backButtonClassName="bg-transparent hover:bg-white/10"
-              arrowClassName="text-white"
-            />
-          </div>
+          <Header
+            title={getPageTitle()}
+            onBackClick={() => {
+              if (!isFirstStep && onPrevious && !isFromProfile)
+                onPrevious()
+              else
+                handleBackClick()
+            }}
+            variant="transparent"
+            headerClassName="bg-transparent"
+            backButtonClassName="bg-transparent hover:bg-white/10"
+            arrowClassName="text-white"
+          />
 
           {/* Progresso no header - apenas se não for do perfil */}
           {!isFromProfile && (
@@ -237,12 +230,12 @@ const TermsScreen = ({
               (!isFromProfile &&
                 isScrolledToBottom &&
                 !showSuccessMessage)) && (
-              <div className="text-center">
-                <p className="text-white/80 text-sm font-inter">
-                  {getInstructionMessage()}
-                </p>
-              </div>
-            )}
+                <div className="text-center">
+                  <p className="text-white/80 text-sm font-inter">
+                    {getInstructionMessage()}
+                  </p>
+                </div>
+              )}
 
             {/* Mensagem de sucesso - apenas no fluxo de cadastro */}
             {!isFromProfile && showSuccessMessage && (
