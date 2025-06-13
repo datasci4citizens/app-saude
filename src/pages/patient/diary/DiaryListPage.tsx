@@ -330,7 +330,9 @@ export default function DiaryListPage() {
                 const [dayB = 0, monthB = 0] = b
                   .split("/")
                   .map((v) => Number(v) || 0);
-                return (monthB ?? 0) - (monthA ?? 0) || (dayB ?? 0) - (dayA ?? 0);
+                return (
+                  (monthB ?? 0) - (monthA ?? 0) || (dayB ?? 0) - (dayA ?? 0)
+                );
               })
               .map(([date, entries]) => (
                 <div key={date} className="space-y-3">

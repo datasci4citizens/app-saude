@@ -268,10 +268,11 @@ export default function ViewDiaryEntry() {
       />
 
       <div className="px-4 py-8">
-
         {!hasContent && (
           <div className="bg-gray1 p-6 rounded-lg text-center my-8">
-            <p className="text-gray2 text-lg">Este diário não possui conteúdo.</p>
+            <p className="text-gray2 text-lg">
+              Este diário não possui conteúdo.
+            </p>
           </div>
         )}
 

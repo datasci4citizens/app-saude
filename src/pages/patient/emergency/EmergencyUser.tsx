@@ -243,18 +243,18 @@ export default function EmergencyScreen() {
             <div className="w-24 h-24 bg-gradient-to-br from-selection/20 to-accent1/20 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg">
               <span className="text-4xl">👨‍⚕️</span>
             </div>
-            
+
             {/* Título com melhor hierarquia */}
             <h2 className="text-typography font-bold text-xl mb-3 leading-tight">
               Nenhum profissional vinculado
             </h2>
-            
+
             {/* Descrição mais clara e legível */}
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-              Para enviar pedidos de ajuda, você precisa primeiro adicionar um 
+              Para enviar pedidos de ajuda, você precisa primeiro adicionar um
               profissional de saúde ao seu perfil.
             </p>
-            
+
             {/* Botões com melhor espaçamento */}
             <div className="space-y-3 w-full">
               <Button
@@ -316,7 +316,9 @@ export default function EmergencyScreen() {
           <div className="bg-red-50 dark:bg-red-950 border-2 border-red-200 dark:border-red-800 rounded-2xl p-5 shadow-sm">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-red-600 dark:text-red-400 text-xl font-bold">⚠️</span>
+                <span className="text-red-600 dark:text-red-400 text-xl font-bold">
+                  ⚠️
+                </span>
               </div>
               <div className="flex-1">
                 <h4 className="text-red-900 dark:text-red-100 font-bold text-base mb-3">
@@ -379,7 +381,9 @@ export default function EmergencyScreen() {
                         "Profissional sem nome"
                       }
                       checked={selectedProviders.includes(provider.provider_id)}
-                      onCheckedChange={() => handleProviderSelect(provider.provider_id)}
+                      onCheckedChange={() =>
+                        handleProviderSelect(provider.provider_id)
+                      }
                     />
                   </div>
                 ))}
@@ -388,7 +392,9 @@ export default function EmergencyScreen() {
               {selectedProviders.length > 0 && (
                 <div className="mt-5 p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800/50 rounded-xl">
                   <p className="text-green-800 dark:text-green-300 text-sm font-semibold flex items-center gap-2">
-                    <span className="text-green-600 dark:text-green-400">✓</span>
+                    <span className="text-green-600 dark:text-green-400">
+                      ✓
+                    </span>
                     {selectedProviders.length} profissional(is) selecionado(s)
                   </p>
                 </div>
