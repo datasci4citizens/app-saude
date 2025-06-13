@@ -14,24 +14,10 @@ import {
 } from "lucide-react";
 import { DiaryService } from "@/api";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
+import Header from "@/components/ui/header";
 
 // Mock services and components for demonstration
-interface HeaderProps {
-  title: string;
-  onBackClick: () => void;
-}
 
-const Header: React.FC<HeaderProps> = ({ title, onBackClick }) => (
-  <div className="flex items-center gap-4 mb-6">
-    <button
-      onClick={onBackClick}
-      className="text-typography hover:text-accent transition-colors"
-    >
-      ←
-    </button>
-    <h1 className="text-xl font-semibold text-typography">{title}</h1>
-  </div>
-);
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
@@ -305,6 +291,10 @@ export default function DiaryListPage() {
     }
   };
 
+  const handleBackClick = () => {
+    navigate(-1); // This goes back one page in history
+  };
+
   if (error) {
     return (
       <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-white dark:bg-gray-900 min-h-screen pb-24">
@@ -329,8 +319,10 @@ export default function DiaryListPage() {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-4 bg-white dark:bg-gray-900 min-h-screen pb-24">
-      <Header title="Diário" onBackClick={() => navigate("/user-main-page")} />
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-primary pb-20">
+        {" "}
+        {/* Added pb-20 for bottom spacing */}
+        <Header title="Novo Diário" onBackClick={handleBackClick} />
 
       {/* Create new diary button */}
       <div className="flex justify-end my-4">
