@@ -99,7 +99,7 @@ export default function ViewSelectedInterests() {
         navigate("/emergency-user");
         break;
       case "profile":
-        navigate("/add-professional");
+        navigate("/profile");
         break;
     }
   };

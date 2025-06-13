@@ -148,23 +148,26 @@ export default function EmergencyScreen() {
     }
   };
 
-  const handleProviderSelect = (providerId: number) => {
-    setSelectedProviders((prev) =>
-      prev.includes(providerId)
-        ? prev.filter((id) => id !== providerId)
-        : [...prev, providerId],
-    );
-  };
+  // CORRIGIDO: Função memoizada para evitar loop infinito
+  const handleProviderSelect = React.useCallback((providerId: number) => {
+    setSelectedProviders((prev) => {
+      if (prev.includes(providerId)) {
+        return prev.filter((id) => id !== providerId);
+      } else {
+        return [...prev, providerId];
+      }
+    });
+  }, []);
 
   // Loading state
   if (isUserLoading || isProvidersLoading) {
     return (
-      <div className="flex flex-col h-screen bg-homebg">
+      <div className="flex flex-col h-screen bg-background">
         <Header title="Pedido de Ajuda" />
         <div className="flex-1 flex items-center justify-center px-4">
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="relative">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray2/20 border-t-selection"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-selection"></div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="text-lg">⚕️</span>
               </div>
@@ -189,7 +192,7 @@ export default function EmergencyScreen() {
   // Error state
   if (providersError) {
     return (
-      <div className="flex flex-col h-screen bg-homebg">
+      <div className="flex flex-col h-screen bg-background">
         <Header title="Pedido de Ajuda" />
         <div className="flex-1 flex flex-col items-center justify-center px-4">
           <div className="text-center mb-6">
@@ -229,39 +232,49 @@ export default function EmergencyScreen() {
     );
   }
 
-  // No providers state
+  // No providers state - MELHORADO
   if (providers && providers.length === 0) {
     return (
-      <div className="flex flex-col h-screen bg-homebg">
+      <div className="flex flex-col h-screen bg-background">
         <Header title="Pedido de Ajuda" />
         <div className="flex-1 flex flex-col items-center justify-center px-4">
-          <div className="text-center mb-8">
-            <div className="w-20 h-20 bg-accent1/20 rounded-full flex items-center justify-center mb-6 mx-auto">
-              <span className="text-3xl">👨‍⚕️</span>
+          <div className="text-center mb-8 max-w-sm">
+            {/* Ícone melhorado */}
+            <div className="w-24 h-24 bg-gradient-to-br from-selection/20 to-accent1/20 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg">
+              <span className="text-4xl">👨‍⚕️</span>
             </div>
-            <h3 className="text-typography font-semibold text-xl mb-3">
+            
+            {/* Título com melhor hierarquia */}
+            <h2 className="text-typography font-bold text-xl mb-3 leading-tight">
               Nenhum profissional vinculado
-            </h3>
-            <p className="text-gray2 text-sm leading-relaxed max-w-sm">
-              Para enviar pedidos de ajuda, você precisa primeiro adicionar um
+            </h2>
+            
+            {/* Descrição mais clara e legível */}
+            <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+              Para enviar pedidos de ajuda, você precisa primeiro adicionar um 
               profissional de saúde ao seu perfil.
             </p>
-          </div>
-          <div className="space-y-3 w-full max-w-sm">
-            <Button
-              variant="orange"
-              className="w-full"
-              onClick={() => navigate("/add-professional")}
-            >
-              Adicionar profissional
-            </Button>
-            <Button
-              variant="ghost"
-              className="w-full"
-              onClick={() => navigate("/user-main-page")}
-            >
-              Voltar ao início
-            </Button>
+            
+            {/* Botões com melhor espaçamento */}
+            <div className="space-y-3 w-full">
+              <Button
+                variant="orange"
+                size="full"
+                className="h-12 font-semibold shadow-md"
+                onClick={() => navigate("/manage-professionals")}
+              >
+                <span className="mr-2">➕</span>
+                Adicionar profissional
+              </Button>
+              <Button
+                variant="ghost"
+                size="full"
+                className="h-11"
+                onClick={() => navigate("/user-main-page")}
+              >
+                Voltar ao início
+              </Button>
+            </div>
           </div>
         </div>
         <BottomNavigationBar
@@ -274,7 +287,7 @@ export default function EmergencyScreen() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-homebg">
+    <div className="flex flex-col h-screen bg-background">
       <Header title="Pedido de Ajuda" />
 
       <div className="flex-1 overflow-y-auto pb-24">
@@ -299,30 +312,30 @@ export default function EmergencyScreen() {
             />
           )}
 
-          {/* Emergency Disclaimer */}
-          <div className="bg-gradient-to-r from-destructive/15 to-destructive/10 border border-destructive/30 rounded-2xl p-4 backdrop-blur-sm">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-destructive/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-destructive text-lg font-bold">⚠️</span>
+          {/* Emergency Disclaimer - CORES TAILWIND PADRÃO */}
+          <div className="bg-red-50 dark:bg-red-950 border-2 border-red-200 dark:border-red-800 rounded-2xl p-5 shadow-sm">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-red-600 dark:text-red-400 text-xl font-bold">⚠️</span>
               </div>
               <div className="flex-1">
-                <h4 className="text-destructive font-semibold text-sm mb-2">
+                <h4 className="text-red-900 dark:text-red-100 font-bold text-base mb-3">
                   ATENÇÃO: Resposta não imediata
                 </h4>
-                <p className="text-destructive/80 text-xs leading-relaxed mb-3">
+                <p className="text-red-800 dark:text-red-200 text-sm leading-relaxed mb-4 font-medium">
                   Este não é um serviço de emergência. Em situações urgentes,
                   contate os serviços oficiais:
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   <a
                     href="tel:192"
-                    className="inline-flex items-center gap-1 bg-destructive text-white px-3 py-1.5 rounded-full text-xs font-medium hover:bg-destructive/90 transition-colors"
+                    className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-md"
                   >
                     📞 192 (SAMU)
                   </a>
                   <a
                     href="tel:188"
-                    className="inline-flex items-center gap-1 bg-destructive text-white px-3 py-1.5 rounded-full text-xs font-medium hover:bg-destructive/90 transition-colors"
+                    className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-md"
                   >
                     💬 188 (CVV)
                   </a>
@@ -332,15 +345,15 @@ export default function EmergencyScreen() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Providers Selection */}
-            <div className="bg-card rounded-2xl p-5 border border-card-border">
-              <h3 className="text-typography font-semibold text-base mb-4 flex items-center gap-2">
-                <span className="w-6 h-6 bg-selection/20 rounded-full flex items-center justify-center">
-                  <span className="text-selection text-sm">👨‍⚕️</span>
+            {/* Providers Selection - MELHORADO E CORRIGIDO */}
+            <div className="bg-card rounded-2xl p-6 border border-card-border shadow-sm">
+              <h3 className="text-typography font-bold text-lg mb-2 flex items-center gap-3">
+                <span className="w-8 h-8 bg-selection/15 rounded-full flex items-center justify-center">
+                  <span className="text-selection text-base">👨‍⚕️</span>
                 </span>
                 Selecionar profissionais
               </h3>
-              <p className="text-gray2 text-sm mb-4">
+              <p className="text-muted-foreground text-sm mb-5 leading-relaxed">
                 Escolha quais profissionais devem receber seu pedido de ajuda:
               </p>
 
@@ -349,14 +362,15 @@ export default function EmergencyScreen() {
                   <div
                     key={provider.provider_id}
                     className={`
-                      p-3 rounded-xl border-2 transition-all duration-200
+                      p-4 rounded-xl border-2 transition-all duration-200 hover:shadow-sm
                       ${
                         selectedProviders.includes(provider.provider_id)
-                          ? "border-selection bg-selection/5 shadow-sm"
-                          : "border-gray2/20 hover:border-gray2/40 hover:bg-gray2/5"
+                          ? "border-selection bg-selection/5 shadow-md"
+                          : "border-border hover:border-selection/30 hover:bg-accent/50"
                       }
                     `}
                   >
+                    {/* CORRIGIDO: Removido onClick duplicado e deixado apenas o onCheckedChange */}
                     <RadioCheckbox
                       id={`provider-${provider.provider_id}`}
                       label={
@@ -365,49 +379,51 @@ export default function EmergencyScreen() {
                         "Profissional sem nome"
                       }
                       checked={selectedProviders.includes(provider.provider_id)}
-                      onCheckedChange={() =>
-                        handleProviderSelect(provider.provider_id)
-                      }
+                      onCheckedChange={() => handleProviderSelect(provider.provider_id)}
                     />
                   </div>
                 ))}
               </div>
 
               {selectedProviders.length > 0 && (
-                <div className="mt-4 p-3 bg-selection/10 rounded-lg">
-                  <p className="text-selection text-sm font-medium">
-                    ✓ {selectedProviders.length} profissional(is) selecionado(s)
+                <div className="mt-5 p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800/50 rounded-xl">
+                  <p className="text-green-800 dark:text-green-300 text-sm font-semibold flex items-center gap-2">
+                    <span className="text-green-600 dark:text-green-400">✓</span>
+                    {selectedProviders.length} profissional(is) selecionado(s)
                   </p>
                 </div>
               )}
             </div>
 
-            {/* Message Input */}
-            <div className="bg-card rounded-2xl p-5 border border-card-border">
-              <h3 className="text-typography font-semibold text-base mb-4 flex items-center gap-2">
-                <span className="w-6 h-6 bg-accent1/20 rounded-full flex items-center justify-center">
-                  <span className="text-accent1 text-sm">💬</span>
+            {/* Message Input - MELHORADO */}
+            <div className="bg-card rounded-2xl p-6 border border-card-border shadow-sm">
+              <h3 className="text-typography font-bold text-lg mb-2 flex items-center gap-3">
+                <span className="w-8 h-8 bg-accent1/15 rounded-full flex items-center justify-center">
+                  <span className="text-accent1 text-base">💬</span>
                 </span>
                 Mensagem (opcional)
               </h3>
+              <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
+                Descreva brevemente sua situação ou como podem te ajudar:
+              </p>
 
               <TextField
                 id="help-message"
                 name="helpMessage"
-                placeholder="Descreva brevemente sua situação ou como podem te ajudar..."
+                placeholder="Ex: Estou passando por um momento difícil e preciso conversar..."
                 value={freeText}
                 onChange={(e) => setFreeText(e.target.value.slice(0, 200))}
                 type="text"
                 maxLength={200}
-                className="mb-2"
+                className="mb-3"
               />
 
               <div className="flex justify-between items-center text-xs">
-                <span className="text-gray2">
+                <span className="text-muted-foreground">
                   {freeText.length}/200 caracteres
                 </span>
                 {freeText.length > 150 && (
-                  <span className="text-yellow-600">
+                  <span className="text-yellow-600 dark:text-yellow-400 font-medium">
                     {200 - freeText.length} restantes
                   </span>
                 )}
@@ -416,24 +432,24 @@ export default function EmergencyScreen() {
 
             {/* Submit Loading State */}
             {isSubmitting && (
-              <div className="bg-card rounded-2xl p-5 border border-card-border">
+              <div className="bg-card rounded-2xl p-6 border border-card-border shadow-sm">
                 <div className="flex items-center justify-center gap-3">
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-selection/20 border-t-selection"></div>
-                  <span className="text-typography text-sm font-medium">
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-selection/20 border-t-selection"></div>
+                  <span className="text-typography text-base font-medium">
                     Enviando seu pedido de ajuda...
                   </span>
                 </div>
               </div>
             )}
 
-            {/* Submit Button - Now inside form for better UX */}
-            <div className="pt-4">
+            {/* Submit Button - MELHORADO */}
+            <div className="pt-2">
               <Button
                 variant="orange"
                 size="full"
                 type="submit"
                 disabled={isSubmitting || selectedProviders.length === 0}
-                className="h-14 text-base font-semibold shadow-lg"
+                className="h-14 text-base font-bold shadow-lg hover:shadow-xl transition-all duration-200"
               >
                 {isSubmitting ? (
                   <div className="flex items-center gap-3">
@@ -445,7 +461,7 @@ export default function EmergencyScreen() {
                     <span className="text-xl">🚨</span>
                     <span>ENVIAR PEDIDO DE AJUDA</span>
                     {selectedProviders.length > 0 && (
-                      <span className="bg-white/20 px-2 py-1 rounded-full text-xs">
+                      <span className="bg-white/25 px-2.5 py-1 rounded-full text-sm font-bold">
                         {selectedProviders.length}
                       </span>
                     )}
@@ -455,30 +471,6 @@ export default function EmergencyScreen() {
             </div>
           </form>
         </div>
-      </div>
-
-      {/* Fixed Bottom Button */}
-      <div className="bg-background border-t border-card-border p-4 pb-6">
-        <Button
-          variant="orange"
-          size="full"
-          type="submit"
-          disabled={isSubmitting || selectedProviders.length === 0}
-          onClick={handleSubmit}
-          className="h-12 text-base font-semibold"
-        >
-          {isSubmitting ? (
-            <div className="flex items-center gap-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white"></div>
-              Enviando...
-            </div>
-          ) : (
-            <>
-              <span className="mr-2">🚨</span>
-              ENVIAR PEDIDO DE AJUDA
-            </>
-          )}
-        </Button>
       </div>
 
       <BottomNavigationBar
