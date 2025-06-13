@@ -176,7 +176,14 @@ const router = createBrowserRouter([
   },
   {
     path: "/terms",
-    element: <TermsScreen onNext={() => {}} currentStep={1} totalSteps={1} isViewOnly={true}/>,
+    element: (
+      <TermsScreen
+        onNext={() => {}}
+        currentStep={1}
+        totalSteps={1}
+        isViewOnly={true}
+      />
+    ),
   },
   {
     path: "*",
