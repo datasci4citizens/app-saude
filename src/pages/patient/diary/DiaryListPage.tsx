@@ -18,7 +18,6 @@ import Header from "@/components/ui/header";
 
 // Mock services and components for demonstration
 
-
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   onClick?: () => void;
@@ -319,11 +318,10 @@ export default function DiaryListPage() {
   }
 
   return (
-      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-primary pb-20">
-        {" "}
-        {/* Added pb-20 for bottom spacing */}
-        <Header title="Novo Diário" onBackClick={handleBackClick} />
-
+    <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-primary pb-20">
+      {" "}
+      {/* Added pb-20 for bottom spacing */}
+      <Header title="Novo Diário" onBackClick={handleBackClick} />
       {/* Create new diary button */}
       <div className="flex justify-end my-4">
         <Button
@@ -334,7 +332,6 @@ export default function DiaryListPage() {
           Novo Diário
         </Button>
       </div>
-
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
           <div className="flex flex-col items-center gap-3">
@@ -439,7 +436,6 @@ export default function DiaryListPage() {
             ))}
         </div>
       )}
-
       {/* NAVEGAÇÃO INFERIOR - Sempre no fundo */}
       <div className="fixed bottom-0 left-0 right-0 z-30">
         <BottomNavigationBar
