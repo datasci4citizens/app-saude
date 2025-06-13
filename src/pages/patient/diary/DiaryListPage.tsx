@@ -1,8 +1,6 @@
-import React, {
+import {
   useState,
   useEffect,
-  type ButtonHTMLAttributes,
-  type ReactNode,
 } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -14,45 +12,8 @@ import {
 } from "lucide-react";
 import { DiaryService } from "@/api";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
-
-// Mock services and components for demonstration
-interface HeaderProps {
-  title: string;
-  onBackClick: () => void;
-}
-
-const Header: React.FC<HeaderProps> = ({ title, onBackClick }) => (
-  <div className="flex items-center gap-4 mb-6">
-    <button
-      onClick={onBackClick}
-      className="text-typography hover:text-accent transition-colors"
-    >
-      ←
-    </button>
-    <h1 className="text-xl font-semibold text-typography">{title}</h1>
-  </div>
-);
-
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: ReactNode;
-  onClick?: () => void;
-  className?: string;
-}
-
-const Button: React.FC<ButtonProps> = ({
-  children,
-  onClick,
-  className = "",
-  ...props
-}) => (
-  <button
-    onClick={onClick}
-    className={`px-4 py-2 rounded-lg font-medium transition-colors ${className}`}
-    {...props}
-  >
-    {children}
-  </button>
-);
+import Header from "@/components/ui/header";
+import { Button } from "@/components/forms/button";
 
 interface DiaryEntry {
   text: string;
@@ -149,6 +110,7 @@ export default function DiaryListPage() {
       return "Data inválida";
     }
   };
+
   // Group diaries by date for display
   const groupedDiaries: Record<string, DiaryRetrieve[]> = {};
 
@@ -160,7 +122,6 @@ export default function DiaryListPage() {
     groupedDiaries[dateKey].push(diary);
   });
 
-  // ✨ Updated helper function for new structure
   const getDiarySummary = (diary: DiaryRetrieve): string => {
     // First, try to get text from entries
     if (
@@ -211,7 +172,6 @@ export default function DiaryListPage() {
     return "Sem conteúdo";
   };
 
-  // ✨ Updated helper function for new structure
   const getDiaryCardInfo = (diary: DiaryRetrieve) => {
     const components = [];
     const icons = [];
@@ -227,7 +187,7 @@ export default function DiaryListPage() {
         <FileText
           key="text"
           size={14}
-          className="text-blue-500 dark:text-blue-400"
+          className="text-accent2"
         />,
       );
     }
@@ -251,7 +211,7 @@ export default function DiaryListPage() {
         <MessageSquare
           key="triggers"
           size={14}
-          className="text-green-500 dark:text-green-400"
+          className="text-success"
         />,
       );
     }
@@ -305,21 +265,24 @@ export default function DiaryListPage() {
     }
   };
 
+  const hasDiaries = Object.keys(groupedDiaries).length > 0;
+
   if (error) {
     return (
-      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-white dark:bg-gray-900 min-h-screen pb-24">
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-homebg min-h-screen pb-24">
         <Header
           title="Diário"
+          variant="transparent"
           onBackClick={() => navigate("/user-main-page")}
         />
 
         <div className="flex flex-col items-center justify-center h-64">
-          <p className="text-center text-red-500 dark:text-red-400 mb-4">
+          <p className="text-center text-destructive mb-4 font-inter text-campos-preenchimento">
             {error}
           </p>
           <Button
             onClick={() => window.location.reload()}
-            className="bg-gray-500 dark:bg-gray-600 text-white hover:bg-gray-600 dark:hover:bg-gray-700"
+            variant="default"
           >
             Tentar Novamente
           </Button>
@@ -329,45 +292,49 @@ export default function DiaryListPage() {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-4 bg-white dark:bg-gray-900 min-h-screen pb-24">
+    <div className="w-full max-w-4xl mx-auto px-4 py-4 bg-homebg min-h-screen pb-24">
       <Header title="Diário" onBackClick={() => navigate("/user-main-page")} />
 
-      {/* Create new diary button */}
-      <div className="flex justify-end my-4">
-        <Button
-          onClick={handleCreateDiary}
-          className="bg-blue-500 dark:bg-blue-600 text-white flex items-center gap-2 hover:bg-blue-600 dark:hover:bg-blue-700 transition-colors"
-        >
-          <PlusCircle size={16} />
-          Novo Diário
-        </Button>
-      </div>
+      {/* Create new diary button - only show if there are existing diaries */}
+      {hasDiaries && (
+        <div className="flex justify-end my-4">
+          <Button
+            onClick={handleCreateDiary}
+            variant="gradientNew"
+            className="flex items-center gap-2"
+          >
+            <PlusCircle size={16} />
+            Novo Diário
+          </Button>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
           <div className="flex flex-col items-center gap-3">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 dark:border-blue-400"></div>
-            <p className="text-gray-600 dark:text-gray-300">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <p className="text-typography/80 font-inter text-campos-preenchimento">
               Carregando diários...
             </p>
           </div>
         </div>
-      ) : Object.keys(groupedDiaries).length === 0 ? (
+      ) : !hasDiaries ? (
         <div className="flex flex-col items-center justify-center h-64">
           <Calendar
             size={48}
-            className="text-gray-300 dark:text-gray-600 mb-4"
+            className="text-gray2 mb-4"
           />
-          <p className="text-center text-gray-600 dark:text-gray-300 mb-4 text-lg">
+          <p className="text-center text-typography mb-4 font-work-sans text-topicos2">
             Você ainda não possui diários.
           </p>
-          <p className="text-center text-gray-500 dark:text-gray-400 mb-6 text-sm max-w-md">
+          <p className="text-center text-typography/70 mb-6 font-inter text-desc-titulo max-w-md">
             Comece a registrar seus pensamentos, experiências e respostas aos
             seus interesses.
           </p>
           <Button
             onClick={handleCreateDiary}
-            className="bg-green-500 dark:bg-green-600 text-white flex items-center gap-2 px-6 py-3 hover:bg-green-600 dark:hover:bg-green-700"
+            variant="outlineWhite"
+            className="flex items-center gap-2 px-6 py-3"
           >
             <PlusCircle size={16} />
             Criar Primeiro Diário
@@ -387,15 +354,15 @@ export default function DiaryListPage() {
             })
             .map(([date, entries]) => (
               <div key={date} className="space-y-3">
-                <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 pb-2">
+                <div className="flex items-center gap-2 border-b border-gray2-border pb-2">
                   <Calendar
                     size={16}
-                    className="text-blue-500 dark:text-blue-400"
+                    className="text-accent2"
                   />
-                  <h3 className="font-medium text-gray-800 dark:text-gray-200">
+                  <h3 className="font-work-sans text-topicos text-typography">
                     Dia {date}
                   </h3>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 ml-auto">
+                  <span className="text-desc-campos font-inter text-typography/60 ml-auto">
                     {entries.length} entrada{entries.length > 1 ? "s" : ""}
                   </span>
                 </div>
@@ -412,7 +379,7 @@ export default function DiaryListPage() {
                     return (
                       <div
                         key={entry.diary_id}
-                        className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer border border-transparent hover:border-blue-200 dark:hover:border-blue-600"
+                        className="bg-card border border-card-border rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:border-accent2/50 hover:bg-card/80"
                         onClick={() => handleViewDiary(entry.diary_id)}
                       >
                         <div className="flex justify-between items-start mb-3">
@@ -420,24 +387,24 @@ export default function DiaryListPage() {
                             <div className="flex items-center gap-1">
                               {icons}
                             </div>
-                            <h4 className="font-medium text-gray-800 dark:text-gray-200 text-sm">
+                            <h4 className="font-work-sans text-topicos text-card-foreground">
                               {title}
                             </h4>
                           </div>
                           <div className="flex items-center gap-2">
                             {time && (
-                              <span className="text-xs text-gray-500 dark:text-gray-400">
+                              <span className="text-desc-campos font-inter text-card-foreground/60">
                                 {time}
                               </span>
                             )}
                             <ChevronRight
                               size={16}
-                              className="text-gray-400 dark:text-gray-500"
+                              className="text-card-foreground/40"
                             />
                           </div>
                         </div>
 
-                        <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2 leading-relaxed">
+                        <p className="text-campos-preenchimento2 font-inter text-card-foreground/80 line-clamp-2 leading-relaxed">
                           {getDiarySummary(entry)}
                         </p>
                       </div>
@@ -452,7 +419,7 @@ export default function DiaryListPage() {
       <div className="fixed bottom-0 left-0 right-0 z-30">
         <BottomNavigationBar
           variant="user"
-          forceActiveId={getActiveNavId()} // Controlled active state
+          forceActiveId={getActiveNavId()}
           onItemClick={handleNavigationClick}
         />
       </div>

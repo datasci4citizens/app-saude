@@ -1,11 +1,5 @@
 import React from "react";
 
-interface NavItem {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-}
-
 interface BottomNavigationBarProps {
   variant?: "user" | "acs";
   forceActiveId?: string | null;
@@ -84,7 +78,7 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   const navItems = navItemVariants[variant];
 
   return (
-    <div className="flex justify-around items-center py-2.5 bg-primary w-full fixed bottom-0 left-0 shadow-[0_-1px_5px_rgba(0,0,0,0.1)] border-t border-input z-50">
+    <div className="flex justify-around items-center py-3 bg-bottom-nav w-full fixed bottom-0 left-0 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] border-t border-bottom-nav-border z-50 backdrop-blur-sm">
       {navItems.map((item) => {
         const isActive = forceActiveId === item.id;
 
@@ -94,33 +88,47 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
             className={`
               flex flex-col items-center font-medium text-xs font-inter
               ${navItems.length ? `w-[${100 / navItems.length}%]` : "w-1/5"}
-              focus:outline-none
+              focus:outline-none focus:ring-2 focus:ring-bottom-nav-active focus:ring-opacity-50 rounded-lg
+              transition-all duration-200 ease-in-out
+              hover:scale-105 active:scale-95
             `}
             onClick={() => onItemClick?.(item.id)}
             aria-current={isActive ? "page" : undefined}
           >
+            {/* Container do ícone com melhor feedback visual */}
             <div
               className={`
-                flex justify-center items-center w-10 h-10 mb-1 text-2xl rounded-[10px]
+                flex justify-center items-center w-11 h-11 mb-1.5 text-2xl rounded-xl
                 transition-all duration-200 ease-in-out
                 ${
                   isActive
-                    ? "bg-selection text-gray2"
-                    : "bg-primary text-gray2 hover:bg-primary-hover"
+                    ? "bg-bottom-nav-active text-white shadow-lg shadow-bottom-nav-active/25 scale-110"
+                    : "bg-transparent text-bottom-nav-foreground hover:bg-bottom-nav-active/10 hover:text-bottom-nav-active"
                 }
               `}
             >
               {item.icon}
             </div>
+            
+            {/* Label com melhor tipografia */}
             <div
               className={`
-                text-center text-[13px] leading-3
-                font-inter font-medium
-                ${isActive ? "text-gray2 font-semibold" : "text-gray2"}
+                text-center text-[11px] leading-3
+                font-inter transition-all duration-200
+                ${
+                  isActive 
+                    ? "text-bottom-nav-active font-semibold" 
+                    : "text-bottom-nav-foreground font-medium"
+                }
               `}
             >
               {item.label}
             </div>
+            
+            {/* Indicador visual para item ativo */}
+            {isActive && (
+              <div className="w-1 h-1 bg-bottom-nav-active rounded-full mt-0.5 animate-pulse" />
+            )}
           </button>
         );
       })}

@@ -352,9 +352,9 @@ export default function UserMainPage() {
   const visibleInterests = userInterestObjects.filter((i) => !i.is_deleted);
 
   return (
-    <div className="min-h-screen bg-homeblob2 relative">
+    <div className="min-h-screen bg-homebg relative">
       {/* HEADER fixo */}
-      <div className="relative z-10 bg-homeblob2">
+      <div className="relative z-10 bg-homebg">
         <HomeBanner
           title="Registro diário"
           subtitle="Adicione seus interesses e acompanhe seu progresso"

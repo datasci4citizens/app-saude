@@ -260,7 +260,7 @@ export default function ViewDiaryEntry() {
       ));
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
+    <div className="max-w-3xl mx-auto px-4 py-8 pb-24">
       <Header
         title="Visualizar Diário"
         onBackClick={() => navigate(-1)}

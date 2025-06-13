@@ -1,13 +1,19 @@
+import React from 'react';
+
 interface GoogleSigninProps {
   onClick: () => void;
   disabled?: boolean;
   isLoading?: boolean;
+  variant?: 'default' | 'outline' | 'minimal';
+  size?: 'sm' | 'md' | 'lg';
 }
 
 const GoogleSignin: React.FC<GoogleSigninProps> = ({
   onClick,
   disabled = false,
   isLoading = false,
+  variant = 'default',
+  size = 'md',
 }) => {
   const handleClick = () => {
     if (!disabled && !isLoading) {
@@ -15,41 +21,103 @@ const GoogleSignin: React.FC<GoogleSigninProps> = ({
     }
   };
 
+  // Size variants
+  const sizeStyles = {
+    sm: {
+      button: 'px-4 py-2.5 text-sm',
+      icon: 'w-4 h-4',
+      arrow: 'w-3 h-3',
+      gap: 'space-x-2',
+    },
+    md: {
+      button: 'px-6 py-4 text-base',
+      icon: 'w-5 h-5',
+      arrow: 'w-4 h-4',
+      gap: 'space-x-3',
+    },
+    lg: {
+      button: 'px-8 py-5 text-lg',
+      icon: 'w-6 h-6',
+      arrow: 'w-5 h-5',
+      gap: 'space-x-4',
+    },
+  };
+
+  // Variant styles
+  const variantStyles = {
+    default: {
+      button: 'bg-card border-card-border hover:bg-card-muted hover:border-selection/30 shadow-md hover:shadow-lg',
+      text: 'text-card-foreground',
+      spinner: 'border-gray2 border-t-selection',
+      arrow: 'text-gray2 group-hover:text-selection',
+      ripple: 'bg-selection/10',
+      shimmer: 'from-transparent via-selection/5 to-transparent',
+    },
+    outline: {
+      button: 'bg-transparent border-2 border-card-border hover:border-selection hover:bg-selection/5',
+      text: 'text-card-foreground',
+      spinner: 'border-selection/30 border-t-selection',
+      arrow: 'text-gray2 group-hover:text-selection',
+      ripple: 'bg-selection/10',
+      shimmer: 'from-transparent via-selection/10 to-transparent',
+    },
+    minimal: {
+      button: 'bg-gray2/5 border-transparent hover:bg-gray2/10 hover:border-gray2/20',
+      text: 'text-typography',
+      spinner: 'border-gray2/50 border-t-selection',
+      arrow: 'text-gray2 group-hover:text-typography',
+      ripple: 'bg-gray2/10',
+      shimmer: 'from-transparent via-gray2/5 to-transparent',
+    },
+  };
+
+  const currentSize = sizeStyles[size];
+  const currentVariant = variantStyles[variant];
+
   return (
     <button
       onClick={handleClick}
       disabled={disabled || isLoading}
       className={`
-        relative group w-full max-w-sm mx-auto px-6 py-4 
-        bg-offwhite rounded-xl shadow-lg transition-all duration-300 transform font-inter
+        relative group w-full max-w-sm mx-auto rounded-2xl 
+        transition-all duration-300 transform font-inter font-semibold
+        border focus:outline-none focus:ring-2 focus:ring-selection focus:ring-opacity-50
+        ${currentSize.button}
+        ${currentVariant.button}
         ${
           disabled || isLoading
             ? "opacity-50 cursor-not-allowed"
-            : "hover:scale-105 hover:shadow-xl active:scale-95 cursor-pointer hover:bg-offwhite-foreground"
+            : "hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
         }
-        focus:outline-none focus:ring-4 focus:ring-primary/30
-        overflow-hidden border border-gray2-border
+        overflow-hidden
       `}
+      type="button"
+      aria-label={isLoading ? "Conectando com Google..." : "Entrar com Google"}
     >
-      {/* Efeito de brilho no hover */}
+      {/* Shimmer effect on hover */}
       {!disabled && !isLoading && (
         <div
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/10 to-transparent 
-                        opacity-0 group-hover:opacity-100 transition-opacity duration-500
-                        animate-shimmer"
+          className={`
+            absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 
+            transition-opacity duration-700 animate-shimmer
+            ${currentVariant.shimmer}
+          `}
         />
       )}
 
-      {/* Conteúdo do botão */}
-      <div className="relative flex items-center justify-center space-x-3">
-        {/* Ícone do Google */}
+      {/* Button content */}
+      <div className={`relative flex items-center justify-center ${currentSize.gap}`}>
+        {/* Google icon or loading spinner */}
         <div className="flex-shrink-0">
           {isLoading ? (
-            // Spinner quando carregando usando cores customizadas
-            <div className="w-5 h-5 border-2 border-gray2 border-t-primary rounded-full animate-spin" />
+            <div 
+              className={`
+                ${currentSize.icon} border-2 rounded-full animate-spin
+                ${currentVariant.spinner}
+              `} 
+            />
           ) : (
-            // Logo do Google
-            <svg className="w-5 h-5" viewBox="0 0 24 24">
+            <svg className={currentSize.icon} viewBox="0 0 24 24" aria-hidden="true">
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -70,19 +138,25 @@ const GoogleSignin: React.FC<GoogleSigninProps> = ({
           )}
         </div>
 
-        {/* Texto usando typography personalizada */}
-        <span className="text-typography font-inter font-semibold text-campos-preenchimento">
+        {/* Button text */}
+        <span className={`font-medium ${currentVariant.text}`}>
           {isLoading ? "Conectando..." : "Entrar com Google"}
         </span>
 
-        {/* Seta indicativa (apenas quando não está carregando) */}
+        {/* Arrow icon (hidden when loading) */}
         {!isLoading && (
-          <div className="flex-shrink-0 text-typography/60 group-hover:text-typography group-hover:translate-x-1 transition-all duration-300">
+          <div 
+            className={`
+              flex-shrink-0 transition-all duration-300 
+              group-hover:translate-x-1 ${currentVariant.arrow}
+            `}
+          >
             <svg
-              className="w-4 h-4"
+              className={currentSize.arrow}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -95,16 +169,22 @@ const GoogleSignin: React.FC<GoogleSigninProps> = ({
         )}
       </div>
 
-      {/* Barra de progresso quando carregando usando cores customizadas */}
+      {/* Loading progress bar */}
       {isLoading && (
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray2 overflow-hidden rounded-b-xl">
-          <div className="h-full bg-gradient-button-background animate-loading-progress rounded-b-xl" />
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray2/20 overflow-hidden rounded-b-2xl">
+          <div className="h-full bg-gradient-to-r from-selection to-accent1 animate-progress-bar rounded-b-2xl" />
         </div>
       )}
 
-      {/* Ripple effect com cores customizadas */}
-      <div className="absolute inset-0 rounded-xl overflow-hidden">
-        <div className="absolute inset-0 bg-primary/10 scale-0 group-active:scale-100 transition-transform duration-200 rounded-xl" />
+      {/* Ripple effect on click */}
+      <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+        <div 
+          className={`
+            absolute inset-0 scale-0 group-active:scale-100 
+            transition-transform duration-200 rounded-2xl
+            ${currentVariant.ripple}
+          `} 
+        />
       </div>
     </button>
   );
