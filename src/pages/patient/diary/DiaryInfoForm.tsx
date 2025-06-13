@@ -314,7 +314,7 @@ export default function DiaryInfoForm() {
               </div>
             </div>
           ) : totalInterests === 0 ? (
-            <div className="text-center py-8 bg-gray-50 rounded-lg">
+            <div className="text-center py-8 bg-offwhite-foreground rounded-lg">
               <p className="text-typography text-sm mb-2">
                 Você ainda não tem interesses cadastrados.
               </p>
