@@ -183,7 +183,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
               id: item.observation_id?.toString() || Math.random().toString(),
               interest_name: name,
               triggers: triggers.map((t: any) =>
-                typeof t === "string" ? { name: t } : t
+                typeof t === "string" ? { name: t } : t,
               ),
               usage_count: 0,
             };
@@ -191,7 +191,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
           .filter(
             (template: InterestTemplate) =>
               // Filter out invalid templates
-              template.interest_name && template.triggers.length > 0
+              template.interest_name && template.triggers.length > 0,
           );
 
         setTemplateInterests(data);
@@ -214,7 +214,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
       ?.toLowerCase()
       .includes(templateSearch.toLowerCase());
     const triggerMatch = template.triggers?.some((trigger) =>
-      trigger?.name?.toLowerCase().includes(templateSearch.toLowerCase())
+      trigger?.name?.toLowerCase().includes(templateSearch.toLowerCase()),
     );
 
     return nameMatch || triggerMatch;

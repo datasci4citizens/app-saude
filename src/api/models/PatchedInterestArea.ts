@@ -2,12 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { InterestAreaTrigger } from './InterestAreaTrigger';
+import type { InterestAreaTrigger } from "./InterestAreaTrigger";
 export type PatchedInterestArea = {
-    name?: string;
-    is_attention_point?: boolean;
-    marked_by?: Array<string>;
-    triggers?: Array<InterestAreaTrigger>;
-    shared_with_provider?: boolean | null;
+  name?: string;
+  is_attention_point?: boolean;
+  marked_by?: Array<string>;
+  triggers?: Array<InterestAreaTrigger>;
+  shared_with_provider?: boolean | null;
 };
-

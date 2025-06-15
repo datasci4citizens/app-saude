@@ -56,7 +56,7 @@ export default function UserMainPage() {
         // Fetch interests for the current user using their person_id
         const userEntity = await ApiService.apiUserEntityRetrieve();
         const userInterests = await InterestAreasService.apiInterestAreaList(
-          userEntity["person_id"]
+          userEntity["person_id"],
         );
 
         console.log("Dados da API:", userInterests);
@@ -78,7 +78,7 @@ export default function UserMainPage() {
     if (interest.is_temporary) {
       // Se é temporário, apenas remove da lista
       setUserInterestObjects((prev) =>
-        prev.filter((i) => i.observation_id !== interest.observation_id)
+        prev.filter((i) => i.observation_id !== interest.observation_id),
       );
     } else {
       // Se existe no servidor, marca como deletado
@@ -86,8 +86,8 @@ export default function UserMainPage() {
         prev.map((i) =>
           i.observation_id === interest.observation_id
             ? { ...i, is_deleted: true }
-            : i
-        )
+            : i,
+        ),
       );
     }
     setHasChanges(true);
@@ -114,8 +114,8 @@ export default function UserMainPage() {
                   name: t,
                 })),
               }
-            : interest
-        )
+            : interest,
+        ),
       );
     } else {
       // Criando novo interesse temporário
@@ -149,28 +149,28 @@ export default function UserMainPage() {
 
     console.log(
       "TO DELETE",
-      userInterestObjects.filter((i) => i.is_deleted && !i.is_temporary)
+      userInterestObjects.filter((i) => i.is_deleted && !i.is_temporary),
     );
 
     try {
       // 1. Deletar interesses marcados como deletados
       const toDelete = userInterestObjects.filter(
-        (i) => i.is_deleted && !i.is_temporary
+        (i) => i.is_deleted && !i.is_temporary,
       );
       for (const interest of toDelete) {
         await InterestAreasService.apiInterestAreaDestroy(
-          interest.observation_id.toString()
+          interest.observation_id.toString(),
         );
       }
 
       console.log(
         "TO CREATE",
-        userInterestObjects.filter((i) => i.is_temporary && !i.is_deleted)
+        userInterestObjects.filter((i) => i.is_temporary && !i.is_deleted),
       );
 
       // 2. Criar novos interesses temporários
       const toCreate = userInterestObjects.filter(
-        (i) => i.is_temporary && !i.is_deleted
+        (i) => i.is_temporary && !i.is_deleted,
       );
       const createdInterests = [];
 
@@ -219,10 +219,10 @@ export default function UserMainPage() {
             hasInterestChanged(
               i,
               originalInterests.find(
-                (o) => o.observation_id === i.observation_id
-              )
-            )
-        )
+                (o) => o.observation_id === i.observation_id,
+              ),
+            ),
+        ),
       );
 
       // 3. Atualizar interesses modificados (deletar e recriar)
@@ -232,8 +232,10 @@ export default function UserMainPage() {
           !i.is_deleted &&
           hasInterestChanged(
             i,
-            originalInterests.find((o) => o.observation_id === i.observation_id)
-          )
+            originalInterests.find(
+              (o) => o.observation_id === i.observation_id,
+            ),
+          ),
       );
 
       const updatedInterests = [];
@@ -255,7 +257,7 @@ export default function UserMainPage() {
           // Wrap in interest_area object as expected by the API
           const result = await InterestAreasService.apiInterestAreaUpdate(
             interest.observation_id.toString(),
-            { interest_area: updatedInterestArea }
+            { interest_area: updatedInterestArea },
           );
 
           // Process the API response (if successful)
@@ -270,7 +272,7 @@ export default function UserMainPage() {
         } catch (error) {
           console.error(
             `Error updating interest ${interest.observation_id}:`,
-            error
+            error,
           );
         }
       }
@@ -278,16 +280,16 @@ export default function UserMainPage() {
       console.log(
         "FINAL INTERESTS",
         ...userInterestObjects.filter(
-          (i) => !i.is_temporary && !i.is_deleted && !toUpdate.includes(i)
+          (i) => !i.is_temporary && !i.is_deleted && !toUpdate.includes(i),
         ),
         ...createdInterests,
-        ...updatedInterests
+        ...updatedInterests,
       );
 
       // 4. Atualizar estado local com dados finais do servidor
       const finalInterests = [
         ...userInterestObjects.filter(
-          (i) => !i.is_temporary && !i.is_deleted && !toUpdate.includes(i)
+          (i) => !i.is_temporary && !i.is_deleted && !toUpdate.includes(i),
         ),
         ...createdInterests,
         ...updatedInterests,
@@ -309,7 +311,7 @@ export default function UserMainPage() {
   // Helper para verificar se interesse foi modificado
   const hasInterestChanged = (
     current: InterestAreaResponse,
-    original?: InterestAreaResponse
+    original?: InterestAreaResponse,
   ) => {
     if (!original) return false;
 
@@ -516,7 +518,7 @@ export default function UserMainPage() {
                       <p className="text-desc-campos font-inter text-blue-600 dark:text-orange-400 mt-1 flex items-center gap-1">
                         📅{" "}
                         {new Date(
-                          interest.attention_point_date
+                          interest.attention_point_date,
                         ).toLocaleDateString("pt-BR")}
                       </p>
                     )}
@@ -585,8 +587,8 @@ export default function UserMainPage() {
               {isSyncing
                 ? "..."
                 : hasChanges
-                ? "✓ Salvar Mudanças"
-                : "✓ Salvar"}
+                  ? "✓ Salvar Mudanças"
+                  : "✓ Salvar"}
             </Button>
             <Button
               onClick={handleCreateNewInterest}

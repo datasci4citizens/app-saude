@@ -52,10 +52,10 @@ export default function ViewDiary() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedInterests, setExpandedInterests] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
   const [localAttentionPoints, setLocalAttentionPoints] = useState<Set<number>>(
-    new Set()
+    new Set(),
   );
 
   // Funções para gerenciar pontos de atenção no localStorage
@@ -74,7 +74,7 @@ export default function ViewDiary() {
     } catch (error) {
       console.warn(
         "Erro ao carregar pontos de atenção do localStorage:",
-        error
+        error,
       );
     }
     return new Set<number>();
@@ -98,7 +98,7 @@ export default function ViewDiary() {
 
           // Buscar dados do paciente
           const patientData = await PersonService.apiPersonRetrieve(
-            Number(personId)
+            Number(personId),
           );
           setPatient(patientData);
 
@@ -106,7 +106,7 @@ export default function ViewDiary() {
           const diaryData =
             await ProviderService.providerPatientsDiariesRetrieve(
               diaryId,
-              Number(personId)
+              Number(personId),
             );
 
           if (diaryData) {
@@ -214,7 +214,7 @@ export default function ViewDiary() {
 
   const handleAttentionToggle = async (
     areaId: number,
-    isCurrentlyFlagged: boolean
+    isCurrentlyFlagged: boolean,
   ) => {
     const newAttentionPoints = new Set(localAttentionPoints);
 
@@ -236,7 +236,7 @@ export default function ViewDiary() {
         areaId,
         "New state:",
         !isCurrentlyFlagged,
-        "Saved to server"
+        "Saved to server",
       );
     } catch (error) {
       console.error("Erro ao marcar ponto de atenção:", error);
@@ -281,8 +281,8 @@ export default function ViewDiary() {
           diary?.date
             ? formatDate(diary.date)
             : patient?.first_name
-            ? `${patient.first_name} ${patient.last_name || ""}`.trim()
-            : "Visualização do Diário"
+              ? `${patient.first_name} ${patient.last_name || ""}`.trim()
+              : "Visualização do Diário"
         }
       />
 
@@ -354,7 +354,7 @@ export default function ViewDiary() {
                   const hasResponses =
                     interest.triggers &&
                     interest.triggers.some(
-                      (t) => t.response && t.response.trim() !== ""
+                      (t) => t.response && t.response.trim() !== "",
                     );
                   const isAttentionPointFlag = isAttentionPoint(interestId);
 
@@ -414,7 +414,7 @@ export default function ViewDiary() {
                                     e.stopPropagation();
                                     handleAttentionToggle(
                                       interestId,
-                                      isAttentionPointFlag
+                                      isAttentionPointFlag,
                                     );
                                   }}
                                   className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
@@ -453,7 +453,7 @@ export default function ViewDiary() {
                                           </span>
                                         </div>
                                       </div>
-                                    )
+                                    ),
                                 )}
                               </div>
                             ) : (
