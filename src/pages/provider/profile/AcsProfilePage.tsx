@@ -307,7 +307,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
 
       {/* Content Area */}
       <div className="flex-1 mt-[-20px] relative z-10">
-        <div className="bg-background rounded-t-3xl min-h-full px-4 pt-6 pb-20">
+        <div className="bg-background rounded-t-3xl min-h-full px-4 pt-6 pb-[100px]">
           {/* Messages */}
           <div className="space-y-4 mb-6">
             {success && (
