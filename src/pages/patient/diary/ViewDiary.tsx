@@ -236,7 +236,6 @@ export default function ViewDiaryEntry() {
   }
 
   const textEntry = getGeneralTextEntry();
-  // console.log("Text entry:", textEntry);
   const hasContent =
     (textEntry && textEntry.text) ||
     (diary.interest_areas &&
@@ -289,7 +288,6 @@ export default function ViewDiaryEntry() {
                 const hasResponses = interest.triggers?.some(
                   (t) => t.response && t.response.trim() !== ""
                 );
-                // console.log(interest);
                 if (!hasResponses) return null;
 
                 return (

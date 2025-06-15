@@ -2,10 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Logout = {
-    /**
-     * Refresh token for logout
-     */
-    refresh: string;
+import type { InterestArea } from './InterestArea';
+export type InterestAreaCreate = {
+    interest_area: InterestArea;
 };
 
