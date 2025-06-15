@@ -8,42 +8,37 @@ import { ErrorMessage } from "@/components/ui/error-message";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import { type PatchedMarkAttentionPoint } from "@/api/models/PatchedMarkAttentionPoint";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
+import { TypeEnum } from "@/api/models/TypeEnum";
 
-// Interface para as entradas do diário
+// Updated interfaces to match new server response structure
 interface DiaryEntryDetail {
-  id?: number;
-  text_content?: string;
-  created_at?: string;
-  scope?: string;
-  value_as_string?: string;
+  text: string;
+  shared: boolean;
+  created_at: string;
 }
 
-// Interface para as respostas das áreas de interesse
-interface ResponseDetail {
-  trigger_id?: number;
-  content?: string;
-  created_at?: string;
-  trigger_name?: string;
-  value_as_string?: string;
-}
-
-// Interface para as áreas de interesse
-interface InterestAreaDetail {
-  interest_area_id?: number;
-  interest_name?: string;
-  triggers?: ResponseDetail[];
-  is_attention_point?: boolean;
-  provider_name?: string | null; // Permitir null
+interface TriggerDetail {
+  name: string;
+  type?: TypeEnum;
+  response: string;
   shared_with_provider?: boolean;
 }
 
-// Interface para o diário completo
+interface InterestAreaDetail {
+  name: string;
+  shared: boolean;
+  triggers: TriggerDetail[];
+  is_attention_point?: boolean;
+  provider_name?: string | null;
+  interest_area_id?: number; // Keeping for backward compatibility
+}
+
 interface DiaryDetail {
   diary_id: number;
   date: string;
   scope: string;
   entries: DiaryEntryDetail[];
-  interest_areas?: InterestAreaDetail[];
+  interest_areas: InterestAreaDetail[];
 }
 
 export default function ViewDiary() {
@@ -56,16 +51,18 @@ export default function ViewDiary() {
   const [patient, setPatient] = useState<PersonRetrieve | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [expandedInterests, setExpandedInterests] = useState<Set<number>>(
-    new Set(),
+  const [expandedInterests, setExpandedInterests] = useState<Set<string>>(
+    new Set()
   );
   const [localAttentionPoints, setLocalAttentionPoints] = useState<Set<number>>(
-    new Set(),
+    new Set()
   );
 
   // Funções para gerenciar pontos de atenção no localStorage
   const getAttentionPointsKey = () =>
-    `attentionPoints_provider_${localStorage.getItem("provider_id") || "unknown"}`;
+    `attentionPoints_provider_${
+      localStorage.getItem("provider_id") || "unknown"
+    }`;
 
   const loadLocalAttentionPoints = () => {
     try {
@@ -77,7 +74,7 @@ export default function ViewDiary() {
     } catch (error) {
       console.warn(
         "Erro ao carregar pontos de atenção do localStorage:",
-        error,
+        error
       );
     }
     return new Set<number>();
@@ -101,38 +98,52 @@ export default function ViewDiary() {
 
           // Buscar dados do paciente
           const patientData = await PersonService.apiPersonRetrieve(
-            Number(personId),
+            Number(personId)
           );
           setPatient(patientData);
 
-          // Buscar o diário espehcífico diretamente
+          // Buscar o diário específico diretamente
           const diaryData =
             await ProviderService.providerPatientsDiariesRetrieve(
               diaryId,
-              Number(personId),
+              Number(personId)
             );
 
           if (diaryData) {
             const loggedProviderName =
               localStorage.getItem("fullname") || "Você";
+
+            // Map data to the new structure
             const diaryWithResolvedNames: DiaryDetail = {
-              ...diaryData,
+              diary_id: diaryData.diary_id,
+              date: diaryData.date,
+              scope: diaryData.scope || "since_last",
               entries: diaryData.entries
                 .map((entry: any) => ({
-                  ...entry,
-                  text_content: entry.text || "",
-                  text_shared: entry.text_shared || false,
+                  text: entry.text || "",
+                  shared: entry.text_shared || entry.shared || false,
+                  created_at: entry.created_at || new Date().toISOString(),
                 }))
-                .filter((entry: any) => entry.text_shared),
-              interest_areas: diaryData.interest_areas
+                .filter((entry: any) => entry.shared),
+              interest_areas: (diaryData.interest_areas || [])
                 .map((area: any) => ({
-                  ...area,
+                  name: area.name || area.interest_name || "",
+                  shared: area.shared || area.shared_with_provider || false,
+                  triggers: (area.triggers || []).map((trigger: any) => ({
+                    name: trigger.name || trigger.trigger_name || "",
+                    type: trigger.type || "text",
+                    response: trigger.response || trigger.value_as_string || "",
+                    shared_with_provider:
+                      area.shared || area.shared_with_provider || false,
+                  })),
+                  is_attention_point: area.is_attention_point || false,
                   provider_name:
                     area.provider_name === loggedProviderName
                       ? "Você"
                       : area.provider_name,
+                  interest_area_id: area.interest_area_id || null,
                 }))
-                .filter((area: any) => area.shared_with_provider),
+                .filter((area: any) => area.shared),
             };
 
             setDiary(diaryWithResolvedNames);
@@ -170,14 +181,14 @@ export default function ViewDiary() {
     }
   };
 
-  // Toggle interest expansion
-  const toggleInterest = (interestId: number) => {
+  // Toggle interest expansion - now using name as the identifier
+  const toggleInterest = (interestName: string) => {
     setExpandedInterests((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(interestId)) {
-        newSet.delete(interestId);
+      if (newSet.has(interestName)) {
+        newSet.delete(interestName);
       } else {
-        newSet.add(interestId);
+        newSet.add(interestName);
       }
       return newSet;
     });
@@ -190,10 +201,10 @@ export default function ViewDiary() {
     }
 
     for (const entry of diary.entries) {
-      if (entry.text_content && entry.text_content.trim() !== "") {
+      if (entry.text && entry.text.trim() !== "") {
         return {
-          text: entry.text_content,
-          shared: true, // Provider only sees shared entries
+          text: entry.text,
+          shared: entry.shared, // Provider only sees shared entries
         };
       }
     }
@@ -201,9 +212,9 @@ export default function ViewDiary() {
     return null;
   };
 
-  const handleAttentionToggle = (
+  const handleAttentionToggle = async (
     areaId: number,
-    isCurrentlyFlagged: boolean,
+    isCurrentlyFlagged: boolean
   ) => {
     const newAttentionPoints = new Set(localAttentionPoints);
 
@@ -212,7 +223,7 @@ export default function ViewDiary() {
         area_id: areaId,
         is_attention_point: !isCurrentlyFlagged,
       };
-      InterestAreasService.markObservationAsAttentionPoint(request);
+      await InterestAreasService.markObservationAsAttentionPoint(request);
 
       if (isCurrentlyFlagged) {
         newAttentionPoints.delete(areaId);
@@ -225,14 +236,15 @@ export default function ViewDiary() {
         areaId,
         "New state:",
         !isCurrentlyFlagged,
-        "Saved to server",
+        "Saved to server"
       );
     } catch (error) {
-      console.warn("Erro ao salvar pontos de atenção no localStorage:", error);
+      console.error("Erro ao marcar ponto de atenção:", error);
     }
 
     setLocalAttentionPoints(newAttentionPoints);
   };
+
   const location = useLocation();
   const getActiveNavId = () => {
     if (location.pathname.startsWith("/acs-main-page")) return "home";
@@ -242,6 +254,7 @@ export default function ViewDiary() {
     if (location.pathname.startsWith("/acs-profile")) return "profile";
     return null;
   };
+
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
       case "home":
@@ -268,8 +281,8 @@ export default function ViewDiary() {
           diary?.date
             ? formatDate(diary.date)
             : patient?.first_name
-              ? `${patient.first_name} ${patient.last_name || ""}`.trim()
-              : "Visualização do Diário"
+            ? `${patient.first_name} ${patient.last_name || ""}`.trim()
+            : "Visualização do Diário"
         }
       />
 
@@ -336,34 +349,29 @@ export default function ViewDiary() {
               </h3>
               <div className="space-y-4">
                 {diary.interest_areas.map((interest) => {
-                  if (!interest.interest_area_id) return null;
-
-                  const isExpanded = expandedInterests.has(
-                    interest.interest_area_id,
-                  );
+                  const interestId = interest.interest_area_id || 0;
+                  const isExpanded = expandedInterests.has(interest.name);
                   const hasResponses =
                     interest.triggers &&
-                    interest.triggers.some((t) => t.value_as_string);
-                  const isAttentionPointFlag = isAttentionPoint(
-                    interest.interest_area_id,
-                  );
+                    interest.triggers.some(
+                      (t) => t.response && t.response.trim() !== ""
+                    );
+                  const isAttentionPointFlag = isAttentionPoint(interestId);
 
                   return (
                     <div
-                      key={interest.interest_area_id}
+                      key={interest.name}
                       className="bg-card border border-border rounded-xl shadow-sm"
                     >
                       <div
                         className="p-5 cursor-pointer"
-                        onClick={() =>
-                          toggleInterest(interest.interest_area_id!)
-                        }
+                        onClick={() => toggleInterest(interest.name)}
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3 flex-1">
                             <span className="w-2 h-2 bg-gradient-interest-indicator rounded-full flex-shrink-0"></span>
                             <h4 className="font-bold text-lg text-card-foreground">
-                              {interest.interest_name}
+                              {interest.name}
                             </h4>
                             {isAttentionPointFlag && (
                               <span className="text-destructive text-lg">
@@ -399,26 +407,28 @@ export default function ViewDiary() {
                         <div className="px-5 pb-5">
                           <div className="border-t border-border pt-4">
                             {/* Attention Point Button */}
-                            <div className="mb-4">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleAttentionToggle(
-                                    interest.interest_area_id!,
-                                    isAttentionPointFlag,
-                                  );
-                                }}
-                                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                                  isAttentionPointFlag
-                                    ? "bg-destructive text-white hover:bg-destructive/80"
-                                    : "bg-orange-500 text-white hover:bg-orange-600"
-                                }`}
-                              >
-                                {isAttentionPointFlag
-                                  ? "Remover atenção ⚠️"
-                                  : "Marcar atenção ⚠️"}
-                              </button>
-                            </div>
+                            {interestId > 0 && (
+                              <div className="mb-4">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAttentionToggle(
+                                      interestId,
+                                      isAttentionPointFlag
+                                    );
+                                  }}
+                                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                                    isAttentionPointFlag
+                                      ? "bg-destructive text-white hover:bg-destructive/80"
+                                      : "bg-orange-500 text-white hover:bg-orange-600"
+                                  }`}
+                                >
+                                  {isAttentionPointFlag
+                                    ? "Remover atenção ⚠️"
+                                    : "Marcar atenção ⚠️"}
+                                </button>
+                              </div>
+                            )}
 
                             {/* Responses */}
                             {hasResponses ? (
@@ -428,21 +438,22 @@ export default function ViewDiary() {
                                 </h5>
                                 {interest.triggers?.map(
                                   (trigger, index) =>
-                                    trigger.value_as_string && (
+                                    trigger.response &&
+                                    trigger.response.trim() !== "" && (
                                       <div
-                                        key={trigger.trigger_id || index}
+                                        key={index}
                                         className="bg-homebg p-3 rounded-lg border-l-4 border-primary"
                                       >
                                         <div className="text-sm">
                                           <span className="font-medium text-foreground">
-                                            {trigger.trigger_name}:
+                                            {trigger.name}:
                                           </span>
                                           <span className="ml-2 text-muted-foreground">
-                                            {trigger.value_as_string}
+                                            {trigger.response}
                                           </span>
                                         </div>
                                       </div>
-                                    ),
+                                    )
                                 )}
                               </div>
                             ) : (
@@ -496,7 +507,7 @@ export default function ViewDiary() {
       )}
       <BottomNavigationBar
         variant="acs"
-        forceActiveId={getActiveNavId()} // Controlled active state
+        forceActiveId={getActiveNavId()}
         onItemClick={handleNavigationClick}
       />
     </div>

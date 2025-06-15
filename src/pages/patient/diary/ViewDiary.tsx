@@ -5,39 +5,31 @@ import { DiaryService } from "@/api/services/DiaryService";
 import CollapsibleInterestCard from "@/components/ui/CollapsibleInterestCard";
 import { ErrorMessage } from "@/components/ui/error-message";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
+import { TypeEnum } from "@/api/models/TypeEnum";
 
-// Updated interfaces to match actual server response structure
+// Updated interfaces to match new server response structure
 interface DiaryTrigger {
-  trigger_id: number;
-  trigger_name: string;
-  observation_concept_id: number;
-  value_as_string: string | null;
-  response?: string;
-  shared?: boolean;
+  name: string;
+  type?: TypeEnum;
+  response: string;
 }
 
 interface DiaryInterestArea {
-  interest_area_id: number;
-  interest_name: string;
-  observation_concept_id: number;
-  value_as_string: string | null;
-  value_as_concept: number | null;
-  shared_with_provider: boolean;
+  name: string;
+  shared: boolean;
   triggers: DiaryTrigger[];
 }
 
 interface DiaryEntry {
-  observation_id: number;
   text: string;
-  shared_with_provider: boolean;
+  shared: boolean;
   created_at: string;
-  observation_concept: number;
 }
 
 interface DiaryData {
   diary_id: number;
   date: string;
-  scope: string; // 'today' or 'since_last' instead of date_range_type
+  scope: string; // 'today' or 'since_last'
   entries: DiaryEntry[];
   interest_areas: DiaryInterestArea[];
 }
@@ -48,8 +40,8 @@ export default function ViewDiaryEntry() {
   const [isLoading, setIsLoading] = useState(true);
   const [diary, setDiary] = useState<DiaryData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [expandedInterests, setExpandedInterests] = useState<Set<number>>(
-    new Set(),
+  const [expandedInterests, setExpandedInterests] = useState<Set<string>>(
+    new Set()
   );
 
   useEffect(() => {
@@ -58,16 +50,10 @@ export default function ViewDiaryEntry() {
 
       try {
         setIsLoading(true);
-        console.log(`Fetching diary with ID: ${diaryId}`);
 
         // Fetch diary by ID
         const response = await DiaryService.diariesRetrieve2(diaryId);
         console.log("Diary API response:", response);
-
-        if (response) {
-          console.log("Diary entries:", response.entries);
-          console.log("Diary interest areas:", response.interest_areas);
-        }
 
         if (response && response.diary_id) {
           setDiary(response);
@@ -76,15 +62,15 @@ export default function ViewDiaryEntry() {
             response.interest_areas
               ?.filter((area) =>
                 area.triggers?.some(
-                  (t) => t.value_as_string && t.value_as_string.trim() !== "",
-                ),
+                  (t) => t.response && t.response.trim() !== ""
+                )
               )
-              .map((area) => area.interest_area_id) || [];
+              .map((area) => area.name) || [];
           setExpandedInterests(new Set(interestsWithResponses));
         } else {
           console.error(
             "Diary not found or invalid response format:",
-            response,
+            response
           );
           setError("Diário não encontrado ou formato inválido.");
         }
@@ -117,7 +103,6 @@ export default function ViewDiaryEntry() {
 
   // Get general text entry if available
   const getGeneralTextEntry = (): { text: string; shared: boolean } | null => {
-    console.log("Getting general text entry from diary:", diary?.entries);
     if (!diary || !diary.entries || diary.entries.length === 0) {
       console.warn("No diary entries found.");
       return null;
@@ -125,7 +110,6 @@ export default function ViewDiaryEntry() {
 
     // Find the general text entry
     for (const entry of diary.entries) {
-      // Handle the new format where entry is {text: 'content', text_shared: boolean}
       if (
         entry.text &&
         typeof entry.text === "string" &&
@@ -133,14 +117,7 @@ export default function ViewDiaryEntry() {
       ) {
         return {
           text: entry.text,
-          shared: entry.text_shared || false,
-        };
-      }
-      // Handle legacy format with value_as_string
-      else if (entry.value_as_string && entry.value_as_string.trim() !== "") {
-        return {
-          text: entry.value_as_string,
-          shared: entry.shared_with_provider || false,
+          shared: entry.shared || false,
         };
       }
     }
@@ -177,14 +154,14 @@ export default function ViewDiaryEntry() {
     }
   };
 
-  // Toggle interest expansion
-  const toggleInterest = (interestId: number) => {
+  // Toggle interest expansion - now using interest name as identifier
+  const toggleInterest = (interestName: string) => {
     setExpandedInterests((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(interestId)) {
-        newSet.delete(interestId);
+      if (newSet.has(interestName)) {
+        newSet.delete(interestName);
       } else {
-        newSet.add(interestId);
+        newSet.add(interestName);
       }
       return newSet;
     });
@@ -192,20 +169,28 @@ export default function ViewDiaryEntry() {
 
   // Convert DiaryInterestArea to UserInterest format for CollapsibleInterestCard
   const convertToUserInterest = (diaryInterest: DiaryInterestArea) => {
+    // Create a map of trigger responses
+    console.log("Converting diary interest:", diaryInterest);
+    const triggerResponses: Record<string, string> = {};
+    diaryInterest.triggers?.forEach((trigger) => {
+      if (trigger.response) {
+        triggerResponses[trigger.name] = trigger.response;
+      }
+    });
+
     return {
-      interest_area_id: diaryInterest.interest_area_id,
-      interest_name: diaryInterest.interest_name,
-      shared: diaryInterest.shared_with_provider,
-      triggers:
-        diaryInterest.triggers?.map((trigger) => ({
-          trigger_id: trigger.trigger_id,
-          trigger_name: trigger.trigger_name,
-          custom_trigger_name: null,
-          observation_concept_id: trigger.observation_concept_id,
-          value_as_string: trigger.value_as_string,
-          response: trigger.value_as_string || "",
-          shared: diaryInterest.shared_with_provider,
-        })) || [],
+      shared: diaryInterest.shared,
+      provider_name: undefined,
+      interest_area: {
+        name: diaryInterest.name,
+        is_attention_point: false,
+        triggers:
+          diaryInterest.triggers?.map((trigger) => ({
+            name: trigger.name,
+            type: trigger.type,
+          })) || [],
+      },
+      triggerResponses: triggerResponses,
     };
   };
 
@@ -251,12 +236,12 @@ export default function ViewDiaryEntry() {
   }
 
   const textEntry = getGeneralTextEntry();
-  console.log("Text entry:", textEntry);
+  // console.log("Text entry:", textEntry);
   const hasContent =
     (textEntry && textEntry.text) ||
     (diary.interest_areas &&
       diary.interest_areas.some(
-        (area) => area.triggers && area.triggers.some((t) => t.value_as_string),
+        (area) => area.triggers && area.triggers.some((t) => t.response)
       ));
 
   return (
@@ -302,20 +287,20 @@ export default function ViewDiaryEntry() {
               {diary.interest_areas.map((interest) => {
                 // Only show interests that have at least one trigger with a response
                 const hasResponses = interest.triggers?.some(
-                  (t) => t.value_as_string && t.value_as_string.trim() !== "",
+                  (t) => t.response && t.response.trim() !== ""
                 );
-
+                // console.log(interest);
                 if (!hasResponses) return null;
 
                 return (
                   <div
-                    key={interest.interest_area_id}
+                    key={interest.name}
                     className="bg-primary border border-gray1 rounded-lg p-4"
                   >
                     <CollapsibleInterestCard
                       interest={convertToUserInterest(interest)}
-                      isOpen={expandedInterests.has(interest.interest_area_id)}
-                      onToggle={() => toggleInterest(interest.interest_area_id)}
+                      isOpen={expandedInterests.has(interest.name)}
+                      onToggle={() => toggleInterest(interest.name)}
                       readOnly={true}
                       onResponseChange={() => {}}
                       onSharingToggle={() => {}}
@@ -330,12 +315,10 @@ export default function ViewDiaryEntry() {
                         </span>
                         <span
                           className={`font-medium ${
-                            interest.shared_with_provider
-                              ? "text-success"
-                              : "text-selection"
+                            interest.shared ? "text-success" : "text-selection"
                           }`}
                         >
-                          {interest.shared_with_provider
+                          {interest.shared
                             ? "✓ Compartilhado com profissionais"
                             : "○ Não compartilhado"}
                         </span>
@@ -385,7 +368,7 @@ export default function ViewDiaryEntry() {
         </div>
         <BottomNavigationBar
           variant="user"
-          forceActiveId={getActiveNavId()} // Controlled active state
+          forceActiveId={getActiveNavId()}
           onItemClick={handleNavigationClick}
         />
       </div>
