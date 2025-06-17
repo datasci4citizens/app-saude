@@ -9,8 +9,8 @@
  * * `scale` - scale
  */
 export enum TypeEnum {
-    BOOLEAN = 'boolean',
-    TEXT = 'text',
-    INT = 'int',
-    SCALE = 'scale',
+  BOOLEAN = "boolean",
+  TEXT = "text",
+  INT = "int",
+  SCALE = "scale",
 }
