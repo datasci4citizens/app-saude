@@ -34,7 +34,7 @@
     --homeblob1-background: #1e40af;
     --homeblob2: #2563eb; /* Azul mais claro para contraste */
     --homeblob2-background: #2563eb;
-    --destructive: #dc2626; /* Mudou de #ff4d4f para vermelho mais padrão */
+    --destructive: #ff4d4f; /* Mudou de #ff4d4f para vermelho mais padrão */
     --destructive-foreground: #ffffff; /* NOVO */
     --success: #16a34a; /* Mudou de #85e191 para verde mais forte */
     --success-foreground: #ffffff; /* Mudou de #065f19 para branco */
