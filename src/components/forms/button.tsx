@@ -15,7 +15,7 @@ const buttonVariants = cva(
         white: "bg-offwhite text-typography hover:bg-typography/90",
         blue: "bg-info text-offwhite hover:bg-info/90",
         outlineWhite:
-          "bg-transparent text-offwhite border-2 border-offwhite hover:bg-offwhite/10",
+          "bg-transparent text-typography border-2 border-typography hover:bg-offwhite/10",
         outlineOrange:
           "bg-transparent text-primary border-2 border-primary hover:bg-primary/10",
 
