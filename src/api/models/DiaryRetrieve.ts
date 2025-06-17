@@ -3,8 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type DiaryRetrieve = {
-  diary_id: number;
-  date: string;
-  readonly entries: string;
-  readonly interest_areas: string;
+    diary_id: number;
+    date: string;
+    readonly entries: string;
+    readonly interest_areas: string;
 };
+
