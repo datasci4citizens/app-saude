@@ -19,6 +19,7 @@ interface InterestAreaResponse {
   interest_area: InterestArea;
   is_temporary?: boolean; // Flag para identificar criados localmente
   is_deleted?: boolean; // Flag para identificar deletados localmente
+  is_modified?: boolean; // Flag para identificar modificados localmente
   attention_point_date?: string; // ✅ Data quando foi marcado como attention point
   provider_name: string; // ✅ Nome do profissional que marcou
 }
@@ -107,14 +108,19 @@ export default function UserMainPage() {
         prev.map((interest) =>
           interest.observation_id.toString() === interestData.id
             ? {
-                ...interest,
-                interest_name: interestData.interest_name,
+              ...interest, // Copy all existing properties
+              interest_area: {
+                ...interest.interest_area, // Copy existing interest_area
+                name: interestData.interest_name, // Update name
                 triggers: interestData.triggers.map((t) => ({
-                  trigger_name: t,
                   name: t,
+                  type: "boolean" as TypeEnum,
+                  response: null, // Keep existing response or set to null
                 })),
-              }
-            : interest,
+              },
+              is_modified: true, // Flag to identify modified interests
+            }
+          : interest,
         ),
       );
     } else {
@@ -144,169 +150,150 @@ export default function UserMainPage() {
 
   // Função para sincronizar com servidor (apenas quando clicar em Salvar)
   const syncWithServer = async () => {
-    setIsSyncing(true);
-    setSyncError(null);
+  setIsSyncing(true);
+  setSyncError(null);
 
-    console.log(
-      "TO DELETE",
-      userInterestObjects.filter((i) => i.is_deleted && !i.is_temporary),
+  try {
+    // 1. Delete marked interests
+    const toDelete = userInterestObjects.filter(
+      (i) => i.is_deleted && !i.is_temporary,
     );
-
-    try {
-      // 1. Deletar interesses marcados como deletados
-      const toDelete = userInterestObjects.filter(
-        (i) => i.is_deleted && !i.is_temporary,
-      );
-      for (const interest of toDelete) {
+    
+    for (const interest of toDelete) {
+      if (interest.observation_id) {
         await InterestAreasService.apiInterestAreaDestroy(
           interest.observation_id.toString(),
         );
       }
+    }
 
-      console.log(
-        "TO CREATE",
-        userInterestObjects.filter((i) => i.is_temporary && !i.is_deleted),
-      );
+    // 2. Create new temporary interests
+    const toCreate = userInterestObjects.filter(
+      (i) => i.is_temporary && !i.is_deleted,
+    );
+    const createdInterests = [];
 
-      // 2. Criar novos interesses temporários
-      const toCreate = userInterestObjects.filter(
-        (i) => i.is_temporary && !i.is_deleted,
-      );
-      const createdInterests = [];
-
-      // console.log("interest to create:", toCreate);
-      for (const interest of toCreate) {
-        // Create the interest area object with all required fields
-        const newInterestArea: InterestArea = {
-          name: interest.interest_area.name,
-          triggers:
-            interest.interest_area.triggers?.map((t) => ({
+    for (const interest of toCreate) {
+      try {
+        const newInterestArea = {
+          interest_area: {
+            name: interest.interest_area.name,
+            triggers: interest.interest_area.triggers?.map((t) => ({
               name: t.name,
               type: "boolean" as TypeEnum,
               response: null,
             })) || [],
-          marked_by: [],
-          is_attention_point: false,
-          shared_with_provider: false, // Default value, can be adjusted later
+            marked_by: [],
+            is_attention_point: false,
+            shared_with_provider: false,
+          },
         };
 
-        try {
-          // Wrap in interest_area object as expected by the API
-          const result = await InterestAreasService.apiInterestAreaCreate({
-            interest_area: newInterestArea,
-          });
+        const result = await InterestAreasService.apiInterestAreaCreate(
+          newInterestArea,
+        );
 
-          // Process the API response
-          if (result) {
-            createdInterests.push({
-              observation_id: result.observation_id,
-              person_id: result.person_id,
-              interest_area: result.interest_area,
-              provider_name: "",
-            } as InterestAreaResponse);
-          }
-        } catch (error) {
-          console.error("Error creating interest:", error);
+        if (result) {
+          createdInterests.push({
+            observation_id: result.observation_id,
+            person_id: result.person_id,
+            interest_area: result.interest_area,
+            provider_name: "",
+          } as InterestAreaResponse);
         }
+      } catch (error) {
+        console.error("Error creating interest:", error);
+        setSyncError(`Erro ao criar interesse: ${interest.interest_area.name}`);
       }
-
-      console.log(
-        "TO UPDATE",
-        userInterestObjects.filter(
-          (i) =>
-            !i.is_temporary &&
-            !i.is_deleted &&
-            hasInterestChanged(
-              i,
-              originalInterests.find(
-                (o) => o.observation_id === i.observation_id,
-              ),
-            ),
-        ),
-      );
-
-      // 3. Atualizar interesses modificados (deletar e recriar)
-      const toUpdate = userInterestObjects.filter(
-        (i) =>
-          !i.is_temporary &&
-          !i.is_deleted &&
-          hasInterestChanged(
-            i,
-            originalInterests.find(
-              (o) => o.observation_id === i.observation_id,
-            ),
-          ),
-      );
-
-      const updatedInterests = [];
-      for (const interest of toUpdate) {
-        // Prepare updated interest data
-        const updatedInterestArea: InterestArea = {
-          name: interest.interest_area.name,
-          triggers:
-            interest.interest_area.triggers?.map((t) => ({
-              name: t.name,
-              type: "boolean" as TypeEnum, // Add the missing type field
-            })) || [],
-          is_attention_point:
-            interest.interest_area.is_attention_point || false,
-          marked_by: interest.interest_area.marked_by || [],
-        };
-
-        try {
-          // Wrap in interest_area object as expected by the API
-          const result = await InterestAreasService.apiInterestAreaUpdate(
-            interest.observation_id.toString(),
-            { interest_area: updatedInterestArea },
-          );
-
-          // Process the API response (if successful)
-          if (result) {
-            updatedInterests.push({
-              observation_id: result.observation_id,
-              person_id: result.person_id,
-              interest_area: result.interest_area,
-              provider_name: interest.provider_name || "",
-            } as InterestAreaResponse);
-          }
-        } catch (error) {
-          console.error(
-            `Error updating interest ${interest.observation_id}:`,
-            error,
-          );
-        }
-      }
-
-      console.log(
-        "FINAL INTERESTS",
-        ...userInterestObjects.filter(
-          (i) => !i.is_temporary && !i.is_deleted && !toUpdate.includes(i),
-        ),
-        ...createdInterests,
-        ...updatedInterests,
-      );
-
-      // 4. Atualizar estado local com dados finais do servidor
-      const finalInterests = [
-        ...userInterestObjects.filter(
-          (i) => !i.is_temporary && !i.is_deleted && !toUpdate.includes(i),
-        ),
-        ...createdInterests,
-        ...updatedInterests,
-      ];
-
-      setUserInterestObjects(finalInterests);
-      setOriginalInterests([...finalInterests]);
-      setHasChanges(false);
-      setSyncSuccess(true);
-      setTimeout(() => setSyncSuccess(false), 3000);
-    } catch (error) {
-      console.error("Error syncing with server:", error);
-      setSyncError("Erro ao salvar interesses. Tente novamente.");
-    } finally {
-      setIsSyncing(false);
     }
-  };
+
+    // 3. Update modified interests using PUT method
+    const toUpdate = userInterestObjects.filter(
+      (i) => !i.is_temporary && !i.is_deleted && i.is_modified,
+    );
+    const updatedInterests = [];
+
+    for (const interest of toUpdate) {
+      if (!interest.observation_id) continue;
+
+      try {
+        // Prepare the complete interest area object for PUT update
+        const updateData = {
+          interest_area: {
+            name: interest.interest_area.name,
+            triggers: interest.interest_area.triggers?.map((t) => ({
+              name: t.name,
+              type: t.type || ("boolean" as TypeEnum),
+              response: t.response || null,
+            })) || [],
+            is_attention_point: interest.interest_area.is_attention_point || false,
+            marked_by: interest.interest_area.marked_by || [],
+            shared_with_provider: interest.interest_area.shared_with_provider || false,
+          },
+        };
+
+        console.log(`Updating interest ${interest.observation_id} with:`, updateData);
+
+        // Use PUT method to update the complete interest area
+        const result = await InterestAreasService.apiInterestAreaUpdate(
+          interest.observation_id.toString(),
+          updateData,
+        );
+
+        if (result) {
+          updatedInterests.push({
+            observation_id: result.observation_id,
+            person_id: result.person_id,
+            interest_area: result.interest_area,
+            provider_name: interest.provider_name || "",
+            attention_point_date: interest.attention_point_date,
+          } as InterestAreaResponse);
+        }
+      } catch (error: any) {
+        console.error(`Error updating interest ${interest.observation_id}:`, error);
+        
+        // Provide specific error messages
+        if (error?.response?.status === 404) {
+          setSyncError(`Interesse não encontrado: ${interest.interest_area.name}`);
+        } else if (error?.response?.status === 400) {
+          setSyncError(`Dados inválidos para: ${interest.interest_area.name}`);
+        } else {
+          setSyncError(`Erro ao atualizar: ${interest.interest_area.name}`);
+        }
+      }
+    }
+
+    // 4. Build final state with all successful operations
+    const finalInterests = [
+      // Keep unchanged interests
+      ...userInterestObjects.filter(
+        (i) => !i.is_temporary && !i.is_deleted && !i.is_modified,
+      ),
+      // Add newly created interests
+      ...createdInterests,
+      // Add updated interests
+      ...updatedInterests,
+    ];
+
+    // Update local state
+    setUserInterestObjects(finalInterests);
+    setOriginalInterests([...finalInterests]);
+    setHasChanges(false);
+    setSyncSuccess(true);
+    setTimeout(() => setSyncSuccess(false), 3000);
+
+  } catch (error: any) {
+    console.error("Error syncing with server:", error);
+    
+    if (error?.message) {
+      setSyncError(`Erro ao sincronizar: ${error.message}`);
+    } else {
+      setSyncError("Erro ao salvar interesses. Tente novamente.");
+    }
+  } finally {
+    setIsSyncing(false);
+  }
+};
 
   // Helper para verificar se interesse foi modificado
   const hasInterestChanged = (
@@ -400,11 +387,17 @@ export default function UserMainPage() {
   };
 
   const handleCancelChanges = () => {
-    // Restaurar estado original
-    setUserInterestObjects([...originalInterests]);
-    setHasChanges(false);
-    setEditionMode(false);
-  };
+  // Restaurar estado original e limpar flags
+  const restoredInterests = originalInterests.map(interest => ({
+    ...interest,
+    is_modified: false,
+    is_deleted: false,
+  }));
+  
+  setUserInterestObjects(restoredInterests);
+  setHasChanges(false);
+  setEditionMode(false);
+};
 
   // Filtrar interesses para exibição (excluir os marcados como deletados)
   const visibleInterests = userInterestObjects.filter((i) => !i.is_deleted);
@@ -498,6 +491,11 @@ export default function UserMainPage() {
                   {interest.interest_area.is_attention_point && (
                     <span className="ml-2 text-desc-campos typescriptbg-red-100 text-red-800 dark:bg-orange-900/30 dark:text-orange-300 px-2 py-1 rounded-full font-inter font-medium flex-shrink-0 border border-orange-200 dark:border-orange-700">
                       ⚠️ Atenção
+                    </span>
+                  )}
+                  {interest.is_modified && (
+                    <span className="ml-2 text-desc-campos bg-blue-500 text-white px-2 py-1 rounded-full font-inter font-medium flex-shrink-0">
+                      Modificado
                     </span>
                   )}
                 </h3>
