@@ -33,7 +33,7 @@ export default function DiaryInfoForm() {
   // Estados do formulário
   const [openTriggers, setOpenTriggers] = useState<Record<number, boolean>>({});
   const [timeRange, setTimeRange] = useState<"today" | "sinceLast">(
-    "sinceLast",
+    "sinceLast"
   );
   const [freeText, setFreeText] = useState("");
   const [shareText, setShareText] = useState(false);
@@ -48,7 +48,7 @@ export default function DiaryInfoForm() {
       try {
         const userEntity = await ApiService.apiUserEntityRetrieve();
         const interests = await InterestAreasService.apiInterestAreaList(
-          userEntity["person_id"],
+          userEntity["person_id"]
         );
         console.log("Interesses recebidos:", interests);
 
@@ -63,7 +63,7 @@ export default function DiaryInfoForm() {
           (interest) => ({
             ...interest,
             triggerResponses: {},
-          }),
+          })
         );
 
         setUserInterests(formattedInterests);
@@ -90,8 +90,8 @@ export default function DiaryInfoForm() {
       prev.map((interest) =>
         interest.observation_id === interestId
           ? { ...interest, shared }
-          : interest,
-      ),
+          : interest
+      )
     );
   };
 
@@ -99,7 +99,7 @@ export default function DiaryInfoForm() {
   const handleTriggerResponseChange = (
     interestId: number,
     triggerName: string,
-    response: string,
+    response: string
   ) => {
     setUserInterests((prev) =>
       prev.map((interest) =>
@@ -111,8 +111,8 @@ export default function DiaryInfoForm() {
                 [triggerName]: response,
               },
             }
-          : interest,
-      ),
+          : interest
+      )
     );
   };
 
@@ -128,7 +128,7 @@ export default function DiaryInfoForm() {
         .filter((interest) => {
           const triggerResponses = interest.triggerResponses || {};
           return Object.values(triggerResponses).some(
-            (response) => response && response.trim() !== "",
+            (response) => response && response.trim() !== ""
           );
         })
         .map((interest) => {
@@ -140,7 +140,7 @@ export default function DiaryInfoForm() {
               ?.filter(
                 (trigger) =>
                   triggerResponses[trigger.name] &&
-                  triggerResponses[trigger.name].trim() !== "",
+                  triggerResponses[trigger.name].trim() !== ""
               )
               .map((trigger) => ({
                 name: trigger.name,
@@ -185,7 +185,7 @@ export default function DiaryInfoForm() {
     } catch (error) {
       console.error("Erro ao salvar diário:", error);
       setSubmitError(
-        "Ocorreu um erro ao salvar o diário. Por favor, tente novamente.",
+        "Ocorreu um erro ao salvar o diário. Por favor, tente novamente."
       );
     } finally {
       setIsSubmitting(false);
@@ -290,7 +290,7 @@ export default function DiaryInfoForm() {
                     handleTriggerResponseChange(
                       interest.observation_id,
                       triggerName,
-                      response,
+                      response
                     )
                   }
                 />

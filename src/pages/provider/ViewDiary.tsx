@@ -30,7 +30,8 @@ interface InterestAreaDetail {
   triggers: TriggerDetail[];
   is_attention_point?: boolean;
   provider_name?: string | null;
-  interest_area_id?: number; // Keeping for backward compatibility
+  observation_id?: number;
+  marked_by?: string[];
 }
 
 interface DiaryDetail {
@@ -52,42 +53,15 @@ export default function ViewDiary() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedInterests, setExpandedInterests] = useState<Set<string>>(
-    new Set(),
-  );
-  const [localAttentionPoints, setLocalAttentionPoints] = useState<Set<number>>(
-    new Set(),
+    new Set()
   );
 
-  // Funções para gerenciar pontos de atenção no localStorage
-  const getAttentionPointsKey = () =>
-    `attentionPoints_provider_${
-      localStorage.getItem("provider_id") || "unknown"
-    }`;
+  const isAttentionPoint = (interest: InterestAreaDetail) => {
+    if (!interest || !interest.marked_by) return false;
 
-  const loadLocalAttentionPoints = () => {
-    try {
-      const stored = localStorage.getItem(getAttentionPointsKey());
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        return new Set(Array.isArray(parsed) ? parsed : []);
-      }
-    } catch (error) {
-      console.warn(
-        "Erro ao carregar pontos de atenção do localStorage:",
-        error,
-      );
-    }
-    return new Set<number>();
+    const providerName = localStorage.getItem("fullname");
+    return interest.marked_by.includes(providerName || "");
   };
-
-  const isAttentionPoint = (areaId: number) => {
-    return localAttentionPoints.has(areaId);
-  };
-
-  // Carregar pontos de atenção quando o componente for montado
-  useEffect(() => {
-    setLocalAttentionPoints(loadLocalAttentionPoints());
-  }, []);
 
   useEffect(() => {
     if (diaryId && personId) {
@@ -98,7 +72,7 @@ export default function ViewDiary() {
 
           // Buscar dados do paciente
           const patientData = await PersonService.apiPersonRetrieve(
-            Number(personId),
+            Number(personId)
           );
           setPatient(patientData);
 
@@ -106,47 +80,11 @@ export default function ViewDiary() {
           const diaryData =
             await ProviderService.providerPatientsDiariesRetrieve(
               diaryId,
-              Number(personId),
+              Number(personId)
             );
 
           if (diaryData) {
-            const loggedProviderName =
-              localStorage.getItem("fullname") || "Você";
-
-            // Map data to the new structure
-            const diaryWithResolvedNames: DiaryDetail = {
-              diary_id: diaryData.diary_id,
-              date: diaryData.date,
-              scope: diaryData.scope || "since_last",
-              entries: diaryData.entries
-                .map((entry: any) => ({
-                  text: entry.text || "",
-                  shared: entry.text_shared || entry.shared || false,
-                  created_at: entry.created_at || new Date().toISOString(),
-                }))
-                .filter((entry: any) => entry.shared),
-              interest_areas: (diaryData.interest_areas || [])
-                .map((area: any) => ({
-                  name: area.name || area.interest_name || "",
-                  shared: area.shared || area.shared_with_provider || false,
-                  triggers: (area.triggers || []).map((trigger: any) => ({
-                    name: trigger.name || trigger.trigger_name || "",
-                    type: trigger.type || "text",
-                    response: trigger.response || trigger.value_as_string || "",
-                    shared_with_provider:
-                      area.shared || area.shared_with_provider || false,
-                  })),
-                  is_attention_point: area.is_attention_point || false,
-                  provider_name:
-                    area.provider_name === loggedProviderName
-                      ? "Você"
-                      : area.provider_name,
-                  interest_area_id: area.interest_area_id || null,
-                }))
-                .filter((area: any) => area.shared),
-            };
-
-            setDiary(diaryWithResolvedNames);
+            setDiary(diaryData);
           } else {
             setError("Diário não encontrado.");
           }
@@ -214,35 +152,27 @@ export default function ViewDiary() {
 
   const handleAttentionToggle = async (
     areaId: number,
-    isCurrentlyFlagged: boolean,
+    isCurrentlyFlagged: boolean
   ) => {
-    const newAttentionPoints = new Set(localAttentionPoints);
-
     try {
       const request: PatchedMarkAttentionPoint = {
         area_id: areaId,
         is_attention_point: !isCurrentlyFlagged,
       };
+      console.log(request);
       await InterestAreasService.markObservationAsAttentionPoint(request);
 
-      if (isCurrentlyFlagged) {
-        newAttentionPoints.delete(areaId);
-      } else {
-        newAttentionPoints.add(areaId);
+      // Refresh diary data after toggling
+      if (diaryId && personId) {
+        const diaryData = await ProviderService.providerPatientsDiariesRetrieve(
+          diaryId,
+          Number(personId)
+        );
+        setDiary(diaryData);
       }
-
-      console.log(
-        "Toggling flag for area:",
-        areaId,
-        "New state:",
-        !isCurrentlyFlagged,
-        "Saved to server",
-      );
     } catch (error) {
       console.error("Erro ao marcar ponto de atenção:", error);
     }
-
-    setLocalAttentionPoints(newAttentionPoints);
   };
 
   const location = useLocation();
@@ -281,8 +211,8 @@ export default function ViewDiary() {
           diary?.date
             ? formatDate(diary.date)
             : patient?.first_name
-              ? `${patient.first_name} ${patient.last_name || ""}`.trim()
-              : "Visualização do Diário"
+            ? `${patient.first_name} ${patient.last_name || ""}`.trim()
+            : "Visualização do Diário"
         }
       />
 
@@ -349,15 +279,15 @@ export default function ViewDiary() {
               </h3>
               <div className="space-y-4">
                 {diary.interest_areas.map((interest) => {
-                  const interestId = interest.interest_area_id || 0;
+                  // console.log("Interest area data:", interest);
+                  const interestId = interest.observation_id || 0;
                   const isExpanded = expandedInterests.has(interest.name);
                   const hasResponses =
                     interest.triggers &&
                     interest.triggers.some(
-                      (t) => t.response && t.response.trim() !== "",
+                      (t) => t.response && t.response.trim() !== ""
                     );
-                  const isAttentionPointFlag = isAttentionPoint(interestId);
-
+                  const isAttentionPointFlag = isAttentionPoint(interest);
                   return (
                     <div
                       key={interest.name}
@@ -406,15 +336,15 @@ export default function ViewDiary() {
                       {isExpanded && (
                         <div className="px-5 pb-5">
                           <div className="border-t border-border pt-4">
-                            {/* Attention Point Button */}
-                            {interestId > 0 && (
+                            {/* Check if interest area exists */}
+                            {interestId > 0 ? (
                               <div className="mb-4">
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleAttentionToggle(
                                       interestId,
-                                      isAttentionPointFlag,
+                                      isAttentionPointFlag
                                     );
                                   }}
                                   className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
@@ -427,6 +357,12 @@ export default function ViewDiary() {
                                     ? "Remover atenção ⚠️"
                                     : "Marcar atenção ⚠️"}
                                 </button>
+                              </div>
+                            ) : (
+                              <div className="mb-4">
+                                <p className="text-sm text-destructive font-medium italic">
+                                  Área de interesse deletada
+                                </p>
                               </div>
                             )}
 
@@ -453,7 +389,7 @@ export default function ViewDiary() {
                                           </span>
                                         </div>
                                       </div>
-                                    ),
+                                    )
                                 )}
                               </div>
                             ) : (
