@@ -313,7 +313,7 @@ export default function DiaryListPage() {
             </p>
             <Button
               onClick={handleCreateDiary}
-              variant="outlineWhite"
+              variant="gradient"
               className="flex items-center gap-2 px-6 py-3"
             >
               <PlusCircle size={16} />
