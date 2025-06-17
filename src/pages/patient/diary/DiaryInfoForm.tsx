@@ -244,7 +244,7 @@ export default function DiaryInfoForm() {
         {/* Seção de Interesses do Usuário */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-lg text-accent2-700">
+            <h3 className="font-semibold text-lg text-typography">
               Seus Interesses
             </h3>
             {totalInterests > 0 && (
