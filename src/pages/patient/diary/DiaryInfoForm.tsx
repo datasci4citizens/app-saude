@@ -8,27 +8,17 @@ import { DiaryService } from "@/api/services/DiaryService";
 import { DateRangeTypeEnum } from "@/api/models/DateRangeTypeEnum";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
+import { ApiService } from "@/api/services/ApiService";
 import { SuccessMessage } from "@/components/ui/success-message";
 import { ErrorMessage } from "@/components/ui/error-message";
 import CollapsibleInterestCard from "@/components/ui/CollapsibleInterestCard";
 
-// Interfaces tipadas
-interface Trigger {
-  trigger_name: string;
-  custom_trigger_name: string | null;
-  observation_concept_id: number;
-  trigger_id: number;
-  value_as_string: string | null;
-  response?: string;
+interface UserInterest {
+  observation_id: number;
+  provider_name?: string;
   shared?: boolean;
-}
-
-interface UserInterest extends InterestArea {
-  interest_area_id: number;
-  interest_name?: string;
-  response?: string;
-  shared?: boolean;
-  triggers?: Trigger[];
+  interest_area: InterestArea;
+  triggerResponses?: Record<string, string>;
 }
 
 export default function DiaryInfoForm() {
@@ -56,8 +46,10 @@ export default function DiaryInfoForm() {
       setIsLoadingInterests(true);
 
       try {
-        const interests =
-          await InterestAreasService.personInterestAreasList(false);
+        const userEntity = await ApiService.apiUserEntityRetrieve();
+        const interests = await InterestAreasService.apiInterestAreaList(
+          userEntity["person_id"],
+        );
         console.log("Interesses recebidos:", interests);
 
         if (!interests || interests.length === 0) {
@@ -66,57 +58,17 @@ export default function DiaryInfoForm() {
           return;
         }
 
-        // Formata interesses para o estado local
+        // Formata interesses para incluir triggerResponses vazio
         const formattedInterests: UserInterest[] = interests.map(
           (interest) => ({
             ...interest,
-            interest_area_id:
-              (interest as any).interest_area_id || Math.random(),
-            interest_name:
-              interest.interest_name === null
-                ? undefined
-                : interest.interest_name,
-            response: "",
-            shared: false,
-            triggers: interest.triggers
-              ? interest.triggers.map((trigger: any) => ({
-                  trigger_name: trigger.trigger_name,
-                  custom_trigger_name: trigger.custom_trigger_name ?? null,
-                  observation_concept_id: trigger.observation_concept_id,
-                  trigger_id: trigger.trigger_id,
-                  value_as_string: trigger.value_as_string ?? null,
-                  response: "",
-                  shared: false,
-                }))
-              : [],
+            triggerResponses: {},
           }),
         );
 
-        console.log("Interesses formatados:", formattedInterests);
         setUserInterests(formattedInterests);
       } catch (error) {
         console.error("Erro ao carregar interesses:", error);
-        // Dados de teste para desenvolvimento
-        setUserInterests([
-          {
-            interest_area_id: 1,
-            observation_concept_id: null,
-            value_as_string: "Teste Interesse 1",
-            response: "",
-            shared: false,
-            provider_name: "Teste Provider",
-            triggers: [
-              {
-                trigger_name: "Como você se sentiu hoje?",
-                custom_trigger_name: null,
-                observation_concept_id: 1001,
-                trigger_id: 1,
-                value_as_string: null,
-                response: "",
-              },
-            ],
-          },
-        ]);
       } finally {
         setIsLoadingInterests(false);
       }
@@ -133,45 +85,31 @@ export default function DiaryInfoForm() {
     }));
   };
 
-  const handleInterestResponseChange = (
-    interestId: number,
-    response: string,
-  ) => {
-    setUserInterests((prev) =>
-      prev.map((interest) =>
-        interest.interest_area_id === interestId
-          ? { ...interest, response }
-          : interest,
-      ),
-    );
-  };
-
   const handleInterestSharingToggle = (interestId: number, shared: boolean) => {
     setUserInterests((prev) =>
       prev.map((interest) =>
-        interest.interest_area_id === interestId
+        interest.observation_id === interestId
           ? { ...interest, shared }
           : interest,
       ),
     );
   };
 
+  // Função atualizada para lidar com respostas de trigger
   const handleTriggerResponseChange = (
     interestId: number,
-    triggerId: number,
+    triggerName: string,
     response: string,
   ) => {
     setUserInterests((prev) =>
       prev.map((interest) =>
-        interest.interest_area_id === interestId
+        interest.observation_id === interestId
           ? {
               ...interest,
-              triggers:
-                interest.triggers?.map((trigger) =>
-                  trigger.trigger_id === triggerId
-                    ? { ...trigger, response }
-                    : trigger,
-                ) || [],
+              triggerResponses: {
+                ...(interest.triggerResponses || {}),
+                [triggerName]: response,
+              },
             }
           : interest,
       ),
@@ -187,25 +125,36 @@ export default function DiaryInfoForm() {
     try {
       // Formata áreas de interesse para a API
       const formattedInterestAreas = userInterests
-        .filter(
-          (interest) =>
-            interest.response?.trim() !== "" ||
-            interest.triggers?.some((t) => t.response?.trim() !== ""),
-        )
+        .filter((interest) => {
+          const triggerResponses = interest.triggerResponses || {};
+          return Object.values(triggerResponses).some(
+            (response) => response && response.trim() !== "",
+          );
+        })
         .map((interest) => {
+          const triggerResponses = interest.triggerResponses || {};
+
+          // Formata os triggers com respostas
           const triggersWithResponses =
-            interest.triggers?.filter(
-              (trigger) => trigger.response && trigger.response.trim() !== "",
-            ) || [];
+            interest.interest_area.triggers
+              ?.filter(
+                (trigger) =>
+                  triggerResponses[trigger.name] &&
+                  triggerResponses[trigger.name].trim() !== "",
+              )
+              .map((trigger) => ({
+                name: trigger.name,
+                type: trigger.type || "text",
+                response: triggerResponses[trigger.name] || "",
+              })) || [];
 
           return {
-            interest_area_id: interest.interest_area_id,
-            value_as_string: interest.response || null,
-            shared_with_provider: interest.shared || false,
-            triggers: triggersWithResponses.map((trigger) => ({
-              trigger_id: trigger.trigger_id,
-              value_as_string: trigger.response || "",
-            })),
+            name: interest.interest_area.name,
+            is_attention_point: interest.interest_area.is_attention_point,
+            marked_by: interest.interest_area.marked_by || [],
+            triggers: triggersWithResponses,
+            interest_area_id: interest.observation_id,
+            shared_with_provider: interest.shared,
           };
         })
         .filter((interest) => interest.triggers.length > 0);
@@ -249,11 +198,10 @@ export default function DiaryInfoForm() {
 
   // Estatísticas do formulário
   const totalInterests = userInterests.length;
-  const answeredInterests = userInterests.filter(
-    (interest) =>
-      interest.response?.trim() ||
-      interest.triggers?.some((t) => t.response?.trim()),
-  ).length;
+  const answeredInterests = userInterests.filter((interest) => {
+    const responses = interest.triggerResponses || {};
+    return Object.values(responses).some((resp) => resp && resp.trim() !== "");
+  }).length;
 
   return (
     <div className="max-w-3xl mx-auto px-4 space-y-6">
@@ -331,29 +279,17 @@ export default function DiaryInfoForm() {
             <div className="space-y-4">
               {userInterests.map((interest) => (
                 <CollapsibleInterestCard
-                  key={interest.interest_area_id}
-                  interest={{
-                    ...interest,
-                    value_as_string: interest.value_as_string ?? undefined,
-                  }}
-                  isOpen={openTriggers[interest.interest_area_id] || false}
-                  onToggle={() => toggleInterest(interest.interest_area_id)}
-                  onResponseChange={(response) =>
-                    handleInterestResponseChange(
-                      interest.interest_area_id,
-                      response,
-                    )
-                  }
+                  key={interest.observation_id}
+                  interest={interest}
+                  isOpen={openTriggers[interest.observation_id] || false}
+                  onToggle={() => toggleInterest(interest.observation_id)}
                   onSharingToggle={(shared) =>
-                    handleInterestSharingToggle(
-                      interest.interest_area_id,
-                      shared,
-                    )
+                    handleInterestSharingToggle(interest.observation_id, shared)
                   }
-                  onTriggerResponseChange={(triggerId, response) =>
+                  onTriggerResponseChange={(triggerName, response) =>
                     handleTriggerResponseChange(
-                      interest.interest_area_id,
-                      triggerId,
+                      interest.observation_id,
+                      triggerName,
                       response,
                     )
                   }

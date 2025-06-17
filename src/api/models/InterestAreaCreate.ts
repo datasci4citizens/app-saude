@@ -3,6 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { InterestArea } from "./InterestArea";
-export type InterestAreaUpdate = {
+export type InterestAreaCreate = {
   interest_area: InterestArea;
 };

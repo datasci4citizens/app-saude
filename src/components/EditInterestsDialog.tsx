@@ -17,6 +17,7 @@ import {
   type InterestAreaTrigger,
 } from "@/api";
 
+// Define clear interfaces
 interface InterestTemplate {
   id: string;
   interest_name: string;
@@ -24,127 +25,246 @@ interface InterestTemplate {
   usage_count?: number;
 }
 
+interface InterestFormData {
+  id?: string;
+  interest_name: string;
+  triggers: string[];
+}
+
 interface EditInterestDialogProps {
   open: boolean;
   onClose: () => void;
-  initialData?: {
-    id?: string;
-    interest_name: string;
-    triggers: string[];
-  };
-  onSave: (updatedData: {
-    id?: string;
-    interest_name: string;
-    triggers: string[];
-  }) => void;
-  // Mock data for demonstration - in real app, this would come from an API
-  availableTemplates?: InterestTemplate[];
+  initialData?: InterestFormData;
+  onSave: (updatedData: InterestFormData) => void;
 }
 
+// Template list item component
+const TemplateItem = ({
+  template,
+  onSelect,
+}: {
+  template: InterestTemplate;
+  onSelect: (template: InterestTemplate) => void;
+}) => {
+  return (
+    <div
+      className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+      onClick={() => onSelect(template)}
+    >
+      <div className="flex items-start justify-between mb-2">
+        <h4 className="font-medium text-sm">{template.interest_name}</h4>
+        <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+          <Users size={12} />
+          {template.usage_count || 0}
+        </div>
+      </div>
+
+      <div className="text-xs text-gray-600 dark:text-gray-300 mb-2">
+        {template.triggers.length} pergunta
+        {template.triggers.length !== 1 ? "s" : ""}
+      </div>
+
+      <div className="flex flex-wrap gap-1 mb-2">
+        {template.triggers.slice(0, 2).map((trigger, idx) => (
+          <span
+            key={idx}
+            className="bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-200 px-2 py-1 rounded text-xs max-w-[200px] truncate"
+            title={trigger.name}
+          >
+            {trigger.name}
+          </span>
+        ))}
+        {template.triggers.length > 2 && (
+          <span className="text-xs text-gray-500 dark:text-gray-400 px-2 py-1">
+            +{template.triggers.length - 2} mais
+          </span>
+        )}
+      </div>
+
+      <Button
+        size="sm"
+        className="bg-selection text-white text-xs px-2 py-1 h-auto flex items-center gap-1"
+        onClick={(e) => {
+          e.stopPropagation();
+          onSelect(template);
+        }}
+      >
+        <Copy size={12} />
+        Usar este modelo
+      </Button>
+    </div>
+  );
+};
+
+// Question tag component
+const QuestionTag = ({
+  question,
+  onRemove,
+}: {
+  question: string;
+  onRemove: () => void;
+}) => (
+  <span
+    className="bg-selection text-white px-3 py-1 rounded-full flex items-center gap-2 max-w-[240px] animate-fade-in"
+    title={question}
+  >
+    <span className="truncate flex-1 min-w-0">{question}</span>
+    <X
+      size={14}
+      className="cursor-pointer hover:scale-110 transition-transform flex-shrink-0"
+      onClick={onRemove}
+    />
+  </span>
+);
+
+// Main component
 const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
   open,
   onClose,
   initialData,
   onSave,
 }) => {
-  const [name, setName] = useState("");
-  const [questions, setQuestions] = useState<string[]>([]);
+  // Form state
+  const [formData, setFormData] = useState<InterestFormData>({
+    interest_name: "",
+    triggers: [],
+  });
   const [newQuestion, setNewQuestion] = useState("");
+
+  // Template state
   const [showTemplates, setShowTemplates] = useState(false);
   const [templateSearch, setTemplateSearch] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [templateInterests, setTemplateInterests] = useState<
+    InterestTemplate[]
+  >([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
+  // Reset form when dialog opens/closes or initial data changes
   useEffect(() => {
-    if (open && initialData) {
-      setName(initialData.interest_name || "");
-      setQuestions(initialData.triggers || []);
-    } else {
-      setName("");
-      setQuestions([]);
+    if (open) {
+      if (initialData) {
+        setFormData({
+          id: initialData.id,
+          interest_name: initialData.interest_name || "",
+          triggers: initialData.triggers || [],
+        });
+      } else {
+        setFormData({ interest_name: "", triggers: [] });
+      }
+      setNewQuestion("");
+      setSelectedTemplate(null);
     }
-    setNewQuestion("");
-    setSelectedTemplate(null);
   }, [open, initialData]);
 
+  // Fetch template interests when dialog opens
+  useEffect(() => {
+    const fetchTemplateInterests = async () => {
+      if (!open || initialData || templateInterests.length > 0) return;
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = (
+          await InterestAreasService.apiInterestAreaList()
+        ).filter((item: any) => item.person_id === null);
+
+        // Map the API response to our template format
+        const data = response
+          .map((item: any) => {
+            // Handle different response structures
+            const interestData = item.interest_area || item;
+            const name = interestData?.name || "";
+            const triggers = interestData?.triggers || [];
+
+            return {
+              id: item.observation_id?.toString() || Math.random().toString(),
+              interest_name: name,
+              triggers: triggers.map((t: any) =>
+                typeof t === "string" ? { name: t } : t,
+              ),
+              usage_count: 0,
+            };
+          })
+          .filter(
+            (template: InterestTemplate) =>
+              // Filter out invalid templates
+              template.interest_name && template.triggers.length > 0,
+          );
+
+        setTemplateInterests(data);
+      } catch (error) {
+        console.error("Error fetching templates:", error);
+        setError("Não foi possível carregar os modelos");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTemplateInterests();
+  }, [open, initialData, templateInterests.length]);
+
+  // Filter templates based on search
+  const filteredTemplates = templateInterests.filter((template) => {
+    if (!template || !templateSearch) return true;
+
+    const nameMatch = template.interest_name
+      ?.toLowerCase()
+      .includes(templateSearch.toLowerCase());
+    const triggerMatch = template.triggers?.some((trigger) =>
+      trigger?.name?.toLowerCase().includes(templateSearch.toLowerCase()),
+    );
+
+    return nameMatch || triggerMatch;
+  });
+
+  // Handlers
   const handleAddQuestion = () => {
     const trimmed = newQuestion.trim();
-    if (trimmed && !questions.includes(trimmed)) {
-      setQuestions((prev) => [...prev, trimmed]);
+    if (trimmed && !formData.triggers.includes(trimmed)) {
+      setFormData((prev) => ({
+        ...prev,
+        triggers: [...prev.triggers, trimmed],
+      }));
       setNewQuestion("");
     }
   };
 
   const handleRemoveQuestion = (index: number) => {
-    setQuestions((prev) => prev.filter((_, i) => i !== index));
+    setFormData((prev) => ({
+      ...prev,
+      triggers: prev.triggers.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleUseTemplate = (template: InterestTemplate) => {
+    setFormData({
+      id: initialData?.id,
+      interest_name: template.interest_name,
+      triggers: template.triggers.map((trigger) => trigger.name),
+    });
+    setSelectedTemplate(template.id);
+    setShowTemplates(false);
+    setTemplateSearch("");
   };
 
   const handleSubmit = () => {
-    if (!name.trim() || questions.length === 0) return;
-    onSave({
-      id: initialData?.id,
-      interest_name: name.trim(),
-      triggers: questions,
-    });
-    onClose();
+    if (!formData.interest_name.trim() || formData.triggers.length === 0)
+      return;
+    onSave(formData);
+    handleClose();
   };
 
   const handleClose = () => {
-    setName("");
-    setQuestions([]);
+    setFormData({ interest_name: "", triggers: [] });
     setNewQuestion("");
     setShowTemplates(false);
     setTemplateSearch("");
     setSelectedTemplate(null);
     onClose();
   };
-
-  const handleUseTemplate = (template: InterestTemplate) => {
-    setName(template.interest_name);
-    setQuestions(
-      template.triggers.map((trigger) =>
-        typeof trigger === "string" ? trigger : (trigger.trigger_name ?? ""),
-      ),
-    );
-    setSelectedTemplate(template.id);
-    setShowTemplates(false);
-    setTemplateSearch("");
-  };
-
-  const [templateInterests, setTemplateInterests] = useState<
-    InterestTemplate[]
-  >([]);
-  useEffect(() => {
-    const fetchTemplateInterests = async () => {
-      try {
-        const response =
-          await InterestAreasService.personInterestAreasList(true);
-        const data = response.map((item: InterestArea) => ({
-          id: item.interest_area_id?.toString() || "",
-          interest_name: item.interest_name ?? "",
-          triggers: item.triggers || [],
-          usage_count: 0,
-        }));
-        setTemplateInterests(data);
-      } catch (error) {
-        setTemplateInterests([]);
-      }
-    };
-    if (open && !initialData) {
-      fetchTemplateInterests();
-    }
-  }, [open, initialData]);
-
-  const filteredTemplates = templateInterests.filter(
-    (template) =>
-      template.interest_name
-        .toLowerCase()
-        .includes(templateSearch.toLowerCase()) ||
-      template.triggers.some((trigger) =>
-        trigger.trigger_name
-          ?.toLowerCase()
-          .includes(templateSearch.toLowerCase()),
-      ),
-  );
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -194,62 +314,26 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
                   </div>
 
                   <div className="max-h-64 overflow-y-auto space-y-2 border border-gray-200 dark:border-gray-600 rounded-lg p-2">
-                    {filteredTemplates.map((template) => (
-                      <div
-                        key={template.id}
-                        className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
-                        onClick={() => handleUseTemplate(template)}
-                      >
-                        <div className="flex items-start justify-between mb-2">
-                          <h4 className="font-medium text-sm">
-                            {template.interest_name}
-                          </h4>
-                          <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                            <Users size={12} />
-                            {template.usage_count}
-                          </div>
-                        </div>
-
-                        <div className="text-xs text-gray-600 dark:text-gray-300 mb-2">
-                          {template.triggers.length} pergunta
-                          {template.triggers.length !== 1 ? "s" : ""}
-                        </div>
-
-                        <div className="flex flex-wrap gap-1 mb-2">
-                          {template.triggers.slice(0, 2).map((trigger, idx) => (
-                            <span
-                              key={idx}
-                              className="bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-200 px-2 py-1 rounded text-xs max-w-[200px] truncate"
-                              title={trigger.trigger_name ?? undefined}
-                            >
-                              {trigger.trigger_name}
-                            </span>
-                          ))}
-                          {template.triggers.length > 2 && (
-                            <span className="text-xs text-gray-500 dark:text-gray-400 px-2 py-1">
-                              +{template.triggers.length - 2} mais
-                            </span>
-                          )}
-                        </div>
-
-                        <Button
-                          size="sm"
-                          className="bg-selection text-white text-xs px-2 py-1 h-auto flex items-center gap-1"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleUseTemplate(template);
-                          }}
-                        >
-                          <Copy size={12} />
-                          Usar este modelo
-                        </Button>
+                    {isLoading ? (
+                      <div className="text-center py-8 text-gray-500">
+                        Carregando modelos...
                       </div>
-                    ))}
-
-                    {filteredTemplates.length === 0 && (
-                      <div className="text-center py-8 text-gray-500 dark:text-gray-400 text-sm">
+                    ) : error ? (
+                      <div className="text-center py-8 text-red-500">
+                        {error}
+                      </div>
+                    ) : filteredTemplates.length === 0 ? (
+                      <div className="text-center py-8 text-gray-500">
                         Nenhum exemplo encontrado
                       </div>
+                    ) : (
+                      filteredTemplates.map((template) => (
+                        <TemplateItem
+                          key={template.id}
+                          template={template}
+                          onSelect={handleUseTemplate}
+                        />
+                      ))
                     )}
                   </div>
                 </div>
@@ -275,15 +359,20 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
             id="interest-name"
             name="interest-name"
             placeholder="Nome do interesse"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={formData.interest_name}
+            onChange={(e) =>
+              setFormData((prev) => ({
+                ...prev,
+                interest_name: e.target.value,
+              }))
+            }
             className="w-full"
           />
 
           {/* Questions Section */}
           <div>
             <label className="block text-base font-semibold text-[var(--typography)] mb-1">
-              Perguntas ({questions.length})
+              Perguntas ({formData.triggers.length})
             </label>
             <div className="flex gap-2 mb-2">
               <div className="flex-1">
@@ -313,23 +402,16 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
             </div>
 
             <div className="flex flex-wrap gap-2 max-h-32 overflow-y-hidden hover:overflow-y-auto scrollbar-thin pr-1 transition-all">
-              {questions.map((q, index) => (
-                <span
-                  key={`${q}-${index}`}
-                  className="bg-selection text-white px-3 py-1 rounded-full flex items-center gap-2 max-w-[240px] animate-fade-in"
-                  title={q}
-                >
-                  <span className="truncate flex-1 min-w-0">{q}</span>
-                  <X
-                    size={14}
-                    className="cursor-pointer hover:scale-110 transition-transform flex-shrink-0"
-                    onClick={() => handleRemoveQuestion(index)}
-                  />
-                </span>
+              {formData.triggers.map((question, index) => (
+                <QuestionTag
+                  key={`${question}-${index}`}
+                  question={question}
+                  onRemove={() => handleRemoveQuestion(index)}
+                />
               ))}
             </div>
 
-            {questions.length === 0 && (
+            {formData.triggers.length === 0 && (
               <p className="text-xs text-gray-500 mt-2 italic">
                 Adicione pelo menos uma pergunta para continuar
               </p>
@@ -344,7 +426,9 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
           <Button
             className="bg-selection text-white"
             onClick={handleSubmit}
-            disabled={!name.trim() || questions.length === 0}
+            disabled={
+              !formData.interest_name.trim() || formData.triggers.length === 0
+            }
           >
             {initialData ? "Salvar Alterações" : "Criar Interesse"}
           </Button>

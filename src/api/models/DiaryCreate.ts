@@ -3,11 +3,11 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { DateRangeTypeEnum } from "./DateRangeTypeEnum";
-import type { InterestAreaUpdate } from "./InterestAreaUpdate";
+import type { InterestArea } from "./InterestArea";
 export type DiaryCreate = {
   date_range_type: DateRangeTypeEnum;
   text: string;
   text_shared: boolean;
   diary_shared: boolean;
-  interest_areas?: Array<InterestAreaUpdate>;
+  interest_areas?: Array<InterestArea>;
 };
