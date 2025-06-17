@@ -241,7 +241,7 @@ export function UserInfoForm({
 
       <Button
         type="submit"
-        variant="white"
+        variant="gradient"
         className="w-full mt-4 font-['Inter'] font-bold mb-4"
       >
         CONTINUAR
