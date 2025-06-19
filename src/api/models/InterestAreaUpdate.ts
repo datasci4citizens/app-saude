@@ -2,7 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { InterestArea } from "./InterestArea";
+import type { InterestArea } from './InterestArea';
 export type InterestAreaUpdate = {
-  interest_area: InterestArea;
+    interest_area: InterestArea;
 };
+

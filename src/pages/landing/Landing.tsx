@@ -37,8 +37,9 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
       const tokenRequest = {
         token: idToken,
       };
-      const loginResponse =
-        await AuthService.authLoginGoogleCreate(tokenRequest);
+      const loginResponse = await AuthService.authLoginGoogleCreate(
+        tokenRequest
+      );
 
       handleLoginSuccess(loginResponse);
     } catch (err: any) {
@@ -58,8 +59,9 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
         const codeRequest: Auth = {
           code: code,
         };
-        const loginResponse =
-          await AuthService.authLoginGoogleCreate(codeRequest);
+        const loginResponse = await AuthService.authLoginGoogleCreate(
+          codeRequest
+        );
 
         handleLoginSuccess(loginResponse);
       } catch (err) {
@@ -90,6 +92,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     localStorage.setItem("role", loginResponse.role);
     localStorage.setItem("userId", String(loginResponse.user_id));
     localStorage.setItem("fullname", loginResponse.full_name || "");
+    localStorage.setItem("social_name", loginResponse.social_name || "");
     localStorage.setItem("profileImage", loginResponse.profile_picture || "");
 
     // Usar o role para decidir navegação
