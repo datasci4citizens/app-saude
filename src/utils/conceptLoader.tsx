@@ -21,7 +21,8 @@ interface HealthConceptsResult extends BaseConceptLoaderResult {
   comorbiditiesOptions: SelectOption[]; // Options for comorbidities
   medicationOptions: SelectOption[]; // Options for medications
   substanceOptions: SelectOption[]; // Options for substances
-  conceptIds: { // Mapping of concept IDs
+  conceptIds: {
+    // Mapping of concept IDs
     sleepHealth: number;
     physicalExercise: number;
     eatingHabits: number;
@@ -55,11 +56,19 @@ interface InterestAreasConceptsResult extends BaseConceptLoaderResult {
  */
 export function useHealthConcepts(): HealthConceptsResult {
   // Options for selects
-  const [sleepHealthOptions, setSleepHealthOptions] = useState<SelectOption[]>([]);
+  const [sleepHealthOptions, setSleepHealthOptions] = useState<SelectOption[]>(
+    [],
+  );
   const [exerciseOptions, setExerciseOptions] = useState<SelectOption[]>([]);
-  const [eatingHabitsOptions, setEatingHabitsOptions] = useState<SelectOption[]>([]);
-  const [comorbiditiesOptions, setComorbiditiesOptions] = useState<SelectOption[]>([]);
-  const [medicationOptions, setMedicationOptions] = useState<SelectOption[]>([]);
+  const [eatingHabitsOptions, setEatingHabitsOptions] = useState<
+    SelectOption[]
+  >([]);
+  const [comorbiditiesOptions, setComorbiditiesOptions] = useState<
+    SelectOption[]
+  >([]);
+  const [medicationOptions, setMedicationOptions] = useState<SelectOption[]>(
+    [],
+  );
   const [substanceOptions, setSubstanceOptions] = useState<SelectOption[]>([]);
 
   // Loading and error states
@@ -157,7 +166,9 @@ export function useHealthConcepts(): HealthConceptsResult {
         );
       } catch (error) {
         console.error("Error fetching health concepts:", error);
-        setError("Erro ao carregar opções. Algumas funcionalidades podem estar limitadas.");
+        setError(
+          "Erro ao carregar opções. Algumas funcionalidades podem estar limitadas.",
+        );
 
         // Set fallback options
         setSleepHealthOptions([
@@ -217,7 +228,10 @@ export function useDemographicConcepts(): DemographicConceptsResult {
 
       try {
         // Fetch gender and race concepts
-        const concepts = await ConceptService.apiConceptList("Gender,Race", "pt");
+        const concepts = await ConceptService.apiConceptList(
+          "Gender,Race",
+          "pt",
+        );
 
         // Process gender options
         setGenderOptions(
@@ -242,7 +256,9 @@ export function useDemographicConcepts(): DemographicConceptsResult {
         );
       } catch (error) {
         console.error("Error fetching demographic concepts:", error);
-        setError("Erro ao carregar opções do servidor. Tente novamente mais tarde.");
+        setError(
+          "Erro ao carregar opções do servidor. Tente novamente mais tarde.",
+        );
 
         // Fallback options
         setGenderOptions([
@@ -293,7 +309,10 @@ export function useLocationConcepts(): LocationConceptsResult {
 
       try {
         // Fetch location concepts
-        const concepts = await ConceptService.apiConceptList("Brazil States", "pt");
+        const concepts = await ConceptService.apiConceptList(
+          "Brazil States",
+          "pt",
+        );
 
         // Process state options
         setStateOptions(
@@ -307,7 +326,9 @@ export function useLocationConcepts(): LocationConceptsResult {
         );
       } catch (error) {
         console.error("Error fetching location concepts:", error);
-        setError("Erro ao carregar opções do servidor. Tente novamente mais tarde.");
+        setError(
+          "Erro ao carregar opções do servidor. Tente novamente mais tarde.",
+        );
 
         // Fallback options
         setStateOptions([
@@ -335,7 +356,9 @@ export function useLocationConcepts(): LocationConceptsResult {
  * @returns {InterestAreasConceptsResult} The interest areas concepts options and loading state.
  */
 export function useInterestAreasConcepts(): InterestAreasConceptsResult {
-  const [interestAreasOptions, setInterestAreasOptions] = useState<SelectOption[]>([]);
+  const [interestAreasOptions, setInterestAreasOptions] = useState<
+    SelectOption[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -365,7 +388,9 @@ export function useInterestAreasConcepts(): InterestAreasConceptsResult {
         );
       } catch (error) {
         console.error("Error fetching interest areas concepts:", error);
-        setError("Erro ao carregar áreas de interesse. Tente novamente mais tarde.");
+        setError(
+          "Erro ao carregar áreas de interesse. Tente novamente mais tarde.",
+        );
 
         // Fallback options
         setInterestAreasOptions([

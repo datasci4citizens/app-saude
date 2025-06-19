@@ -192,7 +192,8 @@ export function App() {
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-primary text-typography">
-        <RouterProvider router={router} /> {/* Router provider for the application */}
+        <RouterProvider router={router} />{" "}
+        {/* Router provider for the application */}
         <div className="fixed top-4 right-4 z-50">
           <ThemeToggle /> {/* Theme toggle button */}
         </div>
