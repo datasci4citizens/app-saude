@@ -13,6 +13,7 @@ export type AuthTokenResponse = {
    * Full name of the user.
    */
   full_name: string;
+  social_name: string;
   /**
    * URL of the user's profile picture.
    */

@@ -58,8 +58,7 @@ export default function ViewDiary() {
 
   const isAttentionPoint = (interest: InterestAreaDetail) => {
     if (!interest || !interest.marked_by) return false;
-
-    const providerName = localStorage.getItem("fullname");
+    const providerName = localStorage.getItem("social_name");
     return interest.marked_by.includes(providerName || "");
   };
 

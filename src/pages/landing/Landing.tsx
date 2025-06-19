@@ -90,6 +90,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
     localStorage.setItem("role", loginResponse.role);
     localStorage.setItem("userId", String(loginResponse.user_id));
     localStorage.setItem("fullname", loginResponse.full_name || "");
+    localStorage.setItem("social_name", loginResponse.social_name || "");
     localStorage.setItem("profileImage", loginResponse.profile_picture || "");
 
     // Usar o role para decidir navegação
