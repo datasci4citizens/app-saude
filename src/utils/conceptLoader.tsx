@@ -1,26 +1,27 @@
 import { useState, useEffect } from "react";
 import { ConceptService } from "@/api/services/ConceptService";
 
-// Shared interfaces
+// Shared interfaces to represent a select option
 export interface SelectOption {
-  value: string | number;
-  label: string;
+  value: string | number; // The value of the option
+  label: string; // The label to display for the option
 }
 
+// Base interface for loading results, includes loading and error state
 interface BaseConceptLoaderResult {
-  isLoading: boolean;
-  error: string | null;
+  isLoading: boolean; // Indicates if the loading is in progress
+  error: string | null; // Error message if an error occurs
 }
 
 // Type for the health concepts hook result
 interface HealthConceptsResult extends BaseConceptLoaderResult {
-  sleepHealthOptions: SelectOption[];
-  exerciseOptions: SelectOption[];
-  eatingHabitsOptions: SelectOption[];
-  comorbiditiesOptions: SelectOption[];
-  medicationOptions: SelectOption[];
-  substanceOptions: SelectOption[];
-  conceptIds: {
+  sleepHealthOptions: SelectOption[]; // Options for sleep health
+  exerciseOptions: SelectOption[]; // Options for exercise
+  eatingHabitsOptions: SelectOption[]; // Options for eating habits
+  comorbiditiesOptions: SelectOption[]; // Options for comorbidities
+  medicationOptions: SelectOption[]; // Options for medications
+  substanceOptions: SelectOption[]; // Options for substances
+  conceptIds: { // Mapping of concept IDs
     sleepHealth: number;
     physicalExercise: number;
     eatingHabits: number;
@@ -33,37 +34,32 @@ interface HealthConceptsResult extends BaseConceptLoaderResult {
 
 // Type for demographic concepts hook result
 interface DemographicConceptsResult extends BaseConceptLoaderResult {
-  genderOptions: SelectOption[];
-  raceOptions: SelectOption[];
+  genderOptions: SelectOption[]; // Options for gender
+  raceOptions: SelectOption[]; // Options for race
 }
 
 // Type for location concepts hook result
 interface LocationConceptsResult extends BaseConceptLoaderResult {
-  stateOptions: SelectOption[];
+  stateOptions: SelectOption[]; // Options for states
 }
 
+// Type for interest areas concepts hook result
 interface InterestAreasConceptsResult extends BaseConceptLoaderResult {
-  interestAreasOptions: SelectOption[];
+  interestAreasOptions: SelectOption[]; // Options for interest areas
 }
 
 /**
  * Hook to load health concepts for UserInfoForm3
+ *
+ * @returns {HealthConceptsResult} The health concepts options and loading state.
  */
 export function useHealthConcepts(): HealthConceptsResult {
   // Options for selects
-  const [sleepHealthOptions, setSleepHealthOptions] = useState<SelectOption[]>(
-    [],
-  );
+  const [sleepHealthOptions, setSleepHealthOptions] = useState<SelectOption[]>([]);
   const [exerciseOptions, setExerciseOptions] = useState<SelectOption[]>([]);
-  const [eatingHabitsOptions, setEatingHabitsOptions] = useState<
-    SelectOption[]
-  >([]);
-  const [comorbiditiesOptions, setComorbiditiesOptions] = useState<
-    SelectOption[]
-  >([]);
-  const [medicationOptions, setMedicationOptions] = useState<SelectOption[]>(
-    [],
-  );
+  const [eatingHabitsOptions, setEatingHabitsOptions] = useState<SelectOption[]>([]);
+  const [comorbiditiesOptions, setComorbiditiesOptions] = useState<SelectOption[]>([]);
+  const [medicationOptions, setMedicationOptions] = useState<SelectOption[]>([]);
   const [substanceOptions, setSubstanceOptions] = useState<SelectOption[]>([]);
 
   // Loading and error states
@@ -161,9 +157,7 @@ export function useHealthConcepts(): HealthConceptsResult {
         );
       } catch (error) {
         console.error("Error fetching health concepts:", error);
-        setError(
-          "Erro ao carregar opções. Algumas funcionalidades podem estar limitadas.",
-        );
+        setError("Erro ao carregar opções. Algumas funcionalidades podem estar limitadas.");
 
         // Set fallback options
         setSleepHealthOptions([
@@ -207,6 +201,8 @@ export function useHealthConcepts(): HealthConceptsResult {
 
 /**
  * Hook to load demographic concepts for UserInfoForm
+ *
+ * @returns {DemographicConceptsResult} The demographic concepts options and loading state.
  */
 export function useDemographicConcepts(): DemographicConceptsResult {
   const [genderOptions, setGenderOptions] = useState<SelectOption[]>([]);
@@ -221,10 +217,7 @@ export function useDemographicConcepts(): DemographicConceptsResult {
 
       try {
         // Fetch gender and race concepts
-        const concepts = await ConceptService.apiConceptList(
-          "Gender,Race",
-          "pt",
-        );
+        const concepts = await ConceptService.apiConceptList("Gender,Race", "pt");
 
         // Process gender options
         setGenderOptions(
@@ -249,9 +242,7 @@ export function useDemographicConcepts(): DemographicConceptsResult {
         );
       } catch (error) {
         console.error("Error fetching demographic concepts:", error);
-        setError(
-          "Erro ao carregar opções do servidor. Tente novamente mais tarde.",
-        );
+        setError("Erro ao carregar opções do servidor. Tente novamente mais tarde.");
 
         // Fallback options
         setGenderOptions([
@@ -287,6 +278,8 @@ export function useDemographicConcepts(): DemographicConceptsResult {
 
 /**
  * Hook to load location concepts for UserInfoForm2
+ *
+ * @returns {LocationConceptsResult} The location concepts options and loading state.
  */
 export function useLocationConcepts(): LocationConceptsResult {
   const [stateOptions, setStateOptions] = useState<SelectOption[]>([]);
@@ -300,10 +293,7 @@ export function useLocationConcepts(): LocationConceptsResult {
 
       try {
         // Fetch location concepts
-        const concepts = await ConceptService.apiConceptList(
-          "Brazil States",
-          "pt",
-        );
+        const concepts = await ConceptService.apiConceptList("Brazil States", "pt");
 
         // Process state options
         setStateOptions(
@@ -317,9 +307,7 @@ export function useLocationConcepts(): LocationConceptsResult {
         );
       } catch (error) {
         console.error("Error fetching location concepts:", error);
-        setError(
-          "Erro ao carregar opções do servidor. Tente novamente mais tarde.",
-        );
+        setError("Erro ao carregar opções do servidor. Tente novamente mais tarde.");
 
         // Fallback options
         setStateOptions([
@@ -343,11 +331,11 @@ export function useLocationConcepts(): LocationConceptsResult {
 
 /**
  * Hook to load interest areas concepts for UserMainPage
+ *
+ * @returns {InterestAreasConceptsResult} The interest areas concepts options and loading state.
  */
 export function useInterestAreasConcepts(): InterestAreasConceptsResult {
-  const [interestAreasOptions, setInterestAreasOptions] = useState<
-    SelectOption[]
-  >([]);
+  const [interestAreasOptions, setInterestAreasOptions] = useState<SelectOption[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -377,9 +365,7 @@ export function useInterestAreasConcepts(): InterestAreasConceptsResult {
         );
       } catch (error) {
         console.error("Error fetching interest areas concepts:", error);
-        setError(
-          "Erro ao carregar áreas de interesse. Tente novamente mais tarde.",
-        );
+        setError("Erro ao carregar áreas de interesse. Tente novamente mais tarde.");
 
         // Fallback options
         setInterestAreasOptions([
