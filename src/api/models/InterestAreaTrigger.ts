@@ -2,10 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { TypeEnum } from './TypeEnum';
+import type { TypeEnum } from "./TypeEnum";
 export type InterestAreaTrigger = {
-    name: string;
-    type?: TypeEnum;
-    response: string | null;
+  name: string;
+  type?: TypeEnum;
+  response: string | null;
 };
-

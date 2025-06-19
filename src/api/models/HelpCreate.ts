@@ -3,8 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type HelpCreate = {
-    provider?: number | null;
-    value_as_string?: string | null;
-    shared_with_provider?: boolean | null;
+  provider?: number | null;
+  value_as_string?: string | null;
+  shared_with_provider?: boolean | null;
 };
-

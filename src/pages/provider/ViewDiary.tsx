@@ -53,7 +53,7 @@ export default function ViewDiary() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedInterests, setExpandedInterests] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
 
   const isAttentionPoint = (interest: InterestAreaDetail) => {
@@ -71,7 +71,7 @@ export default function ViewDiary() {
 
           // Buscar dados do paciente
           const patientData = await PersonService.apiPersonRetrieve(
-            Number(personId)
+            Number(personId),
           );
           setPatient(patientData);
 
@@ -79,7 +79,7 @@ export default function ViewDiary() {
           const diaryData =
             await ProviderService.providerPatientsDiariesRetrieve(
               diaryId,
-              Number(personId)
+              Number(personId),
             );
 
           if (diaryData) {
@@ -151,7 +151,7 @@ export default function ViewDiary() {
 
   const handleAttentionToggle = async (
     areaId: number,
-    isCurrentlyFlagged: boolean
+    isCurrentlyFlagged: boolean,
   ) => {
     try {
       const request: PatchedMarkAttentionPoint = {
@@ -165,7 +165,7 @@ export default function ViewDiary() {
       if (diaryId && personId) {
         const diaryData = await ProviderService.providerPatientsDiariesRetrieve(
           diaryId,
-          Number(personId)
+          Number(personId),
         );
         setDiary(diaryData);
       }
@@ -210,8 +210,8 @@ export default function ViewDiary() {
           diary?.date
             ? formatDate(diary.date)
             : patient?.first_name
-            ? `${patient.first_name} ${patient.last_name || ""}`.trim()
-            : "Visualização do Diário"
+              ? `${patient.first_name} ${patient.last_name || ""}`.trim()
+              : "Visualização do Diário"
         }
       />
 
@@ -284,7 +284,7 @@ export default function ViewDiary() {
                   const hasResponses =
                     interest.triggers &&
                     interest.triggers.some(
-                      (t) => t.response && t.response.trim() !== ""
+                      (t) => t.response && t.response.trim() !== "",
                     );
                   const isAttentionPointFlag = isAttentionPoint(interest);
                   return (
@@ -343,7 +343,7 @@ export default function ViewDiary() {
                                     e.stopPropagation();
                                     handleAttentionToggle(
                                       interestId,
-                                      isAttentionPointFlag
+                                      isAttentionPointFlag,
                                     );
                                   }}
                                   className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
@@ -388,7 +388,7 @@ export default function ViewDiary() {
                                           </span>
                                         </div>
                                       </div>
-                                    )
+                                    ),
                                 )}
                               </div>
                             ) : (

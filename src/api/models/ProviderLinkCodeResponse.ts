@@ -3,9 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export type ProviderLinkCodeResponse = {
-    /**
-     * Code generated to link a person to this provider (ex: 'A1B2C3')
-     */
-    code: string;
+  /**
+   * Code generated to link a person to this provider (ex: 'A1B2C3')
+   */
+  code: string;
 };
-
