@@ -30,6 +30,7 @@ import ViewDiary from "./pages/provider/ViewDiary"; // Import ViewDiary
 import ManageProfessionals from "./pages/patient/profile/ManageProfessionals";
 import TermsScreen from "./pages/landing/Terms";
 
+// NotFound component for handling 404 errors
 const NotFound = () => (
   <div>
     <h1>404</h1>
@@ -38,61 +39,57 @@ const NotFound = () => (
   </div>
 );
 
+// SWR configuration for data fetching
 <SWRConfig value={{ revalidateOnFocus: false }}>
   <App />
 </SWRConfig>;
 
+// Create a browser router instance with defined routes
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <OnboardingSlider />,
+    element: <OnboardingSlider />, // Landing page component
   },
   {
     path: "/login",
-    element: <OnboardingSlider />,
+    element: <OnboardingSlider />, // Login page component
   },
   {
     path: "/welcome",
-    element: <OnboardingSlider />,
+    element: <OnboardingSlider />, // Welcome page component
   },
   {
     path: "/components",
-    element: <ComponentCatalog />,
+    element: <ComponentCatalog />, // Component catalog page
   },
   {
     path: "/forms-user",
-    element: <UserOnboarding />,
+    element: <UserOnboarding />, // User onboarding page
   },
   {
     path: "/diary",
-    element: <DiaryListPage />,
+    element: <DiaryListPage />, // Page displaying the list of diaries
   },
   {
     path: "diary/new",
-    element: <DiaryPage />,
+    element: <DiaryPage />, // Page to create a new diary entry
   },
   {
     path: "/diary/:diaryId",
-    element: <ViewDiaryEntry />,
-  },
-
-  {
-    path: "/diary/:diaryId",
-    element: <ViewDiaryEntry />,
+    element: <ViewDiaryEntry />, // Page to view a specific diary entry
   },
   {
     path: "/reminders",
-    element: <Reminders />,
+    element: <Reminders />, // Page for managing reminders
   },
   {
     path: "/new-reminder",
-    element: <NewReminder />,
+    element: <NewReminder />, // Page to create a new reminder
   },
-
   {
     path: "/reminder",
     element: (
-      <ViewReminder
+      <ViewReminder // View specific reminder with details
         reminder={{
           title: "Risperidona",
           observation: "Tomar após refeição.",
@@ -106,76 +103,79 @@ const router = createBrowserRouter([
   },
   {
     path: "/forms-prof",
-    element: <ProfessionalOnboarding />,
+    element: <ProfessionalOnboarding />, // Professional onboarding page
   },
   {
     path: "/complete-profile",
     element: (
-      <ProtectedRoute element={<CompleteProfile />} allowedTypes={["none"]} />
+      <ProtectedRoute // Protected route for completing user profile
+        element={<CompleteProfile />}
+        allowedTypes={["none"]}
+      />
     ),
   },
   {
     path: "/acs-main-page",
-    element: <AcsMainPage />,
+    element: <AcsMainPage />, // ACS main page for providers
   },
   {
     path: "/user-main-page",
-    element: <UsermainPage />,
+    element: <UsermainPage />, // Main page for users
   },
   {
     path: "/user-selected-interests",
-    element: <ViewSelectedInterests />,
+    element: <ViewSelectedInterests />, // Page to view selected user interests
   },
   {
     path: "/emergencies",
-    element: <EmergencyPage />,
+    element: <EmergencyPage />, // Page for handling emergencies
   },
   {
     path: "/patients",
-    element: <PatientsPage />,
+    element: <PatientsPage />, // Page displaying patients list
   },
   {
     path: "/emergency-user",
-    element: <EmergencyUser />,
+    element: <EmergencyUser />, // Page for emergency user actions
   },
   {
     path: "/modify-habits",
-    element: <ModifyHabits />,
+    element: <ModifyHabits />, // Page for modifying habits
   },
   {
     path: "/profile",
-    element: <ProfilePage />,
+    element: <ProfilePage />, // User profile page
   },
   {
     path: "/acs-profile",
-    element: <AcsProfilePage />,
+    element: <AcsProfilePage />, // ACS provider profile page
   },
   {
     path: "/interests",
-    element: <InterestPage />,
+    element: <InterestPage />, // Page for managing interests
   },
   {
-    path: "/provider/patient/:id", // Route for viewing a patient
+    path: "/provider/patient/:id", // Route for viewing a patient by ID
     element: <ViewPatient />,
   },
   {
-    path: "/provider/patient/:id/:context", // Route for viewing a patient with context (e.g., emergency)
+    path: "/provider/patient/:id/:context", // Viewing a patient with context
     element: <ViewPatient />,
   },
   {
-    path: "/provider/patient/:personId/diary/:diaryId", // Route for viewing a specific diary
+    path: "/provider/patient/:personId/diary/:diaryId", // Viewing a specific diary for a patient
     element: <ViewDiary />,
   },
   {
-    path: "/provider/help/:personId/:helpId", // Route for viewing a help request
+    path: "/provider/help/:personId/:helpId", // Viewing a help request
     element: <ViewHelp />,
   },
   {
-    path: "/manage-professionals",
+    path: "/manage-professionals", // Page for managing professionals
     element: <ManageProfessionals />,
   },
   {
-    path: "/terms",
+    path: "/terms", // Terms and conditions page
     element: (
       <TermsScreen
         onNext={() => {}}
@@ -186,18 +186,23 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "*",
+    path: "*", // Catch-all route for 404 errors
     element: <NotFound />,
   },
 ]);
 
+/**
+ * Main application component that provides the routing and theming context.
+ *
+ * @returns {JSX.Element} The main application wrapped in ThemeProvider and RouterProvider.
+ */
 export function App() {
   return (
     <ThemeProvider>
       <div className="min-h-screen bg-primary text-typography">
-        <RouterProvider router={router} />
+        <RouterProvider router={router} /> {/* Router provider for the application */}
         <div className="fixed top-4 right-4 z-50">
-          <ThemeToggle />
+          <ThemeToggle /> {/* Theme toggle button */}
         </div>
       </div>
     </ThemeProvider>
