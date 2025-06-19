@@ -29,15 +29,7 @@ import ViewHelp from "./pages/provider/ViewHelp"; // Import ViewHelp
 import ViewDiary from "./pages/provider/ViewDiary"; // Import ViewDiary
 import ManageProfessionals from "./pages/patient/profile/ManageProfessionals";
 import TermsScreen from "./pages/landing/Terms";
-
-// NotFound component for handling 404 errors
-const NotFound = () => (
-  <div>
-    <h1>404</h1>
-    <p>Oops! The page you're looking for does not exist.</p>
-    <a href="/">Go back to Home</a>
-  </div>
-);
+import { NotFound } from "./pages/NotFound";
 
 // SWR configuration for data fetching
 <SWRConfig value={{ revalidateOnFocus: false }}>
