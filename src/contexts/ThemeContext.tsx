@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import type React from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import "../globals.css"; // Import the global styles
 
 // Define the possible theme types

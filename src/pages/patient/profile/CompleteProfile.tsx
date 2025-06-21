@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function CompleteProfile() {
@@ -37,7 +38,7 @@ export default function CompleteProfile() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    let validToken = token;
+    const validToken = token;
 
     const endpoint =
       userType === "person"

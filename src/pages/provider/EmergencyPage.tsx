@@ -39,9 +39,9 @@ const formatDisplayDate = (dateString: string | undefined | null): string => {
         const parts = dateString.split("/");
         if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
           // Verifica se todas as partes existem
-          const day = parseInt(parts[0], 10);
-          const month = parseInt(parts[1], 10) - 1; // Mês é 0-indexado
-          const year = parseInt(parts[2], 10);
+          const day = Number.parseInt(parts[0], 10);
+          const month = Number.parseInt(parts[1], 10) - 1; // Mês é 0-indexado
+          const year = Number.parseInt(parts[2], 10);
           // Verifica se os números são válidos antes de criar a data
           if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
             const manualDate = new Date(year, month, day);
@@ -126,9 +126,9 @@ export default function EmergencyPage() {
         const yearStr = parts[2];
 
         if (dayStr && monthStr && yearStr) {
-          const day = parseInt(dayStr, 10);
-          const month = parseInt(monthStr, 10) - 1; // Mês é 0-indexado em Date
-          const year = parseInt(yearStr, 10);
+          const day = Number.parseInt(dayStr, 10);
+          const month = Number.parseInt(monthStr, 10) - 1; // Mês é 0-indexado em Date
+          const year = Number.parseInt(yearStr, 10);
 
           if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
             const d = new Date(year, month, day);

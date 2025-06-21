@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import Header from "@/components/ui/header";
 import { FaTrash } from "react-icons/fa"; // FontAwesome trash icon for delete
 import BottomNavigationBar from "@/components/ui/navigator-bar";

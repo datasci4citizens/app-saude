@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ProfileBanner from "@/components/ui/profile-banner";
 import BottomNavigationBar from "@/components/ui/navigator-bar";

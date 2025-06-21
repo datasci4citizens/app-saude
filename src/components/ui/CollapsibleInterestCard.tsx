@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import HabitCard from "@/components/ui/habit-card";
 import { Switch } from "@/components/ui/switch";

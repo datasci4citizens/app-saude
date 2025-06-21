@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/forms/button";
 import { TextField } from "@/components/forms/text_input";
 import { X, Search, Users, Copy } from "lucide-react";

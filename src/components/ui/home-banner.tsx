@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import header from "@/lib/images/header.png";
 
 interface HomeBannerProps {

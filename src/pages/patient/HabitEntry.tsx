@@ -68,7 +68,7 @@ export default function HabitEntry({
             max="10"
             value={(habit.value as number) || 5}
             onChange={(e) =>
-              onChange({ ...habit, value: parseInt(e.target.value) })
+              onChange({ ...habit, value: Number.parseInt(e.target.value) })
             }
             className="w-full"
           />

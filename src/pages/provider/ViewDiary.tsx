@@ -6,9 +6,9 @@ import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import { ProviderService } from "@/api/services/ProviderService";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
-import { type PatchedMarkAttentionPoint } from "@/api/models/PatchedMarkAttentionPoint";
+import type { PatchedMarkAttentionPoint } from "@/api/models/PatchedMarkAttentionPoint";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
-import { TypeEnum } from "@/api/models/TypeEnum";
+import type { TypeEnum } from "@/api/models/TypeEnum";
 
 // Updated interfaces to match new server response structure
 interface DiaryEntryDetail {

@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import GoogleSignin from "@/components/ui/google-signin";
 import landingImage from "@/lib/images/landing.png";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 import { AuthService } from "@/api/services/AuthService";
 import { Capacitor } from "@capacitor/core";
 import { useGoogleLogin } from "@react-oauth/google";
-import { type AuthTokenResponse } from "@/api";
-import { type Auth } from "@/api/models/Auth";
+import type { AuthTokenResponse } from "@/api";
+import type { Auth } from "@/api/models/Auth";
 
 const isMobile = Capacitor.isNativePlatform();
 

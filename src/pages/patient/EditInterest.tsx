@@ -71,7 +71,7 @@ export default function EditInterest() {
       try {
         const response =
           (await InterestAreasService.personInterestAreasRetrieve(
-            parseInt(interestId),
+            Number.parseInt(interestId),
           )) as InterestAreaResponse;
 
         setInterest(response);

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { RadioCheckbox } from "@/components/forms/radio-checkbox";
 import { Switch } from "@/components/ui/switch";

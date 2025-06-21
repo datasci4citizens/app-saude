@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 

@@ -1,5 +1,6 @@
 // components/ui/bottom-sheet.tsx
-import React, { useEffect, useRef } from "react";
+import type React from "react";
+import { useEffect, useRef } from "react";
 
 interface BottomSheetProps {
   isOpen: boolean;

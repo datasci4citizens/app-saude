@@ -1,5 +1,6 @@
 // components/forms/CustomInterestForm.tsx
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import { Button } from "@/components/forms/button";
 import { RadioCheckbox } from "@/components/forms/radio-checkbox";
 import { TextField } from "@/components/forms/text_input";

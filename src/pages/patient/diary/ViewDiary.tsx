@@ -5,7 +5,7 @@ import { DiaryService } from "@/api/services/DiaryService";
 import CollapsibleInterestCard from "@/components/ui/CollapsibleInterestCard";
 import { ErrorMessage } from "@/components/ui/error-message";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
-import { TypeEnum } from "@/api/models/TypeEnum";
+import type { TypeEnum } from "@/api/models/TypeEnum";
 
 // Updated interfaces to match new server response structure
 interface DiaryTrigger {

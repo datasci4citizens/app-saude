@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
 import Card from "@/components/ui/reminder-card";

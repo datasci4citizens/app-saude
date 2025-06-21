@@ -11,7 +11,7 @@ import ErrorMessage from "@/components/ui/error-message";
 import EditInterestDialog from "../../components/EditInterestsDialog";
 import { ConfirmDialog } from "@/components/ui/confirmDialog";
 import { ApiService } from "@/api";
-import { TypeEnum } from "@/api/models/TypeEnum";
+import type { TypeEnum } from "@/api/models/TypeEnum";
 
 interface InterestAreaResponse {
   observation_id?: number;

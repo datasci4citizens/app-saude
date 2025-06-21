@@ -60,7 +60,7 @@
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.8.3",
+		"@biomejs/biome": "^1.9.4",
 		"@capacitor/cli": "^6.2.1",
 		"@types/next": "^8.0.7",
 		"@types/node": "^22.5.1",
