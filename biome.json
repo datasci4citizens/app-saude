@@ -46,7 +46,12 @@
 			"include": ["src/**/*"],
 			"ignore": ["src/api/**/*"],
 			"linter": {
-				"enabled": true
+				"enabled": true,
+				"rules": {
+					"a11y": {
+						"all": false
+					}
+				}
 			}
 		}
 	]

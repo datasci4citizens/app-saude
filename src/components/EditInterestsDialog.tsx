@@ -12,11 +12,8 @@ import {
   DialogDescription,
   DialogOverlay,
 } from "@/components/ui/dialog";
-import {
-  InterestAreasService,
-  type InterestArea,
-  type InterestAreaTrigger,
-} from "@/api";
+import { InterestAreasService } from "@/api";
+import type { InterestArea, InterestAreaTrigger } from "@/api";
 
 // Define clear interfaces
 interface InterestTemplate {
@@ -51,6 +48,9 @@ const TemplateItem = ({
     <div
       className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
       onClick={() => onSelect(template)}
+      onKeyDown={(e) => e.key === "Enter" && onSelect(template)}
+      role="button"
+      tabIndex={0}
     >
       <div className="flex items-start justify-between mb-2">
         <h4 className="font-medium text-sm">{template.interest_name}</h4>
@@ -66,9 +66,9 @@ const TemplateItem = ({
       </div>
 
       <div className="flex flex-wrap gap-1 mb-2">
-        {template.triggers.slice(0, 2).map((trigger, idx) => (
+        {template.triggers.slice(0, 2).map((trigger) => (
           <span
-            key={idx}
+            key={trigger.name} // Use a stable key
             className="bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-200 px-2 py-1 rounded text-xs max-w-[200px] truncate"
             title={trigger.name}
           >
@@ -170,11 +170,11 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
       try {
         const response = (
           await InterestAreasService.apiInterestAreaList()
-        ).filter((item: any) => item.person_id === null);
+        ).filter((item: InterestArea) => item.person_id === null);
 
         // Map the API response to our template format
         const data = response
-          .map((item: any) => {
+          .map((item: InterestArea) => {
             // Handle different response structures
             const interestData = item.interest_area || item;
             const name = interestData?.name || "";
@@ -183,9 +183,9 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
             return {
               id: item.observation_id?.toString() || Math.random().toString(),
               interest_name: name,
-              triggers: triggers.map((t: any) =>
+              triggers: triggers.map((t: InterestAreaTrigger | string) =>
                 typeof t === "string" ? { name: t } : t,
-              ),
+              ) as InterestAreaTrigger[],
               usage_count: 0,
             };
           })
@@ -403,11 +403,15 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
             </div>
 
             <div className="flex flex-wrap gap-2 max-h-32 overflow-y-hidden hover:overflow-y-auto scrollbar-thin pr-1 transition-all">
-              {formData.triggers.map((question, index) => (
+              {formData.triggers.map((question) => (
                 <QuestionTag
-                  key={`${question}-${index}`}
+                  key={question} // Use question as key, assuming it's unique for this component instance
                   question={question}
-                  onRemove={() => handleRemoveQuestion(index)}
+                  onRemove={() =>
+                    handleRemoveQuestion(
+                      formData.triggers.findIndex((q) => q === question),
+                    )
+                  }
                 />
               ))}
             </div>
