@@ -11,7 +11,6 @@ export default function AcsMainPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-
   // Data states
   const [emergencyCount, setEmergencyCount] = useState<number>(0);
   const [patientsCount, setPatientsCount] = useState<number>(0);
