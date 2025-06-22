@@ -292,8 +292,8 @@ export default function AcsMainPage() {
               </div>
             </div>
 
-            <div className="bg-card rounded-2xl p-4 border border-card-border">
-              <div className="flex items-center gap-3">
+            {/*<div className="bg-card rounded-2xl p-4 border border-card-border">
+              {/*<div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-success/20 rounded-full flex items-center justify-center">
                   <span className="text-success">📈</span>
                 </div>
@@ -313,7 +313,7 @@ export default function AcsMainPage() {
                   <span className="mgc_right_line"></span>
                 </Button>
               </div>
-            </div>
+            </div>*/}
           </div>
         </div>
 
