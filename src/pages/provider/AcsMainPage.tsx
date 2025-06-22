@@ -53,7 +53,7 @@ export default function AcsMainPage() {
       }
 
       // Simular consultas de hoje (placeholder)
-      setTodayAppointments(Math.floor(Math.random() * 5));
+      // setTodayAppointments(Math.floor(Math.random() * 5));
     } catch (err) {
       console.error("Erro ao buscar dados do dashboard:", err);
       setError("Erro ao carregar informações do dashboard.");
@@ -97,7 +97,7 @@ export default function AcsMainPage() {
       title: "Gerenciar Pacientes",
       subtitle: "Ver todos os pacientes vinculados",
       icon: "👥",
-      color: "bg-selection",
+      color: "bg-success",
       textColor: "text-white",
       onClick: () => navigate("/patients"),
     },
@@ -106,29 +106,29 @@ export default function AcsMainPage() {
       title: "Pedidos de Ajuda",
       subtitle: "Verificar solicitações urgentes",
       icon: "🚨",
-      color: "bg-destructive",
+      color: "bg-yellow",
       textColor: "text-white",
       onClick: () => navigate("/emergencies"),
       badge: emergencyCount > 0 ? emergencyCount : undefined,
     },
-    {
-      id: "appointments",
-      title: "Agenda",
-      subtitle: "Consultas e compromissos",
-      icon: "📅",
-      color: "bg-accent1",
-      textColor: "text-white",
-      onClick: () => navigate("/appointments"),
-    },
-    {
-      id: "reports",
-      title: "Relatórios",
-      subtitle: "Acompanhar progresso",
-      icon: "📊",
-      color: "bg-success",
-      textColor: "text-white",
-      onClick: () => navigate("/reports"),
-    },
+    // {
+    //   id: "appointments",
+    //   title: "Agenda",
+    //   subtitle: "Consultas e compromissos",
+    //   icon: "📅",
+    //   color: "bg-accent1",
+    //   textColor: "text-white",
+    //   onClick: () => navigate("/appointments"),
+    // },
+    // {
+    //   id: "reports",
+    //   title: "Relatórios",
+    //   subtitle: "Acompanhar progresso",
+    //   icon: "📊",
+    //   color: "bg-success",
+    //   textColor: "text-white",
+    //   onClick: () => navigate("/reports"),
+    // },
   ];
 
   return (
@@ -151,27 +151,27 @@ export default function AcsMainPage() {
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
-            <div className="text-white text-2xl font-bold">
+        <div className="grid grid-cols-2   gap-3">
+          <div className="bg-homeblob2 backdrop-blur-sm rounded-2xl p-4 text-center">
+            <div className="text-offwhite text-2xl font-bold">
               {loading ? "..." : patientsCount}
             </div>
-            <div className="text-white/80 text-xs">Pacientes</div>
+            <div className="text-offwhite text-xs">Pacientes</div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
-            <div className="text-white text-2xl font-bold">
+          <div className="bg-homeblob2 backdrop-blur-sm rounded-2xl p-4 text-center">
+            <div className="text-offwhite  text-2xl font-bold">
               {loading ? "..." : emergencyCount}
             </div>
-            <div className="text-white/80 text-xs">Pedidos</div>
+            <div className="text-offwhite text-xs">Pedidos</div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
+          {/*<div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
             <div className="text-white text-2xl font-bold">
               {loading ? "..." : todayAppointments}
             </div>
             <div className="text-white/80 text-xs">Hoje</div>
-          </div>
+          </div>*/}
         </div>
       </div>
 
