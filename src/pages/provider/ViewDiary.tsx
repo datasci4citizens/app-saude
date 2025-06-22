@@ -202,249 +202,264 @@ export default function ViewDiary() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
-      <Header
-        title="Visualizar Diário do Paciente"
-        onBackClick={() => navigate(-1)}
-        subtitle={
-          diary?.date
-            ? formatDate(diary.date)
-            : patient?.first_name
-              ? `${patient.first_name} ${patient.last_name || ""}`.trim()
-              : "Visualização do Diário"
-        }
-      />
+  <div className="flex flex-col h-screen bg-homebg">
+    <Header
+      title="Visualizar Diário do Paciente"
+      onBackClick={() => navigate(-1)}
+      subtitle={
+        diary?.date
+          ? formatDate(diary.date)
+          : patient?.first_name
+            ? `${patient.first_name} ${patient.last_name || ""}`.trim()
+            : "Visualização do Diário"
+      }
+    />
 
-      {loading && (
-        <div className="flex justify-center items-center py-16">
-          <p className="text-lg text-muted-foreground">Carregando diário...</p>
-        </div>
-      )}
-
-      {error && (
-        <ErrorMessage
-          message={error || "Erro ao carregar diário"}
-          variant="destructive"
-          onClose={clearError}
-        />
-      )}
-
-      {!loading && !error && diary && (
-        <>
-          {/* Patient Info Section */}
-          {patient && (
-            <div className="bg-card p-4 rounded-lg border border-border mb-6">
-              <h3 className="font-semibold text-lg text-card-foreground mb-3">
-                Informações do Paciente
-              </h3>
-              <div className="space-y-2 text-sm">
-                <p>
-                  <span className="font-medium">Nome:</span>{" "}
-                  {patient.social_name ||
-                    `${patient.first_name} ${patient.last_name || ""}`.trim() ||
-                    "Não informado"}
-                </p>
-                <p>
-                  <span className="font-medium">ID:</span> {patient.person_id}
-                </p>
-                {patient.email && (
-                  <p>
-                    <span className="font-medium">Email:</span> {patient.email}
-                  </p>
-                )}
+    <div className="flex-1 overflow-hidden bg-background rounded-t-3xl mt-4 relative z-10">
+      <div className="h-full overflow-y-auto">
+        <div className="px-4 py-6 pb-24">
+          {loading && (
+            <div className="flex justify-center items-center py-16">
+              <div className="flex flex-col items-center gap-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection"></div>
+                <p className="text-gray2 text-sm">Carregando diário...</p>
               </div>
             </div>
           )}
 
-          {/* Time Range Section */}
-          <div className="space-y-3 mb-6">
-            <h3 className="font-semibold text-lg text-typography mb-1">
-              Período de tempo
-            </h3>
-            <div className="bg-primary p-4 rounded-lg border border-border">
-              <span className="text-sm text-muted-foreground">
-                {diary.scope === "today"
-                  ? "Registros do dia de hoje"
-                  : "Registros desde a última entrada"}
-              </span>
-            </div>
-          </div>
-
-          {/* Interest Areas Section */}
-          {diary.interest_areas && diary.interest_areas.length > 0 && (
-            <div className="space-y-3 mb-6">
-              <h3 className="font-semibold text-lg text-typography mb-1">
-                Áreas de Interesse
-              </h3>
-              <div className="space-y-4">
-                {diary.interest_areas.map((interest) => {
-                  // console.log("Interest area data:", interest);
-                  const interestId = interest.observation_id || 0;
-                  const isExpanded = expandedInterests.has(interest.name);
-                  const hasResponses =
-                    interest.triggers &&
-                    interest.triggers.some(
-                      (t) => t.response && t.response.trim() !== "",
-                    );
-                  const isAttentionPointFlag = isAttentionPoint(interest);
-                  return (
-                    <div
-                      key={interest.name}
-                      className="bg-card border border-border rounded-xl shadow-sm"
-                    >
-                      <div
-                        className="p-5 cursor-pointer"
-                        onClick={() => toggleInterest(interest.name)}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3 flex-1">
-                            <span className="w-2 h-2 bg-gradient-interest-indicator rounded-full flex-shrink-0"></span>
-                            <h4 className="font-bold text-lg text-card-foreground">
-                              {interest.name}
-                            </h4>
-                            {isAttentionPointFlag && (
-                              <span className="text-destructive text-lg">
-                                ⚠️
-                              </span>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-success text-sm font-medium">
-                              ✓ Compartilhado
-                            </span>
-                            <span
-                              className={`transform transition-transform duration-200 ${
-                                isExpanded ? "rotate-180" : ""
-                              }`}
-                            >
-                              ▼
-                            </span>
-                          </div>
-                        </div>
-
-                        {isAttentionPointFlag && interest.provider_name && (
-                          <div className="mt-2">
-                            <span className="text-xs text-destructive italic">
-                              Marcado como ponto de atenção por{" "}
-                              {interest.provider_name}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      {isExpanded && (
-                        <div className="px-5 pb-5">
-                          <div className="border-t border-border pt-4">
-                            {/* Check if interest area exists */}
-                            {interestId > 0 ? (
-                              <div className="mb-4">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleAttentionToggle(
-                                      interestId,
-                                      isAttentionPointFlag,
-                                    );
-                                  }}
-                                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                                    isAttentionPointFlag
-                                      ? "bg-destructive text-white hover:bg-destructive/80"
-                                      : "bg-orange-500 text-white hover:bg-orange-600"
-                                  }`}
-                                >
-                                  {isAttentionPointFlag
-                                    ? "Remover atenção ⚠️"
-                                    : "Marcar atenção ⚠️"}
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="mb-4">
-                                <p className="text-sm text-destructive font-medium italic">
-                                  Área de interesse deletada
-                                </p>
-                              </div>
-                            )}
-
-                            {/* Responses */}
-                            {hasResponses ? (
-                              <div className="space-y-3">
-                                <h5 className="font-medium text-sm text-muted-foreground mb-2">
-                                  Respostas:
-                                </h5>
-                                {interest.triggers?.map(
-                                  (trigger, index) =>
-                                    trigger.response &&
-                                    trigger.response.trim() !== "" && (
-                                      <div
-                                        key={index}
-                                        className="bg-homebg p-3 rounded-lg border-l-4 border-primary"
-                                      >
-                                        <div className="text-sm">
-                                          <span className="font-medium text-foreground">
-                                            {trigger.name}:
-                                          </span>
-                                          <span className="ml-2 text-muted-foreground">
-                                            {trigger.response}
-                                          </span>
-                                        </div>
-                                      </div>
-                                    ),
-                                )}
-                              </div>
-                            ) : (
-                              <p className="text-sm text-muted-foreground italic">
-                                Nenhuma resposta registrada para esta área.
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+          {error && (
+            <div className="mb-6">
+              <ErrorMessage
+                message={error || "Erro ao carregar diário"}
+                variant="destructive"
+                onClose={clearError}
+                className="animate-in slide-in-from-top-2 duration-300"
+              />
             </div>
           )}
 
-          {/* General Text Section */}
-          {(() => {
-            const textEntry = getGeneralTextEntry();
-            return textEntry && textEntry.text ? (
-              <div className="space-y-3">
-                <div className="flex flex-col gap-1">
-                  <h3 className="font-semibold text-lg text-typography mb-1">
-                    Observações Gerais
+          {!loading && !error && diary && (
+            <>
+              {/* Patient Info Section */}
+              {patient && (
+                <div className="bg-card p-4 rounded-lg border border-card-border mb-6">
+                  <h3 className="font-semibold text-lg text-card-foreground mb-3">
+                    Informações do Paciente
                   </h3>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-success">
-                      ✓ Compartilhado com profissionais
-                    </span>
+                  <div className="space-y-2 text-sm">
+                    <p>
+                      <span className="font-medium">Nome:</span>{" "}
+                      {patient.social_name ||
+                        `${patient.first_name} ${patient.last_name || ""}`.trim() ||
+                        "Não informado"}
+                    </p>
+                    <p>
+                      <span className="font-medium">ID:</span> {patient.person_id}
+                    </p>
+                    {patient.email && (
+                      <p>
+                        <span className="font-medium">Email:</span> {patient.email}
+                      </p>
+                    )}
                   </div>
                 </div>
+              )}
 
-                <div className="bg-primary p-4 rounded-lg whitespace-pre-wrap min-h-[150px] border border-border">
-                  {textEntry.text}
+              {/* Time Range Section */}
+              <div className="space-y-3 mb-6">
+                <h3 className="font-semibold text-lg text-typography mb-1">
+                  Período de tempo
+                </h3>
+                <div className="bg-card p-4 rounded-lg border border-card-border">
+                  <span className="text-sm text-muted-foreground">
+                    {diary.scope === "today"
+                      ? "Registros do dia de hoje"
+                      : "Registros desde a última entrada"}
+                  </span>
                 </div>
               </div>
-            ) : null;
-          })()}
 
-          {/* Action button */}
-          <div className="mt-8 text-center">
-            <button
-              onClick={() => navigate(-1)}
-              className="px-6 py-3 bg-gradient-button-edit hover:bg-gradient-button-edit-hover text-white rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
-            >
-              Voltar
-            </button>
-          </div>
-        </>
-      )}
+              {/* Interest Areas Section */}
+              {diary.interest_areas && diary.interest_areas.length > 0 && (
+                <div className="space-y-3 mb-6">
+                  <h3 className="font-semibold text-lg text-typography mb-1">
+                    Áreas de Interesse
+                  </h3>
+                  <div className="space-y-4">
+                    {diary.interest_areas.map((interest) => {
+                      const interestId = interest.observation_id || 0;
+                      const isExpanded = expandedInterests.has(interest.name);
+                      const hasResponses =
+                        interest.triggers &&
+                        interest.triggers.some(
+                          (t) => t.response && t.response.trim() !== "",
+                        );
+                      const isAttentionPointFlag = isAttentionPoint(interest);
+                      return (
+                        <div
+                          key={interest.name}
+                          className="bg-card border border-card-border rounded-xl shadow-sm"
+                        >
+                          <div
+                            className="p-5 cursor-pointer"
+                            onClick={() => toggleInterest(interest.name)}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-3 flex-1">
+                                <span className="w-2 h-2 bg-gradient-interest-indicator rounded-full flex-shrink-0"></span>
+                                <h4 className="font-bold text-lg text-card-foreground">
+                                  {interest.name}
+                                </h4>
+                                {isAttentionPointFlag && (
+                                  <span className="text-destructive text-lg">
+                                    ⚠️
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-success text-sm font-medium">
+                                  ✓ Compartilhado
+                                </span>
+                                <span
+                                  className={`transform transition-transform duration-200 ${
+                                    isExpanded ? "rotate-180" : ""
+                                  }`}
+                                >
+                                  ▼
+                                </span>
+                              </div>
+                            </div>
+
+                            {isAttentionPointFlag && interest.provider_name && (
+                              <div className="mt-2">
+                                <span className="text-xs text-destructive italic">
+                                  Marcado como ponto de atenção por{" "}
+                                  {interest.provider_name}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+
+                          {isExpanded && (
+                            <div className="px-5 pb-5">
+                              <div className="border-t border-card-border pt-4">
+                                {/* Check if interest area exists */}
+                                {interestId > 0 ? (
+                                  <div className="mb-4">
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleAttentionToggle(
+                                          interestId,
+                                          isAttentionPointFlag,
+                                        );
+                                      }}
+                                      className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                                        isAttentionPointFlag
+                                          ? "bg-destructive text-white hover:bg-destructive/80"
+                                          : "bg-orange-500 text-white hover:bg-orange-600"
+                                      }`}
+                                    >
+                                      {isAttentionPointFlag
+                                        ? "Remover atenção ⚠️"
+                                        : "Marcar atenção ⚠️"}
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div className="mb-4">
+                                    <p className="text-sm text-destructive font-medium italic">
+                                      Área de interesse deletada
+                                    </p>
+                                  </div>
+                                )}
+
+                                {/* Responses */}
+                                {hasResponses ? (
+                                  <div className="space-y-3">
+                                    <h5 className="font-medium text-sm text-muted-foreground mb-2">
+                                      Respostas:
+                                    </h5>
+                                    {interest.triggers?.map(
+                                      (trigger, index) =>
+                                        trigger.response &&
+                                        trigger.response.trim() !== "" && (
+                                          <div
+                                            key={index}
+                                            className="bg-card-muted p-3 rounded-lg border-l-4 border-selection"
+                                          >
+                                            <div className="text-sm">
+                                              <span className="font-medium text-card-foreground">
+                                                {trigger.name}:
+                                              </span>
+                                              <span className="ml-2 text-muted-foreground">
+                                                {trigger.response}
+                                              </span>
+                                            </div>
+                                          </div>
+                                        ),
+                                    )}
+                                  </div>
+                                ) : (
+                                  <p className="text-sm text-muted-foreground italic">
+                                    Nenhuma resposta registrada para esta área.
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* General Text Section */}
+              {(() => {
+                const textEntry = getGeneralTextEntry();
+                return textEntry && textEntry.text ? (
+                  <div className="space-y-3 mb-6">
+                    <div className="flex flex-col gap-1">
+                      <h3 className="font-semibold text-lg text-typography mb-1">
+                        Observações Gerais
+                      </h3>
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-medium text-success">
+                          ✓ Compartilhado com profissionais
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="bg-card p-4 rounded-lg whitespace-pre-wrap min-h-[150px] border border-card-border">
+                      {textEntry.text}
+                    </div>
+                  </div>
+                ) : null;
+              })()}
+
+              {/* Action button */}
+              <div className="text-center">
+                <button
+                  onClick={() => navigate(-1)}
+                  className="px-6 py-3 bg-selection hover:bg-selection/80 text-white rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
+                >
+                  Voltar
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+
+    {/* Fixed bottom navigation */}
+    <div className="fixed bottom-0 left-0 right-0 z-50">
       <BottomNavigationBar
         variant="acs"
         forceActiveId={getActiveNavId()}
         onItemClick={handleNavigationClick}
       />
     </div>
-  );
+  </div>
+);
 }
