@@ -146,7 +146,7 @@ export default function ViewHelp() {
           bgColor: "bg-yellow/10",
           borderColor: "border-yellow/30",
           label: "⚠️ Alto",
-          description: "Requer atenção urgente",
+          description: "Requer atenção",
         };
       case "medium":
         return {

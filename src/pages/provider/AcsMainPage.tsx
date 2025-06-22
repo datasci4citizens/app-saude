@@ -11,6 +11,7 @@ export default function AcsMainPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
+
   // Data states
   const [emergencyCount, setEmergencyCount] = useState<number>(0);
   const [patientsCount, setPatientsCount] = useState<number>(0);
@@ -104,7 +105,7 @@ export default function AcsMainPage() {
     {
       id: "emergencies",
       title: "Pedidos de Ajuda",
-      subtitle: "Verificar solicitações urgentes",
+      subtitle: "Verificar solicitações",
       icon: "🚨",
       color: "bg-yellow",
       textColor: "text-white",

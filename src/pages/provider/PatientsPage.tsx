@@ -209,104 +209,106 @@ export default function PatientsPage() {
   const urgentCount = patients.filter((p) => p.urgent).length;
 
   return (
-    <div className="flex flex-col min-h-screen bg-homebg">
+    <div className="flex flex-col h-screen bg-homebg">
       <Header
         title="Gerenciar Pacientes"
         subtitle={`${patients.length} ${patients.length === 1 ? "paciente" : "pacientes"} vinculados`}
       />
 
-      <div className="flex-1 px-4 py-6 bg-background rounded-t-3xl mt-4 relative z-10">
-        {/* Messages */}
-        <div className="space-y-4 mb-6">
-          {success && (
-            <SuccessMessage
-              message={success}
-              onClose={clearSuccess}
-              className="animate-in slide-in-from-top-2 duration-300"
-            />
-          )}
+      <div className="flex-1 overflow-hidden bg-background rounded-t-3xl mt-4 relative z-10">
+        <div className="h-full overflow-y-auto pb-20">
+          <div className="px-4 py-6">
+            {/* Messages */}
+            <div className="space-y-4 mb-6">
+              {success && (
+                <SuccessMessage
+                  message={success}
+                  onClose={clearSuccess}
+                  className="animate-in slide-in-from-top-2 duration-300"
+                />
+              )}
 
-          {error && (
-            <ErrorMessage
-              message={error}
-              onClose={clearError}
-              onRetry={() => fetchPatients()}
-              variant="destructive"
-              className="animate-in slide-in-from-top-2 duration-300"
-            />
-          )}
-        </div>
-
-        {/* Quick Actions */}
-        <div className="flex gap-3 mb-6">
-          <Button
-            variant="orange"
-            size="sm"
-            onClick={() => setShowLinkSection(!showLinkSection)}
-            className="flex items-center gap-2"
-          >
-            <span className="text-lg">➕</span>
-            Conectar paciente
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => fetchPatients()}
-            disabled={loading}
-            className="flex items-center gap-2"
-          >
-            <span className="text-lg">🔄</span>
-            {loading ? "Atualizando..." : "Atualizar"}
-          </Button>
-        </div>
-
-        {/* Link Code Section */}
-        {showLinkSection && (
-          <div className="bg-card rounded-2xl p-5 border border-card-border mb-6 animate-in slide-in-from-top-2 duration-300">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-accent1/20 rounded-full flex items-center justify-center">
-                <span className="text-lg">🔗</span>
-              </div>
-              <div>
-                <h3 className="text-card-foreground font-semibold text-base">
-                  Código de Vinculação
-                </h3>
-                <p className="text-gray2 text-sm">
-                  Gere um código para o paciente se conectar
-                </p>
-              </div>
+              {error && (
+                <ErrorMessage
+                  message={error}
+                  onClose={clearError}
+                  onRetry={() => fetchPatients()}
+                  variant="destructive"
+                  className="animate-in slide-in-from-top-2 duration-300"
+                />
+              )}
             </div>
-
-            {linkCode ? (
-              <div className="space-y-4">
-                <div className="bg-selection/10 rounded-xl p-4 border border-selection/20">
-                  <div className="text-center">
-                    <p className="text-selection font-bold text-3xl font-mono tracking-wider mb-2">
-                      {linkCode}
-                    </p>
-                    <p className="text-selection/80 text-sm">
-                      ⏰ Expira em 10 minutos
+            
+            {/* Quick Actions */}
+            <div className="flex gap-3 mb-6">
+              <Button
+                variant="orange"
+                size="sm"
+                onClick={() => setShowLinkSection(!showLinkSection)}
+                className="flex items-center gap-2"
+              >
+                <span className="text-lg">➕</span>
+                Conectar paciente
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => fetchPatients()}
+                disabled={loading}
+                className="flex items-center gap-2"
+              >
+                <span className="text-lg">🔄</span>
+                {loading ? "Atualizando..." : "Atualizar"}
+              </Button>
+            </div>
+            
+            {/* Link Code Section */}
+            {showLinkSection && (
+              <div className="bg-card rounded-2xl p-5 border border-card-border mb-6 animate-in slide-in-from-top-2 duration-300">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-accent1/20 rounded-full flex items-center justify-center">
+                    <span className="text-lg">🔗</span>
+                  </div>
+                  <div>
+                    <h3 className="text-card-foreground font-semibold text-base">
+                      Código de Vinculação
+                    </h3>
+                    <p className="text-gray2 text-sm">
+                      Gere um código para o paciente se conectar
                     </p>
                   </div>
                 </div>
-
-                <div className="flex gap-2">
-                  <Button
-                    onClick={copyToClipboard}
-                    variant="orange"
-                    className="flex-1"
-                  >
-                    📋 Copiar código
-                  </Button>
-                  <Button
-                    onClick={() => setLinkCode(null)}
-                    variant="ghost"
-                    className="flex-1"
-                  >
-                    🔄 Novo código
-                  </Button>
+            
+                {linkCode ? (
+                  <div className="space-y-4">
+                    <div className="bg-selection/10 rounded-xl p-4 border border-selection/20">
+                      <div className="text-center">
+                        <p className="text-selection font-bold text-3xl font-mono tracking-wider mb-2">
+                          {linkCode}
+                        </p>
+                        <p className="text-selection/80 text-sm">
+                          ⏰ Expira em 10 minutos
+                        </p>
+                      </div>
+                    </div>
+                
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={copyToClipboard}
+                        variant="orange"
+                        className="flex-1"
+                      >
+                        📋 Copiar código
+                      </Button>
+                      <Button
+                        onClick={() => setLinkCode(null)}
+                        variant="ghost"
+                        className="flex-1"
+                      >
+                        🔄 Novo código
+                      </Button>
                 </div>
-              </div>
+                </div>
             ) : (
               <Button
                 onClick={generateLinkCode}
@@ -450,7 +452,7 @@ export default function PatientsPage() {
                   <div className="flex items-center gap-2">
                     {patient.urgent && (
                       <span className="bg-destructive/20 text-destructive text-xs px-2 py-1 rounded-full font-medium">
-                        🚨 Urgente
+                        🚨 Ajuda
                       </span>
                     )}
                     <span className="text-gray2 text-lg">
@@ -512,12 +514,14 @@ export default function PatientsPage() {
           </div>
         )}
       </div>
+      </div>
 
       <BottomNavigationBar
         variant="acs"
         forceActiveId={getActiveNavId()}
         onItemClick={handleNavigationClick}
       />
+    </div>
     </div>
   );
 }
