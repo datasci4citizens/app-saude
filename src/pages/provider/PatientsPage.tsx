@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { TextField } from "@/components/forms/text_input";
-import { Button } from "@/components/forms/button";
-import Header from "@/components/ui/header";
-import { SuccessMessage } from "@/components/ui/success-message";
-import { ErrorMessage } from "@/components/ui/error-message";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderService";
+import { Button } from "@/components/forms/button";
+import { TextField } from "@/components/forms/text_input";
+import { ErrorMessage } from "@/components/ui/error-message";
+import Header from "@/components/ui/header";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
+import { SuccessMessage } from "@/components/ui/success-message";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface Patient {
   id: string | number;
@@ -24,7 +24,7 @@ const formatDisplayDate = (dateString: string | undefined | null): string => {
   if (!dateString) return "";
   try {
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return "";
+    if (Number.isNaN(date.getTime())) return "";
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
@@ -83,7 +83,19 @@ export default function PatientsPage() {
       setError(null);
       const apiPatients = await LinkPersonProviderService.providerPersonsList();
 
-      const formattedPatients: Patient[] = apiPatients.map((patient: any) => ({
+interface ApiPatient {
+  person_id: number;
+  name: string;
+  age?: number;
+  last_visit_date?: string;
+  last_help_date?: string;
+  email?: string;
+  phone?: string;
+}
+
+// ...existing code...
+
+      const formattedPatients: Patient[] = apiPatients.map((patient: ApiPatient) => ({
         id: patient.person_id,
         name: patient.name,
         age: patient.age || 0,
@@ -97,8 +109,8 @@ export default function PatientsPage() {
       }));
 
       setPatients(formattedPatients);
-    } catch (err) {
-      console.error("Erro ao buscar pacientes:", err);
+    } catch (_) {
+      console.error("Erro ao buscar pacientes:", _);
       setError("Não foi possível carregar a lista de pacientes.");
     } finally {
       setLoading(false);
@@ -126,7 +138,7 @@ export default function PatientsPage() {
       try {
         await navigator.clipboard.writeText(linkCode);
         setSuccess("Código copiado para a área de transferência!");
-      } catch (err) {
+      } catch (_err) {
         setError("Não foi possível copiar o código.");
       }
     }
@@ -317,7 +329,7 @@ export default function PatientsPage() {
               >
                 {isGeneratingCode ? (
                   <div className="flex items-center gap-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white" />
                     Gerando código...
                   </div>
                 ) : (
@@ -363,7 +375,7 @@ export default function PatientsPage() {
           >
             🚨 Requerem ajuda ({urgentCount})
             {urgentCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full animate-pulse"></span>
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full animate-pulse" />
             )}
           </button>
         </div>
@@ -371,7 +383,7 @@ export default function PatientsPage() {
         {/* Loading State */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection mb-4" />
             <p className="text-gray2 text-sm">Carregando pacientes...</p>
           </div>
         )}
@@ -440,7 +452,7 @@ export default function PatientsPage() {
                       <h3 className="text-card-foreground font-semibold text-base flex items-center gap-2">
                         {patient.name}
                         {patient.urgent && (
-                          <span className="w-2 h-2 bg-destructive rounded-full animate-pulse"></span>
+                          <span className="w-2 h-2 bg-destructive rounded-full animate-pulse" />
                         )}
                       </h3>
                       <p className="text-gray2 text-sm">{patient.age} anos</p>
@@ -454,7 +466,7 @@ export default function PatientsPage() {
                       </span>
                     )}
                     <span className="text-gray2 text-lg">
-                      <span className="mgc_right_line"></span>
+                      <span className="mgc_right_line" />
                     </span>
                   </div>
                 </div>
@@ -478,7 +490,7 @@ export default function PatientsPage() {
 
                 <div className="flex items-center justify-between pt-3 border-t border-card-border">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-success rounded-full"></div>
+                    <div className="w-2 h-2 bg-success rounded-full" />
                     <span className="text-success text-xs font-medium">
                       Conectado
                     </span>
@@ -496,7 +508,7 @@ export default function PatientsPage() {
                   >
                     {unlinkingPatient === patient.id ? (
                       <div className="flex items-center gap-1">
-                        <div className="animate-spin rounded-full h-3 w-3 border-2 border-white/20 border-t-white"></div>
+                        <div className="animate-spin rounded-full h-3 w-3 border-2 border-white/20 border-t-white" />
                         Removendo...
                       </div>
                     ) : (

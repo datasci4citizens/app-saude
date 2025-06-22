@@ -1,5 +1,4 @@
 import type React from "react";
-import { useState } from "react";
 
 interface PatientButtonProps {
   variant?: "patient" | "emergency";
@@ -7,7 +6,6 @@ interface PatientButtonProps {
   age?: number;
   lastEmergency?: string;
   lastVisit?: string;
-  active?: boolean;
   onClick?: () => void;
   onClickEmergency?: () => void;
 }
@@ -18,7 +16,6 @@ const PatientButton: React.FC<PatientButtonProps> = ({
   age,
   lastEmergency,
   lastVisit,
-  active = false,
   onClick,
   onClickEmergency,
 }) => {
@@ -67,7 +64,7 @@ const PatientButton: React.FC<PatientButtonProps> = ({
         </div>
         {isEmergency ? (
           <div
-            className={`text-topicos text-primary-foreground mt-1.5 font-inter`} // Changed from font-bold text-xs
+            className="text-topicos text-primary-foreground mt-1.5 font-inter" // Changed from font-bold text-xs
             onClick={(e) => {
               e.stopPropagation();
               if (onClickEmergency) onClickEmergency();

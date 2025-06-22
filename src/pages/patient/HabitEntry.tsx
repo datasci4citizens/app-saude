@@ -1,13 +1,18 @@
+type HabitMeasurementType = "scale" | "hours" | "times" | "yesno";
+type HabitFrequency = "daily" | "weekly" | "monthly";
+
+interface Habit {
+  id: string;
+  name: string;
+  measurementType: HabitMeasurementType;
+  frequency: HabitFrequency;
+  shared: boolean;
+  value?: number | boolean;
+}
+
 interface HabitEntryProps {
-  habit: {
-    id: string;
-    name: string;
-    measurementType: "scale" | "hours" | "times" | "yesno";
-    frequency: "daily" | "weekly" | "monthly";
-    shared: boolean;
-    value?: number | boolean;
-  };
-  onChange: (updated: any) => void;
+  habit: Habit;
+  onChange: (updated: Habit) => void;
   onRemove?: () => void;
 }
 
@@ -33,7 +38,10 @@ export default function HabitEntry({
         <select
           value={habit.measurementType}
           onChange={(e) =>
-            onChange({ ...habit, measurementType: e.target.value as any })
+            onChange({
+              ...habit,
+              measurementType: e.target.value as HabitMeasurementType,
+            })
           }
           className="p-2 border rounded"
           disabled={!onRemove}
@@ -48,7 +56,7 @@ export default function HabitEntry({
         <select
           value={habit.frequency}
           onChange={(e) =>
-            onChange({ ...habit, frequency: e.target.value as any })
+            onChange({ ...habit, frequency: e.target.value as HabitFrequency })
           }
           className="p-2 border rounded"
           disabled={!onRemove}

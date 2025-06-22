@@ -16,61 +16,43 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
       {
         id: "home",
         label: "Casa",
-        icon: (
-          <span role="img" aria-label="home" className="mgc_home_4_line"></span>
-        ),
+        icon: <span role="img" aria-label="home" className="mgc_home_4_line" />,
       },
       {
         id: "diary",
         label: "Diário",
-        icon: (
-          <span role="img" aria-label="book" className="mgc_book_6_line"></span>
-        ),
+        icon: <span role="img" aria-label="book" className="mgc_book_6_line" />,
       },
       {
         id: "emergency",
         label: "Ajuda",
         icon: (
-          <span
-            role="img"
-            aria-label="warning"
-            className="mgc_alert_line"
-          ></span>
+          <span role="img" aria-label="warning" className="mgc_alert_line" />
         ),
       },
       {
         id: "profile",
         label: "Eu",
-        icon: (
-          <span role="img" aria-label="user" className="mgc_user_3_line"></span>
-        ),
+        icon: <span role="img" aria-label="user" className="mgc_user_3_line" />,
       },
     ],
     acs: [
       {
         id: "home",
         label: "Casa",
-        icon: (
-          <span role="img" aria-label="home" className="mgc_home_4_line"></span>
-        ),
+        icon: <span role="img" aria-label="home" className="mgc_home_4_line" />,
       },
       {
         id: "patients",
         label: "Pacientes",
         icon: (
-          <span
-            role="img"
-            aria-label="patients"
-            className="mgc_group_3_line"
-          ></span>
+          <span role="img" aria-label="patients" className="mgc_group_3_line" />
         ),
       },
       {
         id: "profile",
         label: "Eu",
-        icon: (
-          <span role="img" aria-label="user" className="mgc_user_3_line"></span>
-        ),
+        icon: <span role="img" aria-label="user" className="mgc_user_3_line" />,
       },
     ],
   };

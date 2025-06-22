@@ -24,7 +24,7 @@ const ProgressIndicator = ({
           <div className="flex space-x-2">
             {Array.from({ length: totalSteps }, (_, index) => (
               <div
-                key={index}
+                key={`indicator-${index}-${totalSteps}`}
                 className={`
                   h-2 rounded-full transition-all duration-500 ease-out
                   ${
@@ -158,7 +158,7 @@ const OnboardingSlider = () => {
         <div className="fixed top-4 right-4 z-50 bg-black/50 rounded-lg p-2 space-x-2">
           {Array.from({ length: totalSteps }, (_, index) => (
             <button
-              key={index}
+              key={`debug-btn-${index}-${totalSteps}`}
               onClick={() => goToStep(index)}
               className={`
                 px-2 py-1 rounded text-xs font-medium transition-colors

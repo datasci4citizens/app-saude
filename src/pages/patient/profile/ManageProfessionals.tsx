@@ -290,7 +290,7 @@ export default function ManageProfessionalsPage() {
         {/* Loading State */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection mb-4" />
             <p className="text-gray2 text-sm">Carregando profissionais...</p>
           </div>
         )}
@@ -408,7 +408,7 @@ export default function ManageProfessionalsPage() {
                   {/* Actions */}
                   <div className="flex items-center justify-between pt-3 border-t border-card-border">
                     <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-success rounded-full"></div>
+                      <div className="w-2 h-2 bg-success rounded-full" />
                       <span className="text-success text-xs font-medium">
                         Conectado
                       </span>
@@ -423,7 +423,7 @@ export default function ManageProfessionalsPage() {
                     >
                       {unlinkingId === provider.provider_id ? (
                         <div className="flex items-center gap-2">
-                          <div className="animate-spin rounded-full h-3 w-3 border-2 border-white/20 border-t-white"></div>
+                          <div className="animate-spin rounded-full h-3 w-3 border-2 border-white/20 border-t-white" />
                           Removendo...
                         </div>
                       ) : (
@@ -494,7 +494,7 @@ export default function ManageProfessionalsPage() {
                         ? "bg-selection"
                         : "bg-gray2/30"
                     }`}
-                  ></div>
+                  />
                   <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-300 ${
                       dialogStep === "confirm" || dialogStep === "success"
@@ -508,7 +508,7 @@ export default function ManageProfessionalsPage() {
                     className={`w-12 h-1 rounded transition-all duration-300 ${
                       dialogStep === "success" ? "bg-selection" : "bg-gray2/30"
                     }`}
-                  ></div>
+                  />
                   <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-300 ${
                       dialogStep === "success"
@@ -595,7 +595,7 @@ export default function ManageProfessionalsPage() {
                   >
                     {isSearching ? (
                       <div className="flex items-center gap-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white" />
                         Buscando...
                       </div>
                     ) : (
@@ -646,7 +646,7 @@ export default function ManageProfessionalsPage() {
                           </p>
                         )}
                         <div className="flex items-center gap-1 mt-2">
-                          <span className="w-1.5 h-1.5 bg-success rounded-full"></span>
+                          <span className="w-1.5 h-1.5 bg-success rounded-full" />
                           <span className="text-success text-xs font-medium">
                             Código: {providerCode}
                           </span>
@@ -679,7 +679,7 @@ export default function ManageProfessionalsPage() {
                     >
                       {isLinking ? (
                         <div className="flex items-center gap-2">
-                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white"></div>
+                          <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white" />
                           Vinculando...
                         </div>
                       ) : (

@@ -13,6 +13,7 @@ import { ApiService } from "@/api/services/ApiService";
 import { SuccessMessage } from "@/components/ui/success-message";
 import { ErrorMessage } from "@/components/ui/error-message";
 import CollapsibleInterestCard from "@/components/ui/CollapsibleInterestCard";
+import type { TypeEnum } from "@/api/models/TypeEnum";
 
 interface UserInterest {
   observation_id: number;
@@ -49,7 +50,7 @@ export default function DiaryInfoForm() {
       try {
         const userEntity = await ApiService.apiUserEntityRetrieve();
         const interests = await InterestAreasService.apiInterestAreaList(
-          userEntity["person_id"],
+          userEntity.person_id,
         );
         console.log("Interesses recebidos:", interests);
 
@@ -61,7 +62,7 @@ export default function DiaryInfoForm() {
 
         // Formata interesses para incluir triggerResponses vazio
         const formattedInterests: UserInterest[] = interests.map(
-          (interest) => ({
+          (interest: InterestArea) => ({
             ...interest,
             triggerResponses: {},
           }),
@@ -145,7 +146,7 @@ export default function DiaryInfoForm() {
               )
               .map((trigger) => ({
                 name: trigger.name,
-                type: trigger.type || "text",
+                type: (trigger.type || "text") as TypeEnum,
                 response: triggerResponses[trigger.name] || "",
               })) || [];
 
@@ -258,7 +259,7 @@ export default function DiaryInfoForm() {
           {isLoadingInterests ? (
             <div className="flex justify-center py-8">
               <div className="text-center">
-                <div className="w-8 h-8 border-2 border-selection border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                <div className="w-8 h-8 border-2 border-selection border-t-transparent rounded-full animate-spin mx-auto mb-2" />
                 <p className="text-typography">Carregando seus interesses...</p>
               </div>
             </div>
@@ -336,7 +337,7 @@ export default function DiaryInfoForm() {
           >
             {isSubmitting ? (
               <span className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 Salvando...
               </span>
             ) : (

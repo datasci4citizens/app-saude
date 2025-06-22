@@ -32,6 +32,13 @@ interface DiaryInterestArea {
   provider_name: string | null;
 }
 
+interface ApiDiaryItem {
+  diary_id: number;
+  date: string;
+  entries: DiaryEntry[] | string;
+  interest_areas: DiaryInterestArea[];
+}
+
 interface DiaryRetrieve {
   diary_id: number;
   date: string;
@@ -58,7 +65,7 @@ export default function DiaryListPage() {
 
         if (Array.isArray(response)) {
           // Transform API response to match local DiaryRetrieve type if needed
-          const mapped = response.map((item: any) => ({
+          const mapped = response.map((item: ApiDiaryItem): DiaryRetrieve => ({
             ...item,
             entries: Array.isArray(item.entries)
               ? item.entries
@@ -102,7 +109,7 @@ export default function DiaryListPage() {
       const day = String(date.getDate()).padStart(2, "0");
       const month = String(date.getMonth() + 1).padStart(2, "0");
       return `${day}/${month}`;
-    } catch (error) {
+    } catch (_error) {
       console.warn("Failed to parse date:", dateString);
       return "Data inválida";
     }
@@ -111,13 +118,13 @@ export default function DiaryListPage() {
   // Group diaries by date for display
   const groupedDiaries: Record<string, DiaryRetrieve[]> = {};
 
-  diaries.forEach((diary) => {
+  for (const diary of diaries) {
     const dateKey = formatDate(diary.date);
     if (!groupedDiaries[dateKey]) {
       groupedDiaries[dateKey] = [];
     }
     groupedDiaries[dateKey].push(diary);
-  });
+  }
 
   const getDiarySummary = (diary: DiaryRetrieve): string => {
     // First, try to get text from entries
@@ -129,7 +136,7 @@ export default function DiaryListPage() {
       const textEntry = diary.entries.find(
         (e) => e.text && e.text.trim() !== "",
       );
-      if (textEntry && textEntry.text) {
+      if (textEntry?.text) {
         const summary = textEntry.text;
 
         // Check if we also have trigger responses
@@ -217,7 +224,7 @@ export default function DiaryListPage() {
         hour: "2-digit",
         minute: "2-digit",
       });
-    } catch (error) {
+    } catch (_error) {
       return "";
     }
   };
@@ -295,7 +302,7 @@ export default function DiaryListPage() {
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <div className="flex flex-col items-center gap-3">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
               <p className="text-typography/80 font-inter text-campos-preenchimento">
                 Carregando diários...
               </p>

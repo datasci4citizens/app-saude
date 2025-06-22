@@ -14,7 +14,6 @@ interface InfoCardProps {
   variant: InfoCardVariant;
   title?: string;
   name?: string;
-  subtitle?: string;
   count?: number;
   date?: string;
   time?: string;
@@ -26,7 +25,6 @@ const InfoCard: React.FC<InfoCardProps> = ({
   variant,
   name,
   title = "Próxima consulta",
-  subtitle,
   count,
   date,
   time,
@@ -57,7 +55,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
                 <span
                   role="img"
                   className="mgc_alert_diamond_line text-[60px] w-[60px] h-[60px] inline-block text-selection" // Kept text-[60px]
-                ></span>
+                />
               </div>
               {/* Número de pedidos de ajuda */}
               <div className="text-titulo text-typography mb-1">
@@ -94,8 +92,11 @@ const InfoCard: React.FC<InfoCardProps> = ({
 
               {/* Lista de consultas */}
               <div className="mt-3">
-                {consultations.map((consultation, index) => (
-                  <div key={index} className="mb-2">
+                {consultations.map((consultation) => (
+                  <div
+                    key={`${consultation.doctor}-${consultation.time}`}
+                    className="mb-2"
+                  >
                     <div className="text-campos-preenchimento2 text-typography mb-0.5">
                       {" "}
                       {/* Changed from text-xs font-inter */}

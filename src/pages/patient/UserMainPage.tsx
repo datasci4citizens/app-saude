@@ -57,7 +57,7 @@ export default function UserMainPage() {
         // Fetch interests for the current user using their person_id
         const userEntity = await ApiService.apiUserEntityRetrieve();
         const userInterests = await InterestAreasService.apiInterestAreaList(
-          userEntity["person_id"],
+          userEntity.person_id,
         );
 
         console.log("Dados da API:", userInterests);
@@ -257,7 +257,7 @@ export default function UserMainPage() {
               attention_point_date: interest.attention_point_date,
             } as InterestAreaResponse);
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error(
             `Error updating interest ${interest.observation_id}:`,
             error,
@@ -296,10 +296,10 @@ export default function UserMainPage() {
       setHasChanges(false);
       setSyncSuccess(true);
       setTimeout(() => setSyncSuccess(false), 3000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error syncing with server:", error);
 
-      if (error?.message) {
+      if (error instanceof Error && error.message) {
         setSyncError(`Erro ao sincronizar: ${error.message}`);
       } else {
         setSyncError("Erro ao salvar interesses. Tente novamente.");
@@ -310,7 +310,7 @@ export default function UserMainPage() {
   };
 
   // Helper para verificar se interesse foi modificado
-  const hasInterestChanged = (
+  const _hasInterestChanged = (
     current: InterestAreaResponse,
     original?: InterestAreaResponse,
   ) => {
@@ -493,7 +493,7 @@ export default function UserMainPage() {
                         ? "bg-orange-400"
                         : "bg-gradient-interest-indicator"
                     }`}
-                  ></span>
+                  />
                   <span className="break-words min-w-0">
                     {interest.interest_area.name}
                   </span>
@@ -503,7 +503,7 @@ export default function UserMainPage() {
                     </span>
                   )}
                   {interest.interest_area.is_attention_point && (
-                    <span className="ml-2 text-desc-campos typescriptbg-red-100 text-red-800 dark:bg-orange-900/30 dark:text-orange-300 px-2 py-1 rounded-full font-inter font-medium flex-shrink-0 border border-orange-200 dark:border-orange-700">
+                    <span className="ml-2 text-desc-campos bg-red-100 text-red-800 dark:bg-orange-900/30 dark:text-orange-300 px-2 py-1 rounded-full font-inter font-medium flex-shrink-0 border border-orange-200 dark:border-orange-700">
                       ⚠️ Atenção
                     </span>
                   )}
@@ -543,7 +543,7 @@ export default function UserMainPage() {
                       key={`${t.name}-${index}`}
                       className="flex items-start gap-2 text-campos-preenchimento2 font-inter text-card-foreground/70"
                     >
-                      <span className="w-1 h-1 bg-card-foreground/40 rounded-full flex-shrink-0 mt-2"></span>
+                      <span className="w-1 h-1 bg-card-foreground/40 rounded-full flex-shrink-0 mt-2" />
                       <span className="break-words min-w-0">{t.name}</span>
                     </div>
                   ))}

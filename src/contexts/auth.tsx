@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { AuthService } from "@/api/services/AuthService";
 
 // Define the shape of the context for authentication
@@ -12,7 +12,7 @@ type AuthContextType = {
 };
 
 // Create the authentication context
-const AuthContext = createContext<AuthContextType>(null!);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 /**
  * AuthProvider component to encapsulate authentication logic and state.
@@ -52,10 +52,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    * Logout function to clear the user session.
    * It removes the token from local storage and resets the user state.
    */
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     setUser(null);
-  };
+  }, []);
 
   // Effect to initialize authentication state
   useEffect(() => {
@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     };
     initAuth(); // Call the initialization function on component mount
-  }, []);
+  }, [logout]);
 
   // Provide the user state and actions to the context
   return (

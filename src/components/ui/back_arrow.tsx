@@ -21,7 +21,7 @@ const BackArrow: React.FC<BackArrowProps> = ({ className }) => {
           role="img"
           aria-label="arrow"
           className="mgc_arrow_left_line text-3xl text-typography"
-        ></span>
+        />
       </div>
     </Button>
   );

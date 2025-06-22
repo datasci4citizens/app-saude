@@ -5,15 +5,12 @@ import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import { Button } from "@/components/forms/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { InterestAreaTriggerCreate } from "@/api/models/InterestAreaTriggerCreate";
+import type { InterestArea } from "@/api/models/InterestArea";
+import type { InterestAreaTrigger } from "@/api/models/InterestAreaTrigger";
 
 // Extended interface for API response that includes the ID
-interface InterestAreaResponse {
+interface InterestAreaResponse extends InterestArea {
   interest_area_id: number;
-  observation_concept_id?: number | null;
-  interest_name?: string | null;
-  value_as_string?: string | null;
-  triggers?: InterestAreaTriggerCreate[];
 }
 
 export default function ViewSelectedInterests() {
@@ -31,7 +28,7 @@ export default function ViewSelectedInterests() {
       setError(null);
 
       try {
-        const interests = (await InterestAreasService.personInterestAreasList(
+        const interests = (await InterestAreasService.apiInterestAreaList(
           false,
         )) as InterestAreaResponse[];
         console.log("Loaded interests:", interests);
@@ -50,11 +47,11 @@ export default function ViewSelectedInterests() {
   // Handle unlinking/deleting an interest
   const handleUnlinkInterest = async (
     interestId: number,
-    isCustom: boolean,
+    _isCustom: boolean,
   ) => {
     try {
       // For both custom and default interests, we call the same delete endpoint
-      await InterestAreasService.personInterestAreasDestroy(interestId);
+      await InterestAreasService.apiInterestAreaDestroy({id: interestId});
 
       // Remove from local state after successful delete
       setUserInterests((prev) =>
@@ -107,7 +104,7 @@ export default function ViewSelectedInterests() {
   // Check if an interest is custom or default
   const isCustomInterest = (interest: InterestAreaResponse) => {
     //console.log("Checking if interest is custom:", interest);
-    return !(interest.observation_concept_id === 2000201);
+    return !(interest.concept_id === 2000201);
   };
 
   return (
@@ -152,11 +149,11 @@ export default function ViewSelectedInterests() {
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg flex justify-between items-center">
                         <span>
-                          {interest.interest_name}
+                          {interest.name}
                           <span className="text-sm font-normal">
                             {isCustomInterest(interest)
-                              ? " (Padrão)"
-                              : " (Personalizado)"}
+                              ? " (Personalizado)"
+                              : " (Padrão)"}
                           </span>
                         </span>
 
@@ -183,8 +180,8 @@ export default function ViewSelectedInterests() {
                             strokeLinecap="round"
                             strokeLinejoin="round"
                           >
-                            <path d="M18 6L6 18"></path>
-                            <path d="M6 6l12 12"></path>
+                            <path d="M18 6L6 18" />
+                            <path d="M6 6l12 12" />
                           </svg>
                         </Button>
                       </CardTitle>
@@ -194,10 +191,10 @@ export default function ViewSelectedInterests() {
                       {interest.triggers && interest.triggers.length > 0 ? (
                         <ul className="text-sm pl-1 space-y-1">
                           {interest.triggers.map((trigger, index) => (
-                            <li key={index} className="flex items-start">
+                            <li key={`${interest.interest_area_id}-trigger-${index}`} className="flex items-start">
                               <span className="mr-2">•</span>
                               <span>
-                                {trigger.trigger_name || "Sem descrição"}
+                                {trigger.name || "Sem descrição"}
                               </span>
                             </li>
                           ))}
@@ -216,8 +213,7 @@ export default function ViewSelectedInterests() {
 
       {/* Navigation bar */}
       <BottomNavigationBar
-        variant="user"
-        forceActiveId={getActiveNavId()} // Controlled active state
+        activeItemId={getActiveNavId()} // Controlled active state
         onItemClick={handleNavigationClick}
       />
     </div>

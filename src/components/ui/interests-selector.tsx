@@ -18,19 +18,7 @@ const InterestsSelector: React.FC<InterestsSelectorProps> = ({
   onSelectionChange,
 }) => {
   const [columnCount, setColumnCount] = useState(4);
-  const [itemHeights, setItemHeights] = useState<
-    Record<string | number, number>
-  >({});
   const [selectedItems, setSelectedItems] = useState<(string | number)[]>([]);
-
-  // Generate random heights for each item (between 150px and 300px)
-  useEffect(() => {
-    const heights: Record<string | number, number> = {};
-    items.forEach((item) => {
-      heights[item.id] = Math.floor(Math.random() * (300 - 150 + 1)) + 150;
-    });
-    setItemHeights(heights);
-  }, [items]);
 
   // Determine column count based on screen width
   useEffect(() => {
@@ -64,32 +52,20 @@ const InterestsSelector: React.FC<InterestsSelectorProps> = ({
     setSelectedItems((prev) => {
       if (prev.includes(id)) {
         return prev.filter((itemId) => itemId !== id);
-      } else {
-        return [...prev, id];
       }
+      return [...prev, id];
     });
   };
 
   // Distribute items among columns
   const getColumnsData = () => {
-    if (columnCount <= 0) {
-      return [items]; // Return all items in one column if columnCount is invalid
-    }
-
-    const columns: ItemType[][] = [];
-    for (let i = 0; i < columnCount; i++) {
-      columns.push([]);
-    }
-
+    const columns: ItemType[][] = Array.from({ length: columnCount }, () => []);
     items.forEach((item, index) => {
-      if (columnCount > 0) {
-        const columnIndex = index % columnCount;
-        if (columns[columnIndex]) {
-          columns[columnIndex].push(item);
-        }
+      const column = columns[index % columnCount];
+      if (column) {
+        column.push(item);
       }
     });
-
     return columns;
   };
 
@@ -99,31 +75,29 @@ const InterestsSelector: React.FC<InterestsSelectorProps> = ({
     <div className="w-full overflow-x-auto">
       <div className="flex w-full gap-3">
         {columns.map((column, columnIndex) => (
-          <div key={columnIndex} className="flex flex-col gap-3 flex-1">
-            {column.map((item) => {
-              const isSelected = selectedItems.includes(item.id);
-
-              return (
-                <div
-                  key={item.id}
-                  className={`
-                    ${isSelected ? "bg-selected" : "bg-selection hover:bg-selected/70"} 
-                    rounded-lg p-4 flex flex-col text-white relative cursor-pointer
-                    transition-colors duration-200
-                  `}
-                  style={{ height: `${itemHeights[item.id]}px` }}
-                  onClick={() => toggleItem(item.id)}
-                >
-                  <span
-                    className={`text-2xl mb-2 icon-${item.icon}`}
-                    aria-hidden="true"
-                  ></span>
-                  <span className="text-typography font-bold absolute bottom-4">
-                    {item.title}
-                  </span>
+          <div key={`col-${columnIndex}-${column.length}`} className="flex flex-col w-full gap-3">
+            {column.map((item) => (
+              <div
+                key={item.id}
+                className={`relative rounded-xl overflow-hidden cursor-pointer transition-all duration-300 ${
+                  selectedItems.includes(item.id)
+                    ? "ring-4 ring-offset-2 ring-selection"
+                    : ""
+                }`}
+                onClick={() => toggleItem(item.id)}
+                style={{
+                  height: `${
+                    Math.floor(Math.random() * (300 - 150 + 1)) + 150
+                  }px`,
+                }}
+              >
+                <div className="absolute inset-0 bg-black bg-opacity-40" />
+                <div className="absolute bottom-4 left-4 right-4 text-white">
+                  <i className={`${item.icon} text-2xl mb-2`} />
+                  <h3 className="font-bold text-lg">{item.title}</h3>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         ))}
       </div>

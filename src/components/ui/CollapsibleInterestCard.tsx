@@ -6,7 +6,7 @@ import { TextField } from "@/components/forms/text_input";
 import { Eye } from "lucide-react";
 import type { InterestArea, InterestAreaTrigger } from "@/api";
 
-interface UserInterest {
+export interface UserInterest {
   observation_id?: number;
   provider_name?: string;
   shared?: boolean;

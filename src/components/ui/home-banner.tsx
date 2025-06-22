@@ -43,7 +43,7 @@ const HomeBanner: React.FC<HomeBannerProps> = ({
             if (onIconClick) onIconClick();
           }}
         >
-          <span className="mgc_pencil_line text-2xl text-success"></span>
+          <span className="mgc_pencil_line text-2xl text-success" />
         </div>
       </div>
     </div>

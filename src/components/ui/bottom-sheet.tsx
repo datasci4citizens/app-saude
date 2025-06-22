@@ -50,7 +50,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         }}
       >
         <div className="flex justify-center py-2">
-          <div className="w-10 h-1 bg-gray-400 rounded-full"></div>
+          <div className="w-10 h-1 bg-gray-400 rounded-full" />
         </div>
 
         {title && (

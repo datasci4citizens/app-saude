@@ -37,7 +37,7 @@ const ProfileBanner: React.FC<ProfileBannerProps> = ({
               className="w-full h-full object-cover"
             />
           ) : (
-            <span className="mgc_user_3_line text-4xl text-white flex items-center justify-center w-full h-full"></span>
+            <span className="mgc_user_3_line text-4xl text-white flex items-center justify-center w-full h-full" />
           )}
         </div>
         {/* Name (opcional) */}
@@ -54,7 +54,7 @@ const ProfileBanner: React.FC<ProfileBannerProps> = ({
               onEditClick();
             }}
           >
-            <span className="mgc_pencil_line text-base text-success"></span>
+            <span className="mgc_pencil_line text-base text-success" />
           </div>
         )}
       </div>

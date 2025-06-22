@@ -6,7 +6,7 @@ const TermsText = () => {
         <h2 className="text-titulo font-work-sans text-white mb-4 leading-tight">
           TERMO DE CONSENTIMENTO LIVRE E ESCLARECIDO
         </h2>
-        <div className="w-16 h-1 bg-white/60 mx-auto rounded-full"></div>
+        <div className="w-16 h-1 bg-white/60 mx-auto rounded-full" />
       </div>
 
       {/* Projeto */}
@@ -21,7 +21,7 @@ const TermsText = () => {
       {/* Pesquisadores */}
       <div>
         <h4 className="text-topicos font-work-sans text-white mb-3 flex items-center">
-          <span className="w-2 h-2 bg-accent1 rounded-full mr-2"></span>
+          <span className="w-2 h-2 bg-accent1 rounded-full mr-2" />
           Pesquisadores Responsáveis:
         </h4>
         <div className="bg-white/5 rounded-lg p-4 space-y-2">
@@ -65,7 +65,7 @@ const TermsText = () => {
       {/* Justificativa e Objetivos */}
       <div>
         <h4 className="text-topicos font-work-sans text-white mb-3 flex items-center">
-          <span className="w-2 h-2 bg-accent2 rounded-full mr-2"></span>
+          <span className="w-2 h-2 bg-accent2 rounded-full mr-2" />
           Justificativa e objetivos:
         </h4>
         <div className="bg-white/5 rounded-lg p-4">
@@ -83,7 +83,7 @@ const TermsText = () => {
       {/* Procedimentos */}
       <div>
         <h4 className="text-topicos font-work-sans text-white mb-3 flex items-center">
-          <span className="w-2 h-2 bg-yellow rounded-full mr-2"></span>
+          <span className="w-2 h-2 bg-yellow rounded-full mr-2" />
           Procedimentos:
         </h4>
         <p className="text-white/90 font-inter text-campos-preenchimento mb-3">
@@ -92,28 +92,28 @@ const TermsText = () => {
         <div className="bg-white/5 rounded-lg p-4">
           <ul className="space-y-3">
             <li className="flex items-start">
-              <span className="inline-block w-2 h-2 bg-accent1 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+              <span className="inline-block w-2 h-2 bg-accent1 rounded-full mr-3 mt-2 flex-shrink-0" />
               <span className="text-white/90 font-inter text-campos-preenchimento2">
                 Utilizar o aplicativo SAÚDE! por um período definido (ex: 6
                 semanas);
               </span>
             </li>
             <li className="flex items-start">
-              <span className="inline-block w-2 h-2 bg-accent1 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+              <span className="inline-block w-2 h-2 bg-accent1 rounded-full mr-3 mt-2 flex-shrink-0" />
               <span className="text-white/90 font-inter text-campos-preenchimento2">
                 Responder a questionários sobre usabilidade, experiência de uso
                 e impacto percebido;
               </span>
             </li>
             <li className="flex items-start">
-              <span className="inline-block w-2 h-2 bg-accent1 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+              <span className="inline-block w-2 h-2 bg-accent1 rounded-full mr-3 mt-2 flex-shrink-0" />
               <span className="text-white/90 font-inter text-campos-preenchimento2">
                 Participar de grupos focais com usuários ou profissionais de
                 saúde;
               </span>
             </li>
             <li className="flex items-start">
-              <span className="inline-block w-2 h-2 bg-accent1 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+              <span className="inline-block w-2 h-2 bg-accent1 rounded-full mr-3 mt-2 flex-shrink-0" />
               <span className="text-white/90 font-inter text-campos-preenchimento2">
                 Participar de entrevistas com a equipe de pesquisa sobre a
                 implementação e melhorias no app.
@@ -134,7 +134,7 @@ const TermsText = () => {
       {/* Riscos e Desconfortos */}
       <div>
         <h4 className="text-topicos font-work-sans text-white mb-3 flex items-center">
-          <span className="w-2 h-2 bg-destructive rounded-full mr-2"></span>
+          <span className="w-2 h-2 bg-destructive rounded-full mr-2" />
           Riscos e desconfortos:
         </h4>
         <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4">
@@ -150,7 +150,7 @@ const TermsText = () => {
       {/* Benefícios */}
       <div>
         <h4 className="text-topicos font-work-sans text-white mb-3 flex items-center">
-          <span className="w-2 h-2 bg-success rounded-full mr-2"></span>
+          <span className="w-2 h-2 bg-success rounded-full mr-2" />
           Benefícios:
         </h4>
         <div className="bg-success/10 border border-success/30 rounded-lg p-4">
@@ -166,7 +166,7 @@ const TermsText = () => {
       {/* Confidencialidade */}
       <div>
         <h4 className="text-topicos font-work-sans text-white mb-3 flex items-center">
-          <span className="w-2 h-2 bg-accent2 rounded-full mr-2"></span>
+          <span className="w-2 h-2 bg-accent2 rounded-full mr-2" />
           Confidencialidade:
         </h4>
         <div className="bg-white/5 rounded-lg p-4">
@@ -181,7 +181,7 @@ const TermsText = () => {
       {/* Ressarcimento */}
       <div>
         <h4 className="text-topicos font-work-sans text-white mb-3 flex items-center">
-          <span className="w-2 h-2 bg-yellow rounded-full mr-2"></span>
+          <span className="w-2 h-2 bg-yellow rounded-full mr-2" />
           Ressarcimento:
         </h4>
         <div className="bg-white/5 rounded-lg p-4">
@@ -196,7 +196,7 @@ const TermsText = () => {
       {/* Tratamento dos Dados */}
       <div>
         <h4 className="text-topicos font-work-sans text-white mb-3 flex items-center">
-          <span className="w-2 h-2 bg-accent1 rounded-full mr-2"></span>
+          <span className="w-2 h-2 bg-accent1 rounded-full mr-2" />
           Tratamento dos dados:
         </h4>
         <div className="bg-white/5 rounded-lg p-4">
@@ -212,7 +212,7 @@ const TermsText = () => {
       {/* Contato */}
       <div>
         <h4 className="text-topicos font-work-sans text-white mb-3 flex items-center">
-          <span className="w-2 h-2 bg-accent2 rounded-full mr-2"></span>
+          <span className="w-2 h-2 bg-accent2 rounded-full mr-2" />
           Contato:
         </h4>
         <div className="bg-accent2/10 border border-accent2/30 rounded-lg p-4 space-y-3">
@@ -257,7 +257,7 @@ const TermsText = () => {
       </div>
 
       {/* Espaçamento final */}
-      <div className="h-8"></div>
+      <div className="h-8" />
     </div>
   );
 };

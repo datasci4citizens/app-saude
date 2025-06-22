@@ -8,15 +8,6 @@ import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderServ
 import useSWR from "swr";
 import Header from "@/components/ui/header";
 
-// Interface para os dados dos pacientes em pedido de ajuda conforme API
-interface EmergencyPatient {
-  id: number | string;
-  name: string;
-  age: number;
-  last_visit_date: string;
-  last_emergency_date: string;
-}
-
 // Interface para o formato utilizado na UI
 interface FormattedEmergencyPatient {
   id: number | string;
@@ -34,7 +25,7 @@ const formatDisplayDate = (dateString: string | undefined | null): string => {
   }
   try {
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) {
+    if (Number.isNaN(date.getTime())) {
       if (typeof dateString === "string" && dateString.includes("/")) {
         const parts = dateString.split("/");
         if (parts.length === 3 && parts[0] && parts[1] && parts[2]) {
@@ -43,9 +34,9 @@ const formatDisplayDate = (dateString: string | undefined | null): string => {
           const month = Number.parseInt(parts[1], 10) - 1; // Mês é 0-indexado
           const year = Number.parseInt(parts[2], 10);
           // Verifica se os números são válidos antes de criar a data
-          if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+          if (!Number.isNaN(day) && !Number.isNaN(month) && !Number.isNaN(year)) {
             const manualDate = new Date(year, month, day);
-            if (!isNaN(manualDate.getTime())) {
+            if (!Number.isNaN(manualDate.getTime())) {
               return `${String(manualDate.getDate()).padStart(2, "0")}/${String(
                 manualDate.getMonth() + 1,
               ).padStart(2, "0")}/${manualDate.getFullYear()}`;
@@ -130,7 +121,7 @@ export default function EmergencyPage() {
           const month = Number.parseInt(monthStr, 10) - 1; // Mês é 0-indexado em Date
           const year = Number.parseInt(yearStr, 10);
 
-          if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+          if (!Number.isNaN(day) && !Number.isNaN(month) && !Number.isNaN(year)) {
             const d = new Date(year, month, day);
             // Confirma se a data construída é válida e corresponde às partes (evita roll-overs)
             if (
@@ -147,7 +138,7 @@ export default function EmergencyPage() {
 
     // Fallback: Tenta parsear com o construtor Date diretamente (pode pegar formatos ISO)
     const d = new Date(dateStr);
-    if (!isNaN(d.getTime())) {
+    if (!Number.isNaN(d.getTime())) {
       return d;
     }
 
@@ -173,7 +164,7 @@ export default function EmergencyPage() {
             const emergencyDateObj = parseDate(patient.lastEmergency);
             // Ensure the parsed emergencyDate is a valid date (not Invalid Date and not epoch 0 from empty string).
             if (
-              isNaN(emergencyDateObj.getTime()) ||
+              Number.isNaN(emergencyDateObj.getTime()) ||
               emergencyDateObj.getTime() === 0
             ) {
               return false;
@@ -185,7 +176,7 @@ export default function EmergencyPage() {
               return true;
             }
             const visitDateObj = parseDate(patient.lastVisit);
-            if (isNaN(visitDateObj.getTime()) || visitDateObj.getTime() === 0) {
+            if (Number.isNaN(visitDateObj.getTime()) || visitDateObj.getTime() === 0) {
               // No valid visit, so emergency is pending
               return true;
             }
@@ -287,9 +278,9 @@ export default function EmergencyPage() {
         ) : fetchError ? (
           <div className="text-center p-4 text-selection">{error}</div>
         ) : filteredPatients.length > 0 ? (
-          filteredPatients.map((patient, index) => (
+          filteredPatients.map((patient) => (
             <PatientButton
-              key={index}
+              key={patient.id}
               variant="emergency"
               name={patient.name}
               age={patient.age || 0}
