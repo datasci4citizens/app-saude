@@ -271,7 +271,7 @@ export default function ViewDiary() {
                   Período de tempo
                 </h3>
                 <div className="bg-card p-4 rounded-lg border border-card-border">
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm text-typography">
                     {diary.scope === "today"
                       ? "Registros do dia de hoje"
                       : "Registros desde a última entrada"}
