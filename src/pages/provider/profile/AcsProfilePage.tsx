@@ -135,22 +135,22 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
     {
       title: "Meus Dados",
       items: [
-        {
-          id: "edit-profile",
-          title: "Editar perfil",
-          subtitle: "Alterar informações pessoais",
-          icon: "✏️",
-          onClick: () => onEditProfile?.(),
-          hasArrow: true,
-        },
-        {
-          id: "professional-info",
-          title: "Informações profissionais",
-          subtitle: "Registro, especialidade e dados",
-          icon: "👨‍⚕️",
-          onClick: () => navigate("/professional-info"),
-          hasArrow: true,
-        },
+        //{
+        //  id: "edit-profile",
+        //  title: "Editar perfil",
+        //  subtitle: "Alterar informações pessoais",
+        //  icon: "✏️",
+        //  onClick: () => onEditProfile?.(),
+        //  hasArrow: true,
+        //},
+       //  {
+        //   id: "professional-info",
+        //   title: "Informações profissionais",
+        //   subtitle: "Registro, especialidade e dados",
+        //   icon: "👨‍⚕️",
+        //   onClick: () => navigate("/professional-info"),
+        //   hasArrow: true,
+        // },
       ],
     },
     {
@@ -164,37 +164,37 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
           onClick: () => navigate("/patients"),
           hasArrow: true,
         },
-        {
-          id: "patient-requests",
-          title: "Solicitações pendentes",
-          subtitle: "Pedidos de vinculação",
-          icon: "📋",
-          onClick: () => navigate("/patient-requests"),
-          hasArrow: true,
-        },
+        // {
+        //   id: "patient-requests",
+        //   title: "Solicitações pendentes",
+        //   subtitle: "Pedidos de vinculação",
+        //   icon: "📋",
+        //   onClick: () => navigate("/patient-requests"),
+        //   hasArrow: true,
+        // },
       ],
     },
-    {
-      title: "Atendimento",
-      items: [
-        {
-          id: "appointments",
-          title: "Consultas agendadas",
-          subtitle: "Visualizar agenda",
-          icon: "📅",
-          onClick: () => navigate("/appointments"),
-          hasArrow: true,
-        },
-        {
-          id: "emergency-alerts",
-          title: "Alertas de emergência",
-          subtitle: "Pedidos de ajuda recebidos",
-          icon: "🚨",
-          onClick: () => navigate("/emergencies"),
-          hasArrow: true,
-        },
-      ],
-    },
+    // {
+    //   title: "Atendimento",
+    //   items: [
+    //     {
+    //       id: "appointments",
+    //       title: "Consultas agendadas",
+    //       subtitle: "Visualizar agenda",
+    //       icon: "📅",
+    //       onClick: () => navigate("/appointments"),
+    //       hasArrow: true,
+    //     },
+    //     {
+    //       id: "emergency-alerts",
+    //       title: "Alertas de emergência",
+    //       subtitle: "Pedidos de ajuda recebidos",
+    //       icon: "🚨",
+    //       onClick: () => navigate("/emergencies"),
+    //       hasArrow: true,
+    //     },
+    //   ],
+    // },
     {
       title: "Suporte e Informações",
       items: [
