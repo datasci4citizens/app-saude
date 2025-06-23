@@ -588,9 +588,11 @@ export default function DiaryInfoForm() {
             observation_id: interest.observation_id || 0,
             interest_area: {
               name: interest.interest_area?.name || "Interesse sem nome",
-              is_attention_point: interest.interest_area?.is_attention_point || false,
+              is_attention_point:
+                interest.interest_area?.is_attention_point || false,
               marked_by: interest.interest_area?.marked_by || [],
-              shared_with_provider: interest.interest_area?.shared_with_provider || false,
+              shared_with_provider:
+                interest.interest_area?.shared_with_provider || false,
               triggers: Array.isArray(interest.interest_area?.triggers)
                 ? interest.interest_area.triggers.map(
                     (trigger: ApiTriggerData): FormattedTrigger => ({
