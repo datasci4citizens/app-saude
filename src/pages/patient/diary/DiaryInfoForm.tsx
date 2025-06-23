@@ -572,6 +572,7 @@ export default function DiaryInfoForm() {
             ...interest,
             interest_area: {
               ...(interest.interest_area as FormattedInterestArea),
+              is_attention_point: interest.interest_area.marked_by && interest.interest_area.marked_by.length > 0,
               triggers: Array.isArray(interest.interest_area.triggers)
                 ? (interest.interest_area.triggers as any[]).map(
                     (trigger: any): FormattedTrigger => ({
@@ -667,7 +668,7 @@ export default function DiaryInfoForm() {
 
           return {
             name: interest.interest_area.name,
-            is_attention_point: interest.interest_area.is_attention_point,
+            is_attention_point: interest.interest_area.marked_by && interest.interest_area.marked_by.length > 0,
             marked_by: interest.interest_area.marked_by || [],
             triggers: triggersWithResponses,
             interest_area_id: interest.observation_id,
