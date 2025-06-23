@@ -36,14 +36,20 @@ export default function UserMainPage() {
   const navigate = useNavigate();
 
   // Estados principais
-  const [userInterestObjects, setUserInterestObjects] = useState<InterestAreaResponse[]>([]);
-  const [originalInterests, setOriginalInterests] = useState<InterestAreaResponse[]>([]);
+  const [userInterestObjects, setUserInterestObjects] = useState<
+    InterestAreaResponse[]
+  >([]);
+  const [originalInterests, setOriginalInterests] = useState<
+    InterestAreaResponse[]
+  >([]);
 
   // Para comparar mudanças
   const [editionMode, setEditionMode] = useState(false);
-  const [editingInterest, setEditingInterest] = useState<InterestAreaResponse | null>(null);
+  const [editingInterest, setEditingInterest] =
+    useState<InterestAreaResponse | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [interestToDelete, setInterestToDelete] = useState<InterestAreaResponse | null>(null);
+  const [interestToDelete, setInterestToDelete] =
+    useState<InterestAreaResponse | null>(null);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   // Estados de sincronização
@@ -68,21 +74,21 @@ export default function UserMainPage() {
           ...interest,
           interest_area: {
             ...interest.interest_area,
-            name: String(interest.interest_area?.name || ''),
-            triggers: Array.isArray(interest.interest_area?.triggers) 
+            name: String(interest.interest_area?.name || ""),
+            triggers: Array.isArray(interest.interest_area?.triggers)
               ? interest.interest_area.triggers.map((trigger: any) => ({
-                  name: String(trigger?.name || trigger || ''),
+                  name: String(trigger?.name || trigger || ""),
                   type: trigger?.type || TypeEnum.TEXT,
-                  response: trigger?.response || null
+                  response: trigger?.response || null,
                 }))
-              : []
+              : [],
           },
           marked_by: Array.isArray(interest.marked_by)
-            ? interest.marked_by.map((provider: any) => String(provider || ''))
+            ? interest.marked_by.map((provider: any) => String(provider || ""))
             : [],
           is_temporary: false,
           is_deleted: false,
-          is_modified: false
+          is_modified: false,
         }));
 
         // flag is_attention_point
@@ -139,7 +145,7 @@ export default function UserMainPage() {
                   ...interest.interest_area,
                   name: interestData.interest_name,
                   triggers: interestData.triggers.map((trigger) => ({
-                    name: String(trigger.name || ''),
+                    name: String(trigger.name || ""),
                     type: trigger.type || TypeEnum.TEXT,
                     response: trigger.response || null,
                   })),
@@ -159,7 +165,7 @@ export default function UserMainPage() {
           is_attention_point: false,
           marked_by: [],
           triggers: interestData.triggers.map((trigger) => ({
-            name: String(trigger.name || ''),
+            name: String(trigger.name || ""),
             type: trigger.type || TypeEnum.TEXT,
             response: trigger.response || null,
           })),
@@ -207,18 +213,20 @@ export default function UserMainPage() {
           const newInterestArea = {
             interest_area: {
               name: interest.interest_area.name,
-              triggers: interest.interest_area.triggers?.map((t) => ({
-                name: String(t.name || ''),
-                type: t.type || TypeEnum.TEXT,
-                response: t.response || null,
-              })) || [],
+              triggers:
+                interest.interest_area.triggers?.map((t) => ({
+                  name: String(t.name || ""),
+                  type: t.type || TypeEnum.TEXT,
+                  response: t.response || null,
+                })) || [],
               marked_by: [],
               is_attention_point: false,
               shared_with_provider: false,
             },
           };
 
-          const result = await InterestAreasService.apiInterestAreaCreate(newInterestArea);
+          const result =
+            await InterestAreasService.apiInterestAreaCreate(newInterestArea);
 
           if (result) {
             createdInterests.push({
@@ -233,7 +241,9 @@ export default function UserMainPage() {
           }
         } catch (error) {
           console.error("Error creating interest:", error);
-          setSyncError(`Erro ao criar interesse: ${interest.interest_area.name}`);
+          setSyncError(
+            `Erro ao criar interesse: ${interest.interest_area.name}`,
+          );
         }
       }
 
@@ -250,14 +260,17 @@ export default function UserMainPage() {
           const updateData = {
             interest_area: {
               name: interest.interest_area.name,
-              triggers: interest.interest_area.triggers?.map((t) => ({
-                name: String(t.name || ''),
-                type: t.type || TypeEnum.TEXT,
-                response: t.response || null,
-              })) || [],
-              is_attention_point: interest.interest_area.is_attention_point || false,
+              triggers:
+                interest.interest_area.triggers?.map((t) => ({
+                  name: String(t.name || ""),
+                  type: t.type || TypeEnum.TEXT,
+                  response: t.response || null,
+                })) || [],
+              is_attention_point:
+                interest.interest_area.is_attention_point || false,
               marked_by: interest.interest_area.marked_by || [],
-              shared_with_provider: interest.interest_area.shared_with_provider || false,
+              shared_with_provider:
+                interest.interest_area.shared_with_provider || false,
             },
           };
 
@@ -279,7 +292,10 @@ export default function UserMainPage() {
             } as InterestAreaResponse);
           }
         } catch (error: any) {
-          console.error(`Error updating interest ${interest.observation_id}:`, error);
+          console.error(
+            `Error updating interest ${interest.observation_id}:`,
+            error,
+          );
           setSyncError(`Erro ao atualizar: ${interest.interest_area.name}`);
         }
       }
@@ -468,7 +484,7 @@ export default function UserMainPage() {
                     }`}
                   ></span>
                   <span className="break-words min-w-0">
-                    {String(interest.interest_area?.name || '')}
+                    {String(interest.interest_area?.name || "")}
                   </span>
                   {interest.is_temporary && (
                     <span className="ml-2 text-desc-campos bg-yellow text-white px-2 py-1 rounded-full font-inter font-medium flex-shrink-0">
@@ -491,34 +507,41 @@ export default function UserMainPage() {
                 {interest.interest_area.is_attention_point && (
                   <div className="mb-3 p-3 bg-blue-50 dark:bg-orange-900/20 border border-blue-200 dark:border-orange-800 rounded-lg">
                     <p className="text-desc-campos font-inter text-blue-700 dark:text-orange-300 flex items-center gap-2">
-                      <span className="text-blue-500 dark:text-orange-400">👤</span>
+                      <span className="text-blue-500 dark:text-orange-400">
+                        👤
+                      </span>
                       <span className="font-medium">Marcado por:</span>
                       <span className="font-semibold">
-                        {String(interest.provider_name || "Profissional não informado")}
+                        {String(
+                          interest.provider_name ||
+                            "Profissional não informado",
+                        )}
                       </span>
                     </p>
                     {interest.attention_point_date && (
                       <p className="text-desc-campos font-inter text-blue-600 dark:text-orange-400 mt-1 flex items-center gap-1">
                         📅{" "}
-                        {new Date(interest.attention_point_date).toLocaleDateString("pt-BR")}
+                        {new Date(
+                          interest.attention_point_date,
+                        ).toLocaleDateString("pt-BR")}
                       </p>
                     )}
                   </div>
                 )}
 
                 <div className="space-y-1">
-                  {Array.isArray(interest.interest_area.triggers) && 
-                   interest.interest_area.triggers.map((trigger, index) => (
-                    <div
-                      key={`${trigger.name || index}-${index}`}
-                      className="flex items-start gap-2 text-campos-preenchimento2 font-inter text-card-foreground/70"
-                    >
-                      <span className="w-1 h-1 bg-card-foreground/40 rounded-full flex-shrink-0 mt-2"></span>
-                      <span className="break-words min-w-0">
-                        {String(trigger?.name || '')}
-                      </span>
-                    </div>
-                  ))}
+                  {Array.isArray(interest.interest_area.triggers) &&
+                    interest.interest_area.triggers.map((trigger, index) => (
+                      <div
+                        key={`${trigger.name || index}-${index}`}
+                        className="flex items-start gap-2 text-campos-preenchimento2 font-inter text-card-foreground/70"
+                      >
+                        <span className="w-1 h-1 bg-card-foreground/40 rounded-full flex-shrink-0 mt-2"></span>
+                        <span className="break-words min-w-0">
+                          {String(trigger?.name || "")}
+                        </span>
+                      </div>
+                    ))}
                 </div>
               </div>
             ))}
@@ -568,7 +591,11 @@ export default function UserMainPage() {
               }`}
               disabled={isSyncing || !hasChanges}
             >
-              {isSyncing ? "..." : hasChanges ? "✓ Salvar Mudanças" : "✓ Salvar"}
+              {isSyncing
+                ? "..."
+                : hasChanges
+                  ? "✓ Salvar Mudanças"
+                  : "✓ Salvar"}
             </Button>
             <Button
               onClick={handleCreateNewInterest}
@@ -607,10 +634,12 @@ export default function UserMainPage() {
           editingInterest
             ? {
                 id: editingInterest.observation_id?.toString(),
-                interest_name: String(editingInterest.interest_area?.name || ''),
+                interest_name: String(
+                  editingInterest.interest_area?.name || "",
+                ),
                 triggers: Array.isArray(editingInterest.interest_area?.triggers)
                   ? editingInterest.interest_area.triggers.map((t) => ({
-                      name: String(t?.name || ''),
+                      name: String(t?.name || ""),
                       type: t?.type || TypeEnum.TEXT,
                       response: t?.response || null,
                     }))
@@ -628,7 +657,7 @@ export default function UserMainPage() {
       <ConfirmDialog
         open={confirmDeleteOpen}
         title="Excluir Interesse"
-        description={`Tem certeza que deseja excluir "${String(interestToDelete?.interest_area?.name || '')}"?`}
+        description={`Tem certeza que deseja excluir "${String(interestToDelete?.interest_area?.name || "")}"?`}
         onCancel={() => {
           setConfirmDeleteOpen(false);
           setInterestToDelete(null);

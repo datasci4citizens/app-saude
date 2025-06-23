@@ -14,7 +14,7 @@ import {
 import {
   InterestAreasService,
   type InterestAreaTrigger,
-  TypeEnum
+  TypeEnum,
 } from "@/api";
 
 // Define clear interfaces
@@ -40,10 +40,10 @@ interface EditInterestDialogProps {
 
 // Type options for the dropdown
 const TYPE_OPTIONS = [
-  { value: TypeEnum.BOOLEAN, label: 'Sim/Não' },
-  { value: TypeEnum.TEXT, label: 'Texto' },
-  { value: TypeEnum.INT, label: 'Número' },
-  { value: TypeEnum.SCALE, label: 'Escala' },
+  { value: TypeEnum.BOOLEAN, label: "Sim/Não" },
+  { value: TypeEnum.TEXT, label: "Texto" },
+  { value: TypeEnum.INT, label: "Número" },
+  { value: TypeEnum.SCALE, label: "Escala" },
 ];
 
 interface QuestionItemProps {
@@ -53,7 +53,12 @@ interface QuestionItemProps {
   onRemove: (index: number) => void;
 }
 
-const QuestionItem: React.FC<QuestionItemProps> = ({ trigger, index, onUpdate, onRemove }) => {
+const QuestionItem: React.FC<QuestionItemProps> = ({
+  trigger,
+  index,
+  onUpdate,
+  onRemove,
+}) => {
   const handleNameChange = (name: string) => {
     onUpdate(index, { ...trigger, name });
   };
@@ -70,7 +75,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ trigger, index, onUpdate, o
             id={`trigger-name-${index}`}
             name={`trigger-name-${index}`}
             placeholder="Nome da pergunta"
-            value={trigger.name || ''}
+            value={trigger.name || ""}
             onChange={(e) => handleNameChange(e.target.value)}
             className="w-full text-sm"
           />
@@ -84,7 +89,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ trigger, index, onUpdate, o
           <X size={16} />
         </Button>
       </div>
-      
+
       <div>
         <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
           Tipo de resposta
@@ -133,9 +138,9 @@ const TemplateItem: React.FC<{
           <span
             key={idx}
             className="bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-200 px-2 py-1 rounded text-xs max-w-[200px] truncate"
-            title={trigger?.name || ''}
+            title={trigger?.name || ""}
           >
-            {trigger?.name || 'Pergunta sem nome'}
+            {trigger?.name || "Pergunta sem nome"}
           </span>
         ))}
         {template.triggers.length > 2 && (
@@ -177,7 +182,9 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
   const [showTemplates, setShowTemplates] = useState(false);
   const [templateSearch, setTemplateSearch] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-  const [templateInterests, setTemplateInterests] = useState<InterestTemplate[]>([]);
+  const [templateInterests, setTemplateInterests] = useState<
+    InterestTemplate[]
+  >([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -220,29 +227,31 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
               const triggers = interestData?.triggers || [];
 
               // Ensure triggers is an array and properly formatted
-              const formattedTriggers = Array.isArray(triggers) ? triggers.map((t: any) => {
-                if (typeof t === "string") {
-                  return { 
-                    name: t, 
-                    type: TypeEnum.TEXT, 
-                    response: null 
-                  };
-                }
-                // Ensure we have a valid trigger object
-                if (t && typeof t === 'object') {
-                  return {
-                    name: String(t.name || ""),
-                    type: t.type || TypeEnum.TEXT,
-                    response: t.response || null
-                  };
-                }
-                // Fallback for invalid triggers
-                return {
-                  name: "Pergunta inválida",
-                  type: TypeEnum.TEXT,
-                  response: null
-                };
-              }) : [];
+              const formattedTriggers = Array.isArray(triggers)
+                ? triggers.map((t: any) => {
+                    if (typeof t === "string") {
+                      return {
+                        name: t,
+                        type: TypeEnum.TEXT,
+                        response: null,
+                      };
+                    }
+                    // Ensure we have a valid trigger object
+                    if (t && typeof t === "object") {
+                      return {
+                        name: String(t.name || ""),
+                        type: t.type || TypeEnum.TEXT,
+                        response: t.response || null,
+                      };
+                    }
+                    // Fallback for invalid triggers
+                    return {
+                      name: "Pergunta inválida",
+                      type: TypeEnum.TEXT,
+                      response: null,
+                    };
+                  })
+                : [];
 
               return {
                 id: String(item.observation_id || Math.random()),
@@ -255,12 +264,13 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
               return null;
             }
           })
-          .filter((template: InterestTemplate | null): template is InterestTemplate => 
-            // Filter out invalid templates and ensure all required fields
-            template !== null &&
-            !!template.interest_name &&
-            template.triggers.length > 0 &&
-            Array.isArray(template.triggers)
+          .filter(
+            (template: InterestTemplate | null): template is InterestTemplate =>
+              // Filter out invalid templates and ensure all required fields
+              template !== null &&
+              !!template.interest_name &&
+              template.triggers.length > 0 &&
+              Array.isArray(template.triggers),
           );
 
         setTemplateInterests(data);
@@ -276,49 +286,53 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
   }, [open, initialData, templateInterests.length]);
 
   // Filter templates based on search
-  const filteredTemplates = templateInterests.filter((template) => {
-    if (!template || !templateSearch) return true;
+  const filteredTemplates = templateInterests
+    .filter((template) => {
+      if (!template || !templateSearch) return true;
 
-    const nameMatch = template.interest_name
-      ?.toLowerCase()
-      .includes(templateSearch.toLowerCase());
-    const triggerMatch = template.triggers?.some((trigger) =>
-      trigger?.name?.toLowerCase().includes(templateSearch.toLowerCase()),
+      const nameMatch = template.interest_name
+        ?.toLowerCase()
+        .includes(templateSearch.toLowerCase());
+      const triggerMatch = template.triggers?.some((trigger) =>
+        trigger?.name?.toLowerCase().includes(templateSearch.toLowerCase()),
+      );
+
+      return nameMatch || triggerMatch;
+    })
+    .filter(
+      (template) =>
+        // Additional safety check
+        template && template.interest_name && Array.isArray(template.triggers),
     );
-
-    return nameMatch || triggerMatch;
-  }).filter(template => 
-    // Additional safety check
-    template && 
-    template.interest_name && 
-    Array.isArray(template.triggers)
-  );
 
   // Handlers
   const handleAddQuestion = () => {
     const newTrigger: InterestAreaTrigger = {
-      name: '',
+      name: "",
       type: TypeEnum.TEXT,
       response: null,
     };
-    
-    setFormData(prev => ({
+
+    setFormData((prev) => ({
       ...prev,
       triggers: [...prev.triggers, newTrigger],
     }));
   };
-  
-  const handleUpdateQuestion = (index: number, updatedTrigger: InterestAreaTrigger) => {
-    setFormData(prev => ({
+
+  const handleUpdateQuestion = (
+    index: number,
+    updatedTrigger: InterestAreaTrigger,
+  ) => {
+    setFormData((prev) => ({
       ...prev,
-      triggers: prev.triggers.map((trigger, i) => 
-        i === index ? updatedTrigger : trigger
+      triggers: prev.triggers.map((trigger, i) =>
+        i === index ? updatedTrigger : trigger,
       ),
     }));
   };
 
   const handleRemoveQuestion = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       triggers: prev.triggers.filter((_, i) => i !== index),
     }));
@@ -329,7 +343,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
       id: initialData?.id,
       interest_name: template.interest_name,
       triggers: template.triggers.map((trigger) => ({
-        name: trigger.name || '',
+        name: trigger.name || "",
         type: trigger.type || TypeEnum.TEXT,
         response: trigger.response || null,
       })),
@@ -342,18 +356,20 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
   const handleSubmit = () => {
     // Validate form data
     if (!formData.interest_name.trim()) return;
-    
+
     // Filter out empty triggers
-    const validTriggers = formData.triggers.filter(trigger => trigger.name.trim());
-    
+    const validTriggers = formData.triggers.filter((trigger) =>
+      trigger.name.trim(),
+    );
+
     if (validTriggers.length === 0) return;
 
     // Submit with cleaned data
     onSave({
       ...formData,
-      triggers: validTriggers
+      triggers: validTriggers,
     });
-    
+
     handleClose();
   };
 
@@ -366,9 +382,10 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
   };
 
   // Check if form is valid
-  const isFormValid = formData.interest_name.trim() && 
-                     formData.triggers.length > 0 && 
-                     formData.triggers.some(trigger => trigger.name?.trim());
+  const isFormValid =
+    formData.interest_name.trim() &&
+    formData.triggers.length > 0 &&
+    formData.triggers.some((trigger) => trigger.name?.trim());
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>

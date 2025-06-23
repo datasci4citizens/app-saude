@@ -75,15 +75,16 @@ export default function ImprovedDiaryListPage() {
             interest_areas: Array.isArray(item.interest_areas)
               ? item.interest_areas.map((area: any) => ({
                   ...area,
-                  name: area.interest_name || area.name || 'Interesse',
-                  triggers: Array.isArray(area.triggers) 
+                  name: area.interest_name || area.name || "Interesse",
+                  triggers: Array.isArray(area.triggers)
                     ? area.triggers.map((trigger: any) => ({
                         trigger_id: trigger.trigger_id || 0,
-                        name: trigger.trigger_name || trigger.name || '',
+                        name: trigger.trigger_name || trigger.name || "",
                         type: trigger.type || TypeEnum.TEXT,
-                        response: trigger.value_as_string || trigger.response || ''
+                        response:
+                          trigger.value_as_string || trigger.response || "",
                       }))
-                    : []
+                    : [],
                 }))
               : [],
           }));
@@ -128,52 +129,69 @@ export default function ImprovedDiaryListPage() {
 
   // Get comprehensive diary statistics
   const getDiaryStats = (diary: DiaryRetrieve) => {
-    const hasTextEntry = diary.entries?.some(e => e.text && e.text.trim() !== "");
-    const sharedTextEntry = diary.entries?.some(e => e.text_shared);
-    
-    const interestStats = diary.interest_areas?.reduce((acc, area) => {
-      const answeredTriggers = area.triggers?.filter(t => t.response && t.response.trim() !== "") || [];
-      
-      return {
-        totalInterests: acc.totalInterests + 1,
-        answeredTriggers: acc.answeredTriggers + answeredTriggers.length,
-        totalTriggers: acc.totalTriggers + (area.triggers?.length || 0),
-        attentionPoints: acc.attentionPoints + (area.is_attention_point ? 1 : 0),
-        sharedInterests: acc.sharedInterests + (area.shared_with_provider ? 1 : 0)
-      };
-    }, {
+    const hasTextEntry = diary.entries?.some(
+      (e) => e.text && e.text.trim() !== "",
+    );
+    const sharedTextEntry = diary.entries?.some((e) => e.text_shared);
+
+    const interestStats = diary.interest_areas?.reduce(
+      (acc, area) => {
+        const answeredTriggers =
+          area.triggers?.filter(
+            (t) => t.response && t.response.trim() !== "",
+          ) || [];
+
+        return {
+          totalInterests: acc.totalInterests + 1,
+          answeredTriggers: acc.answeredTriggers + answeredTriggers.length,
+          totalTriggers: acc.totalTriggers + (area.triggers?.length || 0),
+          attentionPoints:
+            acc.attentionPoints + (area.is_attention_point ? 1 : 0),
+          sharedInterests:
+            acc.sharedInterests + (area.shared_with_provider ? 1 : 0),
+        };
+      },
+      {
+        totalInterests: 0,
+        answeredTriggers: 0,
+        totalTriggers: 0,
+        attentionPoints: 0,
+        sharedInterests: 0,
+      },
+    ) || {
       totalInterests: 0,
       answeredTriggers: 0,
       totalTriggers: 0,
       attentionPoints: 0,
-      sharedInterests: 0
-    }) || {
-      totalInterests: 0,
-      answeredTriggers: 0, 
-      totalTriggers: 0,
-      attentionPoints: 0,
-      sharedInterests: 0
+      sharedInterests: 0,
     };
 
-    const progressPercentage = interestStats.totalTriggers > 0 
-      ? (interestStats.answeredTriggers / interestStats.totalTriggers) * 100 
-      : 0;
+    const progressPercentage =
+      interestStats.totalTriggers > 0
+        ? (interestStats.answeredTriggers / interestStats.totalTriggers) * 100
+        : 0;
 
     return {
       hasTextEntry,
       sharedTextEntry,
       progressPercentage,
-      ...interestStats
+      ...interestStats,
     };
   };
 
   // Get diary summary with improved logic
   const getDiarySummary = (diary: DiaryRetrieve): string => {
     // First, try to get text from entries
-    if (diary.entries && Array.isArray(diary.entries) && diary.entries.length > 0) {
-      const textEntry = diary.entries.find(e => e.text && e.text.trim() !== "");
+    if (
+      diary.entries &&
+      Array.isArray(diary.entries) &&
+      diary.entries.length > 0
+    ) {
+      const textEntry = diary.entries.find(
+        (e) => e.text && e.text.trim() !== "",
+      );
       if (textEntry && textEntry.text) {
-        return textEntry.text.length > 100 
+        return textEntry.text.length > 100
           ? `${textEntry.text.substring(0, 100)}...`
           : textEntry.text;
       }
@@ -185,9 +203,10 @@ export default function ImprovedDiaryListPage() {
         if (area.triggers && Array.isArray(area.triggers)) {
           for (const trigger of area.triggers) {
             if (trigger.response && trigger.response.trim() !== "") {
-              const preview = trigger.response.length > 60 
-                ? `${trigger.response.substring(0, 60)}...`
-                : trigger.response;
+              const preview =
+                trigger.response.length > 60
+                  ? `${trigger.response.substring(0, 60)}...`
+                  : trigger.response;
               return `${area.name}: ${preview}`;
             }
           }
@@ -279,12 +298,12 @@ export default function ImprovedDiaryListPage() {
 
   return (
     <div className="w-full max-w-4xl mx-auto bg-background min-h-screen pb-24">
-      <Header title="📝 Diário" onBackClick={() => navigate("/user-main-page")} />
+      <Header
+        title="📝 Diário"
+        onBackClick={() => navigate("/user-main-page")}
+      />
 
       <div className="px-4 md:px-8 py-4">
-        
-
-
         {/* Create new diary button */}
         {hasDiaries && (
           <div className="flex justify-end mb-6">
@@ -329,14 +348,17 @@ export default function ImprovedDiaryListPage() {
               Criar Primeiro Diário
             </Button>
           </div>
-
         ) : (
           <div className="space-y-8">
             {Object.entries(groupedDiaries)
               .sort(([a], [b]) => {
-                const [dayA = 0, monthA = 0] = a.split("/").map(v => Number(v) || 0);
-                const [dayB = 0, monthB = 0] = b.split("/").map(v => Number(v) || 0);
-                return (monthB - monthA) || (dayB - dayA);
+                const [dayA = 0, monthA = 0] = a
+                  .split("/")
+                  .map((v) => Number(v) || 0);
+                const [dayB = 0, monthB = 0] = b
+                  .split("/")
+                  .map((v) => Number(v) || 0);
+                return monthB - monthA || dayB - dayA;
               })
               .map(([date, entries]) => (
                 <div key={date} className="space-y-4">
@@ -351,7 +373,10 @@ export default function ImprovedDiaryListPage() {
                   </div>
 
                   {entries
-                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                    .sort(
+                      (a, b) =>
+                        new Date(b.date).getTime() - new Date(a.date).getTime(),
+                    )
                     .map((diary) => {
                       const stats = getDiaryStats(diary);
                       const time = getTimeFromDate(diary.date);
@@ -361,9 +386,9 @@ export default function ImprovedDiaryListPage() {
                         <div
                           key={diary.diary_id}
                           className={`border rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer group ${
-                            hasAttentionPoints 
-                              ? 'bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border-orange-200 dark:border-orange-800 hover:border-orange-300 dark:hover:border-orange-700'
-                              : 'bg-card border-card-border hover:border-ring/30 hover:bg-card/90'
+                            hasAttentionPoints
+                              ? "bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border-orange-200 dark:border-orange-800 hover:border-orange-300 dark:hover:border-orange-700"
+                              : "bg-card border-card-border hover:border-ring/30 hover:bg-card/90"
                           }`}
                           onClick={() => handleViewDiary(diary.diary_id)}
                         >
@@ -371,23 +396,30 @@ export default function ImprovedDiaryListPage() {
                           <div className="flex justify-between items-start mb-4">
                             <div className="flex items-center gap-3 flex-wrap">
                               <div className="flex items-center gap-2">
-                                <Clock size={16} className="text-muted-foreground" />
+                                <Clock
+                                  size={16}
+                                  className="text-muted-foreground"
+                                />
                                 <span className="text-sm font-medium text-muted-foreground">
                                   {time}
                                 </span>
                               </div>
-                              
+
                               {diary.diary_shared && (
                                 <div className="flex items-center gap-1 px-2 py-1 bg-success/10 text-success rounded-full">
                                   <Share2 size={12} />
-                                  <span className="text-xs font-medium">Compartilhado</span>
+                                  <span className="text-xs font-medium">
+                                    Compartilhado
+                                  </span>
                                 </div>
                               )}
 
                               {hasAttentionPoints && (
                                 <div className="flex items-center gap-1 px-2 py-1 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-full border border-orange-200 dark:border-orange-800">
                                   <AlertTriangle size={12} />
-                                  <span className="text-xs font-medium">Requer Atenção</span>
+                                  <span className="text-xs font-medium">
+                                    Requer Atenção
+                                  </span>
                                 </div>
                               )}
                             </div>
@@ -402,15 +434,18 @@ export default function ImprovedDiaryListPage() {
                             {stats.hasTextEntry && (
                               <div className="flex items-center gap-2 text-homebg">
                                 <FileText size={16} />
-                                <span className="text-sm font-medium">Observações</span>
+                                <span className="text-sm font-medium">
+                                  Observações
+                                </span>
                               </div>
                             )}
-                            
+
                             {stats.totalInterests > 0 && (
                               <div className="flex items-center gap-2 text-selection">
                                 <Target size={16} />
                                 <span className="text-sm font-medium">
-                                  {stats.totalInterests} interesse{stats.totalInterests > 1 ? "s" : ""}
+                                  {stats.totalInterests} interesse
+                                  {stats.totalInterests > 1 ? "s" : ""}
                                 </span>
                               </div>
                             )}
@@ -419,33 +454,46 @@ export default function ImprovedDiaryListPage() {
                               <div className="flex items-center gap-2 text-orange-500">
                                 <AlertTriangle size={16} />
                                 <span className="text-sm font-medium">
-                                  {stats.attentionPoints} ponto{stats.attentionPoints > 1 ? "s" : ""} de atenção
+                                  {stats.attentionPoints} ponto
+                                  {stats.attentionPoints > 1 ? "s" : ""} de
+                                  atenção
                                 </span>
                               </div>
                             )}
                           </div>
 
                           {/* Interest areas with attention highlights */}
-                          {diary.interest_areas && diary.interest_areas.length > 0 && (
-                            <div className="mb-4 space-y-2">
-                              {diary.interest_areas.map((area, index) => (
-                                <div
-                                  key={`${area.interest_area_id}-${index}`}
-                                  className={`flex items-center gap-2 text-sm p-2 rounded-lg ${
-                                    area.is_attention_point 
-                                      ? 'bg-orange-500/10 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800'
-                                      : 'bg-muted/50 text-muted-foreground'
-                                  }`}
-                                >
-                                  {area.is_attention_point && <AlertTriangle size={14} />}
-                                  <span className="font-medium">{area.name}</span>
-                                  <span className="text-xs">
-                                    ({area.triggers?.filter(t => t.response && t.response.trim() !== "").length || 0}/{area.triggers?.length || 0} respondidas)
-                                  </span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                          {diary.interest_areas &&
+                            diary.interest_areas.length > 0 && (
+                              <div className="mb-4 space-y-2">
+                                {diary.interest_areas.map((area, index) => (
+                                  <div
+                                    key={`${area.interest_area_id}-${index}`}
+                                    className={`flex items-center gap-2 text-sm p-2 rounded-lg ${
+                                      area.is_attention_point
+                                        ? "bg-orange-500/10 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800"
+                                        : "bg-muted/50 text-muted-foreground"
+                                    }`}
+                                  >
+                                    {area.is_attention_point && (
+                                      <AlertTriangle size={14} />
+                                    )}
+                                    <span className="font-medium">
+                                      {area.name}
+                                    </span>
+                                    <span className="text-xs">
+                                      (
+                                      {area.triggers?.filter(
+                                        (t) =>
+                                          t.response &&
+                                          t.response.trim() !== "",
+                                      ).length || 0}
+                                      /{area.triggers?.length || 0} respondidas)
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
 
                           {/* Progress bar for interests */}
                           {stats.totalTriggers > 0 && (
@@ -462,21 +510,25 @@ export default function ImprovedDiaryListPage() {
                                 <div
                                   className={`h-2 rounded-full transition-all duration-500 ${
                                     hasAttentionPoints
-                                      ? 'bg-gradient-to-r from-orange-400 to-red-500'
-                                      : 'bg-gradient-to-r from-homebg to-selection'
+                                      ? "bg-gradient-to-r from-orange-400 to-red-500"
+                                      : "bg-gradient-to-r from-homebg to-selection"
                                   }`}
-                                  style={{ width: `${stats.progressPercentage}%` }}
+                                  style={{
+                                    width: `${stats.progressPercentage}%`,
+                                  }}
                                 />
                               </div>
                             </div>
                           )}
 
                           {/* Summary text */}
-                          <p className={`line-clamp-2 leading-relaxed ${
-                            hasAttentionPoints
-                              ? 'text-orange-800 dark:text-orange-200'
-                              : 'text-typography/80'
-                          }`}>
+                          <p
+                            className={`line-clamp-2 leading-relaxed ${
+                              hasAttentionPoints
+                                ? "text-orange-800 dark:text-orange-200"
+                                : "text-typography/80"
+                            }`}
+                          >
                             {getDiarySummary(diary)}
                           </p>
                         </div>

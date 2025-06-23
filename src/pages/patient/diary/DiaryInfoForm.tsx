@@ -12,7 +12,17 @@ import { TypeEnum } from "@/api/models/TypeEnum";
 import { ApiService } from "@/api/services/ApiService";
 import { SuccessMessage } from "@/components/ui/success-message";
 import { ErrorMessage } from "@/components/ui/error-message";
-import { ChevronDown, Share2, Plus, Minus, Check, X, Calendar, Sparkles, AlertTriangle } from "lucide-react";
+import {
+  ChevronDown,
+  Share2,
+  Plus,
+  Minus,
+  Check,
+  X,
+  Calendar,
+  Sparkles,
+  AlertTriangle,
+} from "lucide-react";
 
 interface UserInterest {
   observation_id: number;
@@ -44,7 +54,10 @@ const BooleanTrigger = ({
             : "bg-card border-card-border text-typography hover:border-success/30 hover:bg-success/10"
         }`}
       >
-        <Check size={18} className={isYes ? "text-success-foreground" : "text-success"} />
+        <Check
+          size={18}
+          className={isYes ? "text-success-foreground" : "text-success"}
+        />
         Sim
       </button>
       <button
@@ -56,7 +69,10 @@ const BooleanTrigger = ({
             : "bg-card border-card-border text-typography hover:border-destructive/30 hover:bg-destructive/10"
         }`}
       >
-        <X size={18} className={isNo ? "text-destructive-foreground" : "text-destructive"} />
+        <X
+          size={18}
+          className={isNo ? "text-destructive-foreground" : "text-destructive"}
+        />
         Não
       </button>
     </div>
@@ -103,14 +119,19 @@ const ScaleTrigger = ({
 
       <div className="flex justify-between text-xs text-muted-foreground">
         {Array.from({ length: maxValue + 1 }, (_, i) => (
-          <span key={i} className={numValue === i ? "font-bold text-typography" : ""}>
+          <span
+            key={i}
+            className={numValue === i ? "font-bold text-typography" : ""}
+          >
             {i}
           </span>
         ))}
       </div>
 
       <div className="text-center">
-        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${getScaleColor(numValue)} text-white font-semibold shadow-lg`}>
+        <div
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${getScaleColor(numValue)} text-white font-semibold shadow-lg`}
+        >
           <span className="text-2xl">{numValue}</span>
           <span className="text-sm">{getScaleLabel(numValue)}</span>
         </div>
@@ -142,7 +163,7 @@ const IntegerTrigger = ({
       >
         <Minus size={20} className="mx-auto" />
       </button>
-      
+
       <div className="flex flex-col items-center gap-2">
         <input
           type="text"
@@ -157,7 +178,9 @@ const IntegerTrigger = ({
                      bg-input text-input-foreground rounded-xl focus:border-ring focus:outline-none shadow-inner"
           placeholder="0"
         />
-        <span className="text-xs text-muted-foreground font-medium">Quantidade</span>
+        <span className="text-xs text-muted-foreground font-medium">
+          Quantidade
+        </span>
       </div>
 
       <button
@@ -213,37 +236,46 @@ const EnhancedInterestCard = ({
   onSharingToggle: (shared: boolean) => void;
   onTriggerResponseChange: (triggerName: string, response: string) => void;
 }) => {
-  const answeredTriggers = interest.interest_area.triggers?.filter(trigger => {
-    const response = interest.triggerResponses?.[trigger.name];
-    return response && response.trim() !== "";
-  }).length || 0;
+  const answeredTriggers =
+    interest.interest_area.triggers?.filter((trigger) => {
+      const response = interest.triggerResponses?.[trigger.name];
+      return response && response.trim() !== "";
+    }).length || 0;
 
   const totalTriggers = interest.interest_area.triggers?.length || 0;
-  const progressPercentage = totalTriggers > 0 ? (answeredTriggers / totalTriggers) * 100 : 0;
+  const progressPercentage =
+    totalTriggers > 0 ? (answeredTriggers / totalTriggers) * 100 : 0;
 
   const getProgressGradient = () => {
-    if (progressPercentage === 0) return "from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-700";
+    if (progressPercentage === 0)
+      return "from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-700";
     if (progressPercentage < 50) return "from-orange-400 to-red-500";
     if (progressPercentage < 100) return "from-yellow-400 to-orange-500";
     return "from-green-400 to-emerald-500";
   };
 
   const getStatusBadge = () => {
-    if (progressPercentage === 0) return { 
-      text: "Não iniciado", 
-      className: "bg-muted text-muted-foreground" 
-    };
-    if (progressPercentage < 50) return { 
-      text: "Iniciado", 
-      className: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300" 
-    };
-    if (progressPercentage < 100) return { 
-      text: "Em progresso", 
-      className: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300" 
-    };
-    return { 
-      text: "Completo", 
-      className: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" 
+    if (progressPercentage === 0)
+      return {
+        text: "Não iniciado",
+        className: "bg-muted text-muted-foreground",
+      };
+    if (progressPercentage < 50)
+      return {
+        text: "Iniciado",
+        className:
+          "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
+      };
+    if (progressPercentage < 100)
+      return {
+        text: "Em progresso",
+        className:
+          "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300",
+      };
+    return {
+      text: "Completo",
+      className:
+        "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
     };
   };
 
@@ -252,7 +284,7 @@ const EnhancedInterestCard = ({
   const renderTriggerInput = (trigger: InterestAreaTrigger): JSX.Element => {
     const value: string = interest.triggerResponses?.[trigger.name] || "";
     const onChange = (newValue: string) => {
-      console.log('Trigger change:', trigger.name, newValue); // Debug
+      console.log("Trigger change:", trigger.name, newValue); // Debug
       onTriggerResponseChange(trigger.name, newValue);
     };
 
@@ -265,95 +297,115 @@ const EnhancedInterestCard = ({
         return <IntegerTrigger value={value} onChange={onChange} />;
       case TypeEnum.TEXT:
       default:
-        return <TextTrigger trigger={trigger} value={value} onChange={onChange} />;
+        return (
+          <TextTrigger trigger={trigger} value={value} onChange={onChange} />
+        );
     }
   };
 
   const handleSharingClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log('Sharing toggle:', !interest.shared); // Debug
+    console.log("Sharing toggle:", !interest.shared); // Debug
     onSharingToggle(!interest.shared);
   };
 
   return (
-    <div className="group card-hover rounded-2xl border overflow-hidden transition-all duration-300 hover-lift 
-                    bg-card border-card-border hover:border-ring/30 hover:shadow-hover-lg">
-      
+    <div
+      className="group card-hover rounded-2xl border overflow-hidden transition-all duration-300 hover-lift 
+                    bg-card border-card-border hover:border-ring/30 hover:shadow-hover-lg"
+    >
       {/* Header */}
       <div
         className="relative p-6 cursor-pointer transition-all duration-300 
                    hover:bg-gradient-to-r hover:from-accent/50 hover:to-muted/50"
         onClick={() => {
-          console.log('Card toggle clicked'); // Debug
+          console.log("Card toggle clicked"); // Debug
           onToggle();
         }}
       >
         {/* Overlay sutil */}
-        <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
-          interest.interest_area.is_attention_point
-            ? 'bg-gradient-to-r from-orange-500/5 to-red-500/5'
-            : 'bg-gradient-to-r from-homebg/5 to-selection/5'
-        }`} />
-        
+        <div
+          className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
+            interest.interest_area.is_attention_point
+              ? "bg-gradient-to-r from-orange-500/5 to-red-500/5"
+              : "bg-gradient-to-r from-homebg/5 to-selection/5"
+          }`}
+        />
+
         <div className="relative flex items-center justify-between">
           <div className="flex-1">
-            
             {/* Título e indicadores */}
             <div className="flex items-center gap-3 mb-3">
               {/* Indicator dot */}
-              <div className={`relative w-3 h-3 rounded-full transition-all duration-300 shadow-lg ${
-                interest.interest_area.is_attention_point 
-                  ? "bg-gradient-to-r from-orange-400 to-red-500 shadow-orange-500/30" 
-                  : "bg-[var(--gradient-interest-indicator)] shadow-homebg/30"
-              }`}>
+              <div
+                className={`relative w-3 h-3 rounded-full transition-all duration-300 shadow-lg ${
+                  interest.interest_area.is_attention_point
+                    ? "bg-gradient-to-r from-orange-400 to-red-500 shadow-orange-500/30"
+                    : "bg-[var(--gradient-interest-indicator)] shadow-homebg/30"
+                }`}
+              >
                 {progressPercentage === 100 && (
                   <div className="absolute inset-0 rounded-full bg-success animate-pulse">
-                    <Sparkles size={12} className="absolute inset-0 m-auto text-success-foreground" />
+                    <Sparkles
+                      size={12}
+                      className="absolute inset-0 m-auto text-success-foreground"
+                    />
                   </div>
                 )}
               </div>
-              
+
               {/* Nome */}
-              <h4 className="font-bold text-lg text-typography transition-colors duration-200 
-                             group-hover:text-selection">
+              <h4
+                className="font-bold text-lg text-typography transition-colors duration-200 
+                             group-hover:text-selection"
+              >
                 {interest.interest_area.name}
               </h4>
-              
+
               {/* Badge de atenção */}
               {interest.interest_area.is_attention_point && (
-                <div className="flex items-center gap-1 px-3 py-1 
+                <div
+                  className="flex items-center gap-1 px-3 py-1 
                               bg-gradient-to-r from-orange-100 to-red-100 
                               dark:from-orange-900/30 dark:to-red-900/30
                               text-orange-800 dark:text-orange-300 
                               text-xs font-medium rounded-full border border-orange-200 
-                              dark:border-orange-700 shadow-sm">
+                              dark:border-orange-700 shadow-sm"
+                >
                   <AlertTriangle size={12} />
                   <span>Atenção</span>
                 </div>
               )}
-              
+
               {/* Badge de status */}
-              <span className={`px-3 py-1 text-xs font-medium rounded-full shadow-sm ${status.className}`}>
+              <span
+                className={`px-3 py-1 text-xs font-medium rounded-full shadow-sm ${status.className}`}
+              >
                 {status.text}
               </span>
             </div>
-            
+
             {/* Progress Bar */}
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-muted-foreground">
                   {answeredTriggers}/{totalTriggers} perguntas respondidas
                 </span>
-                <div className={`text-lg font-bold ${
-                  progressPercentage === 100 ? 'text-success' : 
-                  progressPercentage > 50 ? 'text-yellow-500' : 
-                  progressPercentage > 0 ? 'text-orange-500' : 
-                  'text-muted-foreground'
-                }`}>
+                <div
+                  className={`text-lg font-bold ${
+                    progressPercentage === 100
+                      ? "text-success"
+                      : progressPercentage > 50
+                        ? "text-yellow-500"
+                        : progressPercentage > 0
+                          ? "text-orange-500"
+                          : "text-muted-foreground"
+                  }`}
+                >
                   {Math.round(progressPercentage)}%
                 </div>
               </div>
-              
+
               {/* Barra de progresso */}
               <div className="relative w-full bg-muted rounded-full h-3 overflow-hidden">
                 <div
@@ -362,51 +414,57 @@ const EnhancedInterestCard = ({
                   style={{ width: `${progressPercentage}%` }}
                 >
                   {progressPercentage > 0 && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent 
-                                    transform -skew-x-12 animate-pulse" />
+                    <div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent 
+                                    transform -skew-x-12 animate-pulse"
+                    />
                   )}
                 </div>
-                
+
                 {/* Marcadores */}
                 <div className="absolute inset-0 flex justify-between items-center px-1">
-                  {[25, 50, 75].map(mark => (
-                    <div 
+                  {[25, 50, 75].map((mark) => (
+                    <div
                       key={mark}
                       className={`w-0.5 h-1 rounded-full transition-colors ${
-                        progressPercentage >= mark 
-                          ? 'bg-white/50' 
-                          : 'bg-muted-foreground/30'
-                      }`} 
+                        progressPercentage >= mark
+                          ? "bg-white/50"
+                          : "bg-muted-foreground/30"
+                      }`}
                     />
                   ))}
                 </div>
               </div>
             </div>
           </div>
-          
+
           {/* Controles direita */}
           <div className="flex items-center gap-4 ml-6">
-            
             {/* Sharing Toggle */}
             <div className="flex items-center gap-2">
-              <Share2 size={16} className={`transition-colors duration-200 ${
-                interest.shared 
-                  ? 'text-selection' 
-                  : 'text-muted-foreground hover:text-typography'
-              }`} />
+              <Share2
+                size={16}
+                className={`transition-colors duration-200 ${
+                  interest.shared
+                    ? "text-selection"
+                    : "text-muted-foreground hover:text-typography"
+                }`}
+              />
               <Switch
                 checked={interest.shared || false}
                 onCheckedChange={(checked) => {
-                  console.log('Switch changed:', checked); // Debug
+                  console.log("Switch changed:", checked); // Debug
                   onSharingToggle(checked);
                 }}
                 onClick={handleSharingClick}
               />
             </div>
-            
+
             {/* Expand Icon */}
-            <div className={`transition-all duration-300 text-muted-foreground 
-                             group-hover:text-typography ${isOpen ? 'rotate-180' : 'rotate-0'}`}>
+            <div
+              className={`transition-all duration-300 text-muted-foreground 
+                             group-hover:text-typography ${isOpen ? "rotate-180" : "rotate-0"}`}
+            >
               <ChevronDown size={24} />
             </div>
           </div>
@@ -414,38 +472,45 @@ const EnhancedInterestCard = ({
       </div>
 
       {/* Expanded Content */}
-      <div className={`transition-all duration-300 overflow-hidden ${
-        isOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
-      }`}>
+      <div
+        className={`transition-all duration-300 overflow-hidden ${
+          isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
         <div className="border-t border-card-border bg-card-muted">
           <div className="p-6 space-y-6">
-            {interest.interest_area.triggers?.map((trigger: InterestAreaTrigger, index: number) => (
-              <div key={`${trigger.name}-${index}`} className="space-y-3">
-                
-                {/* Label */}
-                <div className="flex items-center justify-between">
-                  <label className="font-semibold text-base text-typography">
-                    {trigger.name}
-                  </label>
-                  <span className="text-xs font-medium px-3 py-1 rounded-full 
-                                 bg-muted text-muted-foreground">
-                    {trigger.type === TypeEnum.BOOLEAN && "✓ Sim/Não"}
-                    {trigger.type === TypeEnum.SCALE && "📊 Escala 0-10"}
-                    {trigger.type === TypeEnum.INT && "🔢 Número"}
-                    {trigger.type === TypeEnum.TEXT && "📝 Texto"}
-                  </span>
+            {interest.interest_area.triggers?.map(
+              (trigger: InterestAreaTrigger, index: number) => (
+                <div key={`${trigger.name}-${index}`} className="space-y-3">
+                  {/* Label */}
+                  <div className="flex items-center justify-between">
+                    <label className="font-semibold text-base text-typography">
+                      {trigger.name}
+                    </label>
+                    <span
+                      className="text-xs font-medium px-3 py-1 rounded-full 
+                                 bg-muted text-muted-foreground"
+                    >
+                      {trigger.type === TypeEnum.BOOLEAN && "✓ Sim/Não"}
+                      {trigger.type === TypeEnum.SCALE && "📊 Escala 0-10"}
+                      {trigger.type === TypeEnum.INT && "🔢 Número"}
+                      {trigger.type === TypeEnum.TEXT && "📝 Texto"}
+                    </span>
+                  </div>
+
+                  {/* Input container */}
+                  <div
+                    className={`rounded-xl p-4 border transition-all duration-200 ${
+                      interest.triggerResponses?.[trigger.name]
+                        ? "bg-card border-ring/30 shadow-inner"
+                        : "bg-card border-card-border hover:border-ring/20"
+                    }`}
+                  >
+                    {renderTriggerInput(trigger)}
+                  </div>
                 </div>
-                
-                {/* Input container */}
-                <div className={`rounded-xl p-4 border transition-all duration-200 ${
-                  interest.triggerResponses?.[trigger.name]
-                    ? 'bg-card border-ring/30 shadow-inner' 
-                    : 'bg-card border-card-border hover:border-ring/20'
-                }`}>
-                  {renderTriggerInput(trigger)}
-                </div>
-              </div>
-            ))}
+              ),
+            )}
           </div>
         </div>
       </div>
@@ -455,7 +520,7 @@ const EnhancedInterestCard = ({
 
 export default function DiaryInfoForm() {
   const navigate = useNavigate();
-  
+
   // Estados principais
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoadingInterests, setIsLoadingInterests] = useState(true);
@@ -464,7 +529,9 @@ export default function DiaryInfoForm() {
 
   // Estados do formulário
   const [openTriggers, setOpenTriggers] = useState<Record<number, boolean>>({});
-  const [timeRange, setTimeRange] = useState<"today" | "sinceLast">("sinceLast");
+  const [timeRange, setTimeRange] = useState<"today" | "sinceLast">(
+    "sinceLast",
+  );
   const [freeText, setFreeText] = useState("");
   const [shareText, setShareText] = useState(false);
   const [userInterests, setUserInterests] = useState<UserInterest[]>([]);
@@ -500,20 +567,24 @@ export default function DiaryInfoForm() {
           [key: string]: any;
         }
 
-        const formattedInterests: UserInterest[] = interests.map((interest: any): UserInterest => ({
-          ...interest,
-          interest_area: {
-            ...(interest.interest_area as FormattedInterestArea),
-            triggers: Array.isArray(interest.interest_area.triggers)
-              ? (interest.interest_area.triggers as any[]).map((trigger: any): FormattedTrigger => ({
-                  name: String(trigger?.name || trigger || ''),
-                  type: trigger?.type || TypeEnum.TEXT,
-                  response: trigger?.response || null,
-                }))
-              : []
-          },
-          triggerResponses: {} as Record<string, string>,
-        }));
+        const formattedInterests: UserInterest[] = interests.map(
+          (interest: any): UserInterest => ({
+            ...interest,
+            interest_area: {
+              ...(interest.interest_area as FormattedInterestArea),
+              triggers: Array.isArray(interest.interest_area.triggers)
+                ? (interest.interest_area.triggers as any[]).map(
+                    (trigger: any): FormattedTrigger => ({
+                      name: String(trigger?.name || trigger || ""),
+                      type: trigger?.type || TypeEnum.TEXT,
+                      response: trigger?.response || null,
+                    }),
+                  )
+                : [],
+            },
+            triggerResponses: {} as Record<string, string>,
+          }),
+        );
 
         setUserInterests(formattedInterests);
       } catch (error) {
@@ -537,7 +608,9 @@ export default function DiaryInfoForm() {
   const handleInterestSharingToggle = (interestId: number, shared: boolean) => {
     setUserInterests((prev) =>
       prev.map((interest) =>
-        interest.observation_id === interestId ? { ...interest, shared } : interest,
+        interest.observation_id === interestId
+          ? { ...interest, shared }
+          : interest,
       ),
     );
   };
@@ -603,7 +676,8 @@ export default function DiaryInfoForm() {
         })
         .filter((interest) => interest.triggers.length > 0);
 
-      const diary_shared = shareText || userInterests.some((interest) => interest.shared);
+      const diary_shared =
+        shareText || userInterests.some((interest) => interest.shared);
 
       const diary = {
         date_range_type:
@@ -668,7 +742,7 @@ export default function DiaryInfoForm() {
             <Calendar size={18} className="text-homebg" />
             Período do diário
           </h3>
-          
+
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
@@ -714,7 +788,9 @@ export default function DiaryInfoForm() {
             <div className="flex justify-center py-12">
               <div className="text-center">
                 <div className="w-12 h-12 border-4 border-homebg/20 border-t-homebg rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-muted-foreground font-medium">Carregando seus interesses...</p>
+                <p className="text-muted-foreground font-medium">
+                  Carregando seus interesses...
+                </p>
               </div>
             </div>
           ) : totalInterests === 0 ? (
@@ -724,7 +800,8 @@ export default function DiaryInfoForm() {
                 Você ainda não tem interesses cadastrados.
               </p>
               <p className="text-muted-foreground mb-6">
-                Adicione seus interesses para começar a acompanhar seu progresso!
+                Adicione seus interesses para começar a acompanhar seu
+                progresso!
               </p>
               <Button
                 type="button"
@@ -759,68 +836,74 @@ export default function DiaryInfoForm() {
           )}
         </section>
 
-          <section className="bg-card rounded-2xl shadow-lg p-6 border border-card-border">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold text-xl text-typography">
-                💭 Observações Gerais
-              </h3>
-              <div className="flex items-center gap-3">
-                <Share2 size={18} className={`transition-colors duration-200 ${
-                  shareText ? 'text-selection' : 'text-muted-foreground'
-                }`} />
-                <span className="text-sm text-muted-foreground font-medium">
-                  Compartilhar com profissionais
-                </span>
-                <Switch checked={shareText} onCheckedChange={setShareText} />
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <TextField
-                id="freeText"
-                name="freeText"
-                value={freeText}
-                onChange={(e) => setFreeText(e.target.value)}
-                placeholder="Descreva como você se sente ou qualquer observação importante..."
-                multiline={true}
-                rows={4}
+        <section className="bg-card rounded-2xl shadow-lg p-6 border border-card-border">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="font-bold text-xl text-typography">
+              💭 Observações Gerais
+            </h3>
+            <div className="flex items-center gap-3">
+              <Share2
+                size={18}
+                className={`transition-colors duration-200 ${
+                  shareText ? "text-selection" : "text-muted-foreground"
+                }`}
               />
-              <div className="flex justify-between items-center">
-                <div className="text-sm text-muted-foreground">
-                  💡 <span className="italic">Suas observações nos ajudam a entender melhor seu bem-estar</span>
-                </div>
-                <div className="text-sm text-muted-foreground font-medium">
-                  {freeText.length} caracteres
-                </div>
+              <span className="text-sm text-muted-foreground font-medium">
+                Compartilhar com profissionais
+              </span>
+              <Switch checked={shareText} onCheckedChange={setShareText} />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <TextField
+              id="freeText"
+              name="freeText"
+              value={freeText}
+              onChange={(e) => setFreeText(e.target.value)}
+              placeholder="Descreva como você se sente ou qualquer observação importante..."
+              multiline={true}
+              rows={4}
+            />
+            <div className="flex justify-between items-center">
+              <div className="text-sm text-muted-foreground">
+                💡{" "}
+                <span className="italic">
+                  Suas observações nos ajudam a entender melhor seu bem-estar
+                </span>
+              </div>
+              <div className="text-sm text-muted-foreground font-medium">
+                {freeText.length} caracteres
               </div>
             </div>
-          </section>
-
-          {/* Botão de Submissão */}
-          <div className="pt-8 text-center">
-            <Button
-              variant="orange"
-              size="xl"
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full max-w-md mx-auto hover:shadow-2xl transform hover:scale-105 transition-all duration-200"
-            >
-              {isSubmitting ? (
-                <span className="flex items-center justify-center gap-3">
-                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Salvando...
-                </span>
-              ) : (
-                <span className="flex items-center justify-center gap-2">
-                  💾 SALVAR DIÁRIO
-                </span>
-              )}
-            </Button>
           </div>
-        </form>
+        </section>
 
-        {/* CSS customizado para sliders */}
-        <style>{`
+        {/* Botão de Submissão */}
+        <div className="pt-8 text-center">
+          <Button
+            variant="orange"
+            size="xl"
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full max-w-md mx-auto hover:shadow-2xl transform hover:scale-105 transition-all duration-200"
+          >
+            {isSubmitting ? (
+              <span className="flex items-center justify-center gap-3">
+                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Salvando...
+              </span>
+            ) : (
+              <span className="flex items-center justify-center gap-2">
+                💾 SALVAR DIÁRIO
+              </span>
+            )}
+          </Button>
+        </div>
+      </form>
+
+      {/* CSS customizado para sliders */}
+      <style>{`
           .slider-thumb::-webkit-slider-thumb {
             appearance: none;
             height: 24px;

@@ -43,7 +43,9 @@ export default function ImprovedViewDiaryEntry() {
   const [isLoading, setIsLoading] = useState(true);
   const [diary, setDiary] = useState<DiaryData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [expandedInterests, setExpandedInterests] = useState<Set<string>>(new Set());
+  const [expandedInterests, setExpandedInterests] = useState<Set<string>>(
+    new Set(),
+  );
 
   useEffect(() => {
     const fetchDiaryData = async () => {
@@ -57,9 +59,10 @@ export default function ImprovedViewDiaryEntry() {
         console.log("Diary API response:", response);
 
         if (response && response.diary_id) {
-          const parsedInterestAreas = typeof response.interest_areas === "string"
-            ? JSON.parse(response.interest_areas)
-            : response.interest_areas;
+          const parsedInterestAreas =
+            typeof response.interest_areas === "string"
+              ? JSON.parse(response.interest_areas)
+              : response.interest_areas;
 
           // Set is_attention_point and provider_name if they are not present
           parsedInterestAreas.forEach((area: DiaryInterestArea) => {
@@ -72,9 +75,10 @@ export default function ImprovedViewDiaryEntry() {
             diary_id: response.diary_id,
             date: response.date,
             scope: "today", // Provide a default since 'scope' is missing in response
-            entries: typeof response.entries === "string"
-              ? JSON.parse(response.entries)
-              : response.entries,
+            entries:
+              typeof response.entries === "string"
+                ? JSON.parse(response.entries)
+                : response.entries,
             interest_areas: parsedInterestAreas,
           });
           // Auto-expand interests that have responses
@@ -88,7 +92,10 @@ export default function ImprovedViewDiaryEntry() {
               .map((area: DiaryInterestArea) => area.name) || [];
           setExpandedInterests(new Set(interestsWithResponses));
         } else {
-          console.error("Diary not found or invalid response format:", response);
+          console.error(
+            "Diary not found or invalid response format:",
+            response,
+          );
           setError("Diário não encontrado ou formato inválido.");
         }
       } catch (error) {
@@ -137,7 +144,11 @@ export default function ImprovedViewDiaryEntry() {
     }
 
     for (const entry of diary.entries) {
-      if (entry.text && typeof entry.text === "string" && entry.text.trim() !== "") {
+      if (
+        entry.text &&
+        typeof entry.text === "string" &&
+        entry.text.trim() !== ""
+      ) {
         return {
           text: entry.text,
           shared: entry.text_shared || false,
@@ -195,14 +206,16 @@ export default function ImprovedViewDiaryEntry() {
   if (isLoading) {
     return (
       <div className="flex flex-col h-screen bg-homebg">
-        <Header 
-          title="📝 Visualizar Diário" 
+        <Header
+          title="📝 Visualizar Diário"
           onBackClick={() => navigate("/diary")}
         />
         <div className="flex-1 flex justify-center items-center">
           <div className="flex flex-col items-center gap-4">
             <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-foreground/20 border-t-primary-foreground"></div>
-            <p className="text-primary-foreground/80 font-medium">Carregando diário...</p>
+            <p className="text-primary-foreground/80 font-medium">
+              Carregando diário...
+            </p>
           </div>
         </div>
       </div>
@@ -240,9 +253,11 @@ export default function ImprovedViewDiaryEntry() {
 
   const textEntry = getGeneralTextEntry();
   const time = diary.date ? getTimeFromDate(diary.date) : "";
-  const hasContent = textEntry?.text || diary.interest_areas?.some(area => 
-    area.triggers?.some(t => t.response && t.response.trim() !== "")
-  );
+  const hasContent =
+    textEntry?.text ||
+    diary.interest_areas?.some((area) =>
+      area.triggers?.some((t) => t.response && t.response.trim() !== ""),
+    );
 
   return (
     <div className="flex flex-col h-screen bg-homebg">
@@ -255,7 +270,6 @@ export default function ImprovedViewDiaryEntry() {
       <div className="flex-1 overflow-hidden bg-background rounded-t-3xl mt-4 relative z-10">
         <div className="h-full overflow-y-auto">
           <div className="px-4 py-6 pb-24">
-
             {!hasContent && (
               <div className="flex flex-col items-center justify-center py-16">
                 <div className="text-6xl mb-4">📭</div>
@@ -272,7 +286,9 @@ export default function ImprovedViewDiaryEntry() {
               </h3>
               <div className="bg-card p-4 rounded-lg border border-card-border flex items-center justify-between">
                 <span className="text-typography">
-                  {diary.scope === "today" ? "Registros do dia de hoje" : "Registros desde a última entrada"}
+                  {diary.scope === "today"
+                    ? "Registros do dia de hoje"
+                    : "Registros desde a última entrada"}
                 </span>
                 {time && (
                   <div className="flex items-center gap-2 text-muted-foreground">
@@ -295,7 +311,7 @@ export default function ImprovedViewDiaryEntry() {
                     const hasResponses = interest.triggers?.some(
                       (t) => t.response && t.response.trim() !== "",
                     );
-                    
+
                     if (!hasResponses) return null;
 
                     return (
@@ -303,8 +319,8 @@ export default function ImprovedViewDiaryEntry() {
                         key={interest.name}
                         className={`border rounded-xl shadow-sm ${
                           interest.is_attention_point
-                            ? 'bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border-orange-200 dark:border-orange-800'
-                            : 'bg-card border-card-border'
+                            ? "bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border-orange-200 dark:border-orange-800"
+                            : "bg-card border-card-border"
                         }`}
                       >
                         <div
@@ -313,37 +329,47 @@ export default function ImprovedViewDiaryEntry() {
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3 flex-1">
-                              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                                interest.is_attention_point
-                                  ? 'bg-gradient-to-r from-orange-400 to-red-500'
-                                  : 'bg-[var(--gradient-interest-indicator)]'
-                              }`} />
+                              <span
+                                className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                                  interest.is_attention_point
+                                    ? "bg-gradient-to-r from-orange-400 to-red-500"
+                                    : "bg-[var(--gradient-interest-indicator)]"
+                                }`}
+                              />
                               <h4 className="font-bold text-lg text-card-foreground">
                                 {interest.name}
                               </h4>
                               {interest.is_attention_point && (
-                                <span className="text-orange-500 text-lg">⚠️</span>
+                                <span className="text-orange-500 text-lg">
+                                  ⚠️
+                                </span>
                               )}
                             </div>
                             <div className="flex items-center gap-2">
                               {interest.shared && (
-                                <span className="text-success text-sm font-medium">✓ Compartilhado</span>
+                                <span className="text-success text-sm font-medium">
+                                  ✓ Compartilhado
+                                </span>
                               )}
-                              <span className={`transform transition-transform duration-200 ${
-                                isExpanded ? "rotate-180" : ""
-                              }`}>
+                              <span
+                                className={`transform transition-transform duration-200 ${
+                                  isExpanded ? "rotate-180" : ""
+                                }`}
+                              >
                                 ▼
                               </span>
                             </div>
                           </div>
 
-                          {interest.is_attention_point && interest.marked_by && (
-                            <div className="mt-2">
-                              <span className="text-xs text-orange-600 dark:text-orange-400 italic">
-                                Marcado como ponto de atenção por {interest.marked_by.join(", ")}
-                              </span>
-                            </div>
-                          )}
+                          {interest.is_attention_point &&
+                            interest.marked_by && (
+                              <div className="mt-2">
+                                <span className="text-xs text-orange-600 dark:text-orange-400 italic">
+                                  Marcado como ponto de atenção por{" "}
+                                  {interest.marked_by.join(", ")}
+                                </span>
+                              </div>
+                            )}
                         </div>
 
                         {isExpanded && (
@@ -391,9 +417,13 @@ export default function ImprovedViewDiaryEntry() {
                     Observações Gerais
                   </h3>
                   <div className="flex items-center gap-3">
-                    <span className={`text-sm font-medium ${
-                      textEntry.shared ? "text-success" : "text-muted-foreground"
-                    }`}>
+                    <span
+                      className={`text-sm font-medium ${
+                        textEntry.shared
+                          ? "text-success"
+                          : "text-muted-foreground"
+                      }`}
+                    >
                       {textEntry.shared
                         ? "✓ Compartilhado com profissionais"
                         : "○ Não compartilhado"}

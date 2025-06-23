@@ -34,7 +34,7 @@ export default function ViewSelectedInterests() {
       try {
         const userEntity = await AccountService.accountsRetrieve();
         const interests = (await InterestAreasService.apiInterestAreaList(
-          userEntity.person_id
+          userEntity.person_id,
         )) as InterestAreaResponse[];
         console.log("Loaded interests:", interests);
         setUserInterests(interests);
@@ -50,13 +50,14 @@ export default function ViewSelectedInterests() {
   }, []);
 
   // Handle unlinking/deleting an interest
-  const handleUnlinkInterest = async (
-    interestId: number,
-  ) => {
+  const handleUnlinkInterest = async (interestId: number) => {
     try {
       // For both custom and default interests, we call the same delete endpoint
       const userEntity = await AccountService.accountsRetrieve();
-      await InterestAreasService.apiInterestAreaDestroy(String(interestId), userEntity.person_id);
+      await InterestAreasService.apiInterestAreaDestroy(
+        String(interestId),
+        userEntity.person_id,
+      );
 
       // Remove from local state after successful delete
       setUserInterests((prev) =>
@@ -168,9 +169,7 @@ export default function ViewSelectedInterests() {
                           className="bg-transparent hover:bg-destructive p-1 h-8 w-8 rounded-full"
                           onClick={(e) => {
                             e.stopPropagation(); // This prevents the click from bubbling up to the parent div
-                            handleUnlinkInterest(
-                              interest.interest_area_id
-                            );
+                            handleUnlinkInterest(interest.interest_area_id);
                           }}
                         >
                           <svg
@@ -197,9 +196,7 @@ export default function ViewSelectedInterests() {
                           {interest.triggers.map((trigger, index) => (
                             <li key={index} className="flex items-start">
                               <span className="mr-2">•</span>
-                              <span>
-                                {trigger.name || "Sem descrição"}
-                              </span>
+                              <span>{trigger.name || "Sem descrição"}</span>
                             </li>
                           ))}
                         </ul>

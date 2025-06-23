@@ -83,7 +83,7 @@ export default function ViewDiary() {
               interest.is_attention_point = false;
             }
           });
-          
+
           if (diaryData) {
             setDiary(diaryData);
           } else {
@@ -333,7 +333,8 @@ export default function ViewDiary() {
                                 </div>
                               </div>
 
-                              {interest.is_attention_point && interest.marked_by && (
+                              {interest.is_attention_point &&
+                                interest.marked_by && (
                                   <div className="mt-2">
                                     <span className="text-xs text-destructive italic">
                                       Marcado como ponto de atenção por{" "}
