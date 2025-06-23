@@ -1,351 +1,407 @@
-import type React from "react";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { RadioCheckbox } from "@/components/forms/radio-checkbox";
-import { Switch } from "@/components/ui/switch";
-import { TextField } from "@/components/forms/text_input";
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+  ChevronRight,
+  PlusCircle,
+  Calendar,
+  FileText,
+  MessageSquare,
+} from "lucide-react";
+import { DiaryService } from "@/api";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
+import Header from "@/components/ui/header";
 import { Button } from "@/components/forms/button";
-import { DiaryService } from "@/api/services/DiaryService";
-import { DateRangeTypeEnum } from "@/api/models/DateRangeTypeEnum";
-import { InterestAreasService } from "@/api/services/InterestAreasService";
-import type { InterestArea } from "@/api/models/InterestArea";
-import { ApiService } from "@/api/services/ApiService";
-import { SuccessMessage } from "@/components/ui/success-message";
-import { ErrorMessage } from "@/components/ui/error-message";
-import CollapsibleInterestCard from "@/components/ui/CollapsibleInterestCard";
-import type { TypeEnum } from "@/api/models/TypeEnum";
 
-interface UserInterest {
-  observation_id: number;
-  provider_name?: string;
-  shared?: boolean;
-  interest_area: InterestArea;
-  triggerResponses?: Record<string, string>;
+interface DiaryEntry {
+  text: string;
+  text_shared: boolean;
 }
 
-export default function DiaryInfoForm() {
+interface DiaryTrigger {
+  trigger_id: number;
+  value_as_string: string;
+  trigger_name: string;
+}
+
+interface DiaryInterestArea {
+  interest_area_id: number;
+  value_as_string: string | null;
+  shared_with_provider: boolean;
+  triggers: DiaryTrigger[];
+  interest_name: string;
+  provider_name: string | null;
+}
+
+interface DiaryRetrieve {
+  diary_id: number;
+  date: string;
+  entries: DiaryEntry[];
+  interest_areas: DiaryInterestArea[];
+}
+
+export default function DiaryListPage() {
+  const [diaries, setDiaries] = useState<DiaryRetrieve[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Estados principais
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoadingInterests, setIsLoadingInterests] = useState(true);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-
-  // Estados do formulário
-  const [openTriggers, setOpenTriggers] = useState<Record<number, boolean>>({});
-  const [timeRange, setTimeRange] = useState<"today" | "sinceLast">(
-    "sinceLast",
-  );
-  const [freeText, setFreeText] = useState("");
-  const [shareText, setShareText] = useState(false);
-  const [userInterests, setUserInterests] = useState<UserInterest[]>([]);
-
-  // Carrega interesses do usuário
   useEffect(() => {
-    const fetchUserInterests = async () => {
-      console.log("Carregando interesses do usuário...");
-      setIsLoadingInterests(true);
-
+    const fetchDiaries = async () => {
       try {
-        const userEntity = await ApiService.apiUserEntityRetrieve();
-        const interests = await InterestAreasService.apiInterestAreaList(
-          userEntity.person_id,
-        );
-        console.log("Interesses recebidos:", interests);
+        setIsLoading(true);
+        setError(null);
 
-        if (!interests || interests.length === 0) {
-          console.warn("Nenhum interesse encontrado");
-          setUserInterests([]);
-          return;
+        const response = await DiaryService.personDiariesList();
+        console.log("API response:", response);
+
+        if (Array.isArray(response)) {
+          // Transform API response to match local DiaryRetrieve type if needed
+          const mapped = response.map((item: Record<string, unknown>) => ({
+            ...item,
+            entries: Array.isArray(item.entries)
+              ? item.entries
+              : typeof item.entries === "string" && item.entries.trim() !== ""
+                ? [{ text: item.entries, text_shared: false }]
+                : [],
+            interest_areas: Array.isArray(item.interest_areas)
+              ? item.interest_areas
+              : [],
+          } as DiaryRetrieve));
+          setDiaries(mapped);
+        } else {
+          console.error("Unexpected API response format:", response);
+          setError("Formato de resposta inesperado da API");
+          setDiaries([]);
         }
-
-        // Formata interesses para incluir triggerResponses vazio
-        const formattedInterests: UserInterest[] = interests.map(
-          (interest: InterestArea) => ({
-            ...interest,
-            triggerResponses: {},
-          }),
-        );
-
-        setUserInterests(formattedInterests);
       } catch (error) {
-        console.error("Erro ao carregar interesses:", error);
+        console.error("Error fetching diaries:", error);
+        setError("Erro ao carregar diários");
+        setDiaries([]);
       } finally {
-        setIsLoadingInterests(false);
+        setIsLoading(false);
       }
     };
 
-    fetchUserInterests();
+    fetchDiaries();
   }, []);
 
-  // Handlers para interesses
-  const toggleInterest = (interestId: number) => {
-    setOpenTriggers((prev) => ({
-      ...prev,
-      [interestId]: !prev[interestId],
-    }));
+  const handleCreateDiary = () => {
+    navigate("/diary/new");
   };
 
-  const handleInterestSharingToggle = (interestId: number, shared: boolean) => {
-    setUserInterests((prev) =>
-      prev.map((interest) =>
-        interest.observation_id === interestId
-          ? { ...interest, shared }
-          : interest,
-      ),
-    );
+  const handleViewDiary = (id: number) => {
+    navigate(`/diary/${id}`);
   };
 
-  // Função atualizada para lidar com respostas de trigger
-  const handleTriggerResponseChange = (
-    interestId: number,
-    triggerName: string,
-    response: string,
-  ) => {
-    setUserInterests((prev) =>
-      prev.map((interest) =>
-        interest.observation_id === interestId
-          ? {
-              ...interest,
-              triggerResponses: {
-                ...(interest.triggerResponses || {}),
-                [triggerName]: response,
-              },
-            }
-          : interest,
-      ),
-    );
-  };
-
-  // Submissão do formulário
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitError(null);
-
+  // Format date for display
+  const formatDate = (dateString: string): string => {
     try {
-      // Formata áreas de interesse para a API
-      const formattedInterestAreas = userInterests
-        .filter((interest) => {
-          const triggerResponses = interest.triggerResponses || {};
-          return Object.values(triggerResponses).some(
-            (response) => response && response.trim() !== "",
-          );
-        })
-        .map((interest) => {
-          const triggerResponses = interest.triggerResponses || {};
-
-          // Formata os triggers com respostas
-          const triggersWithResponses =
-            interest.interest_area.triggers
-              ?.filter(
-                (trigger) =>
-                  triggerResponses[trigger.name] &&
-                  triggerResponses[trigger.name].trim() !== "",
-              )
-              .map((trigger) => ({
-                name: trigger.name,
-                type: (trigger.type || "text") as TypeEnum,
-                response: triggerResponses[trigger.name] || "",
-              })) || [];
-
-          return {
-            name: interest.interest_area.name,
-            is_attention_point: interest.interest_area.is_attention_point,
-            marked_by: interest.interest_area.marked_by || [],
-            triggers: triggersWithResponses,
-            interest_area_id: interest.observation_id,
-            shared_with_provider: interest.shared,
-          };
-        })
-        .filter((interest) => interest.triggers.length > 0);
-
-      const diary_shared =
-        shareText || userInterests.some((interest) => interest.shared);
-
-      const diary = {
-        date_range_type:
-          timeRange === "today"
-            ? DateRangeTypeEnum.TODAY
-            : DateRangeTypeEnum.SINCE_LAST,
-        text: freeText,
-        text_shared: shareText,
-        interest_areas: formattedInterestAreas,
-        diary_shared: diary_shared,
-      };
-
-      console.log("Enviando diário:", diary);
-
-      await DiaryService.diariesCreate(diary);
-      setSubmitSuccess(true);
-
-      // Redireciona após sucesso
-      setTimeout(() => {
-        navigate("/diary");
-      }, 2000);
-    } catch (error) {
-      console.error("Erro ao salvar diário:", error);
-      setSubmitError(
-        "Ocorreu um erro ao salvar o diário. Por favor, tente novamente.",
-      );
-    } finally {
-      setIsSubmitting(false);
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      return `${day}/${month}`;
+    } catch {
+      console.warn("Failed to parse date:", dateString);
+      return "Data inválida";
     }
   };
 
-  const clearSubmitError = () => {
-    setSubmitError(null);
+  // Group diaries by date for display
+  const groupedDiaries: Record<string, DiaryRetrieve[]> = {};
+
+  for (const diary of diaries) {
+    const dateKey = formatDate(diary.date);
+    if (!groupedDiaries[dateKey]) {
+      groupedDiaries[dateKey] = [];
+    }
+    groupedDiaries[dateKey].push(diary);
+  }
+
+  const getDiarySummary = (diary: DiaryRetrieve): string => {
+    // First, try to get text from entries
+    if (
+      diary.entries &&
+      Array.isArray(diary.entries) &&
+      diary.entries.length > 0
+    ) {
+      const textEntry = diary.entries.find(
+        (e) => e.text && e.text.trim() !== "",
+      );
+      if (textEntry?.text) {
+        const summary = textEntry.text;
+
+        // Check if we also have trigger responses
+        const hasTriggerResponses = diary.interest_areas?.some(
+          (area) =>
+            Array.isArray(area.triggers) &&
+            area.triggers.some(
+              (t) => t.value_as_string && t.value_as_string.trim() !== "",
+            ),
+        );
+
+        return hasTriggerResponses
+          ? `${summary} (+ respostas de interesses)`
+          : summary;
+      }
+    }
+
+    // If no text entry, try to get trigger responses
+    if (diary.interest_areas && Array.isArray(diary.interest_areas)) {
+      const triggersWithResponses = diary.interest_areas.flatMap((area) =>
+        Array.isArray(area.triggers)
+          ? area.triggers.filter(
+              (t) => t.value_as_string && t.value_as_string.trim() !== "",
+            )
+          : [],
+      );
+
+      if (
+        triggersWithResponses.length > 0 &&
+        triggersWithResponses[0] &&
+        triggersWithResponses[0].value_as_string
+      ) {
+        return triggersWithResponses[0].value_as_string;
+      }
+    }
+
+    return "Sem conteúdo";
   };
 
-  // Estatísticas do formulário
-  const totalInterests = userInterests.length;
-  const answeredInterests = userInterests.filter((interest) => {
-    const responses = interest.triggerResponses || {};
-    return Object.values(responses).some((resp) => resp && resp.trim() !== "");
-  }).length;
+  const getDiaryCardInfo = (diary: DiaryRetrieve) => {
+    const components = [];
+    const icons = [];
 
-  return (
-    <div className="max-w-3xl mx-auto px-4 space-y-6">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Mensagens de status */}
-        {submitSuccess && (
-          <SuccessMessage message="Diário salvo com sucesso! Redirecionando..." />
-        )}
+    // Check for text entry
+    const hasTextEntry = diary.entries?.some(
+      (e) => e.text && e.text.trim() !== "",
+    );
 
-        {submitError && (
-          <ErrorMessage
-            message={submitError}
-            onClose={clearSubmitError}
-            onRetry={clearSubmitError}
-            variant="destructive"
-          />
-        )}
+    if (hasTextEntry) {
+      components.push("Texto");
+      icons.push(<FileText key="text" size={14} className="text-accent2" />);
+    }
 
-        {/* Seção de Período de Tempo */}
-        <section className="space-y-3">
-          <h3 className="font-semibold text-lg text-accent2-700">
-            A qual período de tempo esse diário se refere?
-          </h3>
-          <div className="flex flex-col gap-2">
-            <RadioCheckbox
-              id="today"
-              label="Hoje"
-              checked={timeRange === "today"}
-              onCheckedChange={() => setTimeRange("today")}
-            />
-            <RadioCheckbox
-              id="sinceLast"
-              label="Desde o último diário"
-              checked={timeRange === "sinceLast"}
-              onCheckedChange={() => setTimeRange("sinceLast")}
-            />
-          </div>
-        </section>
+    // Check for triggers with responses
+    const triggerCount =
+      diary.interest_areas?.reduce(
+        (count, area) =>
+          count +
+          (Array.isArray(area.triggers)
+            ? area.triggers.filter(
+                (t) => t.value_as_string && t.value_as_string.trim() !== "",
+              ).length
+            : 0),
+        0,
+      ) || 0;
 
-        {/* Seção de Interesses do Usuário */}
-        <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-lg text-typography">
-              Seus Interesses
-            </h3>
-            {totalInterests > 0 && (
-              <span className="text-sm text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
-                {answeredInterests}/{totalInterests} respondidos
-              </span>
-            )}
-          </div>
+    if (triggerCount > 0) {
+      components.push(`${triggerCount} resposta${triggerCount > 1 ? "s" : ""}`);
+      icons.push(
+        <MessageSquare key="triggers" size={14} className="text-success" />,
+      );
+    }
 
-          {isLoadingInterests ? (
-            <div className="flex justify-center py-8">
-              <div className="text-center">
-                <div className="w-8 h-8 border-2 border-selection border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-                <p className="text-typography">Carregando seus interesses...</p>
-              </div>
-            </div>
-          ) : totalInterests === 0 ? (
-            <div className="text-center py-8 bg-background rounded-lg">
-              <p className="text-typography text-sm mb-2">
-                Você ainda não tem interesses cadastrados.
-              </p>
-              <Button
-                type="button"
-                variant="outlineWhite"
-                size="sm"
-                onClick={() => navigate("/user-main")}
-              >
-                Adicionar Interesses
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {userInterests.map((interest) => (
-                <CollapsibleInterestCard
-                  key={interest.observation_id}
-                  interest={interest}
-                  isOpen={openTriggers[interest.observation_id] || false}
-                  onToggle={() => toggleInterest(interest.observation_id)}
-                  onSharingToggle={(shared) =>
-                    handleInterestSharingToggle(interest.observation_id, shared)
-                  }
-                  onTriggerResponseChange={(triggerName, response) =>
-                    handleTriggerResponseChange(
-                      interest.observation_id,
-                      triggerName,
-                      response,
-                    )
-                  }
-                />
-              ))}
-            </div>
-          )}
-        </section>
+    const title =
+      components.length > 0 ? `Diário (${components.join(", ")})` : "Diário";
 
-        {/* Seção de Observações Gerais */}
-        <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-lg text-accent2-700">
-              Observações Gerais
-            </h3>
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 italic">
-                Compartilhar com profissionais
-              </span>
-              <Switch checked={shareText} onCheckedChange={setShareText} />
-            </div>
-          </div>
-          <TextField
-            id="freeText"
-            name="freeText"
-            value={freeText}
-            onChange={(e) => setFreeText(e.target.value)}
-            placeholder="Descreva como você se sente ou qualquer observação importante..."
-            className="border-gray2 border-2 focus:border-selection"
-            multiline={true}
-            rows={4}
-          />
-        </section>
+    return { title, icons };
+  };
 
-        {/* Botão de Submissão */}
-        <div className="pt-6 text-center">
-          <Button
-            variant="orange"
-            size="lg"
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full max-w-[280px] text-offwhite mx-auto py-3 text-base"
-          >
-            {isSubmitting ? (
-              <span className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Salvando...
-              </span>
-            ) : (
-              "SALVAR DIÁRIO"
-            )}
+  // Helper function to get time from date string
+  const getTimeFromDate = (dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return "";
+    }
+  };
+
+  // Get active navigation item based on current route
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/user-main-page")) return "home";
+    if (location.pathname.startsWith("/reminders")) return "meds";
+    if (location.pathname.startsWith("/diary")) return "diary";
+    if (location.pathname.startsWith("/emergency-user")) return "emergency";
+    if (location.pathname.startsWith("/profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/user-main-page");
+        break;
+      case "meds":
+        navigate("/reminders");
+        break;
+      case "diary":
+        navigate("/diary");
+        break;
+      case "emergency":
+        navigate("/emergency-user");
+        break;
+      case "profile":
+        navigate("/profile");
+        break;
+    }
+  };
+
+  const hasDiaries = Object.keys(groupedDiaries).length > 0;
+
+  if (error) {
+    return (
+      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 bg-background min-h-screen pb-24">
+        <Header
+          title="Diário"
+          onBackClick={() => navigate("/user-main-page")}
+        />
+
+        <div className="flex flex-col items-center justify-center h-64">
+          <p className="text-center text-destructive mb-4 font-inter text-campos-preenchimento">
+            {error}
+          </p>
+          <Button onClick={() => window.location.reload()} variant="default">
+            Tentar Novamente
           </Button>
         </div>
-      </form>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full max-w-4xl mx-auto bg-background min-h-screen pb-24">
+      <Header title="Diário" onBackClick={() => navigate("/user-main-page")} />
+
+      <div className="px-4 md:px-8 py-4">
+        {/* Create new diary button - only show if there are existing diaries */}
+        {hasDiaries && (
+          <div className="flex justify-end my-4">
+            <Button
+              onClick={handleCreateDiary}
+              variant="gradientNew"
+              className="flex items-center gap-2"
+            >
+              <PlusCircle size={16} />
+              Novo Diário
+            </Button>
+          </div>
+        )}
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="flex flex-col items-center gap-3">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+              <p className="text-typography/80 font-inter text-campos-preenchimento">
+                Carregando diários...
+              </p>
+            </div>
+          </div>
+        ) : !hasDiaries ? (
+          <div className="flex flex-col items-center justify-center h-64">
+            <Calendar size={48} className="text-gray2 mb-4" />
+            <p className="text-center text-typography mb-4 font-work-sans text-topicos2">
+              Você ainda não possui diários.
+            </p>
+            <p className="text-center text-typography/70 mb-6 font-inter text-desc-titulo max-w-md">
+              Comece a registrar seus pensamentos, experiências e respostas aos
+              seus interesses.
+            </p>
+            <Button
+              onClick={handleCreateDiary}
+              variant="gradient"
+              className="flex items-center gap-2 px-6 py-3"
+            >
+              <PlusCircle size={16} />
+              Criar Primeiro Diário
+            </Button>
+          </div>
+        ) : (
+          <div className="mt-4 space-y-6">
+            {Object.entries(groupedDiaries)
+              .sort(([a], [b]) => {
+                const [dayA = 0, monthA = 0] = a
+                  .split("/")
+                  .map((v) => Number(v) || 0);
+                const [dayB = 0, monthB = 0] = b
+                  .split("/")
+                  .map((v) => Number(v) || 0);
+                return (
+                  (monthB ?? 0) - (monthA ?? 0) || (dayB ?? 0) - (dayA ?? 0)
+                );
+              })
+              .map(([date, entries]) => (
+                <div key={date} className="space-y-3">
+                  <div className="flex items-center gap-2 border-b border-gray2-border pb-2">
+                    <Calendar size={16} className="text-accent2" />
+                    <h3 className="font-work-sans text-topicos text-typography">
+                      Dia {date}
+                    </h3>
+                    <span className="text-desc-campos font-inter text-typography/60 ml-auto">
+                      {entries.length} entrada{entries.length > 1 ? "s" : ""}
+                    </span>
+                  </div>
+
+                  {entries
+                    .sort(
+                      (a, b) =>
+                        new Date(b.date).getTime() - new Date(a.date).getTime(),
+                    )
+                    .map((entry) => {
+                      const { title, icons } = getDiaryCardInfo(entry);
+                      const time = getTimeFromDate(entry.date);
+
+                      return (
+                        <div
+                          key={entry.diary_id}
+                          className="bg-card border border-card-border rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:border-accent2/50 hover:bg-card/80"
+                          onClick={() => handleViewDiary(entry.diary_id)}
+                        >
+                          <div className="flex justify-between items-start mb-3">
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1">
+                                {icons}
+                              </div>
+                              <h4 className="font-work-sans text-topicos text-card-foreground">
+                                {title}
+                              </h4>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {time && (
+                                <span className="text-desc-campos font-inter text-card-foreground/60">
+                                  {time}
+                                </span>
+                              )}
+                              <ChevronRight
+                                size={16}
+                                className="text-card-foreground/40"
+                              />
+                            </div>
+                          </div>
+
+                          <p className="text-campos-preenchimento2 font-inter text-card-foreground/80 line-clamp-2 leading-relaxed">
+                            {getDiarySummary(entry)}
+                          </p>
+                        </div>
+                      );
+                    })}
+                </div>
+              ))}
+          </div>
+        )}
+      </div>
+      {/* NAVEGAÇÃO INFERIOR - Sempre no fundo */}
+      <div className="fixed bottom-0 left-0 right-0 z-30">
+        <BottomNavigationBar
+          variant="user"
+          forceActiveId={getActiveNavId()}
+          onItemClick={handleNavigationClick}
+        />
+      </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import type React from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/forms/button";
 import {
   SelectField,
@@ -15,6 +15,7 @@ import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 const ModifyHabits = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [habitName, setHabitName] = useState("");
   const [measurementType, setMeasurementType] = useState<
     "scale" | "hours" | "times" | "yesno"
@@ -22,7 +23,7 @@ const ModifyHabits = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate(-1, {
+    navigate("/diary", {
       state: {
         newHabit: {
           id: Date.now().toString(),
@@ -85,10 +86,11 @@ const ModifyHabits = () => {
         <h2 className="text-2xl font-bold mb-6">Criar Novo Hábito</h2>
 
         <TextField
+          id="habitName"
+          name="habitName"
           label="Nome do Hábito"
           value={habitName}
           onChange={(e) => setHabitName(e.target.value)}
-          required
         />
 
         <SelectField
