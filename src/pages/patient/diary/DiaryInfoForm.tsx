@@ -186,8 +186,7 @@ const IntegerTrigger = ({
       <button
         type="button"
         onClick={increment}
-        className="w-12 h-12 rounded-full bg-homebg text-primary-foreground 
-                   hover:opacity-90 transition-opacity shadow-lg"
+        className="w-12 h-12 rounded-full hover:opacity-90 transition-opacity shadow-lg"
       >
         <Plus size={20} className="mx-auto" />
       </button>
