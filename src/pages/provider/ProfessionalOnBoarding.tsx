@@ -106,9 +106,11 @@ export default function ProfessionalOnboarding() {
       <div className="max-w-md mx-auto">
         {/* Header */}
         <div className="px-8 pt-9">
-          <Header title="Preencha informações profissionais"
-           onBackClick={handleBackClick} 
-           variant="transparent"/>
+          <Header
+            title="Preencha informações profissionais"
+            onBackClick={handleBackClick}
+            variant="transparent"
+          />
         </div>
 
         <div className="pl-9 pr-9">
