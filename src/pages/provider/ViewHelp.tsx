@@ -1,8 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Header from "@/components/ui/header";
+import { Button } from "@/components/forms/button";
 import { PersonService } from "@/api/services/PersonService";
 import { HelpService } from "@/api/services/HelpService";
+import { SuccessMessage } from "@/components/ui/success-message";
+import { ErrorMessage } from "@/components/ui/error-message";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
 
@@ -11,6 +15,8 @@ export default function ViewHelp() {
     personId: string;
     helpId: string;
   }>();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Data states
   const [patient, setPatient] = useState<PersonRetrieve | null>(null);
@@ -20,16 +26,24 @@ export default function ViewHelp() {
 
   // UI states
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  const fetchData = useCallback(async () => {
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchData = async () => {
     if (!personId || !helpId) {
-      console.error("IDs do paciente ou pedido de ajuda não encontrados.");
+      setError("IDs do paciente ou pedido de ajuda não encontrados.");
       setLoading(false);
       return;
     }
 
     try {
       setLoading(true);
+      setError(null);
 
       // Buscar dados do paciente
       const patientData = await PersonService.apiPersonRetrieve(
@@ -48,21 +62,18 @@ export default function ViewHelp() {
       );
 
       if (!specificHelpRequest) {
-        console.error("Pedido de ajuda não encontrado.");
+        setError("Pedido de ajuda não encontrado.");
         return;
       }
 
       setHelpRequest(specificHelpRequest);
     } catch (err) {
       console.error("Error fetching data:", err);
+      setError("Não foi possível carregar os dados.");
     } finally {
       setLoading(false);
     }
-  }, [personId, helpId]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  };
 
   const formatDateTime = (dateString: string) => {
     try {
@@ -74,7 +85,7 @@ export default function ViewHelp() {
         hour: "2-digit",
         minute: "2-digit",
       });
-    } catch (_e) {
+    } catch {
       return "Data inválida";
     }
   };
@@ -95,10 +106,55 @@ export default function ViewHelp() {
       if (diffInDays === 1) return "Ontem";
       if (diffInDays < 7) return `Há ${diffInDays} dias`;
       return formatDateTime(dateString);
-    } catch (_e) {
+    } catch {
       return "Data inválida";
     }
   };
+
+  const handleMarkAsResolved = async () => {
+    // Placeholder para marcar como resolvido
+    const confirmed = window.confirm("Marcar este pedido como resolvido?");
+    if (!confirmed) return;
+
+    try {
+      // await markHelpRequestAsResolved(helpId);
+      setSuccess("Pedido marcado como resolvido!");
+      setTimeout(() => {
+        navigate(`/provider/patient/${personId}`);
+      }, 1500);
+    } catch {
+      setError("Erro ao marcar como resolvido. Tente novamente.");
+    }
+  };
+
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/acs-main-page")) return "home";
+    if (location.pathname.startsWith("/appointments")) return "consults";
+    if (location.pathname.startsWith("/patients")) return "patients";
+    if (location.pathname.startsWith("/emergencies")) return "emergency";
+    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    return null;
+  };
+
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/acs-main-page");
+        break;
+      case "patients":
+        navigate("/patients");
+        break;
+      case "emergency":
+        navigate("/emergencies");
+        break;
+      case "profile":
+        navigate("/acs-profile");
+        break;
+    }
+  };
+
+  const clearError = () => setError(null);
+  const clearSuccess = () => setSuccess(null);
 
   const patientName =
     patient?.social_name ||
@@ -117,6 +173,27 @@ export default function ViewHelp() {
       />
 
       <div className="flex-1 px-4 py-6 bg-background rounded-t-3xl mt-4 relative z-10 pb-24">
+        {/* Messages */}
+        <div className="space-y-4 mb-6">
+          {success && (
+            <SuccessMessage
+              message={success}
+              onClose={clearSuccess}
+              className="animate-in slide-in-from-top-2 duration-300"
+            />
+          )}
+
+          {error && (
+            <ErrorMessage
+              message={error}
+              onClose={clearError}
+              onRetry={() => fetchData()}
+              variant="destructive"
+              className="animate-in slide-in-from-top-2 duration-300"
+            />
+          )}
+        </div>
+
         {/* Loading State */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-12">
@@ -143,6 +220,16 @@ export default function ViewHelp() {
                   <p className="text-gray2 text-sm">ID: {patient.person_id}</p>
                 </div>
               </div>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate(`/provider/patient/${personId}`)}
+                className="w-full flex items-center gap-2"
+              >
+                <span className="text-sm">👤</span>
+                Ver perfil completo do paciente
+              </Button>
             </div>
 
             {/* Help Request Details */}
@@ -208,18 +295,35 @@ export default function ViewHelp() {
 
             {/* Action Buttons */}
             <div className="space-y-3">
-              <div className="flex gap-3" />
+              <div className="flex gap-3">
+                <Button
+                  variant="success"
+                  className="flex-1 h-11"
+                  onClick={handleMarkAsResolved}
+                >
+                  <span className="mr-2">✅</span>
+                  Marcar como resolvido
+                </Button>
+              </div>
 
-              <button
-                onClick={() => window.history.back()}
-                className="w-full h-10 text-sm bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              <Button
+                variant="ghost"
+                size="full"
+                onClick={() => navigate(-1)}
+                className="h-10 text-sm"
               >
                 ← Voltar
-              </button>
+              </Button>
             </div>
           </div>
         )}
       </div>
+
+      <BottomNavigationBar
+        variant="acs"
+        forceActiveId={getActiveNavId()}
+        onItemClick={handleNavigationClick}
+      />
     </div>
   );
 }
