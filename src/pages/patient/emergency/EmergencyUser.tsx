@@ -309,7 +309,7 @@ export default function EmergencyScreen() {
             />
           )}
 
-          {/* Emergency Disclaimer - CORES TAILWIND PADRÃO */}
+          {/* Emergency Disclaimer - CORES TAILWIND PADRÃO (RED NAO EH COR TAILWIND)*/}
           <div className="bg-red-50 dark:bg-red-950 border-2 border-red-200 dark:border-red-800 rounded-2xl p-5 shadow-sm">
             <div className="flex items-start gap-4">
               <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
