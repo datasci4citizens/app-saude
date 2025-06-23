@@ -98,6 +98,8 @@ export default function UserMainPage() {
           }),
         );
 
+        console.log("Interesses normalizados:", normalizedInterests);
+
         // flag is_attention_point
         for (const interest of normalizedInterests) {
           if (interest.marked_by && interest.marked_by.length > 0) {
@@ -180,7 +182,7 @@ export default function UserMainPage() {
         is_temporary: true,
         is_deleted: false,
         is_modified: false,
-        provider_name: "",
+        marked_by: [],
       };
 
       setUserInterestObjects((prev) => [...prev, tempInterest]);
@@ -291,7 +293,7 @@ export default function UserMainPage() {
               observation_id: result.observation_id,
               person_id: result.person_id,
               interest_area: result.interest_area,
-              provider_name: interest.provider_name || "",
+              marked_by: result.marked_by || [],
               attention_point_date: interest.attention_point_date,
               is_temporary: false,
               is_deleted: false,
@@ -427,21 +429,21 @@ export default function UserMainPage() {
         </h2>
       </div>
 
-      {/* ÁREA SCROLLÁVEL - Lista de Interesses */}
+      {/* ÁREA SCROLLÁVEL - Lista de Interesses COMPACTA E PRETTY */}
       <div
         className="px-4 overflow-y-auto"
         style={{ paddingBottom: "180px", maxHeight: "calc(100vh - 140px)" }}
       >
         {visibleInterests.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="w-16 h-16 bg-gray2/50 rounded-full flex items-center justify-center mb-4">
-              <span className="text-2xl">📋</span>
+            <div className="w-20 h-20 bg-gradient-to-br from-homebg/20 to-selection/20 rounded-2xl flex items-center justify-center mb-6 shadow-xl">
+              <span className="text-4xl">🎯</span>
             </div>
-            <p className="text-typography text-lg font-medium mb-2">
+            <p className="text-typography text-xl font-bold mb-3">
               Nenhum interesse selecionado
             </p>
-            <p className="text-desc-titulo text-typography/60">
-              Adicione seus interesses para começar!
+            <p className="text-muted-foreground text-base max-w-md">
+              Adicione seus interesses para começar a acompanhar seu bem-estar!
             </p>
           </div>
         ) : (
@@ -455,100 +457,159 @@ export default function UserMainPage() {
                   }
                 }}
                 className={`
-                  bg-card border border-card-border rounded-xl p-5 shadow-sm transition-all duration-200 relative group
+                  bg-card border rounded-2xl p-5 transition-all duration-300 relative group hover-lift
+                  shadow-lg hover:shadow-xl
                   ${
                     interest.interest_area.is_attention_point
-                      ? "border-orange-300 ring-2 ring-orange-100 dark:border-orange-400 dark:ring-orange-900/30"
-                      : ""
+                      ? "border-orange-300 bg-gradient-to-br from-orange-50/80 to-red-50/80 dark:from-orange-900/10 dark:to-red-900/10 dark:border-orange-400 shadow-orange-200/50 dark:shadow-orange-900/20"
+                      : "border-card-border hover:border-ring/40 shadow-slate-200/80 dark:shadow-slate-900/40"
                   }
                   ${
                     editionMode
-                      ? "cursor-pointer hover:shadow-lg hover:scale-[1.02] hover:border-ring hover:bg-accent/50"
+                      ? "cursor-pointer hover:scale-[1.02] hover:bg-accent/20"
                       : ""
                   }
                 `}
               >
-                {/* botão de deletar */}
+                {/* Botão de deletar compacto */}
                 {editionMode && (
-                  <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    <X
-                      size={20}
-                      className="text-destructive hover:text-destructive/80 cursor-pointer hover:scale-110 transition-all duration-200 bg-card rounded-full p-1 shadow-md border border-card-border"
+                  <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-200">
+                    <button
+                      className="w-7 h-7 bg-destructive/10 hover:bg-destructive text-destructive 
+                              hover:text-destructive-foreground rounded-full flex items-center justify-center
+                              transition-all duration-200 hover:scale-110 shadow-md border border-destructive/30"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDeleteInterest(interest);
                       }}
-                    />
+                    >
+                      <X size={14} />
+                    </button>
                   </div>
                 )}
 
-                <h3 className="font-work-sans text-topicos2 text-card-foreground mb-2 flex items-center gap-2 flex-wrap">
-                  <span
-                    className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                      interest.interest_area.is_attention_point
-                        ? "bg-orange-400"
-                        : "bg-gradient-interest-indicator"
-                    }`}
-                  />
-                  <span className="break-words min-w-0">
+                {/* Header compacto */}
+                <div className="flex items-center gap-3 mb-3">
+                  <div className={`w-3 h-3 rounded-full flex-shrink-0 shadow-sm ${
+                    interest.interest_area.is_attention_point
+                      ? "bg-gradient-to-r from-orange-400 to-red-500"
+                      : "bg-[var(--gradient-interest-indicator)]"
+                  }`} />
+                  
+                  <h3 className="font-bold text-base text-typography break-words leading-tight flex-1">
                     {String(interest.interest_area?.name || "")}
-                  </span>
-                  {interest.is_temporary && (
-                    <span className="ml-2 text-desc-campos bg-yellow text-white px-2 py-1 rounded-full font-inter font-medium flex-shrink-0">
-                      Não salvo
-                    </span>
-                  )}
-                  {interest.interest_area.is_attention_point && (
-                    <span className="ml-2 text-desc-campos bg-red-100 text-red-800 dark:bg-orange-900/30 dark:text-orange-300 px-2 py-1 rounded-full font-inter font-medium flex-shrink-0 border border-orange-200 dark:border-orange-700">
-                      ⚠️ Atenção
-                    </span>
-                  )}
-                  {interest.is_modified && (
-                    <span className="ml-2 text-desc-campos bg-blue-500 text-white px-2 py-1 rounded-full font-inter font-medium flex-shrink-0">
-                      Modificado
-                    </span>
-                  )}
-                </h3>
-
-                {/* Provider Info - quando é attention point */}
-                {interest.interest_area.is_attention_point && (
-                  <div className="mb-3 p-3 bg-blue-50 dark:bg-orange-900/20 border border-blue-200 dark:border-orange-800 rounded-lg">
-                    <p className="text-desc-campos font-inter text-blue-700 dark:text-orange-300 flex items-center gap-2">
-                      <span className="text-blue-500 dark:text-orange-400">
-                        👤
+                  </h3>
+                  
+                  {/* Badges compactos */}
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    {interest.is_temporary && (
+                      <span className="px-2 py-0.5 bg-yellow-500 text-white text-xs font-medium rounded-full shadow-sm">
+                        💾
                       </span>
-                      <span className="font-medium">Marcado por:</span>
-                      <span className="font-semibold">
-                        {String(
-                          interest.provider_name ||
-                            "Profissional não informado",
-                        )}
+                    )}
+                    {interest.interest_area.is_attention_point && (
+                      <span className="px-2 py-0.5 bg-orange-100 text-orange-700 dark:bg-orange-500/10 dark:text-orange-300 text-xs font-medium rounded-full border border-orange-300 dark:border-orange-700 shadow-sm">
+                        ⚠️
                       </span>
-                    </p>
-                    {interest.attention_point_date && (
-                      <p className="text-desc-campos font-inter text-blue-600 dark:text-orange-400 mt-1 flex items-center gap-1">
-                        📅{" "}
-                        {new Date(
-                          interest.attention_point_date,
-                        ).toLocaleDateString("pt-BR")}
-                      </p>
+                    )}
+                    {interest.is_modified && (
+                      <span className="px-2 py-0.5 bg-blue-500 text-white text-xs font-medium rounded-full shadow-sm">
+                        ✏️
+                      </span>
                     )}
                   </div>
+                </div>
+
+                {/* Provider Info compacta */}
+                {interest.interest_area.is_attention_point && (
+                  <div className="mb-3 p-3 bg-orange-100/90 dark:bg-orange-900/20 border border-orange-300 dark:border-orange-800 rounded-lg shadow-inner">
+                    <div className="flex items-center gap-2">
+                      <span className="text-orange-700 dark:text-orange-400 text-xs">👤</span>
+                      <span className="text-xs font-medium text-orange-800 dark:text-orange-300">
+                        {String(interest.marked_by?.join(", ") || "Profissional")}
+                      </span>
+                      {interest.attention_point_date && (
+                        <span className="text-xs text-orange-700 dark:text-orange-400 ml-auto">
+                          📅 {new Date(interest.attention_point_date).toLocaleDateString("pt-BR", { day: '2-digit', month: '2-digit' })}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 )}
 
-                <div className="space-y-1">
+                {/* Lista de triggers compacta com tipos */}
+                <div className="space-y-1.5">
                   {Array.isArray(interest.interest_area.triggers) &&
-                    interest.interest_area.triggers.map((trigger, index) => (
-                      <div
-                        key={`${trigger.name || index}-${index}`}
-                        className="flex items-start gap-2 text-campos-preenchimento2 font-inter text-card-foreground/70"
-                      >
-                        <span className="w-1 h-1 bg-card-foreground/40 rounded-full flex-shrink-0 mt-2" />
-                        <span className="break-words min-w-0">
-                          {String(trigger?.name || "")}
-                        </span>
-                      </div>
-                    ))}
+                    interest.interest_area.triggers.map((trigger, index) => {
+                      // Função para determinar tipo e ícone
+                      const getTriggerTypeInfo = (triggerType: TypeEnum) => {
+                        switch (triggerType) {
+                          case TypeEnum.BOOLEAN:
+                            return { 
+                              icon: '✓', 
+                              color: 'text-green-700 dark:text-green-400', 
+                              bg: 'bg-green-200 dark:bg-green-900/30', 
+                              label: 'Sim/Não' 
+                            };
+                          case TypeEnum.SCALE:
+                            return { 
+                              icon: '📊', 
+                              color: 'text-blue-700 dark:text-blue-400', 
+                              bg: 'bg-blue-200 dark:bg-blue-900/30', 
+                              label: 'Escala' 
+                            };
+                          case TypeEnum.INT:
+                            return { 
+                              icon: '🔢', 
+                              color: 'text-purple-700 dark:text-purple-400', 
+                              bg: 'bg-purple-200 dark:bg-purple-900/30', 
+                              label: 'Número' 
+                            };
+                          case TypeEnum.TEXT:
+                          default:
+                            return { 
+                              icon: '📝', 
+                              color: 'text-slate-700 dark:text-slate-400', 
+                              bg: 'bg-slate-200 dark:bg-slate-800/50', 
+                              label: 'Texto' 
+                            };
+                        }
+                      };
+                      
+                      const typeInfo = getTriggerTypeInfo(trigger.type || TypeEnum.TEXT);
+                      
+                      return (
+                        <div
+                          key={`${trigger.name || index}-${index}`}
+                                                    className="flex items-center gap-2 p-2 bg-card-muted rounded-lg border border-card-border hover:bg-accent/30 transition-colors duration-200 shadow-sm"
+                        >
+                          <div className={`w-6 h-6 ${typeInfo.bg} rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                            <span className="text-xs">{typeInfo.icon}</span>
+                          </div>
+                          <span className="text-sm text-typography break-words leading-relaxed flex-1 min-w-0">
+                            {String(trigger?.name || "")}
+                          </span>
+                          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${typeInfo.bg} ${typeInfo.color} shadow-sm flex-shrink-0`}>
+                            {typeInfo.label}
+                          </span>
+                        </div>
+                      );
+                    })}
+                </div>
+
+                {/* Footer compacto */}
+                <div className="mt-3 pt-3 border-t border-card-border/50">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="flex items-center gap-1.5 text-muted-foreground">
+                      <div className="w-1.5 h-1.5 bg-muted-foreground/60 rounded-full" />
+                      {interest.interest_area.triggers?.length || 0} pergunta{(interest.interest_area.triggers?.length || 0) !== 1 ? 's' : ''}
+                    </span>
+                    {editionMode && (
+                      <span className="text-selection font-medium hover:text-selection/80 transition-colors">
+                        Clique para editar →
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
