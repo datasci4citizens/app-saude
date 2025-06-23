@@ -137,6 +137,7 @@ export default function UserMainPage() {
           triggers: interestData.triggers.map((t) => ({
             name: t, // Using name instead of trigger_name
             type: "boolean" as TypeEnum, // Default type, can be adjusted later
+            response: null, // Required property for InterestAreaTrigger
           })),
         },
         is_temporary: true, // Flag para identificar que é temporário
