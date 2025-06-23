@@ -124,8 +124,8 @@ export default function ViewPatient() {
           return !resolvedConcept.some((concept) => concept.concept_id === help.value_as_concept);
         });
 
-        "teste";
-        "teste";
+                      "teste";
+                      "teste";
 
       const formattedHelpRequests: HelpRequest[] = patientHelpRequests.map((help) => ({
         id: help.observation_id,
