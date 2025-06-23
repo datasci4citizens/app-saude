@@ -11,6 +11,7 @@ import ErrorMessage from "@/components/ui/error-message";
 import EditInterestDialog from "../../components/EditInterestsDialog";
 import { ConfirmDialog } from "@/components/ui/confirmDialog";
 import { ApiService } from "@/api";
+import { ApiError } from "@/api/core/ApiError";
 import type { TypeEnum } from "@/api/models/TypeEnum";
 
 interface InterestAreaResponse {
@@ -106,6 +107,7 @@ export default function UserMainPage() {
       // Editando interesse existente
       setUserInterestObjects((prev) =>
         prev.map((interest) =>
+          interest.observation_id &&
           interest.observation_id.toString() === interestData.id
             ? {
                 ...interest, // Copy all existing properties
@@ -264,14 +266,18 @@ export default function UserMainPage() {
           );
 
           // Provide specific error messages
-          if (error?.response?.status === 404) {
-            setSyncError(
-              `Interesse não encontrado: ${interest.interest_area.name}`,
-            );
-          } else if (error?.response?.status === 400) {
-            setSyncError(
-              `Dados inválidos para: ${interest.interest_area.name}`,
-            );
+          if (error instanceof ApiError) {
+            if (error.status === 404) {
+              setSyncError(
+                `Interesse não encontrado: ${interest.interest_area.name}`,
+              );
+            } else if (error.status === 400) {
+              setSyncError(
+                `Dados inválidos para: ${interest.interest_area.name}`,
+              );
+            } else {
+              setSyncError(`Erro ao atualizar: ${interest.interest_area.name}`);
+            }
           } else {
             setSyncError(`Erro ao atualizar: ${interest.interest_area.name}`);
           }
@@ -307,24 +313,6 @@ export default function UserMainPage() {
     } finally {
       setIsSyncing(false);
     }
-  };
-
-  // Helper para verificar se interesse foi modificado
-  const _hasInterestChanged = (
-    current: InterestAreaResponse,
-    original?: InterestAreaResponse,
-  ) => {
-    if (!original) return false;
-
-    const currentTriggers =
-      current.interest_area.triggers?.map((t) => t.name).sort() || [];
-    const originalTriggers =
-      original.interest_area.triggers?.map((t) => t.name).sort() || [];
-
-    return (
-      current.interest_area.name !== original.interest_area.name ||
-      JSON.stringify(currentTriggers) !== JSON.stringify(originalTriggers)
-    );
   };
 
   // Navigation functions
@@ -627,7 +615,6 @@ export default function UserMainPage() {
       <div className="fixed bottom-0 left-0 right-0 z-30">
         <BottomNavigationBar
           variant="user"
-          initialActiveId="home"
           forceActiveId={getActiveNavId()} // Controlled active state
           onItemClick={handleNavigationClick}
         />
@@ -639,7 +626,7 @@ export default function UserMainPage() {
         initialData={
           editingInterest
             ? {
-                id: editingInterest.observation_id.toString(),
+                id: editingInterest.observation_id?.toString(),
                 interest_name: editingInterest.interest_area.name || "",
                 triggers:
                   editingInterest.interest_area.triggers?.map((t) => t.name) ||

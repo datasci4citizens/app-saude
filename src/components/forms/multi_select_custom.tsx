@@ -127,7 +127,9 @@ export function MultiSelectCustom({
 
         {/* Dropdown */}
         {isOpen && (
-          <div className={`absolute top-full left-0 right-0 mt-1 bg-primary border border-gray2 rounded-lg shadow-lg z-10 transition-all duration-200 overflow-hidden ${isOpen ? "max-h-60 opacity-100" : "max-h-0 opacity-0"}`}>
+          <div
+            className={`absolute top-full left-0 right-0 mt-1 bg-primary border border-gray2 rounded-lg shadow-lg z-10 transition-all duration-200 overflow-hidden ${isOpen ? "max-h-60 opacity-100" : "max-h-0 opacity-0"}`}
+          >
             {isLoading ? (
               <div className="p-2">
                 <input

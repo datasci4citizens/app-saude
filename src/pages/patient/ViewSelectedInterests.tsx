@@ -51,7 +51,7 @@ export default function ViewSelectedInterests() {
   ) => {
     try {
       // For both custom and default interests, we call the same delete endpoint
-      await InterestAreasService.apiInterestAreaDestroy({id: interestId});
+      await InterestAreasService.apiInterestAreaDestroy({ id: interestId });
 
       // Remove from local state after successful delete
       setUserInterests((prev) =>
@@ -191,11 +191,12 @@ export default function ViewSelectedInterests() {
                       {interest.triggers && interest.triggers.length > 0 ? (
                         <ul className="text-sm pl-1 space-y-1">
                           {interest.triggers.map((trigger, index) => (
-                            <li key={`${interest.interest_area_id}-trigger-${index}`} className="flex items-start">
+                            <li
+                              key={`${interest.interest_area_id}-trigger-${index}`}
+                              className="flex items-start"
+                            >
                               <span className="mr-2">•</span>
-                              <span>
-                                {trigger.name || "Sem descrição"}
-                              </span>
+                              <span>{trigger.name || "Sem descrição"}</span>
                             </li>
                           ))}
                         </ul>

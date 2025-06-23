@@ -1,5 +1,12 @@
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { AuthService } from "@/api/services/AuthService";
+import { AccountService } from "@/api/services/AccountService";
 
 // Define the shape of the context for authentication
 type AuthContextType = {
@@ -37,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("token", response.access);
 
       // Retrieve user data after successful login
-      const me = await AuthService.authMeRetrieve();
+      const me = await AccountService.accountsRetrieve();
 
       setUser({
         token: response.access,
@@ -64,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (token) {
         try {
           // Validate session and retrieve user data
-          const me = await AuthService.authMeRetrieve();
+          const me = await AccountService.accountsRetrieve();
           setUser({
             token,
             person_id: me.person_id, // Set user state with retrieved person_id

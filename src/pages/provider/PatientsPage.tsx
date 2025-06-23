@@ -83,30 +83,32 @@ export default function PatientsPage() {
       setError(null);
       const apiPatients = await LinkPersonProviderService.providerPersonsList();
 
-interface ApiPatient {
-  person_id: number;
-  name: string;
-  age?: number;
-  last_visit_date?: string;
-  last_help_date?: string;
-  email?: string;
-  phone?: string;
-}
+      interface ApiPatient {
+        person_id: number;
+        name: string;
+        age?: number;
+        last_visit_date?: string;
+        last_help_date?: string;
+        email?: string;
+        phone?: string;
+      }
 
-// ...existing code...
+      // ...existing code...
 
-      const formattedPatients: Patient[] = apiPatients.map((patient: ApiPatient) => ({
-        id: patient.person_id,
-        name: patient.name,
-        age: patient.age || 0,
-        lastVisit: formatDisplayDate(patient.last_visit_date),
-        lastHelp: formatDisplayDate(patient.last_help_date),
-        email: patient.email,
-        phone: patient.phone,
-        urgent: patient.last_help_date
-          ? getDaysAgo(patient.last_help_date) <= 3
-          : false,
-      }));
+      const formattedPatients: Patient[] = apiPatients.map(
+        (patient: ApiPatient) => ({
+          id: patient.person_id,
+          name: patient.name,
+          age: patient.age || 0,
+          lastVisit: formatDisplayDate(patient.last_visit_date),
+          lastHelp: formatDisplayDate(patient.last_help_date),
+          email: patient.email,
+          phone: patient.phone,
+          urgent: patient.last_help_date
+            ? getDaysAgo(patient.last_help_date) <= 3
+            : false,
+        }),
+      );
 
       setPatients(formattedPatients);
     } catch (_) {

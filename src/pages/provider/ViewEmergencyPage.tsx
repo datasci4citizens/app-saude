@@ -7,7 +7,10 @@ import { ProviderService } from "@/api/services/ProviderService";
 import type { DiaryRetrieve } from "@/api/models/DiaryRetrieve";
 
 export default function ViewEmergencyPage() {
-  const { diaryId, personId } = useParams<{ diaryId: string; personId: string }>();
+  const { diaryId, personId } = useParams<{
+    diaryId: string;
+    personId: string;
+  }>();
   const navigate = useNavigate();
   const [diary, setDiary] = useState<DiaryRetrieve | null>(null);
   const [loading, setLoading] = useState(true);
@@ -19,7 +22,11 @@ export default function ViewEmergencyPage() {
         try {
           setLoading(true);
           setError(null);
-          const diaryData = await ProviderService.providerPatientsDiariesRetrieve(diaryId, Number(personId));
+          const diaryData =
+            await ProviderService.providerPatientsDiariesRetrieve(
+              diaryId,
+              Number(personId),
+            );
           setDiary(diaryData);
         } catch (err) {
           console.error("Error fetching diary data:", err);

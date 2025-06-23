@@ -75,7 +75,10 @@ const InterestsSelector: React.FC<InterestsSelectorProps> = ({
     <div className="w-full overflow-x-auto">
       <div className="flex w-full gap-3">
         {columns.map((column, columnIndex) => (
-          <div key={`col-${columnIndex}-${column.length}`} className="flex flex-col w-full gap-3">
+          <div
+            key={`col-${columnIndex}-${column.length}`}
+            className="flex flex-col w-full gap-3"
+          >
             {column.map((item) => (
               <div
                 key={item.id}

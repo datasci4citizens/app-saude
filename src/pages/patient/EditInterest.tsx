@@ -68,10 +68,9 @@ export default function EditInterest() {
       setError(null);
 
       try {
-        const response =
-          (await InterestAreasService.apiInterestAreaRetrieve(
-            Number.parseInt(interestId),
-          )) as InterestAreaResponse;
+        const response = (await InterestAreasService.apiInterestAreaRetrieve(
+          Number.parseInt(interestId),
+        )) as InterestAreaResponse;
 
         setInterest(response);
       } catch (err) {
@@ -197,10 +196,7 @@ export default function EditInterest() {
     <div className="p-4 bg-primary min-h-screen pb-24">
       {/* Header */}
       <Header
-        title={
-          interest?.name ||
-          "Editar Interesse"
-        }
+        title={interest?.name || "Editar Interesse"}
         onBackClick={handleBack}
       />
 

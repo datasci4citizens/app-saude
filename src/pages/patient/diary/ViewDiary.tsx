@@ -3,7 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import Header from "@/components/ui/header";
 import { DiaryService } from "@/api/services/DiaryService";
-import CollapsibleInterestCard, { type UserInterest } from "@/components/ui/CollapsibleInterestCard";
+import CollapsibleInterestCard, {
+  type UserInterest,
+} from "@/components/ui/CollapsibleInterestCard";
 import { ErrorMessage } from "@/components/ui/error-message";
 import type { TypeEnum } from "@/api/models/TypeEnum";
 import type { DiaryRetrieve } from "@/api/models/DiaryRetrieve";

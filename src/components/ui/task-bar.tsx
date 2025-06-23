@@ -15,11 +15,7 @@ const navItems: NavItem[] = [
   {
     label: "Remédios e consultas",
     icon: (
-      <span
-        role="img"
-        aria-label="calendar"
-        className="mgc_calendar_line"
-      />
+      <span role="img" aria-label="calendar" className="mgc_calendar_line" />
     ),
   },
   {
