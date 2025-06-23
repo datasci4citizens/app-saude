@@ -61,14 +61,16 @@ export default function ViewDiaryEntry() {
             diary_id: response.diary_id,
             date: response.date,
             scope: response.scope,
-            entries: typeof response.entries === 'string' 
-              ? JSON.parse(response.entries) 
-              : response.entries || [],
-            interest_areas: typeof response.interest_areas === 'string'
-              ? JSON.parse(response.interest_areas)
-              : response.interest_areas || [],
+            entries:
+              typeof response.entries === "string"
+                ? JSON.parse(response.entries)
+                : response.entries || [],
+            interest_areas:
+              typeof response.interest_areas === "string"
+                ? JSON.parse(response.interest_areas)
+                : response.interest_areas || [],
           };
-          
+
           setDiary(diaryData);
           // Auto-expand interests that have responses
           const interestsWithResponses =
@@ -185,7 +187,7 @@ export default function ViewDiaryEntry() {
     // Create a map of trigger responses
     console.log("Converting diary interest:", diaryInterest);
     const triggerResponses: Record<string, string> = {};
-    
+
     if (diaryInterest.triggers) {
       for (const trigger of diaryInterest.triggers) {
         if (trigger.response) {
@@ -255,8 +257,8 @@ export default function ViewDiaryEntry() {
   const textEntry = getGeneralTextEntry();
   const hasContent =
     textEntry?.text ||
-    diary.interest_areas?.some(
-      (area) => area.triggers?.some((t) => t.response),
+    diary.interest_areas?.some((area) =>
+      area.triggers?.some((t) => t.response),
     );
 
   return (
