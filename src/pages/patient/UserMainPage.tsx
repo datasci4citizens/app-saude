@@ -490,16 +490,18 @@ export default function UserMainPage() {
 
                 {/* Header compacto */}
                 <div className="flex items-center gap-3 mb-3">
-                  <div className={`w-3 h-3 rounded-full flex-shrink-0 shadow-sm ${
-                    interest.interest_area.is_attention_point
-                      ? "bg-gradient-to-r from-orange-400 to-red-500"
-                      : "bg-[var(--gradient-interest-indicator)]"
-                  }`} />
-                  
+                  <div
+                    className={`w-3 h-3 rounded-full flex-shrink-0 shadow-sm ${
+                      interest.interest_area.is_attention_point
+                        ? "bg-gradient-to-r from-orange-400 to-red-500"
+                        : "bg-[var(--gradient-interest-indicator)]"
+                    }`}
+                  />
+
                   <h3 className="font-bold text-base text-typography break-words leading-tight flex-1">
                     {String(interest.interest_area?.name || "")}
                   </h3>
-                  
+
                   {/* Badges compactos */}
                   <div className="flex items-center gap-1 flex-shrink-0">
                     {interest.is_temporary && (
@@ -524,13 +526,23 @@ export default function UserMainPage() {
                 {interest.interest_area.is_attention_point && (
                   <div className="mb-3 p-3 bg-orange-100/90 dark:bg-orange-900/20 border border-orange-300 dark:border-orange-800 rounded-lg shadow-inner">
                     <div className="flex items-center gap-2">
-                      <span className="text-orange-700 dark:text-orange-400 text-xs">👤</span>
+                      <span className="text-orange-700 dark:text-orange-400 text-xs">
+                        👤
+                      </span>
                       <span className="text-xs font-medium text-orange-800 dark:text-orange-300">
-                        {String(interest.marked_by?.join(", ") || "Profissional")}
+                        {String(
+                          interest.marked_by?.join(", ") || "Profissional",
+                        )}
                       </span>
                       {interest.attention_point_date && (
                         <span className="text-xs text-orange-700 dark:text-orange-400 ml-auto">
-                          📅 {new Date(interest.attention_point_date).toLocaleDateString("pt-BR", { day: '2-digit', month: '2-digit' })}
+                          📅{" "}
+                          {new Date(
+                            interest.attention_point_date,
+                          ).toLocaleDateString("pt-BR", {
+                            day: "2-digit",
+                            month: "2-digit",
+                          })}
                         </span>
                       )}
                     </div>
@@ -545,51 +557,57 @@ export default function UserMainPage() {
                       const getTriggerTypeInfo = (triggerType: TypeEnum) => {
                         switch (triggerType) {
                           case TypeEnum.BOOLEAN:
-                            return { 
-                              icon: '✓', 
-                              color: 'text-green-700 dark:text-green-400', 
-                              bg: 'bg-green-200 dark:bg-green-900/30', 
-                              label: 'Sim/Não' 
+                            return {
+                              icon: "✓",
+                              color: "text-green-700 dark:text-green-400",
+                              bg: "bg-green-200 dark:bg-green-900/30",
+                              label: "Sim/Não",
                             };
                           case TypeEnum.SCALE:
-                            return { 
-                              icon: '📊', 
-                              color: 'text-blue-700 dark:text-blue-400', 
-                              bg: 'bg-blue-200 dark:bg-blue-900/30', 
-                              label: 'Escala' 
+                            return {
+                              icon: "📊",
+                              color: "text-blue-700 dark:text-blue-400",
+                              bg: "bg-blue-200 dark:bg-blue-900/30",
+                              label: "Escala",
                             };
                           case TypeEnum.INT:
-                            return { 
-                              icon: '🔢', 
-                              color: 'text-purple-700 dark:text-purple-400', 
-                              bg: 'bg-purple-200 dark:bg-purple-900/30', 
-                              label: 'Número' 
+                            return {
+                              icon: "🔢",
+                              color: "text-purple-700 dark:text-purple-400",
+                              bg: "bg-purple-200 dark:bg-purple-900/30",
+                              label: "Número",
                             };
                           case TypeEnum.TEXT:
                           default:
-                            return { 
-                              icon: '📝', 
-                              color: 'text-slate-700 dark:text-slate-400', 
-                              bg: 'bg-slate-200 dark:bg-slate-800/50', 
-                              label: 'Texto' 
+                            return {
+                              icon: "📝",
+                              color: "text-slate-700 dark:text-slate-400",
+                              bg: "bg-slate-200 dark:bg-slate-800/50",
+                              label: "Texto",
                             };
                         }
                       };
-                      
-                      const typeInfo = getTriggerTypeInfo(trigger.type || TypeEnum.TEXT);
-                      
+
+                      const typeInfo = getTriggerTypeInfo(
+                        trigger.type || TypeEnum.TEXT,
+                      );
+
                       return (
                         <div
                           key={`${trigger.name || index}-${index}`}
-                                                    className="flex items-center gap-2 p-2 bg-card-muted rounded-lg border border-card-border hover:bg-accent/30 transition-colors duration-200 shadow-sm"
+                          className="flex items-center gap-2 p-2 bg-card-muted rounded-lg border border-card-border hover:bg-accent/30 transition-colors duration-200 shadow-sm"
                         >
-                          <div className={`w-6 h-6 ${typeInfo.bg} rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                          <div
+                            className={`w-6 h-6 ${typeInfo.bg} rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm`}
+                          >
                             <span className="text-xs">{typeInfo.icon}</span>
                           </div>
                           <span className="text-sm text-typography break-words leading-relaxed flex-1 min-w-0">
                             {String(trigger?.name || "")}
                           </span>
-                          <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${typeInfo.bg} ${typeInfo.color} shadow-sm flex-shrink-0`}>
+                          <span
+                            className={`text-xs font-medium px-2 py-0.5 rounded-full ${typeInfo.bg} ${typeInfo.color} shadow-sm flex-shrink-0`}
+                          >
                             {typeInfo.label}
                           </span>
                         </div>
@@ -602,7 +620,10 @@ export default function UserMainPage() {
                   <div className="flex items-center justify-between text-xs">
                     <span className="flex items-center gap-1.5 text-muted-foreground">
                       <div className="w-1.5 h-1.5 bg-muted-foreground/60 rounded-full" />
-                      {interest.interest_area.triggers?.length || 0} pergunta{(interest.interest_area.triggers?.length || 0) !== 1 ? 's' : ''}
+                      {interest.interest_area.triggers?.length || 0} pergunta
+                      {(interest.interest_area.triggers?.length || 0) !== 1
+                        ? "s"
+                        : ""}
                     </span>
                     {editionMode && (
                       <span className="text-selection font-medium hover:text-selection/80 transition-colors">

@@ -588,8 +588,9 @@ export default function DiaryInfoForm() {
             observation_id: interest.observation_id || 0,
             interest_area: {
               name: interest.interest_area?.name || "Interesse sem nome",
-              is_attention_point: 
-                interest.interest_area?.marked_by && interest.interest_area.marked_by.length > 0,
+              is_attention_point:
+                interest.interest_area?.marked_by &&
+                interest.interest_area.marked_by.length > 0,
               marked_by: interest.interest_area?.marked_by || [],
               shared_with_provider:
                 interest.interest_area?.shared_with_provider || false,
@@ -688,7 +689,9 @@ export default function DiaryInfoForm() {
 
           return {
             name: interest.interest_area.name,
-            is_attention_point: interest.interest_area.marked_by && interest.interest_area.marked_by.length > 0,
+            is_attention_point:
+              interest.interest_area.marked_by &&
+              interest.interest_area.marked_by.length > 0,
             marked_by: interest.interest_area.marked_by || [],
             triggers: triggersWithResponses,
             interest_area_id: interest.observation_id,
