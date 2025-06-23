@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import GoogleSignin from "@/components/ui/google-signin";
 import landingImage from "@/lib/images/landing.png";
 import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
 import { AuthService } from "@/api/services/AuthService";
 import { Capacitor } from "@capacitor/core";
 import { useGoogleLogin } from "@react-oauth/google";
-import { type AuthTokenResponse } from "@/api";
-import { type Auth } from "@/api/models/Auth";
+import type { AuthTokenResponse } from "@/api";
+import type { Auth } from "@/api/models/Auth";
 
 const isMobile = Capacitor.isNativePlatform();
 
@@ -16,11 +17,7 @@ interface LandingScreenProps {
   totalSteps: number;
 }
 
-export const LandingScreen: React.FC<LandingScreenProps> = ({
-  onNext,
-  currentStep,
-  totalSteps,
-}) => {
+export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -41,10 +38,10 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
         await AuthService.authLoginGoogleCreate(tokenRequest);
 
       handleLoginSuccess(loginResponse);
-    } catch (err: any) {
+    } catch (err: unknown) {
       const full = JSON.stringify(err, Object.getOwnPropertyNames(err));
       console.error("Erro ao logar (mobile):", full);
-      alert("Erro ao logar (mobile): " + full);
+      alert(`Erro ao logar (mobile): ${full}`);
       setError("Falha ao fazer login. Por favor, tente novamente.");
     } finally {
       setIsLoading(false);
@@ -144,7 +141,10 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
         <div className="illustration-container">
           <div className="meditation-circles">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className={`circle circle-${i + 1}`} />
+              <div
+                key={`circle-${i + 1}`}
+                className={`circle circle-${i + 1}`}
+              />
             ))}
           </div>
           <img
@@ -165,8 +165,8 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
               <div className="inline-flex flex-col items-center space-y-3">
                 {/* Spinner melhorado */}
                 <div className="relative">
-                  <div className="animate-spin rounded-full h-8 w-8 border-3 border-white/30 border-t-white"></div>
-                  <div className="absolute inset-0 rounded-full border-3 border-transparent border-t-white animate-pulse"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-3 border-white/30 border-t-white" />
+                  <div className="absolute inset-0 rounded-full border-3 border-transparent border-t-white animate-pulse" />
                 </div>
 
                 {/* Texto de loading */}
@@ -176,7 +176,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
 
                 {/* Barra de progresso animada */}
                 <div className="w-32 h-1 bg-white/20 rounded-full overflow-hidden">
-                  <div className="h-full bg-white rounded-full animate-loading-bar"></div>
+                  <div className="h-full bg-white rounded-full animate-loading-bar" />
                 </div>
               </div>
             </div>

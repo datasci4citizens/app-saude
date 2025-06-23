@@ -5,7 +5,6 @@ import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
 import { DateField } from "@/components/forms/date_input";
 import { Checkbox } from "@/components/forms/checkbox";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 const NewReminder: React.FC = () => {
   const hours = Array.from({ length: 24 }, (_, i) =>
@@ -111,7 +110,7 @@ const NewReminder: React.FC = () => {
             height={150}
             width={80}
           >
-            <div className="bg-black bg-opacity-5 h-full w-full p-2.5 rounded-l-xl border-l-2 border-t-2 border-b-2 border-selection"></div>
+            <div className="bg-black bg-opacity-5 h-full w-full p-2.5 rounded-l-xl border-l-2 border-t-2 border-b-2 border-selection" />
           </WheelPicker>
           <span className="absolute top-1/2">:</span>
           <WheelPicker
@@ -121,7 +120,7 @@ const NewReminder: React.FC = () => {
             height={150}
             width={80}
           >
-            <div className="bg-black bg-opacity-5 h-full w-full p-2.5 rounded-r-xl border-r-2 border-t-2 border-b-2 border-selection"></div>
+            <div className="bg-black bg-opacity-5 h-full w-full p-2.5 rounded-r-xl border-r-2 border-t-2 border-b-2 border-selection" />
           </WheelPicker>
         </div>
       </div>

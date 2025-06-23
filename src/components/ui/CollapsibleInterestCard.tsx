@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import HabitCard from "@/components/ui/habit-card";
 import { Switch } from "@/components/ui/switch";
@@ -6,7 +6,7 @@ import { TextField } from "@/components/forms/text_input";
 import { Eye } from "lucide-react";
 import type { InterestArea, InterestAreaTrigger } from "@/api";
 
-interface UserInterest {
+export interface UserInterest {
   observation_id?: number;
   provider_name?: string;
   shared?: boolean;

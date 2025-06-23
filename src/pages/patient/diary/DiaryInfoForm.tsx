@@ -86,7 +86,7 @@ const ScaleTrigger = ({
   value: string;
   onChange: (value: string) => void;
 }) => {
-  const numValue = parseInt(value) || 0;
+  const numValue = Number.parseInt(value) || 0;
   const maxValue = 10;
 
   const getScaleColor = (value: number): string => {
@@ -120,7 +120,7 @@ const ScaleTrigger = ({
       <div className="flex justify-between text-xs text-muted-foreground">
         {Array.from({ length: maxValue + 1 }, (_, i) => (
           <span
-            key={i}
+            key={`scale-value-${i}-${maxValue}`}
             className={numValue === i ? "font-bold text-typography" : ""}
           >
             {i}
@@ -147,7 +147,7 @@ const IntegerTrigger = ({
   value: string;
   onChange: (value: string) => void;
 }) => {
-  const numValue = parseInt(value) || 0;
+  const numValue = Number.parseInt(value) || 0;
 
   const increment = () => onChange(Math.max(0, numValue + 1).toString());
   const decrement = () => onChange(Math.max(0, numValue - 1).toString());
@@ -295,7 +295,6 @@ const EnhancedInterestCard = ({
         return <ScaleTrigger value={value} onChange={onChange} />;
       case TypeEnum.INT:
         return <IntegerTrigger value={value} onChange={onChange} />;
-      case TypeEnum.TEXT:
       default:
         return (
           <TextTrigger trigger={trigger} value={value} onChange={onChange} />
@@ -545,7 +544,7 @@ export default function DiaryInfoForm() {
       try {
         const userEntity = await ApiService.apiUserEntityRetrieve();
         const interests = await InterestAreasService.apiInterestAreaList(
-          userEntity["person_id"],
+          userEntity.person_id,
         );
         console.log("Interesses recebidos:", interests);
 
@@ -562,19 +561,41 @@ export default function DiaryInfoForm() {
           response: string | null;
         }
 
-        interface FormattedInterestArea {
-          triggers: FormattedTrigger[];
-          [key: string]: any;
+        interface ApiTriggerData {
+          name?: string;
+          type?: TypeEnum;
+          response?: string;
+          [key: string]: unknown;
+        }
+
+        interface ApiInterestAreaData {
+          name?: string;
+          is_attention_point?: boolean;
+          marked_by?: string[];
+          shared_with_provider?: boolean;
+          triggers?: ApiTriggerData[];
+          [key: string]: unknown;
+        }
+
+        interface ApiInterestData {
+          observation_id?: number;
+          interest_area?: ApiInterestAreaData;
+          [key: string]: unknown;
         }
 
         const formattedInterests: UserInterest[] = interests.map(
-          (interest: any): UserInterest => ({
-            ...interest,
+          (interest: ApiInterestData): UserInterest => ({
+            observation_id: interest.observation_id || 0,
             interest_area: {
-              ...(interest.interest_area as FormattedInterestArea),
-              triggers: Array.isArray(interest.interest_area.triggers)
-                ? (interest.interest_area.triggers as any[]).map(
-                    (trigger: any): FormattedTrigger => ({
+              name: interest.interest_area?.name || "Interesse sem nome",
+              is_attention_point:
+                interest.interest_area?.is_attention_point || false,
+              marked_by: interest.interest_area?.marked_by || [],
+              shared_with_provider:
+                interest.interest_area?.shared_with_provider || false,
+              triggers: Array.isArray(interest.interest_area?.triggers)
+                ? interest.interest_area.triggers.map(
+                    (trigger: ApiTriggerData): FormattedTrigger => ({
                       name: String(trigger?.name || trigger || ""),
                       type: trigger?.type || TypeEnum.TEXT,
                       response: trigger?.response || null,
@@ -787,7 +808,7 @@ export default function DiaryInfoForm() {
           {isLoadingInterests ? (
             <div className="flex justify-center py-12">
               <div className="text-center">
-                <div className="w-12 h-12 border-4 border-homebg/20 border-t-homebg rounded-full animate-spin mx-auto mb-4"></div>
+                <div className="w-12 h-12 border-4 border-homebg/20 border-t-homebg rounded-full animate-spin mx-auto mb-4" />
                 <p className="text-muted-foreground font-medium">
                   Carregando seus interesses...
                 </p>
@@ -890,7 +911,7 @@ export default function DiaryInfoForm() {
           >
             {isSubmitting ? (
               <span className="flex items-center justify-center gap-3">
-                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 Salvando...
               </span>
             ) : (

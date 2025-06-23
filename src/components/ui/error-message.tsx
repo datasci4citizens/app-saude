@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 
 interface ErrorMessageProps {
   message: string;
@@ -19,19 +19,14 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
   closable = true,
   retryable = true,
   icon = true,
-  variant = "red",
+  variant,
 }) => {
   const getVariantStyles = () => {
     switch (variant) {
       case "destructive":
         return "bg-destructive border-destructive text-white";
-    }
-  };
-
-  const getIconColor = () => {
-    switch (variant) {
-      case "destructive":
-        return "text-white";
+      default:
+        return "bg-red-100 border-red-400 text-red-700";
     }
   };
 
@@ -42,11 +37,15 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
           close: "text-white hover:text-gray-2",
           retry: "text-white hover:text-gray-2",
         };
+      default:
+        return {
+          close: "text-red-500 hover:text-red-700",
+          retry: "text-red-500 hover:text-red-700",
+        };
     }
   };
 
   const variantStyles = getVariantStyles();
-  const iconColor = getIconColor();
   const buttonStyles = getButtonStyles();
 
   return (
@@ -55,7 +54,7 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
     >
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-2">
-          {icon}
+          {icon && <span className="mgc_alert_line text-xl" />}
           <p className="text-sm">{message}</p>
         </div>
         {closable && onClose && (

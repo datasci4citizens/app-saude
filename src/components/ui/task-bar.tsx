@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 
 interface NavItem {
   label: string;
@@ -9,26 +9,18 @@ interface NavItem {
 const navItems: NavItem[] = [
   {
     label: "Casa",
-    icon: (
-      <span role="img" aria-label="home" className="mgc_home_4_line"></span>
-    ),
+    icon: <span role="img" aria-label="home" className="mgc_home_4_line" />,
     active: true,
   },
   {
     label: "Remédios e consultas",
     icon: (
-      <span
-        role="img"
-        aria-label="calendar"
-        className="mgc_calendar_line"
-      ></span>
+      <span role="img" aria-label="calendar" className="mgc_calendar_line" />
     ),
   },
   {
     label: "Diário",
-    icon: (
-      <span role="img" aria-label="book" className="mgc_book_6_line"></span>
-    ),
+    icon: <span role="img" aria-label="book" className="mgc_book_6_line" />,
   },
   {
     label: "Pedidos de Ajuda",
@@ -37,14 +29,12 @@ const navItems: NavItem[] = [
         role="img"
         aria-label="warning"
         className="mgc_emergency_flashers_line"
-      ></span>
+      />
     ),
   },
   {
     label: "Eu",
-    icon: (
-      <span role="img" aria-label="user" className="mgc_user_2_line"></span>
-    ),
+    icon: <span role="img" aria-label="user" className="mgc_user_2_line" />,
   },
 ];
 
@@ -53,7 +43,7 @@ const BottomNavigationBar: React.FC = () => {
     <div className="flex justify-around items-center bg-background py-2 shadow-sm border-t border-input">
       {navItems.map((item, index) => (
         <div
-          key={index}
+          key={`nav-${item.label}-${index}`}
           className={`flex flex-col items-center text-gray2 font-medium text-xs font-inter cursor-pointer ${
             item.active ? "text-primary" : ""
           }`}

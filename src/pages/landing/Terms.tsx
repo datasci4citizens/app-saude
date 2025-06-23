@@ -113,7 +113,7 @@ const TermsScreen = ({
   const stepNumber = currentStep + 1;
 
   // Determinar se deve mostrar o botão de aceitar
-  const shouldShowAcceptButton = !isFromProfile;
+  const _shouldShowAcceptButton = !isFromProfile;
 
   // Título baseado no contexto
   const getPageTitle = () => {

@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import {
   Select,
   SelectContent,
@@ -6,11 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-interface Option {
-  value: string;
-  label: string;
-}
 
 interface SelectFieldProps {
   id: string;

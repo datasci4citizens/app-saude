@@ -6,9 +6,9 @@ import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import { ProviderService } from "@/api/services/ProviderService";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
-import { type PatchedMarkAttentionPoint } from "@/api/models/PatchedMarkAttentionPoint";
+import type { PatchedMarkAttentionPoint } from "@/api/models/PatchedMarkAttentionPoint";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
-import { TypeEnum } from "@/api/models/TypeEnum";
+import type { TypeEnum } from "@/api/models/TypeEnum";
 
 // Updated interfaces to match new server response structure
 interface DiaryEntryDetail {
@@ -76,13 +76,13 @@ export default function ViewDiary() {
               Number(personId),
             );
 
-          diaryData.interest_areas.forEach((interest: InterestAreaDetail) => {
+          for (const interest of diaryData.interest_areas) {
             if (interest.marked_by && interest.marked_by.length > 0) {
               interest.is_attention_point = true;
             } else {
               interest.is_attention_point = false;
             }
-          });
+          }
 
           if (diaryData) {
             setDiary(diaryData);
@@ -115,7 +115,7 @@ export default function ViewDiary() {
       const year = date.getFullYear();
 
       return `${day}/${month}/${year}`;
-    } catch (e) {
+    } catch (_e) {
       return dateString;
     }
   };
@@ -223,7 +223,7 @@ export default function ViewDiary() {
             {loading && (
               <div className="flex justify-center items-center py-16">
                 <div className="flex flex-col items-center gap-4">
-                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection" />
                   <p className="text-gray2 text-sm">Carregando diário...</p>
                 </div>
               </div>
@@ -268,7 +268,6 @@ export default function ViewDiary() {
                     </div>
                   </div>
                 )}
-
                 {/* Time Range Section */}
                 <div className="space-y-3 mb-6">
                   <h3 className="font-semibold text-lg text-typography mb-1">
@@ -282,7 +281,6 @@ export default function ViewDiary() {
                     </span>
                   </div>
                 </div>
-
                 {/* Interest Areas Section */}
                 {diary.interest_areas && diary.interest_areas.length > 0 && (
                   <div className="space-y-3 mb-6">
@@ -293,11 +291,9 @@ export default function ViewDiary() {
                       {diary.interest_areas.map((interest) => {
                         const interestId = interest.observation_id || 0;
                         const isExpanded = expandedInterests.has(interest.name);
-                        const hasResponses =
-                          interest.triggers &&
-                          interest.triggers.some(
-                            (t) => t.response && t.response.trim() !== "",
-                          );
+                        const hasResponses = interest.triggers?.some(
+                          (t) => t.response && t.response.trim() !== "",
+                        );
                         return (
                           <div
                             key={interest.name}
@@ -307,9 +303,10 @@ export default function ViewDiary() {
                               className="p-5 cursor-pointer"
                               onClick={() => toggleInterest(interest.name)}
                             >
+                              {" "}
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3 flex-1">
-                                  <span className="w-2 h-2 bg-gradient-interest-indicator rounded-full flex-shrink-0"></span>
+                                  <span className="w-2 h-2 bg-gradient-interest-indicator rounded-full flex-shrink-0" />
                                   <h4 className="font-bold text-lg text-card-foreground">
                                     {interest.name}
                                   </h4>
@@ -332,7 +329,6 @@ export default function ViewDiary() {
                                   </span>
                                 </div>
                               </div>
-
                               {interest.is_attention_point &&
                                 interest.marked_by && (
                                   <div className="mt-2">
@@ -388,7 +384,7 @@ export default function ViewDiary() {
                                           trigger.response &&
                                           trigger.response.trim() !== "" && (
                                             <div
-                                              key={index}
+                                              key={`${trigger.name}-${index}`}
                                               className="bg-card-muted p-3 rounded-lg border-l-4 border-selection"
                                             >
                                               <div className="text-sm">
@@ -418,11 +414,10 @@ export default function ViewDiary() {
                     </div>
                   </div>
                 )}
-
-                {/* General Text Section */}
+                {/* General Text Section */}{" "}
                 {(() => {
                   const textEntry = getGeneralTextEntry();
-                  return textEntry && textEntry.text ? (
+                  return textEntry?.text ? (
                     <div className="space-y-3 mb-6">
                       <div className="flex flex-col gap-1">
                         <h3 className="font-semibold text-lg text-typography mb-1">
@@ -441,7 +436,6 @@ export default function ViewDiary() {
                     </div>
                   ) : null;
                 })()}
-
                 {/* Action button */}
                 <div className="text-center">
                   <button

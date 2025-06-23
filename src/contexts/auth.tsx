@@ -1,5 +1,12 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { AuthService } from "@/api/services/AuthService";
+import { AccountService } from "@/api/services/AccountService";
 
 // Define the shape of the context for authentication
 type AuthContextType = {
@@ -12,7 +19,7 @@ type AuthContextType = {
 };
 
 // Create the authentication context
-const AuthContext = createContext<AuthContextType>(null!);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 /**
  * AuthProvider component to encapsulate authentication logic and state.
@@ -37,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("token", response.access);
 
       // Retrieve user data after successful login
-      const me = await AuthService.authMeRetrieve();
+      const me = await AccountService.accountsRetrieve();
 
       setUser({
         token: response.access,
@@ -52,10 +59,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    * Logout function to clear the user session.
    * It removes the token from local storage and resets the user state.
    */
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("token");
     setUser(null);
-  };
+  }, []);
 
   // Effect to initialize authentication state
   useEffect(() => {
@@ -64,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (token) {
         try {
           // Validate session and retrieve user data
-          const me = await AuthService.authMeRetrieve();
+          const me = await AccountService.accountsRetrieve();
           setUser({
             token,
             person_id: me.person_id, // Set user state with retrieved person_id
@@ -76,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     };
     initAuth(); // Call the initialization function on component mount
-  }, []);
+  }, [logout]);
 
   // Provide the user state and actions to the context
   return (

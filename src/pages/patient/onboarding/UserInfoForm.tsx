@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "@/components/forms/button";
-import { TextField } from "@/components/forms/text_input";
-import { SelectField } from "@/components/forms/select_input";
-import { DateField } from "@/components/forms/date_input";
+import type React from "react";
+import { useState } from "react";
 import type { PersonCreate } from "@/api/models/PersonCreate";
+import { Button } from "@/components/forms/button";
+import { DateField } from "@/components/forms/date_input";
+import { SelectField } from "@/components/forms/select_input";
+import { TextField } from "@/components/forms/text_input";
 import { useDemographicConcepts } from "@/utils/conceptLoader";
 
 // Define form data type that extends Person with form-specific fields
@@ -118,7 +119,7 @@ export function UserInfoForm({
       } else {
         // Check if it's a valid date
         const date = new Date(formData.birth_datetime);
-        if (isNaN(date.getTime())) {
+        if (Number.isNaN(date.getTime())) {
           newErrors.birth_datetime = "Data inválida";
         } else {
           // Check if date is in future

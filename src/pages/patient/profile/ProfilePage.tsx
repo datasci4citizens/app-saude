@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileBanner from "@/components/ui/profile-banner";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
@@ -39,7 +40,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   const [personId, setPersonId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [_isLoading, _setIsLoading] = useState(false);
   const [loadingItem, setLoadingItem] = useState<string | null>(null);
 
   // Fetch person_id on mount
@@ -57,7 +58,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   }, []);
 
   const clearError = () => setError(null);
-  const clearSuccess = () => setSuccess(null);
 
   const handleLogout = async () => {
     const refresh = localStorage.getItem("refreshToken");
@@ -78,10 +78,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
         localStorage.removeItem("refreshToken");
         navigate("/welcome");
       }, 1500);
-    } catch (error: any) {
-      const errorMessage = error?.message
-        ? `Erro ao fazer logout: ${error.message}`
-        : "Erro ao fazer logout. Tente novamente.";
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error && error.message
+          ? `Erro ao fazer logout: ${error.message}`
+          : "Erro ao fazer logout. Tente novamente.";
       setError(errorMessage);
     } finally {
       setLoadingItem(null);
@@ -299,8 +300,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
 
           {/* Menu Sections */}
           <div className="space-y-8">
-            {menuSections.map((section, sectionIndex) => (
-              <div key={sectionIndex} className="space-y-4">
+            {menuSections.map((section) => (
+              <div key={section.title} className="space-y-4">
                 <h3 className="text-card-foreground font-semibold text-sm uppercase tracking-wide opacity-70 px-2">
                   {section.title}
                 </h3>
@@ -318,7 +319,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-10 bg-selection/10 rounded-full flex items-center justify-center text-lg">
                             {loadingItem === item.id ? (
-                              <div className="animate-spin rounded-full h-5 w-5 border-2 border-selection/20 border-t-selection"></div>
+                              <div className="animate-spin rounded-full h-5 w-5 border-2 border-selection/20 border-t-selection" />
                             ) : (
                               item.icon
                             )}
@@ -342,7 +343,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                           <div
                             className={`text-lg ${getTextStyles(item)} opacity-50`}
                           >
-                            <span className="mgc_right_line"></span>
+                            <span className="mgc_right_line" />
                           </div>
                         )}
                       </div>

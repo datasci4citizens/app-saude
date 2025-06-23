@@ -23,6 +23,7 @@ interface InterestAreaResponse {
   is_modified?: boolean;
   attention_point_date?: string;
   marked_by?: string[];
+  provider_name?: string;
 }
 
 // Interface for the dialog data format
@@ -64,41 +65,47 @@ export default function UserMainPage() {
       try {
         const userEntity = await ApiService.apiUserEntityRetrieve();
         const userInterests = await InterestAreasService.apiInterestAreaList(
-          userEntity["person_id"],
+          userEntity.person_id,
         );
 
         console.log("Dados da API:", userInterests);
 
         // Ensure all interests have proper structure
-        const normalizedInterests = userInterests.map((interest: any) => ({
-          ...interest,
-          interest_area: {
-            ...interest.interest_area,
-            name: String(interest.interest_area?.name || ""),
-            triggers: Array.isArray(interest.interest_area?.triggers)
-              ? interest.interest_area.triggers.map((trigger: any) => ({
-                  name: String(trigger?.name || trigger || ""),
-                  type: trigger?.type || TypeEnum.TEXT,
-                  response: trigger?.response || null,
-                }))
+        const normalizedInterests = userInterests.map(
+          (interest: InterestAreaResponse) => ({
+            ...interest,
+            interest_area: {
+              ...interest.interest_area,
+              name: String(interest.interest_area?.name || ""),
+              triggers: Array.isArray(interest.interest_area?.triggers)
+                ? interest.interest_area.triggers.map(
+                    (trigger: InterestAreaTrigger) => ({
+                      name: String(trigger?.name || trigger || ""),
+                      type: trigger?.type || TypeEnum.TEXT,
+                      response: trigger?.response || null,
+                    }),
+                  )
+                : [],
+            },
+            marked_by: Array.isArray(interest.marked_by)
+              ? interest.marked_by.map((provider: string) =>
+                  String(provider || ""),
+                )
               : [],
-          },
-          marked_by: Array.isArray(interest.marked_by)
-            ? interest.marked_by.map((provider: any) => String(provider || ""))
-            : [],
-          is_temporary: false,
-          is_deleted: false,
-          is_modified: false,
-        }));
+            is_temporary: false,
+            is_deleted: false,
+            is_modified: false,
+          }),
+        );
 
         // flag is_attention_point
-        normalizedInterests.forEach((interest: InterestAreaResponse) => {
+        for (const interest of normalizedInterests) {
           if (interest.marked_by && interest.marked_by.length > 0) {
             interest.interest_area.is_attention_point = true;
           } else {
             interest.interest_area.is_attention_point = false;
           }
-        });
+        }
 
         setUserInterestObjects(normalizedInterests);
         setOriginalInterests([...normalizedInterests]);
@@ -291,7 +298,7 @@ export default function UserMainPage() {
               is_modified: false,
             } as InterestAreaResponse);
           }
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error(
             `Error updating interest ${interest.observation_id}:`,
             error,
@@ -314,7 +321,7 @@ export default function UserMainPage() {
       setHasChanges(false);
       setSyncSuccess(true);
       setTimeout(() => setSyncSuccess(false), 3000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error syncing with server:", error);
       setSyncError("Erro ao salvar interesses. Tente novamente.");
     } finally {
@@ -482,7 +489,7 @@ export default function UserMainPage() {
                         ? "bg-orange-400"
                         : "bg-gradient-interest-indicator"
                     }`}
-                  ></span>
+                  />
                   <span className="break-words min-w-0">
                     {String(interest.interest_area?.name || "")}
                   </span>
@@ -536,7 +543,7 @@ export default function UserMainPage() {
                         key={`${trigger.name || index}-${index}`}
                         className="flex items-start gap-2 text-campos-preenchimento2 font-inter text-card-foreground/70"
                       >
-                        <span className="w-1 h-1 bg-card-foreground/40 rounded-full flex-shrink-0 mt-2"></span>
+                        <span className="w-1 h-1 bg-card-foreground/40 rounded-full flex-shrink-0 mt-2" />
                         <span className="break-words min-w-0">
                           {String(trigger?.name || "")}
                         </span>
