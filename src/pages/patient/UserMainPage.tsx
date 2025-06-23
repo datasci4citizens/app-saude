@@ -430,14 +430,10 @@ export default function UserMainPage() {
                   shadow-lg hover:shadow-xl
                   ${
                     interest.interest_area.is_attention_point
-                      ? "border-destructive bg-gradient-to-br from-destructive-50/80 to-destructive-50/80 dark:from-destructive-900/10 dark:to-destructive-900/10 dark:border-destructive-400 shadow-destructive-200/50 dark:shadow-destructive-900/20"
-                      : "border-card-border hover:border-ring/40 shadow-slate-200/80 dark:shadow-slate-900/40"
+                      ? 'border-destructive bg-gradient-to-br from-destructive-50/80 to-destructive-50/80 dark:from-destructive-900/10 dark:to-destructive-900/10 dark:border-destructive-400 shadow-destructive-200/50 dark:shadow-destructive-900/20'
+                      : 'border-card-border hover:border-ring/40 shadow-slate-200/80 dark:shadow-slate-900/40'
                   }
-                  ${
-                    editionMode
-                      ? "cursor-pointer hover:scale-[1.02] hover:bg-accent/20"
-                      : ""
-                  }
+                  ${editionMode ? 'cursor-pointer hover:scale-[1.02] hover:bg-accent/20' : ''}
                   ${editionMode ? 'cursor-pointer hover:scale-[1.02] hover:bg-accent/20' : ''}
                 `}
               >
@@ -463,8 +459,8 @@ export default function UserMainPage() {
                   <div
                     className={`w-3 h-3 rounded-full flex-shrink-0 shadow-sm ${
                       interest.interest_area.is_attention_point
-                        ? "bg-gradient-to-r from-destructive-400 to-destructive-500"
-                        : "bg-[var(--gradient-interest-indicator)]"
+                        ? 'bg-gradient-to-r from-destructive-400 to-destructive-500'
+                        : 'bg-[var(--gradient-interest-indicator)]'
                     }`}
                   />
 
@@ -500,18 +496,14 @@ export default function UserMainPage() {
                         👤
                       </span>
                       <span className="text-xs font-medium text-destructive-800 dark:text-destructive-300">
-                        {String(
-                          interest.marked_by?.join(", ") || "Profissional",
-                        )}
+                        {String(interest.marked_by?.join(', ') || 'Profissional')}
                       </span>
                       {interest.attention_point_date && (
                         <span className="text-xs text-destructive-700 dark:text-destructive-400 ml-auto">
-                          📅{" "}
-                          {new Date(
-                            interest.attention_point_date,
-                          ).toLocaleDateString("pt-BR", {
-                            day: "2-digit",
-                            month: "2-digit",
+                          📅{' '}
+                          {new Date(interest.attention_point_date).toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
                           })}
                         </span>
                       )}
@@ -528,32 +520,32 @@ export default function UserMainPage() {
                         switch (triggerType) {
                           case TypeEnum.BOOLEAN:
                             return {
-                              icon: "✓",
+                              icon: '✓',
                               // color: "text-success-700 dark:text-success-400",
                               // bg: "bg-sucess-200 dark:bg-success-900/30",
-                              label: "Sim/Não",
+                              label: 'Sim/Não',
                             };
                           case TypeEnum.SCALE:
                             return {
-                              icon: "📊",
+                              icon: '📊',
                               // color: "text-success-700 dark:text-success-400",
                               // bg: "bg-primary dark:bg-primary-900/30",
-                              label: "Escala",
+                              label: 'Escala',
                             };
                           case TypeEnum.INT:
                             return {
-                              icon: "🔢",
+                              icon: '🔢',
                               // color: "text-typography dark:text-typography",
                               // bg: "bg-offwhite dark:bg-offwhite",
-                              label: "Número",
+                              label: 'Número',
                             };
                           case TypeEnum.TEXT:
                           default:
                             return {
-                              icon: "📝",
+                              icon: '📝',
                               // color: "text-typography dark:text-typography",
                               // bg: "bg-offwhite dark:bg-offwhite",
-                              label: "Texto",
+                              label: 'Texto',
                             };
                         }
                       };

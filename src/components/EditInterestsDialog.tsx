@@ -144,7 +144,7 @@ const TemplateItem: React.FC<{
           <span
             key={trigger.name}
             className="bg-offwhite2 dark:bg-offwhite2 text-typography dark:text-typography px-2 py-1 rounded text-xs max-w-[200px] truncate"
-            title={trigger?.name || ""}
+            title={trigger?.name || ''}
           >
             {trigger?.name || 'Pergunta sem nome'}
           </span>
@@ -459,9 +459,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
                 <Copy size={14} />
                 <span className="font-medium">Baseado em modelo existente</span>
               </div>
-              <p className="text-xs mt-1">
-                Todas as informações podem ser editadas livremente.
-              </p>
+              <p className="text-xs mt-1">Todas as informações podem ser editadas livremente.</p>
             </div>
           )}
 
