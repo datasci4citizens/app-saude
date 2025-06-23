@@ -125,6 +125,7 @@ export default function ViewPatient() {
         });
 
         "teste";
+        "teste";
 
       const formattedHelpRequests: HelpRequest[] = patientHelpRequests.map((help) => ({
         id: help.observation_id,
