@@ -16,36 +16,6 @@ import Header from "@/components/ui/header";
 import { Button } from "@/components/forms/button";
 import { TypeEnum } from "@/api/models/TypeEnum";
 
-// API Response interfaces
-interface ApiTriggerResponse {
-  trigger_id?: number;
-  trigger_name?: string;
-  name?: string;
-  type?: TypeEnum;
-  value_as_string?: string;
-  response?: string;
-}
-
-interface ApiInterestAreaResponse {
-  interest_name?: string;
-  name?: string;
-  triggers?: ApiTriggerResponse[];
-  interest_area_id?: number;
-  is_attention_point?: boolean;
-  shared_with_provider?: boolean;
-  provider_name?: string | null;
-  [key: string]: unknown;
-}
-
-interface ApiDiaryItemResponse {
-  diary_id?: number;
-  date?: string;
-  diary_shared?: boolean;
-  entries?: DiaryEntry[] | string;
-  interest_areas?: ApiInterestAreaResponse[];
-  [key: string]: unknown;
-}
-
 // Interfaces atualizadas para a nova estrutura
 interface DiaryEntry {
   text: string;
@@ -68,7 +38,7 @@ interface DiaryInterestArea {
   provider_name: string | null;
 }
 
-interface DiaryRetrieve {
+interface LocalDiaryRetrieve {
   diary_id: number;
   date: string;
   entries: DiaryEntry[];
@@ -77,7 +47,7 @@ interface DiaryRetrieve {
 }
 
 export default function ImprovedDiaryListPage() {
-  const [diaries, setDiaries] = useState<DiaryRetrieve[]>([]);
+  const [diaries, setDiaries] = useState<LocalDiaryRetrieve[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -95,34 +65,58 @@ export default function ImprovedDiaryListPage() {
 
         if (Array.isArray(response)) {
           // Transform API response to match new structure
-          const mapped = response.map((item: ApiDiaryItemResponse) => ({
-            diary_id: item.diary_id || 0,
-            date: item.date || new Date().toISOString(),
-            diary_shared: item.diary_shared || false,
-            entries: Array.isArray(item.entries)
-              ? item.entries
-              : typeof item.entries === "string" && item.entries.trim() !== ""
-                ? [{ text: item.entries, text_shared: false }]
+          const mapped = response.map((item: unknown) => {
+            const typedItem = item as Record<string, unknown>;
+            // Handle case where response might be ApiDiaryRetrieve or already processed
+            if (typeof typedItem.entries === 'string' || typeof typedItem.interest_areas === 'string') {
+              // This is an ApiDiaryRetrieve - parse the JSON strings
+              const entries = typeof typedItem.entries === 'string' ? 
+                (typedItem.entries.trim() ? JSON.parse(typedItem.entries) : []) : 
+                (Array.isArray(typedItem.entries) ? typedItem.entries : []);
+              
+              const interest_areas = typeof typedItem.interest_areas === 'string' ?
+                (typedItem.interest_areas.trim() ? JSON.parse(typedItem.interest_areas) : []) :
+                (Array.isArray(typedItem.interest_areas) ? typedItem.interest_areas : []);
+
+              return {
+                diary_id: (typedItem.diary_id as number) || 0,
+                date: (typedItem.date as string) || new Date().toISOString(),
+                diary_shared: (typedItem.diary_shared as boolean) || false,
+                entries: Array.isArray(entries) ? entries : [],
+                interest_areas: Array.isArray(interest_areas) ? interest_areas : [],
+              };
+            }
+            
+            // This is already in the expected format or ApiDiaryItemResponse
+            return {
+              diary_id: (typedItem.diary_id as number) || 0,
+              date: (typedItem.date as string) || new Date().toISOString(),
+              diary_shared: (typedItem.diary_shared as boolean) || false,
+              entries: Array.isArray(typedItem.entries)
+                ? typedItem.entries
+                : typeof typedItem.entries === "string" && typedItem.entries.trim() !== ""
+                  ? [{ text: typedItem.entries, text_shared: false }]
+                  : [],
+              interest_areas: Array.isArray(typedItem.interest_areas)
+                ? (typedItem.interest_areas as Record<string, unknown>[]).map((area: Record<string, unknown>) => ({
+                    interest_area_id: (area.interest_area_id as number) || 0,
+                    name: (area.interest_name as string) || (area.name as string) || "Interesse",
+                    is_attention_point: (area.is_attention_point as boolean) || false,
+                    shared_with_provider: (area.shared_with_provider as boolean) || false,
+                    provider_name: (area.provider_name as string) || null,
+                    triggers: Array.isArray(area.triggers)
+                      ? (area.triggers as Record<string, unknown>[]).map((trigger: Record<string, unknown>) => ({
+                          trigger_id: (trigger.trigger_id as number) || 0,
+                          name: (trigger.trigger_name as string) || (trigger.name as string) || "",
+                          type: (trigger.type as TypeEnum) || TypeEnum.TEXT,
+                          response:
+                            (trigger.value_as_string as string) || (trigger.response as string) || "",
+                        }))
+                      : [],
+                  }))
                 : [],
-            interest_areas: Array.isArray(item.interest_areas)
-              ? item.interest_areas.map((area: ApiInterestAreaResponse) => ({
-                  interest_area_id: area.interest_area_id || 0,
-                  name: area.interest_name || area.name || "Interesse",
-                  is_attention_point: area.is_attention_point || false,
-                  shared_with_provider: area.shared_with_provider || false,
-                  provider_name: area.provider_name || null,
-                  triggers: Array.isArray(area.triggers)
-                    ? area.triggers.map((trigger: ApiTriggerResponse) => ({
-                        trigger_id: trigger.trigger_id || 0,
-                        name: trigger.trigger_name || trigger.name || "",
-                        type: trigger.type || TypeEnum.TEXT,
-                        response:
-                          trigger.value_as_string || trigger.response || "",
-                      }))
-                    : [],
-                }))
-              : [],
-          })) as DiaryRetrieve[];
+            };
+          }) as LocalDiaryRetrieve[];
           setDiaries(mapped);
         } else {
           console.error("Unexpected API response format:", response);
@@ -163,7 +157,7 @@ export default function ImprovedDiaryListPage() {
   };
 
   // Get comprehensive diary statistics
-  const getDiaryStats = (diary: DiaryRetrieve) => {
+  const getDiaryStats = (diary: LocalDiaryRetrieve) => {
     const hasTextEntry = diary.entries?.some(
       (e) => e.text && e.text.trim() !== "",
     );
@@ -215,7 +209,7 @@ export default function ImprovedDiaryListPage() {
   };
 
   // Get diary summary with improved logic
-  const getDiarySummary = (diary: DiaryRetrieve): string => {
+  const getDiarySummary = (diary: LocalDiaryRetrieve): string => {
     // First, try to get text from entries
     if (
       diary.entries &&
@@ -269,7 +263,7 @@ export default function ImprovedDiaryListPage() {
   const filteredDiaries = diaries;
 
   // Group diaries by date
-  const groupedDiaries: Record<string, DiaryRetrieve[]> = {};
+  const groupedDiaries: Record<string, LocalDiaryRetrieve[]> = {};
   for (const diary of filteredDiaries) {
     const dateKey = formatDate(diary.date);
     if (!groupedDiaries[dateKey]) {

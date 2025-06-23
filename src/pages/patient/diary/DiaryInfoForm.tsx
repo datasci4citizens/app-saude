@@ -120,7 +120,7 @@ const ScaleTrigger = ({
       <div className="flex justify-between text-xs text-muted-foreground">
         {Array.from({ length: maxValue + 1 }, (_, i) => (
           <span
-            key={i}
+            key={`scale-value-${i}-${maxValue}`}
             className={numValue === i ? "font-bold text-typography" : ""}
           >
             {i}
@@ -561,19 +561,39 @@ export default function DiaryInfoForm() {
           response: string | null;
         }
 
-        interface FormattedInterestArea {
-          triggers: FormattedTrigger[];
-          [key: string]: any;
+        interface ApiTriggerData {
+          name?: string;
+          type?: TypeEnum;
+          response?: string;
+          [key: string]: unknown;
+        }
+
+        interface ApiInterestAreaData {
+          name?: string;
+          is_attention_point?: boolean;
+          marked_by?: string[];
+          shared_with_provider?: boolean;
+          triggers?: ApiTriggerData[];
+          [key: string]: unknown;
+        }
+
+        interface ApiInterestData {
+          observation_id?: number;
+          interest_area?: ApiInterestAreaData;
+          [key: string]: unknown;
         }
 
         const formattedInterests: UserInterest[] = interests.map(
-          (interest: any): UserInterest => ({
-            ...interest,
+          (interest: ApiInterestData): UserInterest => ({
+            observation_id: interest.observation_id || 0,
             interest_area: {
-              ...(interest.interest_area as FormattedInterestArea),
-              triggers: Array.isArray(interest.interest_area.triggers)
-                ? (interest.interest_area.triggers as any[]).map(
-                    (trigger: any): FormattedTrigger => ({
+              name: interest.interest_area?.name || "Interesse sem nome",
+              is_attention_point: interest.interest_area?.is_attention_point || false,
+              marked_by: interest.interest_area?.marked_by || [],
+              shared_with_provider: interest.interest_area?.shared_with_provider || false,
+              triggers: Array.isArray(interest.interest_area?.triggers)
+                ? interest.interest_area.triggers.map(
+                    (trigger: ApiTriggerData): FormattedTrigger => ({
                       name: String(trigger?.name || trigger || ""),
                       type: trigger?.type || TypeEnum.TEXT,
                       response: trigger?.response || null,
