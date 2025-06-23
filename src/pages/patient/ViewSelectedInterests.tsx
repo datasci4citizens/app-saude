@@ -5,7 +5,8 @@ import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import { Button } from "@/components/forms/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { InterestAreaTriggerCreate } from "@/api/models/InterestAreaTriggerCreate";
+import { type InterestAreaTrigger } from "@/api/models/InterestAreaTrigger";
+import { AccountService } from "@/api";
 
 // Extended interface for API response that includes the ID
 interface InterestAreaResponse {
@@ -13,7 +14,7 @@ interface InterestAreaResponse {
   observation_concept_id?: number | null;
   interest_name?: string | null;
   value_as_string?: string | null;
-  triggers?: InterestAreaTriggerCreate[];
+  triggers?: InterestAreaTrigger[];
 }
 
 export default function ViewSelectedInterests() {
@@ -31,8 +32,9 @@ export default function ViewSelectedInterests() {
       setError(null);
 
       try {
-        const interests = (await InterestAreasService.personInterestAreasList(
-          false,
+        const userEntity = await AccountService.accountsRetrieve();
+        const interests = (await InterestAreasService.apiInterestAreaList(
+          userEntity.person_id
         )) as InterestAreaResponse[];
         console.log("Loaded interests:", interests);
         setUserInterests(interests);
@@ -50,11 +52,11 @@ export default function ViewSelectedInterests() {
   // Handle unlinking/deleting an interest
   const handleUnlinkInterest = async (
     interestId: number,
-    isCustom: boolean,
   ) => {
     try {
       // For both custom and default interests, we call the same delete endpoint
-      await InterestAreasService.personInterestAreasDestroy(interestId);
+      const userEntity = await AccountService.accountsRetrieve();
+      await InterestAreasService.apiInterestAreaDestroy(String(interestId), userEntity.person_id);
 
       // Remove from local state after successful delete
       setUserInterests((prev) =>
@@ -167,8 +169,7 @@ export default function ViewSelectedInterests() {
                           onClick={(e) => {
                             e.stopPropagation(); // This prevents the click from bubbling up to the parent div
                             handleUnlinkInterest(
-                              interest.interest_area_id,
-                              isCustomInterest(interest),
+                              interest.interest_area_id
                             );
                           }}
                         >
@@ -197,7 +198,7 @@ export default function ViewSelectedInterests() {
                             <li key={index} className="flex items-start">
                               <span className="mr-2">•</span>
                               <span>
-                                {trigger.trigger_name || "Sem descrição"}
+                                {trigger.name || "Sem descrição"}
                               </span>
                             </li>
                           ))}

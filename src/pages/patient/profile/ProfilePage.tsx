@@ -282,7 +282,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
             {success && (
               <SuccessMessage
                 message={success}
-                onClose={clearSuccess}
                 className="animate-in slide-in-from-top-2 duration-300"
               />
             )}

@@ -119,18 +119,86 @@ export default {
           active: 'var(--bottom-nav-active)',
           border: 'var(--bottom-nav-border)',
         },
+        backgroundImage: {
+          'gradient-interest-indicator': 'var(--gradient-interest-indicator)',
+          'gradient-button-background': 'var(--gradient-button-background)',
+          'gradient-button-save': 'var(--gradient-button-save)',
+          'gradient-button-save-hover': 'var(--gradient-button-save-hover)',
+          'gradient-button-new': 'var(--gradient-button-new)',
+          'gradient-button-new-hover': 'var(--gradient-button-new-hover)',
+          'gradient-button-edit': 'var(--gradient-button-edit)',
+          'gradient-button-edit-hover': 'var(--gradient-button-edit-hover)',
+        },
+        'hover': {
+          'primary': 'rgb(var(--hover-primary) / <alpha-value>)',
+          'primary-light': 'rgb(var(--hover-primary-light) / <alpha-value>)',
+          'secondary': 'rgb(var(--hover-secondary) / <alpha-value>)',
+          'secondary-light': 'rgb(var(--hover-secondary-light) / <alpha-value>)',
+          'surface': 'rgb(var(--hover-surface) / <alpha-value>)',
+          'surface-dark': 'rgb(var(--hover-surface-dark) / <alpha-value>)',
+          'border': 'rgb(var(--hover-border) / <alpha-value>)',
+          'border-active': 'rgb(var(--hover-border-active) / <alpha-value>)',
+          'text': 'rgb(var(--hover-text) / <alpha-value>)',
+          'text-muted': 'rgb(var(--hover-text-muted) / <alpha-value>)',
+        },
       },
-      backgroundImage: {
-        'gradient-interest-indicator': 'var(--gradient-interest-indicator)',
-        'gradient-button-background': 'var(--gradient-button-background)',
-        'gradient-button-save': 'var(--gradient-button-save)',
-        'gradient-button-save-hover': 'var(--gradient-button-save-hover)',
-        'gradient-button-new': 'var(--gradient-button-new)',
-        'gradient-button-new-hover': 'var(--gradient-button-new-hover)',
-        'gradient-button-edit': 'var(--gradient-button-edit)',
-        'gradient-button-edit-hover': 'var(--gradient-button-edit-hover)',
-      },
+      boxShadow: {
+        'hover': 'var(--hover-shadow)',
+        'hover-lg': 'var(--hover-shadow-lg)',
+        'glow': '0 0 20px rgb(var(--hover-primary) / 0.3)',
+        'glow-purple': '0 0 20px rgb(var(--hover-secondary) / 0.3)',
+      },   
+      animation: {
+        'hover-float': 'hover-float 3s ease-in-out infinite',
+        'pulse-soft': 'pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },   
+      keyframes: {
+        'hover-float': {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-4px)' }
+        },
+        'pulse-soft': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.8' }
+        }
+      },   
+      backdropBlur: {
+        'hover': '8px',
+      },  
+      transitionTimingFunction: {
+        'hover': 'cubic-bezier(0.4, 0, 0.2, 1)',
+        'bounce-soft': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+      }
     },
   },
-  plugins: [tailwindcssAnimate],
+  plugins: [
+    tailwindcssAnimate,
+    function({ addUtilities }) {
+      const newUtilities = {
+        '.hover-lift': {
+          '&:hover': {
+            transform: 'translateY(-2px)',
+            boxShadow: 'var(--hover-shadow-lg)',
+          }
+        },
+        '.hover-glow': {
+          '&:hover': {
+            boxShadow: '0 0 20px rgb(var(--hover-primary) / 0.3)',
+          }
+        },
+        '.hover-scale': {
+          '&:hover': {
+            transform: 'scale(1.02)',
+          }
+        },
+        '.hover-rotate': {
+          '&:hover': {
+            transform: 'rotate(2deg)',
+          }
+        }
+      }
+      
+      addUtilities(newUtilities, ['responsive', 'hover'])
+    }
+  ],
 } satisfies Config;

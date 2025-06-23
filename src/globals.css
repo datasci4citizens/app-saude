@@ -92,13 +92,34 @@
       #be185d 0%,
       #9f1239 100%
     );
+
+    --hover-primary: 99 102 241; /* Indigo vibrante */
+    --hover-primary-light: 129 140 248; /* Indigo mais claro */
+    --hover-secondary: 168 85 247; /* Roxo vibrante */
+    --hover-secondary-light: 196 181 253; /* Roxo mais claro */
+    
+    /* Cores de superficie para hover */
+    --hover-surface: 248 250 252; /* Slate 50 */
+    --hover-surface-dark: 241 245 249; /* Slate 100 */
+    
+    /* Cores de borda para hover */
+    --hover-border: 203 213 225; /* Slate 300 */
+    --hover-border-active: 99 102 241; /* Indigo 500 */
+    
+    /* Cores de texto para hover */
+    --hover-text: 51 65 85; /* Slate 700 */
+    --hover-text-muted: 100 116 139; /* Slate 500 */
+    
+    /* Sombras suaves */
+    --hover-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --hover-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
   .theme-dark {
     /* Tema escuro - MELHORADO */
     --selection: #f43f5e; /* Rosa mais vibrante no escuro */
     --selection-background: #f43f5e;
-    --homebg: #1e40af; /* Azul mais escuro e elegante */
+    --homebg: #2563eb; /* Azul mais escuro e elegante */
     --homebg-background: #1e40af;
     --selected: #22c55e; /* Verde mantido - funcionava bem */
     --selected-background: #22c55e;
@@ -180,6 +201,27 @@
       #e11d48 0%,
       #be185d 100%
     );
+
+    --hover-primary: 129 140 248; /* Indigo mais claro no dark */
+    --hover-primary-light: 165 180 252; /* Indigo ainda mais claro */
+    --hover-secondary: 196 181 253; /* Roxo mais claro no dark */
+    --hover-secondary-light: 221 214 254; /* Roxo bem suave */
+    
+    /* Cores de superficie para hover no dark */
+    --hover-surface: 51 65 85; /* Slate 700 */
+    --hover-surface-dark: 71 85 105; /* Slate 600 */
+    
+    /* Cores de borda para hover no dark */
+    --hover-border: 100 116 139; /* Slate 500 */
+    --hover-border-active: 129 140 248; /* Indigo 400 */
+    
+    /* Cores de texto para hover no dark */
+    --hover-text: 226 232 240; /* Slate 200 */
+    --hover-text-muted: 148 163 184; /* Slate 400 */
+    
+    /* Sombras mais sutis no dark */
+    --hover-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+    --hover-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.25), 0 4px 6px -4px rgb(0 0 0 / 0.25);
   }
 
   [class^="mgc_"]::before,
@@ -269,5 +311,94 @@
 
   .animate-progress-bar {
     animation: progress-bar 1.5s ease-in-out infinite;
+  }
+
+  /* Classes utilitárias para hover */
+  .hover-lift {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--hover-shadow-lg);
+  }
+
+  .hover-glow {
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .hover-glow:hover {
+    box-shadow: 0 0 20px rgb(var(--hover-primary) / 0.3);
+  }
+
+  .hover-gradient {
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, 
+      rgb(var(--hover-surface)), 
+      rgb(var(--hover-surface-dark))
+    );
+  }
+
+  .hover-gradient:hover {
+    background: linear-gradient(135deg, 
+      rgb(var(--hover-primary) / 0.1), 
+      rgb(var(--hover-secondary) / 0.1)
+    );
+  }
+
+  /* Animação suave para cards */
+  .card-hover {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgb(var(--hover-border));
+  }
+
+  .card-hover:hover {
+    border-color: rgb(var(--hover-border-active));
+    background: rgb(var(--hover-surface));
+    transform: translateY(-1px);
+    box-shadow: var(--hover-shadow);
+  }
+
+  /* Botões com hover suave */
+  .btn-hover-primary {
+    background: linear-gradient(135deg, 
+      rgb(var(--hover-primary)), 
+      rgb(var(--hover-secondary))
+    );
+    transition: all 0.2s ease;
+  }
+
+  .btn-hover-primary:hover {
+    background: linear-gradient(135deg, 
+      rgb(var(--hover-primary-light)), 
+      rgb(var(--hover-secondary-light))
+    );
+    transform: translateY(-1px);
+    box-shadow: var(--hover-shadow);
+  }
+
+  /* Efeito de ondulação para cliques */
+  .ripple {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ripple::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgb(var(--hover-primary) / 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+  }
+
+  .ripple:hover::before {
+    width: 300px;
+    height: 300px;
   }
 }

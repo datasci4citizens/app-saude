@@ -3,7 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export type DomainUpdate = {
-  domain_id: string;
-  domain_name?: string | null;
-  domain_concept?: number | null;
+    domain_id: string;
+    domain_name?: string | null;
+    domain_concept?: number | null;
 };
+
