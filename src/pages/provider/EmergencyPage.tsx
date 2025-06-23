@@ -34,7 +34,11 @@ const formatDisplayDate = (dateString: string | undefined | null): string => {
           const month = Number.parseInt(parts[1], 10) - 1; // Mês é 0-indexado
           const year = Number.parseInt(parts[2], 10);
           // Verifica se os números são válidos antes de criar a data
-          if (!Number.isNaN(day) && !Number.isNaN(month) && !Number.isNaN(year)) {
+          if (
+            !Number.isNaN(day) &&
+            !Number.isNaN(month) &&
+            !Number.isNaN(year)
+          ) {
             const manualDate = new Date(year, month, day);
             if (!Number.isNaN(manualDate.getTime())) {
               return `${String(manualDate.getDate()).padStart(2, "0")}/${String(
@@ -121,7 +125,11 @@ export default function EmergencyPage() {
           const month = Number.parseInt(monthStr, 10) - 1; // Mês é 0-indexado em Date
           const year = Number.parseInt(yearStr, 10);
 
-          if (!Number.isNaN(day) && !Number.isNaN(month) && !Number.isNaN(year)) {
+          if (
+            !Number.isNaN(day) &&
+            !Number.isNaN(month) &&
+            !Number.isNaN(year)
+          ) {
             const d = new Date(year, month, day);
             // Confirma se a data construída é válida e corresponde às partes (evita roll-overs)
             if (
@@ -176,7 +184,10 @@ export default function EmergencyPage() {
               return true;
             }
             const visitDateObj = parseDate(patient.lastVisit);
-            if (Number.isNaN(visitDateObj.getTime()) || visitDateObj.getTime() === 0) {
+            if (
+              Number.isNaN(visitDateObj.getTime()) ||
+              visitDateObj.getTime() === 0
+            ) {
               // No valid visit, so emergency is pending
               return true;
             }

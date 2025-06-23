@@ -96,7 +96,7 @@ export default function ViewPatient() {
           entries:
             typeof d.entries === "string"
               ? JSON.parse(d.entries)
-              : d.entries ?? [],
+              : (d.entries ?? []),
         }))
         .sort((a, b) => {
           const dateA = new Date(a.date).getTime();
@@ -456,9 +456,7 @@ export default function ViewPatient() {
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-selection/10 rounded-full flex items-center justify-center">
-                              <span className="text-selection text-lg">
-                                📖
-                              </span>
+                              <span className="text-selection text-lg">📖</span>
                             </div>
                             <div>
                               <h4 className="text-card-foreground font-medium text-sm">
@@ -502,24 +500,23 @@ export default function ViewPatient() {
                   </div>
                 )}
 
-                {!helpRequestsLoading &&
-                  filteredHelpRequests.length === 0 && (
-                    <div className="text-center py-12">
-                      <div className="w-16 h-16 bg-gray2/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span className="text-2xl">🚨</span>
-                      </div>
-                      <h3 className="text-typography font-semibold text-base mb-2">
-                        {searchValue
-                          ? "Nenhum pedido encontrado"
-                          : "Nenhum pedido de ajuda"}
-                      </h3>
-                      <p className="text-gray2 text-sm">
-                        {searchValue
-                          ? `Não encontramos pedidos com "${searchValue}"`
-                          : "Este paciente não fez pedidos de ajuda ainda"}
-                      </p>
+                {!helpRequestsLoading && filteredHelpRequests.length === 0 && (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-gray2/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <span className="text-2xl">🚨</span>
                     </div>
-                  )}
+                    <h3 className="text-typography font-semibold text-base mb-2">
+                      {searchValue
+                        ? "Nenhum pedido encontrado"
+                        : "Nenhum pedido de ajuda"}
+                    </h3>
+                    <p className="text-gray2 text-sm">
+                      {searchValue
+                        ? `Não encontramos pedidos com "${searchValue}"`
+                        : "Este paciente não fez pedidos de ajuda ainda"}
+                    </p>
+                  </div>
+                )}
 
                 {!helpRequestsLoading &&
                   filteredHelpRequests.length > 0 &&
@@ -561,12 +558,10 @@ export default function ViewPatient() {
                                 )}
                               </h4>
                               <p className="text-gray2 text-xs">
-                                {
-                                  formatDateWithTime(
-                                    helpRequest.observation_date ||
-                                      helpRequest.created_at,
-                                  )
-                                }
+                                {formatDateWithTime(
+                                  helpRequest.observation_date ||
+                                    helpRequest.created_at,
+                                )}
                               </p>
                             </div>
                           </div>
@@ -577,10 +572,8 @@ export default function ViewPatient() {
 
                         <div className="bg-gray2/5 rounded-lg p-3">
                           <p className="text-card-foreground text-sm">
-                            {
-                              helpRequest.value_as_string ||
-                                "Pedido de ajuda sem descrição"
-                            }
+                            {helpRequest.value_as_string ||
+                              "Pedido de ajuda sem descrição"}
                           </p>
                         </div>
 
@@ -590,12 +583,10 @@ export default function ViewPatient() {
                               ⚠️ Recente
                             </span>
                             <span className="text-gray2 text-xs">
-                              {
-                                getRelativeTime(
-                                  helpRequest.observation_date ||
-                                    helpRequest.created_at,
-                                )
-                              }
+                              {getRelativeTime(
+                                helpRequest.observation_date ||
+                                  helpRequest.created_at,
+                              )}
                             </span>
                           </div>
                         )}

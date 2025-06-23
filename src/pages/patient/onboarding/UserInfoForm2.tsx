@@ -55,7 +55,10 @@ export function UserInfoForm2({
   const handleChange: React.ChangeEventHandler<
     HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
   > = (e) => {
-    const { name, value } = e.target as (HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement);
+    const { name, value } = e.target as
+      | HTMLInputElement
+      | HTMLSelectElement
+      | HTMLTextAreaElement;
     setFormData({ ...formData, [name]: value || null });
 
     // Clear error when user starts typing
@@ -122,7 +125,9 @@ export function UserInfoForm2({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-      {conceptError && <div className="text-red-500">Erro ao carregar os estados.</div>}
+      {conceptError && (
+        <div className="text-red-500">Erro ao carregar os estados.</div>
+      )}
       <div className="flex flex-row gap-4 max-[311px]:flex-wrap">
         <TextField
           id="zip"
@@ -142,7 +147,7 @@ export function UserInfoForm2({
           onChange={handleChange}
           options={stateOptions}
           error={errors.state}
-          isLoading={isLoading} 
+          isLoading={isLoading}
         />
       </div>
 

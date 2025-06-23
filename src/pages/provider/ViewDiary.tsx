@@ -236,7 +236,8 @@ export default function ViewDiary() {
                 <span className="text-xs text-gray-400 mt-2 block">
                   {new Date(entry.created_at).toLocaleString("pt-BR", {
                     timeZone: "UTC",
-                  })} - {entry.shared ? "Compartilhado" : "Privado"}
+                  })}{" "}
+                  - {entry.shared ? "Compartilhado" : "Privado"}
                 </span>
               </div>
             ))}

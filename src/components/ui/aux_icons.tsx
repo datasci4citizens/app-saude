@@ -9,9 +9,7 @@ interface Icon {
 const icon: Icon[] = [
   {
     label: "Remedio",
-    icon: (
-      <span role="img" aria-label="capsule" className="mgc_capsule_line" />
-    ),
+    icon: <span role="img" aria-label="capsule" className="mgc_capsule_line" />,
     shouldFlip: true,
   },
   {

@@ -17,9 +17,7 @@ interface LandingScreenProps {
   totalSteps: number;
 }
 
-export const LandingScreen: React.FC<LandingScreenProps> = ({
-  onNext,
-}) => {
+export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -142,7 +140,10 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
         <div className="illustration-container">
           <div className="meditation-circles">
             {[...Array(3)].map((_, i) => (
-              <div key={`circle-${i + 1}`} className={`circle circle-${i + 1}`} />
+              <div
+                key={`circle-${i + 1}`}
+                className={`circle circle-${i + 1}`}
+              />
             ))}
           </div>
           <img

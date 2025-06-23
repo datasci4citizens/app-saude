@@ -65,17 +65,19 @@ export default function DiaryListPage() {
 
         if (Array.isArray(response)) {
           // Transform API response to match local DiaryRetrieve type if needed
-          const mapped = response.map((item: ApiDiaryItem): DiaryRetrieve => ({
-            ...item,
-            entries: Array.isArray(item.entries)
-              ? item.entries
-              : typeof item.entries === "string" && item.entries.trim() !== ""
-                ? [{ text: item.entries, text_shared: false }]
+          const mapped = response.map(
+            (item: ApiDiaryItem): DiaryRetrieve => ({
+              ...item,
+              entries: Array.isArray(item.entries)
+                ? item.entries
+                : typeof item.entries === "string" && item.entries.trim() !== ""
+                  ? [{ text: item.entries, text_shared: false }]
+                  : [],
+              interest_areas: Array.isArray(item.interest_areas)
+                ? item.interest_areas
                 : [],
-            interest_areas: Array.isArray(item.interest_areas)
-              ? item.interest_areas
-              : [],
-          }));
+            }),
+          );
           setDiaries(mapped);
         } else {
           console.error("Unexpected API response format:", response);
