@@ -80,7 +80,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
   };
 
   return (
-    <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 space-y-3">
+    <div className="border border-offwhite2 dark:border-offwhite2 rounded-lg p-3 space-y-3">
       <div className="flex items-start gap-2">
         <div className="flex-1">
           <TextField
@@ -96,20 +96,20 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
           variant="ghost"
           size="sm"
           onClick={() => onRemove(index)}
-          className="text-red-500 hover:text-red-700 p-1"
+          className="text-destructive hover:text-destructive p-1"
         >
           <X size={16} />
         </Button>
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <label className="block text-xs font-medium text-typography dark:text-typography mb-1">
           Tipo de resposta
         </label>
         <select
           value={trigger.type || TypeEnum.TEXT}
           onChange={(e) => handleTypeChange(e.target.value as TypeEnum)}
-          className="w-full text-sm border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+          className="w-full text-sm border border-offwhite2 dark:border-offwhite2 rounded-md px-3 py-2 bg-offwhite dark:bg-offwhite2 text-typography dark:text-typography"
         >
           {TYPE_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -129,7 +129,7 @@ const TemplateItem: React.FC<{
 }> = ({ template, onSelect }) => {
   return (
     <div
-      className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+      className="border border-offwhite2 dark:border-offwhite2 rounded-lg p-3 hover:bg-offwhite2 dark:hover:bg-offwhite2 transition-colors cursor-pointer"
       onClick={() => onSelect(template)}
       onKeyDown={(e) => e.key === "Enter" && onSelect(template)}
       role="button"
@@ -137,13 +137,13 @@ const TemplateItem: React.FC<{
     >
       <div className="flex items-start justify-between mb-2">
         <h4 className="font-medium text-sm">{template.interest_name}</h4>
-        <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+        <div className="flex items-center gap-1 text-xs text-typography dark:text-typography">
           <Users size={12} />
           {template.usage_count || 0}
         </div>
       </div>
 
-      <div className="text-xs text-gray-600 dark:text-gray-300 mb-2">
+      <div className="text-xs text-typography dark:text-typography mb-2">
         {template.triggers.length} pergunta
         {template.triggers.length !== 1 ? "s" : ""}
       </div>
@@ -152,14 +152,14 @@ const TemplateItem: React.FC<{
         {template.triggers.slice(0, 2).map((trigger) => (
           <span
             key={trigger.name}
-            className="bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-200 px-2 py-1 rounded text-xs max-w-[200px] truncate"
+            className="bg-offwhite2 dark:bg-offwhite2 text-typography dark:text-typography px-2 py-1 rounded text-xs max-w-[200px] truncate"
             title={trigger?.name || ""}
           >
             {trigger?.name || "Pergunta sem nome"}
           </span>
         ))}
         {template.triggers.length > 2 && (
-          <span className="text-xs text-gray-500 dark:text-gray-400 px-2 py-1">
+          <span className="text-xs text-offwhite-500 dark:text-offwhite-400 px-2 py-1">
             +{template.triggers.length - 2} mais
           </span>
         )}
@@ -404,12 +404,12 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogOverlay className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9998]" />
-      <DialogContent className="bg-[var(--primary)] text-[var(--typography)] z-[9999] w-[min(90vw,600px)] rounded-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className=" text-[var(--typography)] z-[9999] w-[min(90vw,600px)] rounded-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
             {initialData ? "Editar interesse" : "Novo interesse"}
           </DialogTitle>
-          <DialogDescription className="text-sm text-gray-500">
+          <DialogDescription className="text-sm text-offwhite-500">
             {initialData
               ? "Altere o nome ou as perguntas desta área de interesse."
               : "Crie um novo interesse personalizado com suas próprias perguntas."}
@@ -419,7 +419,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
         <div className="mt-4 space-y-4">
           {/* Template Selection */}
           {!initialData && (
-            <div className="border-b border-gray-200 pb-4">
+            <div className="border-b border-offwhite-200 pb-4">
               <Button
                 variant="outlineWhite"
                 onClick={() => setShowTemplates(!showTemplates)}
@@ -436,7 +436,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
                   <div className="relative">
                     <Search
                       size={16}
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-offwhite-400"
                     />
                     <TextField
                       id="template-search"
@@ -448,9 +448,9 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
                     />
                   </div>
 
-                  <div className="max-h-64 overflow-y-auto space-y-2 border border-gray-200 dark:border-gray-600 rounded-lg p-2">
+                  <div className="max-h-64 overflow-y-auto space-y-2 border border-offwhite-200 dark:border-offwhite-600 rounded-lg p-2">
                     {isLoading ? (
-                      <div className="text-center py-8 text-gray-500">
+                      <div className="text-center py-8 text-offwhite-500">
                         Carregando modelos...
                       </div>
                     ) : error ? (
@@ -458,7 +458,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
                         {error}
                       </div>
                     ) : filteredTemplates.length === 0 ? (
-                      <div className="text-center py-8 text-gray-500">
+                      <div className="text-center py-8 text-offwhite-500">
                         Nenhum exemplo encontrado
                       </div>
                     ) : (
@@ -478,12 +478,12 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
 
           {/* Template Selection Indicator */}
           {selectedTemplate && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <div className="flex items-center gap-2 text-sm text-blue-700">
+            <div className="rounded-lg p-3">
+              <div className="flex items-center gap-2 text-sm">
                 <Copy size={14} />
                 <span className="font-medium">Baseado em modelo existente</span>
               </div>
-              <p className="text-xs text-blue-600 mt-1">
+              <p className="text-xs mt-1">
                 Todas as informações podem ser editadas livremente.
               </p>
             </div>
@@ -532,7 +532,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
             </div>
 
             {formData.triggers.length === 0 && (
-              <p className="text-xs text-gray-500 mt-2 italic text-center py-8 border border-dashed border-gray-300 rounded-lg">
+              <p className="text-xs text-offwhite-500 mt-2 italic text-center py-8 border border-dashed border-offwhite-300 rounded-lg">
                 Clique em "Adicionar" para criar sua primeira pergunta
               </p>
             )}

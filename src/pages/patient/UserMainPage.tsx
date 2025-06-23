@@ -461,7 +461,7 @@ export default function UserMainPage() {
                   shadow-lg hover:shadow-xl
                   ${
                     interest.interest_area.is_attention_point
-                      ? "border-orange-300 bg-gradient-to-br from-orange-50/80 to-red-50/80 dark:from-orange-900/10 dark:to-red-900/10 dark:border-orange-400 shadow-orange-200/50 dark:shadow-orange-900/20"
+                      ? "border-destructive bg-gradient-to-br from-destructive-50/80 to-destructive-50/80 dark:from-destructive-900/10 dark:to-destructive-900/10 dark:border-destructive-400 shadow-destructive-200/50 dark:shadow-destructive-900/20"
                       : "border-card-border hover:border-ring/40 shadow-slate-200/80 dark:shadow-slate-900/40"
                   }
                   ${
@@ -493,7 +493,7 @@ export default function UserMainPage() {
                   <div
                     className={`w-3 h-3 rounded-full flex-shrink-0 shadow-sm ${
                       interest.interest_area.is_attention_point
-                        ? "bg-gradient-to-r from-orange-400 to-red-500"
+                        ? "bg-gradient-to-r from-destructive-400 to-destructive-500"
                         : "bg-[var(--gradient-interest-indicator)]"
                     }`}
                   />
@@ -510,12 +510,12 @@ export default function UserMainPage() {
                       </span>
                     )}
                     {interest.interest_area.is_attention_point && (
-                      <span className="px-2 py-0.5 bg-orange-100 text-orange-700 dark:bg-orange-500/10 dark:text-orange-300 text-xs font-medium rounded-full border border-orange-300 dark:border-orange-700 shadow-sm">
+                      <span className="px-2 py-0.5 bg-destructive-100 text-destructive-700 dark:bg-destructive-500/10 dark:text-destructive-300 text-xs font-medium rounded-full border border-destructive-300 dark:border-destructive-700 shadow-sm">
                         ⚠️
                       </span>
                     )}
                     {interest.is_modified && (
-                      <span className="px-2 py-0.5 bg-blue-500 text-white text-xs font-medium rounded-full shadow-sm">
+                      <span className="px-2 py-0.5 bg-offwhite text-white text-xs font-medium rounded-full shadow-sm">
                         ✏️
                       </span>
                     )}
@@ -524,18 +524,18 @@ export default function UserMainPage() {
 
                 {/* Provider Info compacta */}
                 {interest.interest_area.is_attention_point && (
-                  <div className="mb-3 p-3 bg-orange-100/90 dark:bg-orange-900/20 border border-orange-300 dark:border-orange-800 rounded-lg shadow-inner">
+                  <div className="mb-3 p-3 bg-destructive-100/90 dark:bg-destructive-900/20 border border-destructive-300 dark:border-destructive-800 rounded-lg shadow-inner">
                     <div className="flex items-center gap-2">
-                      <span className="text-orange-700 dark:text-orange-400 text-xs">
+                      <span className="text-destructive-700 dark:text-destructive-400 text-xs">
                         👤
                       </span>
-                      <span className="text-xs font-medium text-orange-800 dark:text-orange-300">
+                      <span className="text-xs font-medium text-destructive-800 dark:text-destructive-300">
                         {String(
                           interest.marked_by?.join(", ") || "Profissional",
                         )}
                       </span>
                       {interest.attention_point_date && (
-                        <span className="text-xs text-orange-700 dark:text-orange-400 ml-auto">
+                        <span className="text-xs text-destructive-700 dark:text-destructive-400 ml-auto">
                           📅{" "}
                           {new Date(
                             interest.attention_point_date,
@@ -559,30 +559,30 @@ export default function UserMainPage() {
                           case TypeEnum.BOOLEAN:
                             return {
                               icon: "✓",
-                              color: "text-green-700 dark:text-green-400",
-                              bg: "bg-green-200 dark:bg-green-900/30",
+                              // color: "text-success-700 dark:text-success-400",
+                              // bg: "bg-sucess-200 dark:bg-success-900/30",
                               label: "Sim/Não",
                             };
                           case TypeEnum.SCALE:
                             return {
                               icon: "📊",
-                              color: "text-blue-700 dark:text-blue-400",
-                              bg: "bg-blue-200 dark:bg-blue-900/30",
+                              // color: "text-success-700 dark:text-success-400",
+                              // bg: "bg-primary dark:bg-primary-900/30",
                               label: "Escala",
                             };
                           case TypeEnum.INT:
                             return {
                               icon: "🔢",
-                              color: "text-purple-700 dark:text-purple-400",
-                              bg: "bg-purple-200 dark:bg-purple-900/30",
+                              // color: "text-typography dark:text-typography",
+                              // bg: "bg-offwhite dark:bg-offwhite",
                               label: "Número",
                             };
                           case TypeEnum.TEXT:
                           default:
                             return {
                               icon: "📝",
-                              color: "text-slate-700 dark:text-slate-400",
-                              bg: "bg-slate-200 dark:bg-slate-800/50",
+                              // color: "text-typography dark:text-typography",
+                              // bg: "bg-offwhite dark:bg-offwhite",
                               label: "Texto",
                             };
                         }
