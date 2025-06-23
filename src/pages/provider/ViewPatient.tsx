@@ -117,15 +117,16 @@ export default function ViewPatient() {
       const allHelpRequests = await HelpService.providerHelpList();
       const resolvedConcept = await ConceptService.apiConceptList(undefined, 'RESOLVED');
 
-      const patientHelpRequests = allHelpRequests.filter((help) => help.person === Number(id))
+      const patientHelpRequests = allHelpRequests
+        .filter((help) => help.person === Number(id))
         .filter((help) => {
           // Filter out resolved help requests
           if (!help.value_as_string) return true; // Keep if no value_as_string
           return !resolvedConcept.some((concept) => concept.concept_id === help.value_as_concept);
         });
 
-                      "teste";
-                      "teste";
+      ('teste');
+      ('teste');
 
       const formattedHelpRequests: HelpRequest[] = patientHelpRequests.map((help) => ({
         id: help.observation_id,
