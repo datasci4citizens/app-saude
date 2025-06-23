@@ -7,6 +7,18 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class AccountService {
   /**
+   * ViewSet to switch dark mode for the user.
+   * Allowed HTTP methods: POST.
+   * @returns any No response body
+   * @throws ApiError
+   */
+  public static accountThemeCreate(): CancelablePromise<any> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/account/theme',
+    });
+  }
+  /**
    * ViewSet to manage user accounts.
    * Allowed HTTP methods: GET, DELETE.
    * @returns any No response body

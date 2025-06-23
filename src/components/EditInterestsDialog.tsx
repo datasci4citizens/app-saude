@@ -36,14 +36,16 @@ interface ApiInterestAreaResponse {
 interface InterestFormData {
   id?: string;
   interest_name: string;
-  triggers: InterestAreaTrigger[];
+  triggers: (InterestAreaTrigger & { _id: string })[];
 }
 
 interface EditInterestDialogProps {
   open: boolean;
   onClose: () => void;
-  initialData?: InterestFormData;
-  onSave: (updatedData: InterestFormData) => void;
+  initialData?: Omit<InterestFormData, 'triggers'> & { triggers: InterestAreaTrigger[] };
+  onSave: (
+    updatedData: Omit<InterestFormData, 'triggers'> & { triggers: InterestAreaTrigger[] },
+  ) => void;
 }
 
 // Type options for the dropdown
@@ -55,9 +57,9 @@ const TYPE_OPTIONS = [
 ];
 
 interface QuestionItemProps {
-  trigger: InterestAreaTrigger;
+  trigger: InterestAreaTrigger & { _id: string };
   index: number;
-  onUpdate: (index: number, updatedTrigger: InterestAreaTrigger) => void;
+  onUpdate: (index: number, updatedTrigger: InterestAreaTrigger & { _id: string }) => void;
   onRemove: (index: number) => void;
 }
 
@@ -75,8 +77,8 @@ const QuestionItem: React.FC<QuestionItemProps> = ({ trigger, index, onUpdate, o
       <div className="flex items-start gap-2">
         <div className="flex-1">
           <TextField
-            id={`trigger-name-${index}`}
-            name={`trigger-name-${index}`}
+            id={`trigger-name-${trigger._id}`}
+            name={`trigger-name-${trigger._id}`}
             placeholder="Nome da pergunta"
             value={trigger.name || ''}
             onChange={(e) => handleNameChange(e.target.value)}
@@ -171,6 +173,9 @@ const TemplateItem: React.FC<{
   );
 };
 
+// Helper function to generate unique IDs
+const generateId = () => Math.random().toString(36).substr(2, 9);
+
 // Main component
 const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
   open,
@@ -199,7 +204,10 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
         setFormData({
           id: initialData.id,
           interest_name: initialData.interest_name || '',
-          triggers: initialData.triggers || [],
+          triggers: initialData.triggers.map((trigger) => ({
+            ...trigger,
+            _id: generateId(),
+          })),
         });
       } else {
         setFormData({ interest_name: '', triggers: [] });
@@ -308,10 +316,11 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
 
   // Handlers
   const handleAddQuestion = () => {
-    const newTrigger: InterestAreaTrigger = {
+    const newTrigger = {
       name: '',
       type: TypeEnum.TEXT,
       response: null,
+      _id: generateId(),
     };
 
     setFormData((prev) => ({
@@ -320,7 +329,10 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
     }));
   };
 
-  const handleUpdateQuestion = (index: number, updatedTrigger: InterestAreaTrigger) => {
+  const handleUpdateQuestion = (
+    index: number,
+    updatedTrigger: InterestAreaTrigger & { _id: string },
+  ) => {
     setFormData((prev) => ({
       ...prev,
       triggers: prev.triggers.map((trigger, i) => (i === index ? updatedTrigger : trigger)),
@@ -342,6 +354,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
         name: trigger.name || '',
         type: trigger.type || TypeEnum.TEXT,
         response: trigger.response || null,
+        _id: generateId(),
       })),
     });
     setSelectedTemplate(template.id);
@@ -353,8 +366,10 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
     // Validate form data
     if (!formData.interest_name.trim()) return;
 
-    // Filter out empty triggers
-    const validTriggers = formData.triggers.filter((trigger) => trigger.name.trim());
+    // Filter out empty triggers and remove _id for API
+    const validTriggers = formData.triggers
+      .filter((trigger) => trigger.name.trim())
+      .map(({ _id, ...trigger }) => trigger);
 
     if (validTriggers.length === 0) return;
 
@@ -496,7 +511,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
             <div className="space-y-3 max-h-80 overflow-y-auto">
               {formData.triggers.map((trigger, index) => (
                 <QuestionItem
-                  key={`trigger-${trigger.name || index}`}
+                  key={trigger._id}
                   trigger={trigger}
                   index={index}
                   onUpdate={handleUpdateQuestion}

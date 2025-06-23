@@ -18,7 +18,6 @@ import OnboardingSlider from './pages/landing/OnboardingSlider';
 import { SWRConfig } from 'swr';
 import ModifyHabits from './pages/patient/diary/modify-habits';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { ThemeToggle } from './components/ui/ThemeToggle';
 import ViewDiaryEntry from './pages/patient/diary/ViewDiary';
 import ProfilePage from './pages/patient/profile/ProfilePage';
 import AcsProfilePage from './pages/provider/profile/AcsProfilePage';
@@ -184,11 +183,8 @@ const router = createBrowserRouter([
 export function App() {
   return (
     <ThemeProvider>
-      <div className="min-h-screen bg-primary text-typography">
-        <RouterProvider router={router} /> {/* Router provider for the application */}
-        <div className="fixed top-4 right-4 z-50">
-          <ThemeToggle /> {/* Theme toggle button */}
-        </div>
+      <div className="min-h-screen bg-background text-typography">
+        <RouterProvider router={router} />
       </div>
     </ThemeProvider>
   );

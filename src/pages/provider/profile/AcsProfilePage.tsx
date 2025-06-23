@@ -8,6 +8,8 @@ import { LogoutService } from '@/api/services/LogoutService';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { ApiService } from '@/api/services/ApiService';
+import { useTheme } from '@/contexts/ThemeContext';
+import { Switch } from '@/components/ui/switch';
 
 interface AcsProfileMenuItem {
   id: string;
@@ -18,6 +20,8 @@ interface AcsProfileMenuItem {
   hasArrow?: boolean;
   variant?: 'default' | 'danger' | 'warning';
   disabled?: boolean;
+  isToggle?: boolean;
+  toggleState?: boolean;
 }
 
 interface AcsProfileMenuSection {
@@ -46,6 +50,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loadingItem, setLoadingItem] = useState<string | null>(null);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const fetchProviderId = async () => {
@@ -78,8 +83,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
       setSuccess('Logout realizado com sucesso!');
 
       setTimeout(() => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+        localStorage.clear();
         navigate('/welcome');
       }, 1500);
     } catch (error) {
@@ -218,6 +222,15 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
     {
       title: 'Conta',
       items: [
+        {
+          id: 'theme',
+          title: 'Tema escuro',
+          subtitle: theme === 'dark' ? 'Ativado' : 'Desativado',
+          icon: theme === 'dark' ? '🌙' : '☀️',
+          onClick: toggleTheme,
+          isToggle: true,
+          toggleState: theme === 'dark',
+        },
         {
           id: 'logout',
           title: 'Sair da conta',
@@ -358,11 +371,13 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
                           </div>
                         </div>
 
-                        {item.hasArrow && !loadingItem && (
+                        {item.isToggle ? (
+                          <Switch checked={item.toggleState || false} onChange={item.onClick} />
+                        ) : item.hasArrow && !loadingItem ? (
                           <div className={`text-lg ${getTextStyles(item)} opacity-50`}>
                             <span className="mgc_right_line" />
                           </div>
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   ))}

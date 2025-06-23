@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Dialog,
   DialogContent,
@@ -14,8 +15,11 @@ interface ConfirmDialogProps {
   description?: string;
   confirmText?: string;
   cancelText?: string;
+  confirmVariant?: 'default' | 'destructive' | 'warning';
   onConfirm: () => void;
   onCancel: () => void;
+  children?: React.ReactNode;
+  disabled?: boolean;
 }
 
 export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
@@ -24,28 +28,43 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   description,
   confirmText = 'Confirmar',
   cancelText = 'Cancelar',
+  confirmVariant = 'default',
   onConfirm,
   onCancel,
+  children,
+  disabled = false,
 }) => {
   return (
     <Dialog open={open} onOpenChange={onCancel}>
-      <DialogContent className="bg-[var(--primary)] text-[var(--typography)] rounded-xl w-[min(90vw,400px)] p-6">
+      <DialogContent className="bg-primary text-typography rounded-xl w-[min(90vw,500px)] p-6 shadow-xl border border-card-border">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">{title}</DialogTitle>
           {description && (
-            <DialogDescription className="text-sm text-gray-400 mt-1">
+            <DialogDescription className="text-sm text-muted-foreground mt-1">
               {description}
             </DialogDescription>
           )}
         </DialogHeader>
 
+        {children && <div className="my-4">{children}</div>}
+
         <DialogFooter className="mt-6 flex justify-end gap-3">
-          <Button variant="outline" onClick={onCancel} className="px-4 py-2 text-sm rounded-md">
+          <Button variant="outlineGray" onClick={onCancel} className="px-4 py-2 text-sm rounded-md">
             {cancelText}
           </Button>
           <Button
             onClick={onConfirm}
-            className="bg-destructive hover:bg-destructive/90 text-white px-4 py-2 text-sm rounded-md font-semibold"
+            disabled={disabled}
+            variant={
+              confirmVariant === 'destructive'
+                ? 'destructive'
+                : confirmVariant === 'warning'
+                  ? 'orange'
+                  : 'default'
+            }
+            className={`px-4 py-2 text-sm rounded-md font-semibold transition-all duration-200 ${
+              disabled ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
           >
             {confirmText}
           </Button>

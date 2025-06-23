@@ -94,6 +94,7 @@ export function useHealthConcepts(): HealthConceptsResult {
         // Get concepts from the server
         const concepts = await ConceptService.apiConceptList(
           `${FREQUENCY_CLASS}, ${QUALITY_CLASS}, ${COMORBIDITY_CLASS}, ${MEDICATION_CLASS}, ${SUBSTANCE_CLASS}`,
+          undefined,
           'pt',
         );
 
@@ -218,7 +219,7 @@ export function useDemographicConcepts(): DemographicConceptsResult {
 
       try {
         // Fetch gender and race concepts
-        const concepts = await ConceptService.apiConceptList('Gender,Race', 'pt');
+        const concepts = await ConceptService.apiConceptList('Gender,Race', undefined, 'pt');
 
         // Process gender options
         setGenderOptions(
@@ -294,7 +295,7 @@ export function useLocationConcepts(): LocationConceptsResult {
 
       try {
         // Fetch location concepts
-        const concepts = await ConceptService.apiConceptList('Brazil States', 'pt');
+        const concepts = await ConceptService.apiConceptList('Brazil States', undefined, 'pt');
 
         // Process state options
         setStateOptions(
@@ -347,7 +348,7 @@ export function useInterestAreasConcepts(): InterestAreasConceptsResult {
 
       try {
         // Fetch interest areas concepts
-        const concepts = await ConceptService.apiConceptList('Interest', 'pt');
+        const concepts = await ConceptService.apiConceptList('Interest', undefined, 'pt');
 
         // Process interest areas options
         setInterestAreasOptions(
