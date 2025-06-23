@@ -1,6 +1,6 @@
 import type React from 'react';
 import { createContext, useContext, useState, useEffect } from 'react';
-import '../globals.css'; // Import the global styles
+import { AccountService } from '@/api/services/AccountService';
 
 // Define the possible theme types
 type Theme = 'light' | 'dark';
@@ -25,8 +25,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // State to hold the current theme, with initial value from localStorage or default to "light"
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== 'undefined') {
+      const useDarkMode = localStorage.getItem('useDarkMode');
+      // Convert string to boolean and then to theme
+      if (useDarkMode === 'true') {
+        return 'dark';
+      } else if (useDarkMode === 'false') {
+        return 'light';
+      }
+      // Fallback to old key for compatibility
       const savedTheme = localStorage.getItem('app-theme');
-      return (savedTheme as Theme) || 'light'; // Return saved theme or default to "light"
+      return (savedTheme as Theme) || 'light';
     }
     return 'light'; // Default value for server-side rendering
   });
@@ -35,17 +43,34 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'dark') {
-      root.classList.add('theme-dark'); // Add dark theme class
+      root.classList.add('theme-dark'); // Usar sua classe customizada
     } else {
-      root.classList.remove('theme-dark'); // Remove dark theme class
+      root.classList.remove('theme-dark'); // Remover sua classe customizada
     }
-    localStorage.setItem('app-theme', theme); // Store the current theme in localStorage
+
+    // Update both localStorage keys
+    localStorage.setItem('useDarkMode', String(theme === 'dark'));
+    localStorage.setItem('app-theme', theme); // Keep for compatibility
   }, [theme]); // Trigger effect when theme changes
 
   /**
    * Toggle between light and dark themes.
    */
-  const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
+  const toggleTheme = async () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+
+    // Update localStorage immediately
+    localStorage.setItem('useDarkMode', String(newTheme === 'dark'));
+
+    // Call API to sync with backend
+    try {
+      await AccountService.accountThemeCreate();
+    } catch (error) {
+      console.error('Erro ao salvar tema no servidor:', error);
+      // Theme change still works locally even if API fails
+    }
+  };
 
   // Provide the current theme state and functions to the context
   return (

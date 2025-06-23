@@ -8,6 +8,10 @@ import { ApiService } from '@/api/services/ApiService';
 import { LogoutService } from '@/api/services/LogoutService';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { SuccessMessage } from '@/components/ui/success-message';
+import { useTheme } from '@/contexts/ThemeContext';
+import { ConfirmDialog } from '@/components/ui/confirmDialog';
+import { TextField } from '@/components/forms/text_input';
+import { Switch } from '@/components/ui/switch';
 
 interface ProfileMenuItem {
   id: string;
@@ -18,6 +22,8 @@ interface ProfileMenuItem {
   hasArrow?: boolean;
   variant?: 'default' | 'danger' | 'warning';
   disabled?: boolean;
+  isToggle?: boolean;
+  toggleState?: boolean;
 }
 
 interface ProfileMenuSection {
@@ -37,11 +43,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   onEditProfile,
 }) => {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
   const [personId, setPersonId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [_isLoading, _setIsLoading] = useState(false);
   const [loadingItem, setLoadingItem] = useState<string | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   // Fetch person_id on mount
   useEffect(() => {
@@ -74,8 +83,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       setSuccess('Logout realizado com sucesso!');
 
       setTimeout(() => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+        localStorage.clear();
         navigate('/welcome');
       }, 1500);
     } catch (error: unknown) {
@@ -95,17 +103,16 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       return;
     }
 
-    const confirmed = window.confirm(
-      '⚠️ ATENÇÃO: Esta ação irá excluir permanentemente sua conta e todos os dados associados.\n\nEsta ação NÃO PODE ser desfeita.\n\nTem certeza que deseja continuar?',
-    );
+    setShowDeleteDialog(true);
+  };
 
-    if (!confirmed) return;
+  const confirmDeleteAccount = async () => {
+    if (deleteConfirmText.toUpperCase() !== 'EXCLUIR') {
+      return; // O botão já está desabilitado, mas mantemos a verificação
+    }
 
-    // Segunda confirmação para ações críticas
-    const doubleConfirmed = window.confirm("Digite 'EXCLUIR' para confirmar a exclusão da conta:");
-
-    if (!doubleConfirmed) return;
-
+    setShowDeleteDialog(false);
+    setDeleteConfirmText('');
     setLoadingItem('delete');
     setError(null);
 
@@ -124,6 +131,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     } finally {
       setLoadingItem(null);
     }
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setShowDeleteDialog(false);
+    setDeleteConfirmText('');
   };
 
   const menuSections: ProfileMenuSection[] = [
@@ -186,6 +198,15 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       title: 'Conta',
       items: [
         {
+          id: 'theme',
+          title: 'Tema escuro',
+          subtitle: theme === 'dark' ? 'Ativado' : 'Desativado',
+          icon: theme === 'dark' ? '🌙' : '☀️',
+          onClick: toggleTheme,
+          isToggle: true,
+          toggleState: theme === 'dark',
+        },
+        {
           id: 'logout',
           title: 'Sair da conta',
           subtitle: 'Fazer logout do aplicativo',
@@ -236,7 +257,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   };
 
   const getItemStyles = (item: ProfileMenuItem) => {
-    const baseStyles = 'p-4 rounded-xl transition-all duration-200 cursor-pointer border';
+    const baseStyles =
+      'p-4 rounded-xl transition-all duration-200 cursor-pointer border shadow-sm hover:shadow-md';
 
     if (item.disabled || loadingItem) {
       return `${baseStyles} opacity-50 cursor-not-allowed bg-card border-card-border`;
@@ -244,11 +266,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
 
     switch (item.variant) {
       case 'danger':
-        return `${baseStyles} bg-destructive/5 border-destructive/20 hover:bg-destructive/10 hover:border-destructive/30`;
+        return `${baseStyles} bg-destructive/10 border-destructive/20 hover:bg-destructive/20 hover:border-destructive/30 hover:shadow-lg`;
       case 'warning':
-        return `${baseStyles} bg-yellow/5 border-yellow/20 hover:bg-yellow/10 hover:border-yellow/30`;
+        return `${baseStyles} bg-yellow/10 border-yellow/20 hover:bg-yellow/20 hover:border-yellow/30 hover:shadow-lg`;
       default:
-        return `${baseStyles} bg-card border-card-border hover:bg-card-muted hover:border-selection/20 hover:shadow-sm`;
+        return `${baseStyles} bg-card border-card-border hover:bg-card-muted hover:border-selection/20 hover:shadow-lg`;
     }
   };
 
@@ -257,9 +279,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       case 'danger':
         return 'text-destructive';
       case 'warning':
-        return 'text-yellow-600';
+        return 'text-yellow';
       default:
-        return 'text-card-foreground';
+        return 'text-typography';
     }
   };
 
@@ -270,13 +292,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
 
       {/* Content Area */}
       <div className="flex-1 mt-[-20px] relative z-10">
-        <div className="bg-background rounded-t-3xl min-h-full px-4 pt-6 pb-[100px]">
+        <div className="bg-background rounded-t-3xl min-h-full px-4 pt-6 pb-[100px] shadow-lg">
           {/* Messages */}
           <div className="space-y-4 mb-6">
             {success && (
               <SuccessMessage
                 message={success}
-                className="animate-in slide-in-from-top-2 duration-300"
+                className="animate-in slide-in-from-top-2 duration-300 shadow-sm"
               />
             )}
 
@@ -286,7 +308,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                 onClose={clearError}
                 onRetry={clearError}
                 variant="destructive"
-                className="animate-in slide-in-from-top-2 duration-300"
+                className="animate-in slide-in-from-top-2 duration-300 shadow-sm"
               />
             )}
           </div>
@@ -295,7 +317,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
           <div className="space-y-8">
             {menuSections.map((section) => (
               <div key={section.title} className="space-y-4">
-                <h3 className="text-card-foreground font-semibold text-sm uppercase tracking-wide opacity-70 px-2">
+                <h3 className="text-muted-foreground font-semibold text-sm uppercase tracking-wide opacity-70 px-2">
                   {section.title}
                 </h3>
 
@@ -308,7 +330,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-selection/10 rounded-full flex items-center justify-center text-lg">
+                          <div className="w-10 h-10 bg-selection/10 rounded-full flex items-center justify-center text-lg shadow-sm">
                             {loadingItem === item.id ? (
                               <div className="animate-spin rounded-full h-5 w-5 border-2 border-selection/20 border-t-selection" />
                             ) : (
@@ -321,16 +343,20 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
                               {item.title}
                             </h4>
                             {item.subtitle && (
-                              <p className="text-xs text-gray2 mt-0.5">{item.subtitle}</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">
+                                {item.subtitle}
+                              </p>
                             )}
                           </div>
                         </div>
 
-                        {item.hasArrow && !loadingItem && (
+                        {item.isToggle ? (
+                          <Switch checked={item.toggleState || false} onChange={item.onClick} />
+                        ) : item.hasArrow && !loadingItem ? (
                           <div className={`text-lg ${getTextStyles(item)} opacity-50`}>
                             <span className="mgc_right_line" />
                           </div>
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   ))}
@@ -341,7 +367,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
 
           {/* App Info */}
           <div className="mt-12 pt-6 border-t border-card-border text-center">
-            <p className="text-gray2 text-xs">Versão 1.0.0 • Feito com ❤️ para sua saúde mental</p>
+            <p className="text-muted-foreground text-xs">
+              Versão 1.0.0 • Feito com ❤️ para sua saúde mental
+            </p>
           </div>
         </div>
       </div>
@@ -351,6 +379,50 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
         forceActiveId={getActiveNavId()}
         onItemClick={handleNavigationClick}
       />
+
+      {/* Delete Account Confirmation Dialog */}
+      <ConfirmDialog
+        open={showDeleteDialog}
+        title="⚠️ Excluir Conta"
+        onConfirm={confirmDeleteAccount}
+        onCancel={handleCloseDeleteDialog}
+        confirmText="Excluir Conta"
+        cancelText="Cancelar"
+        confirmVariant="destructive"
+        disabled={deleteConfirmText.toUpperCase() !== 'EXCLUIR'}
+      >
+        <div className="space-y-4">
+          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 shadow-sm">
+            <p className="text-sm text-destructive font-medium mb-2">
+              ⚠️ ATENÇÃO: Esta ação é irreversível!
+            </p>
+            <p className="text-sm text-destructive-foreground">
+              Esta ação irá excluir permanentemente sua conta e todos os dados associados. Esta
+              operação <strong>NÃO PODE</strong> ser desfeita.
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-typography mb-2">
+              Para confirmar, digite <strong>EXCLUIR</strong> no campo abaixo:
+            </label>
+            <TextField
+              id="delete-confirm-text"
+              name="delete-confirm-text"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder="Digite EXCLUIR"
+              className="w-full shadow-sm"
+            />
+          </div>
+
+          {deleteConfirmText && deleteConfirmText.toUpperCase() !== 'EXCLUIR' && (
+            <p className="text-sm text-destructive">
+              Texto incorreto. Digite exatamente "EXCLUIR" para continuar.
+            </p>
+          )}
+        </div>
+      </ConfirmDialog>
     </div>
   );
 };

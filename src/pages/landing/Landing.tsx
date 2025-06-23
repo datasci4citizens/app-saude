@@ -88,6 +88,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
     localStorage.setItem('fullname', loginResponse.full_name || '');
     localStorage.setItem('social_name', loginResponse.social_name || '');
     localStorage.setItem('profileImage', loginResponse.profile_picture || '');
+    localStorage.setItem('useDarkMode', String(loginResponse.use_dark_mode));
 
     // Usar o role para decidir navegação
     if (loginResponse.role === 'provider') {
