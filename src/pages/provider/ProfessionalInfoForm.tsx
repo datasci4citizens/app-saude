@@ -193,7 +193,7 @@ export function ProfessionalInfoForm({
         </p>
       </div>
 
-      <Button type="submit" variant="white" className="w-full mt-4 font-inter font-bold">
+      <Button type="submit" variant="default" className="w-full mt-4 font-inter font-bold">
         CONTINUAR
       </Button>
     </form>
