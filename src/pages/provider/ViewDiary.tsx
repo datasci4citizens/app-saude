@@ -291,10 +291,9 @@ export default function ViewDiary() {
                       {diary.interest_areas.map((interest) => {
                         const interestId = interest.observation_id || 0;
                         const isExpanded = expandedInterests.has(interest.name);
-                        const hasResponses =
-                          interest.triggers?.some(
-                            (t) => t.response && t.response.trim() !== "",
-                          );
+                        const hasResponses = interest.triggers?.some(
+                          (t) => t.response && t.response.trim() !== "",
+                        );
                         const isAttentionPointFlag = isAttentionPoint(interest);
                         return (
                           <div
