@@ -22,6 +22,7 @@ export class ProviderService {
    * @param socialName
    * @param specialtyConcept
    * @param updatedAt
+   * @param useDarkMode
    * @param user
    * @returns ProviderRetrieve
    * @throws ApiError
@@ -37,6 +38,7 @@ export class ProviderService {
     socialName?: string,
     specialtyConcept?: number,
     updatedAt?: string,
+    useDarkMode?: boolean,
     user?: number,
   ): CancelablePromise<Array<ProviderRetrieve>> {
     return __request(OpenAPI, {
@@ -53,6 +55,7 @@ export class ProviderService {
         social_name: socialName,
         specialty_concept: specialtyConcept,
         updated_at: updatedAt,
+        use_dark_mode: useDarkMode,
         user: user,
       },
     });

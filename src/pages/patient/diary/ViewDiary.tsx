@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Header from "@/components/ui/header";
 import { DiaryService } from "@/api/services/DiaryService";
-import CollapsibleInterestCard from "@/components/ui/CollapsibleInterestCard";
 import { ErrorMessage } from "@/components/ui/error-message";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
-import type { TypeEnum } from "@/api/models/TypeEnum";
+import { TypeEnum } from "@/api/models/TypeEnum";
+import { Clock } from "lucide-react";
 
 // Updated interfaces to match new server response structure
 interface DiaryTrigger {
@@ -18,6 +18,8 @@ interface DiaryInterestArea {
   name: string;
   shared: boolean;
   triggers: DiaryTrigger[];
+  marked_by?: string[];
+  is_attention_point?: boolean;
 }
 
 interface DiaryEntry {
@@ -34,9 +36,10 @@ interface DiaryData {
   interest_areas: DiaryInterestArea[];
 }
 
-export default function ViewDiaryEntry() {
+export default function ImprovedViewDiaryEntry() {
   const { diaryId } = useParams<{ diaryId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isLoading, setIsLoading] = useState(true);
   const [diary, setDiary] = useState<DiaryData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -50,34 +53,40 @@ export default function ViewDiaryEntry() {
 
       try {
         setIsLoading(true);
+        setError(null);
 
-        // Fetch diary by ID
         const response = await DiaryService.diariesRetrieve2(diaryId);
         console.log("Diary API response:", response);
 
-        if (response?.diary_id) {
-          // Convert the API response to match our interface
-          const diaryData: DiaryData = {
+        if (response && response.diary_id) {
+          const parsedInterestAreas =
+            typeof response.interest_areas === "string"
+              ? JSON.parse(response.interest_areas)
+              : response.interest_areas;
+
+          // Set is_attention_point and provider_name if they are not present
+          parsedInterestAreas.forEach((area: DiaryInterestArea) => {
+            if (area.marked_by && area.marked_by.length > 0) {
+              area.is_attention_point = true;
+            }
+          });
+
+          setDiary({
             diary_id: response.diary_id,
             date: response.date,
-            scope: response.scope,
+            scope: "today", // Provide a default since 'scope' is missing in response
             entries:
               typeof response.entries === "string"
                 ? JSON.parse(response.entries)
-                : response.entries || [],
-            interest_areas:
-              typeof response.interest_areas === "string"
-                ? JSON.parse(response.interest_areas)
-                : response.interest_areas || [],
-          };
-
-          setDiary(diaryData);
+                : response.entries,
+            interest_areas: parsedInterestAreas,
+          });
           // Auto-expand interests that have responses
           const interestsWithResponses =
-            diaryData.interest_areas
+            parsedInterestAreas
               ?.filter((area: DiaryInterestArea) =>
                 area.triggers?.some(
-                  (t: DiaryTrigger) => t.response && t.response.trim() !== "",
+                  (t) => t.response && t.response.trim() !== "",
                 ),
               )
               .map((area: DiaryInterestArea) => area.name) || [];
@@ -109,21 +118,31 @@ export default function ViewDiaryEntry() {
       const day = date.getDate().toString().padStart(2, "0");
       const month = (date.getMonth() + 1).toString().padStart(2, "0");
       const year = date.getFullYear();
-
       return `${day}/${month}/${year}`;
-    } catch {
+    } catch (e) {
       return dateString;
+    }
+  };
+
+  // Get time from date string
+  const getTimeFromDate = (dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (error) {
+      return "";
     }
   };
 
   // Get general text entry if available
   const getGeneralTextEntry = (): { text: string; shared: boolean } | null => {
     if (!diary || !diary.entries || diary.entries.length === 0) {
-      console.warn("No diary entries found.");
       return null;
     }
 
-    // Find the general text entry
     for (const entry of diary.entries) {
       if (
         entry.text &&
@@ -136,10 +155,23 @@ export default function ViewDiaryEntry() {
         };
       }
     }
-
     return null;
   };
 
+  // Toggle interest expansion
+  const toggleInterest = (interestName: string) => {
+    setExpandedInterests((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(interestName)) {
+        newSet.delete(interestName);
+      } else {
+        newSet.add(interestName);
+      }
+      return newSet;
+    });
+  };
+
+  // Navigation helpers
   const getActiveNavId = () => {
     if (location.pathname.startsWith("/user-main-page")) return "home";
     if (location.pathname.startsWith("/reminders")) return "meds";
@@ -169,60 +201,22 @@ export default function ViewDiaryEntry() {
     }
   };
 
-  // Toggle interest expansion - now using interest name as identifier
-  const toggleInterest = (interestName: string) => {
-    setExpandedInterests((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(interestName)) {
-        newSet.delete(interestName);
-      } else {
-        newSet.add(interestName);
-      }
-      return newSet;
-    });
-  };
-
-  // Convert DiaryInterestArea to UserInterest format for CollapsibleInterestCard
-  const convertToUserInterest = (diaryInterest: DiaryInterestArea) => {
-    // Create a map of trigger responses
-    console.log("Converting diary interest:", diaryInterest);
-    const triggerResponses: Record<string, string> = {};
-
-    if (diaryInterest.triggers) {
-      for (const trigger of diaryInterest.triggers) {
-        if (trigger.response) {
-          triggerResponses[trigger.name] = trigger.response;
-        }
-      }
-    }
-
-    return {
-      shared: diaryInterest.shared,
-      provider_name: undefined,
-      interest_area: {
-        name: diaryInterest.name,
-        is_attention_point: false,
-        triggers:
-          diaryInterest.triggers?.map((trigger) => ({
-            name: trigger.name,
-            type: trigger.type,
-            response: trigger.response || null,
-          })) || [],
-      },
-      triggerResponses: triggerResponses,
-    };
-  };
-
-  const clearError = () => {
-    setError(null);
-  };
+  const clearError = () => setError(null);
 
   if (isLoading) {
     return (
-      <div className="max-w-3xl mx-auto">
-        <Header title="Visualizar Diário" />
-        <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-selection" />
+      <div className="flex flex-col h-screen bg-homebg">
+        <Header
+          title="📝 Visualizar Diário"
+          onBackClick={() => navigate("/diary")}
+        />
+        <div className="flex-1 flex justify-center items-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-foreground/20 border-t-primary-foreground"></div>
+            <p className="text-primary-foreground/80 font-medium">
+              Carregando diário...
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -230,157 +224,235 @@ export default function ViewDiaryEntry() {
 
   if (error || !diary) {
     return (
-      <div className="max-w-3xl mx-auto">
+      <div className="flex flex-col h-screen bg-homebg">
         <Header
-          title="Visualizar Diário"
+          title="📝 Visualizar Diário"
           onBackClick={() => navigate("/diary")}
         />
-
-        <ErrorMessage
-          message={error || "Diário não encontrado"}
-          variant="destructive"
-          onClose={clearError}
-        />
-
-        <div className="mt-6 text-center">
-          <button
-            onClick={() => navigate(-1)}
-            className="px-6 py-2 bg-gray1 hover:bg-gray2 rounded-full text-primary transition-colors"
-          >
-            Voltar
-          </button>
+        <div className="flex-1 overflow-hidden bg-background rounded-t-3xl mt-4 relative z-10">
+          <div className="px-4 py-6">
+            <ErrorMessage
+              message={error || "Diário não encontrado"}
+              variant="destructive"
+              onClose={clearError}
+              className="mb-6"
+            />
+            <div className="text-center">
+              <button
+                onClick={() => navigate("/diary")}
+                className="px-6 py-3 bg-homebg text-primary-foreground rounded-lg transition-colors font-medium"
+              >
+                Voltar aos Diários
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   const textEntry = getGeneralTextEntry();
+  const time = diary.date ? getTimeFromDate(diary.date) : "";
   const hasContent =
     textEntry?.text ||
     diary.interest_areas?.some((area) =>
-      area.triggers?.some((t) => t.response),
+      area.triggers?.some((t) => t.response && t.response.trim() !== ""),
     );
 
   return (
-    <div className="max-w-3xl mx-auto pb-24 bg-background">
+    <div className="flex flex-col h-screen bg-homebg">
       <Header
-        title="Visualizar Diário"
-        onBackClick={() => navigate(-1)}
+        title="📝 Visualizar Diário"
+        onBackClick={() => navigate("/diary")}
         subtitle={diary.date ? formatDate(diary.date) : "Data não disponível"}
       />
 
-      <div className="px-4 py-8">
-        {!hasContent && (
-          <div className="bg-gray1 p-6 rounded-lg text-center my-8">
-            <p className="text-gray2 text-lg">
-              Este diário não possui conteúdo.
-            </p>
-          </div>
-        )}
+      <div className="flex-1 overflow-hidden bg-background rounded-t-3xl mt-4 relative z-10">
+        <div className="h-full overflow-y-auto">
+          <div className="px-4 py-6 pb-24">
+            {!hasContent && (
+              <div className="flex flex-col items-center justify-center py-16">
+                <div className="text-6xl mb-4">📭</div>
+                <p className="text-muted-foreground text-lg font-medium">
+                  Este diário não possui conteúdo registrado.
+                </p>
+              </div>
+            )}
 
-        {/* Time Range Section */}
-        <div className="space-y-3 mb-6 mt-6">
-          <h3 className="font-semibold text-lg text-typography mb-1">
-            Período de tempo
-          </h3>
-          <div className="bg-card p-4 rounded-lg">
-            <p>{diary.scope === "today" ? "Hoje" : "Desde o último diário"}</p>
-          </div>
-        </div>
-
-        {/* Interest Areas Section - Using CollapsibleInterestCard */}
-        {diary.interest_areas && diary.interest_areas.length > 0 && (
-          <div className="space-y-4 mb-6">
-            <div className="flex flex-col gap-1">
+            {/* Time Range Section */}
+            <div className="space-y-3 mb-6">
               <h3 className="font-semibold text-lg text-typography mb-1">
-                Seus Interesses
+                Período de tempo
               </h3>
-              <p className="text-sm text-typography">
-                Clique nos interesses para ver as respostas detalhadas
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {diary.interest_areas.map((interest) => {
-                // Only show interests that have at least one trigger with a response
-                const hasResponses = interest.triggers?.some(
-                  (t) => t.response && t.response.trim() !== "",
-                );
-                if (!hasResponses) return null;
-
-                return (
-                  <div
-                    key={interest.name}
-                    className="bg-card border border-gray1 rounded-lg p-4"
-                  >
-                    <CollapsibleInterestCard
-                      interest={convertToUserInterest(interest)}
-                      isOpen={expandedInterests.has(interest.name)}
-                      onToggle={() => toggleInterest(interest.name)}
-                      readOnly={true}
-                      onSharingToggle={() => {}}
-                      onTriggerResponseChange={() => {}}
-                    />
-
-                    {/* Sharing status */}
-                    <div className="mt-3 pt-3 border-t border-gray1">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-gray2">
-                          Status de compartilhamento:
-                        </span>
-                        <span
-                          className={`font-medium ${
-                            interest.shared ? "text-success" : "text-selection"
-                          }`}
-                        >
-                          {interest.shared
-                            ? "✓ Compartilhado com profissionais"
-                            : "○ Não compartilhado"}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Text Section - Only show if there's text */}
-        {textEntry?.text && (
-          <div className="space-y-3">
-            <div className="flex flex-col gap-1">
-              <h3 className="font-semibold text-lg text-typography mb-1">
-                Observações Gerais
-              </h3>
-              <div className="flex items-center gap-3">
-                <span
-                  className={`text-sm font-medium ${
-                    textEntry.shared ? "text-success" : "text-selection"
-                  }`}
-                >
-                  {textEntry.shared
-                    ? "✓ Compartilhado com profissionais"
-                    : "○ Não compartilhado"}
+              <div className="bg-card p-4 rounded-lg border border-card-border flex items-center justify-between">
+                <span className="text-typography">
+                  {diary.scope === "today"
+                    ? "Registros do dia de hoje"
+                    : "Registros desde a última entrada"}
                 </span>
+                {time && (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Clock size={16} />
+                    <span className="text-sm font-medium">{time}</span>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="bg-card p-4 rounded-lg whitespace-pre-wrap min-h-[150px] border border-gray2">
-              {textEntry.text}
+            {/* Interest Areas Section */}
+            {diary.interest_areas && diary.interest_areas.length > 0 && (
+              <div className="space-y-3 mb-6">
+                <h3 className="font-semibold text-lg text-typography mb-1">
+                  Áreas de Interesse
+                </h3>
+                <div className="space-y-4">
+                  {diary.interest_areas.map((interest) => {
+                    const isExpanded = expandedInterests.has(interest.name);
+                    const hasResponses = interest.triggers?.some(
+                      (t) => t.response && t.response.trim() !== "",
+                    );
+
+                    if (!hasResponses) return null;
+
+                    return (
+                      <div
+                        key={interest.name}
+                        className={`border rounded-xl shadow-sm ${
+                          interest.is_attention_point
+                            ? "bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border-orange-200 dark:border-orange-800"
+                            : "bg-card border-card-border"
+                        }`}
+                      >
+                        <div
+                          className="p-5 cursor-pointer hover:bg-accent/30 transition-colors duration-200"
+                          onClick={() => toggleInterest(interest.name)}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3 flex-1">
+                              <span
+                                className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                                  interest.is_attention_point
+                                    ? "bg-gradient-to-r from-orange-400 to-red-500"
+                                    : "bg-[var(--gradient-interest-indicator)]"
+                                }`}
+                              />
+                              <h4 className="font-bold text-lg text-card-foreground">
+                                {interest.name}
+                              </h4>
+                              {interest.is_attention_point && (
+                                <span className="text-orange-500 text-lg">
+                                  ⚠️
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {interest.shared && (
+                                <span className="text-success text-sm font-medium">
+                                  ✓ Compartilhado
+                                </span>
+                              )}
+                              <span
+                                className={`transform transition-transform duration-200 ${
+                                  isExpanded ? "rotate-180" : ""
+                                }`}
+                              >
+                                ▼
+                              </span>
+                            </div>
+                          </div>
+
+                          {interest.is_attention_point &&
+                            interest.marked_by && (
+                              <div className="mt-2">
+                                <span className="text-xs text-orange-600 dark:text-orange-400 italic">
+                                  Marcado como ponto de atenção por{" "}
+                                  {interest.marked_by.join(", ")}
+                                </span>
+                              </div>
+                            )}
+                        </div>
+
+                        {isExpanded && (
+                          <div className="px-5 pb-5">
+                            <div className="border-t border-card-border pt-4">
+                              <div className="space-y-3">
+                                <h5 className="font-medium text-sm text-muted-foreground mb-2">
+                                  Respostas:
+                                </h5>
+                                {interest.triggers?.map(
+                                  (trigger, index) =>
+                                    trigger.response &&
+                                    trigger.response.trim() !== "" && (
+                                      <div
+                                        key={index}
+                                        className="bg-card-muted p-3 rounded-lg border-l-4 border-selection"
+                                      >
+                                        <div className="text-sm">
+                                          <span className="font-medium text-card-foreground">
+                                            {trigger.name}:
+                                          </span>
+                                          <span className="ml-2 text-muted-foreground">
+                                            {trigger.response}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    ),
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* General Text Section */}
+            {textEntry && textEntry.text && (
+              <div className="space-y-3 mb-6">
+                <div className="flex flex-col gap-1">
+                  <h3 className="font-semibold text-lg text-typography mb-1">
+                    Observações Gerais
+                  </h3>
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`text-sm font-medium ${
+                        textEntry.shared
+                          ? "text-success"
+                          : "text-muted-foreground"
+                      }`}
+                    >
+                      {textEntry.shared
+                        ? "✓ Compartilhado com profissionais"
+                        : "○ Não compartilhado"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-card p-4 rounded-lg whitespace-pre-wrap min-h-[150px] border border-card-border">
+                  {textEntry.text}
+                </div>
+              </div>
+            )}
+
+            {/* Action button */}
+            <div className="text-center mt-8">
+              <button
+                onClick={() => navigate("/diary")}
+                className="px-8 py-3 bg-selection hover:bg-selection/80 text-white rounded-lg 
+                         transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
+              >
+                Voltar aos Diários
+              </button>
             </div>
           </div>
-        )}
-
-        {/* Action button */}
-        <div className="mt-8 text-center">
-          <button
-            onClick={() => navigate("/diary")}
-            className="px-6 py-3 bg-selection text-card rounded-lg transition-colors font-medium"
-          >
-            Voltar aos Diários
-          </button>
         </div>
+      </div>
+
+      {/* Fixed bottom navigation */}
+      <div className="fixed bottom-0 left-0 right-0 z-50">
         <BottomNavigationBar
           variant="user"
           forceActiveId={getActiveNavId()}

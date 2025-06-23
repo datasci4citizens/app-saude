@@ -41,6 +41,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
     } catch (err: unknown) {
       const full = JSON.stringify(err, Object.getOwnPropertyNames(err));
       console.error("Erro ao logar (mobile):", full);
+      alert("Erro ao logar (mobile): " + full);
       setError("Falha ao fazer login. Por favor, tente novamente.");
     } finally {
       setIsLoading(false);
