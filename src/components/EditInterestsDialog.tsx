@@ -229,11 +229,14 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
 
       try {
         const response = await InterestAreasService.apiInterestAreaList();
-        const filteredResponse = response.filter((item: ApiInterestAreaResponse) => item.person_id === null);
+        const filteredResponse = response.filter(
+          (item: ApiInterestAreaResponse) => item.person_id === null,
+        );
 
         // Map the API response to our template format
         const data = filteredResponse
-          .map((item: ApiInterestAreaResponse) => { // API response structure differs from InterestArea type
+          .map((item: ApiInterestAreaResponse) => {
+            // API response structure differs from InterestArea type
             try {
               // Handle different response structures
               const interestData = item.interest_area || item;
@@ -313,8 +316,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
       return nameMatch || triggerMatch;
     })
     .filter(
-      (template) =>
-        template?.interest_name && Array.isArray(template.triggers),
+      (template) => template?.interest_name && Array.isArray(template.triggers),
     );
 
   // Handlers

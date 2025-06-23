@@ -71,26 +71,32 @@ export default function UserMainPage() {
         console.log("Dados da API:", userInterests);
 
         // Ensure all interests have proper structure
-        const normalizedInterests = userInterests.map((interest: InterestAreaResponse) => ({
-          ...interest,
-          interest_area: {
-            ...interest.interest_area,
-            name: String(interest.interest_area?.name || ""),
-            triggers: Array.isArray(interest.interest_area?.triggers)
-              ? interest.interest_area.triggers.map((trigger: InterestAreaTrigger) => ({
-                  name: String(trigger?.name || trigger || ""),
-                  type: trigger?.type || TypeEnum.TEXT,
-                  response: trigger?.response || null,
-                }))
+        const normalizedInterests = userInterests.map(
+          (interest: InterestAreaResponse) => ({
+            ...interest,
+            interest_area: {
+              ...interest.interest_area,
+              name: String(interest.interest_area?.name || ""),
+              triggers: Array.isArray(interest.interest_area?.triggers)
+                ? interest.interest_area.triggers.map(
+                    (trigger: InterestAreaTrigger) => ({
+                      name: String(trigger?.name || trigger || ""),
+                      type: trigger?.type || TypeEnum.TEXT,
+                      response: trigger?.response || null,
+                    }),
+                  )
+                : [],
+            },
+            marked_by: Array.isArray(interest.marked_by)
+              ? interest.marked_by.map((provider: string) =>
+                  String(provider || ""),
+                )
               : [],
-          },
-          marked_by: Array.isArray(interest.marked_by)
-            ? interest.marked_by.map((provider: string) => String(provider || ""))
-            : [],
-          is_temporary: false,
-          is_deleted: false,
-          is_modified: false,
-        }));
+            is_temporary: false,
+            is_deleted: false,
+            is_modified: false,
+          }),
+        );
 
         // flag is_attention_point
         for (const interest of normalizedInterests) {
