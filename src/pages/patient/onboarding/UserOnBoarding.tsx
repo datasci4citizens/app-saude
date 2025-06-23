@@ -98,9 +98,11 @@ export default function UserOnboarding() {
       <div className="max-w-md mx-auto">
         {/* Header */}
         <div className="bg-background px-8 pt-9">
-          <Header title="Preencha informações sobre você"
-           onBackClick={handleBackClick} 
-           variant="transparent"/>
+          <Header
+            title="Preencha informações sobre você"
+            onBackClick={handleBackClick}
+            variant="transparent"
+          />
         </div>
 
         {/* Progress indicator*/}

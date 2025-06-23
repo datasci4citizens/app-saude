@@ -48,7 +48,7 @@ export function UserInfoForm({
     genderOptionsLength: genderOptions?.length,
     raceOptionsLength: raceOptions?.length,
     genderOptions,
-    raceOptions
+    raceOptions,
   });
 
   const [formData, setFormData] = useState<UserFormData>({
@@ -63,7 +63,9 @@ export function UserInfoForm({
   const [errors, setErrors] = useState<FormErrors>({});
 
   // Handle input change
-  const handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement> = (e) => {
+  const handleChange: React.ChangeEventHandler<
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  > = (e) => {
     const { name, value } = e.target;
 
     // Convert numeric fields to numbers
