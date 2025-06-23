@@ -51,22 +51,41 @@ const parseDate = (dateStr: string | undefined | null): Date => {
 
 
 export default function AcsMainPage() {
-  const navigate = useNavigate();
-  const [emergencyCount, setEmergencyCount] = useState<number>(0);
-  const [_loading, setLoading] = useState<boolean>(true);
-  const [_error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
+    const [emergencyCount, setEmergencyCount] = useState<number>(0);
+    const [_loading, setLoading] = useState<boolean>(true);
+    const [_error, setError] = useState<string | null>(null);
 
     // Busca a contagem de emergências ao carregar a página
     useEffect(() => {
         const fetchEmergencyCount = async () => {
             try {
                 setLoading(true);
-                const response = await ProviderService.providerEmergencyCountRetrieve();
-                // Verifica se a resposta contém a propriedade emergency_count
-                if (response && 'emergency_count' in response) {
-                    setEmergencyCount(response.emergency_count);
+                const patients = await LinkPersonProviderService.providerPersonsList();
+
+                if (patients && Array.isArray(patients)) {
+                    const pendingEmergencies = patients.filter((patient: ProviderPersonSummary) => {
+                        if (!patient.last_help_date) {
+                            return false;
+                        }
+                        const emergencyDate = parseDate(patient.last_help_date);
+                        if (Number.isNaN(emergencyDate.getTime()) || emergencyDate.getTime() === 0) {
+                            return false;
+                        }
+
+                        if (!patient.last_visit_date) {
+                            return true;
+                        }
+                        const visitDate = parseDate(patient.last_visit_date);
+                        if (Number.isNaN(visitDate.getTime()) || visitDate.getTime() === 0) {
+                            return true;
+                        }
+
+                        return visitDate.getTime() <= emergencyDate.getTime();
+                    });
+                    setEmergencyCount(pendingEmergencies.length);
                 } else {
-                    console.error('Formato de resposta inválido:', response);
+                    console.error('Formato de resposta inválido:', patients);
                     setError('Não foi possível obter o número de emergências.');
                 }
             } catch (err) {
@@ -77,76 +96,77 @@ export default function AcsMainPage() {
             }
         };
 
-    fetchEmergencyCount();
-  }, []);
+        fetchEmergencyCount();
+    }, []);
 
-  // Funções de navegação - atualizadas para usar navigate em vez de router.push
-  const handleEmergencyClick = () => {
-    navigate("/emergencies");
-  };
+    // Funções de navegação - atualizadas para usar navigate em vez de router.push
+    const handleEmergencyClick = () => {
+        navigate('/emergencies');
+    };
 
-  const handleAppointmentClick = () => {
-    navigate("/appointments/amanda");
-  };
+    const handleAppointmentClick = () => {
+        navigate('/appointments/amanda');
+    };
 
-  const handleBannerIconClick = () => {
-    navigate("/patient-registry");
-  };
+    const handleBannerIconClick = () => {
+        navigate('/patient-registry');
+    };
 
-  const handleNavigationClick = (itemId: string) => {
-    // Implementar navegação baseada no item clicado
-    switch (itemId) {
-      case "home":
-        // Já estamos na home
-        break;
-      //case 'consults':
-      //    navigate('/appointments');
-      //    break;
-      case "patients":
-        navigate("/patients");
-        break;
-      case "emergency":
-        navigate("/emergencies");
-        break;
-      //case 'profile':
-      //    navigate('/profile');
-      //    break;
-    }
-  };
+    const handleNavigationClick = (itemId: string) => {
+        // Implementar navegação baseada no item clicado
+        switch (itemId) {
+            case 'home':
+                // Já estamos na home
+                break;
+            //case 'consults':
+            //    navigate('/appointments');
+            //    break;
+            case 'patients':
+                navigate('/patients');
+                break;
+            case 'emergency':
+                navigate('/emergencies');
+                break;
+            //case 'profile':
+            //    navigate('/profile');
+            //    break;
+        }
+    };
 
-  return (
-    <div className="bg-gray-50 h-full pb-24" style={{ minHeight: "100vh" }}>
-      {/* Banner superior */}
-      <HomeBanner
-        title="Registro diário"
-        subtitle="Cheque registro dos seus pacientes"
-        onIconClick={handleBannerIconClick}
-      />
+    return (
+        <div className="bg-gray-50 h-full pb-24" style={{ minHeight: '100vh' }}>
+            {/* Banner superior */}
+            <HomeBanner
+                title="Registro diário"
+                subtitle="Cheque registro dos seus pacientes"
+                onIconClick={handleBannerIconClick}
+            />
 
-      {/* Container para os cards */}
-      <div className="px-4 py-5 flex justify-center gap-4">
-        {/* Card de Emergência */}
-        <InfoCard
-          variant="emergency"
-          count={emergencyCount}
-          onClick={handleEmergencyClick}
-        />
+            {/* Container para os cards */}
+            <div className="px-4 py-5 flex justify-center gap-4">
+                {/* Card de Emergência */}
+                <InfoCard
+                    variant="emergency"
+                    count={emergencyCount}
+                    onClick={handleEmergencyClick}
 
-        {/* Card de Próxima Consulta */}
-        <InfoCard
-          variant="appointment"
-          title="Próxima consulta"
-          name="Amanda de Souza"
-          date="26/04/2024"
-          time="13:00"
-          onClick={handleAppointmentClick}
-        />
-      </div>
+                />
+
+                {/* Card de Próxima Consulta */}
+                <InfoCard
+                    variant="appointment"
+                    title="Próxima consulta"
+                    name="Amanda de Souza"
+                    date="26/04/2024"
+                    time="13:00"
+                    onClick={handleAppointmentClick}
+                />
+            </div>
 
             {/* Barra de navegação */}
             <BottomNavigationBar
                 variant="acs"
-                initialActiveId="home"
+                forceActiveId="home"
                 onItemClick={handleNavigationClick}
             />
         </div>
