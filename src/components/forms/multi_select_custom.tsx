@@ -1,5 +1,5 @@
-import type React from "react";
-import { useState, useRef, useEffect } from "react";
+import type React from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface Option {
   value: string | number;
@@ -24,27 +24,24 @@ export function MultiSelectCustom({
   value,
   onChange,
   isLoading = false,
-  placeholder = "Selecione",
+  placeholder = 'Selecione',
   error,
 }: MultiSelectCustomProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
@@ -70,24 +67,19 @@ export function MultiSelectCustom({
   };
 
   // Get selected items with their labels
-  const selectedItems = options.filter((option) =>
-    value.includes(option.value.toString()),
-  );
+  const selectedItems = options.filter((option) => value.includes(option.value.toString()));
 
   return (
     <div className="mb-2" ref={containerRef}>
       {label && (
-        <label
-          htmlFor={id}
-          className="block text-sm font-inter font-light text-gray2 mb-1"
-        >
+        <label htmlFor={id} className="block text-sm font-inter font-light text-gray2 mb-1">
           {label}
         </label>
       )}
 
       <div
-        className={`relative rounded-lg border ${error ? "border-destructive" : "border-gray2"} 
-          ${isOpen ? "border-selection" : ""} bg-primary`}
+        className={`relative rounded-lg border ${error ? 'border-destructive' : 'border-gray2'} 
+          ${isOpen ? 'border-selection' : ''} bg-primary`}
       >
         {/* Selected items and input container */}
         <div
@@ -117,7 +109,7 @@ export function MultiSelectCustom({
             ref={inputRef}
             type="text"
             className="bg-transparent flex-1 outline-none min-w-[80px] text-typography placeholder:text-gray2"
-            placeholder={selectedItems.length === 0 ? placeholder : ""}
+            placeholder={selectedItems.length === 0 ? placeholder : ''}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onFocus={() => setIsOpen(true)}
@@ -128,7 +120,7 @@ export function MultiSelectCustom({
         {/* Dropdown */}
         {isOpen && (
           <div
-            className={`absolute top-full left-0 right-0 mt-1 bg-primary border border-gray2 rounded-lg shadow-lg z-10 transition-all duration-200 overflow-hidden ${isOpen ? "max-h-60 opacity-100" : "max-h-0 opacity-0"}`}
+            className={`absolute top-full left-0 right-0 mt-1 bg-primary border border-gray2 rounded-lg shadow-lg z-10 transition-all duration-200 overflow-hidden ${isOpen ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'}`}
           >
             {isLoading ? (
               <div className="p-2">
@@ -139,16 +131,14 @@ export function MultiSelectCustom({
                 />
               </div>
             ) : filteredOptions.length === 0 ? (
-              <div className="p-2 text-center text-gray2">
-                Nenhuma opção encontrada
-              </div>
+              <div className="p-2 text-center text-gray2">Nenhuma opção encontrada</div>
             ) : (
               <ul className="max-h-48 overflow-y-auto p-1">
                 {filteredOptions.map((option) => (
                   <li
                     key={option.value}
                     className={`px-3 py-2 text-sm rounded-md cursor-pointer transition-all duration-150 flex items-center justify-between font-inter font-light text-typography 
-                    ${value.includes(option.value.toString()) ? "bg-selection bg-opacity-20" : ""}`}
+                    ${value.includes(option.value.toString()) ? 'bg-selection bg-opacity-20' : ''}`}
                     onClick={() => toggleOption(option.value.toString())}
                   >
                     <span>{option.label}</span>
@@ -166,11 +156,7 @@ export function MultiSelectCustom({
         )}
       </div>
 
-      {error && (
-        <p className="text-destructive text-xs font-inter font-light mt-1">
-          {error}
-        </p>
-      )}
+      {error && <p className="text-destructive text-xs font-inter font-light mt-1">{error}</p>}
     </div>
   );
 }

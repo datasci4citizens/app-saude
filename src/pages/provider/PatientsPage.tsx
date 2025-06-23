@@ -1,12 +1,12 @@
-import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderService";
-import { Button } from "@/components/forms/button";
-import { TextField } from "@/components/forms/text_input";
-import { ErrorMessage } from "@/components/ui/error-message";
-import Header from "@/components/ui/header";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
-import { SuccessMessage } from "@/components/ui/success-message";
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
+import { Button } from '@/components/forms/button';
+import { TextField } from '@/components/forms/text_input';
+import { ErrorMessage } from '@/components/ui/error-message';
+import Header from '@/components/ui/header';
+import BottomNavigationBar from '@/components/ui/navigator-bar';
+import { SuccessMessage } from '@/components/ui/success-message';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface Patient {
   id: string | number;
@@ -21,17 +21,17 @@ interface Patient {
 
 // Função para formatar a data para DD/MM/AAAA
 const formatDisplayDate = (dateString: string | undefined | null): string => {
-  if (!dateString) return "";
+  if (!dateString) return '';
   try {
     const date = new Date(dateString);
-    if (Number.isNaN(date.getTime())) return "";
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
+    if (Number.isNaN(date.getTime())) return '';
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   } catch (error) {
-    console.error("Error formatting date:", dateString, error);
-    return "";
+    console.error('Error formatting date:', dateString, error);
+    return '';
   }
 };
 
@@ -54,8 +54,8 @@ export default function PatientsPage() {
   const location = useLocation();
 
   // Search and filter states
-  const [searchValue, setSearchValue] = useState("");
-  const [activeTab, setActiveTab] = useState("todos");
+  const [searchValue, setSearchValue] = useState('');
+  const [activeTab, setActiveTab] = useState('todos');
 
   // Link code states
   const [linkCode, setLinkCode] = useState<string | null>(null);
@@ -69,9 +69,7 @@ export default function PatientsPage() {
   // UI states
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [unlinkingPatient, setUnlinkingPatient] = useState<
-    string | number | null
-  >(null);
+  const [unlinkingPatient, setUnlinkingPatient] = useState<string | number | null>(null);
 
   useEffect(() => {
     fetchPatients();
@@ -93,34 +91,32 @@ export default function PatientsPage() {
         phone?: string;
       }
 
-      const formattedPatients: Patient[] = apiPatients.map(
-        (patient: ApiPatient) => {
-          // Check if last_help_date is valid
-          let isUrgent = false;
-          if (patient.last_help_date) {
-            const helpDate = new Date(patient.last_help_date);
-            if (!Number.isNaN(helpDate.getTime())) {
-              isUrgent = getDaysAgo(patient.last_help_date) <= 3;
-            }
+      const formattedPatients: Patient[] = apiPatients.map((patient: ApiPatient) => {
+        // Check if last_help_date is valid
+        let isUrgent = false;
+        if (patient.last_help_date) {
+          const helpDate = new Date(patient.last_help_date);
+          if (!Number.isNaN(helpDate.getTime())) {
+            isUrgent = getDaysAgo(patient.last_help_date) <= 3;
           }
+        }
 
-          return {
-            id: patient.person_id,
-            name: patient.name,
-            age: patient.age || 0,
-            lastVisit: formatDisplayDate(patient.last_visit_date),
-            lastHelp: formatDisplayDate(patient.last_help_date),
-            email: patient.email,
-            phone: patient.phone,
-            urgent: isUrgent,
-          };
-        },
-      );
+        return {
+          id: patient.person_id,
+          name: patient.name,
+          age: patient.age || 0,
+          lastVisit: formatDisplayDate(patient.last_visit_date),
+          lastHelp: formatDisplayDate(patient.last_help_date),
+          email: patient.email,
+          phone: patient.phone,
+          urgent: isUrgent,
+        };
+      });
 
       setPatients(formattedPatients);
     } catch (_) {
-      console.error("Erro ao buscar pacientes:", _);
-      setError("Não foi possível carregar a lista de pacientes.");
+      console.error('Erro ao buscar pacientes:', _);
+      setError('Não foi possível carregar a lista de pacientes.');
     } finally {
       setLoading(false);
     }
@@ -133,10 +129,10 @@ export default function PatientsPage() {
     try {
       const response = await LinkPersonProviderService.providerLinkCodeCreate();
       setLinkCode(response.code);
-      setSuccess("Código gerado com sucesso! Compartilhe com o paciente.");
+      setSuccess('Código gerado com sucesso! Compartilhe com o paciente.');
     } catch (error) {
-      console.error("Error generating link code:", error);
-      setError("Não foi possível gerar o código. Tente novamente.");
+      console.error('Error generating link code:', error);
+      setError('Não foi possível gerar o código. Tente novamente.');
     } finally {
       setIsGeneratingCode(false);
     }
@@ -146,9 +142,9 @@ export default function PatientsPage() {
     if (linkCode) {
       try {
         await navigator.clipboard.writeText(linkCode);
-        setSuccess("Código copiado para a área de transferência!");
+        setSuccess('Código copiado para a área de transferência!');
       } catch (_err) {
-        setError("Não foi possível copiar o código.");
+        setError('Não foi possível copiar o código.');
       }
     }
   };
@@ -171,7 +167,7 @@ export default function PatientsPage() {
       setPatients((prev) => prev.filter((p) => p.id !== patient.id));
       setSuccess(`${patient.name} foi desvinculado com sucesso.`);
     } catch (err) {
-      console.error("Erro ao desvincular paciente:", err);
+      console.error('Erro ao desvincular paciente:', err);
       setError(`Erro ao desvincular ${patient.name}. Tente novamente.`);
     } finally {
       setUnlinkingPatient(null);
@@ -180,11 +176,9 @@ export default function PatientsPage() {
 
   // Filtros avançados
   const filteredPatients = patients.filter((patient) => {
-    const matchesSearch = patient.name
-      .toLowerCase()
-      .includes(searchValue.toLowerCase());
+    const matchesSearch = patient.name.toLowerCase().includes(searchValue.toLowerCase());
 
-    if (activeTab === "urgentes") {
+    if (activeTab === 'urgentes') {
       return matchesSearch && patient.urgent;
     }
 
@@ -199,27 +193,27 @@ export default function PatientsPage() {
   });
 
   const getActiveNavId = () => {
-    if (location.pathname.startsWith("/acs-main-page")) return "home";
-    if (location.pathname.startsWith("/appointments")) return "consults";
-    if (location.pathname.startsWith("/patients")) return "patients";
-    if (location.pathname.startsWith("/emergencies")) return "emergency";
-    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    if (location.pathname.startsWith('/acs-main-page')) return 'home';
+    if (location.pathname.startsWith('/appointments')) return 'consults';
+    if (location.pathname.startsWith('/patients')) return 'patients';
+    if (location.pathname.startsWith('/emergencies')) return 'emergency';
+    if (location.pathname.startsWith('/acs-profile')) return 'profile';
     return null;
   };
 
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
-      case "home":
-        navigate("/acs-main-page");
+      case 'home':
+        navigate('/acs-main-page');
         break;
-      case "patients":
-        navigate("/patients");
+      case 'patients':
+        navigate('/patients');
         break;
-      case "emergency":
-        navigate("/emergencies");
+      case 'emergency':
+        navigate('/emergencies');
         break;
-      case "profile":
-        navigate("/acs-profile");
+      case 'profile':
+        navigate('/acs-profile');
         break;
     }
   };
@@ -233,7 +227,7 @@ export default function PatientsPage() {
     <div className="flex flex-col h-screen bg-homebg">
       <Header
         title="Gerenciar Pacientes"
-        subtitle={`${patients.length} ${patients.length === 1 ? "paciente" : "pacientes"} vinculados`}
+        subtitle={`${patients.length} ${patients.length === 1 ? 'paciente' : 'pacientes'} vinculados`}
       />
 
       <div className="flex-1 overflow-hidden bg-background rounded-t-3xl mt-4 relative z-10">
@@ -279,7 +273,7 @@ export default function PatientsPage() {
                 className="flex items-center gap-2"
               >
                 <span className="text-lg">🔄</span>
-                {loading ? "Atualizando..." : "Atualizar"}
+                {loading ? 'Atualizando...' : 'Atualizar'}
               </Button>
             </div>
 
@@ -294,9 +288,7 @@ export default function PatientsPage() {
                     <h3 className="text-card-foreground font-semibold text-base">
                       Código de Vinculação
                     </h3>
-                    <p className="text-gray2 text-sm">
-                      Gere um código para o paciente se conectar
-                    </p>
+                    <p className="text-gray2 text-sm">Gere um código para o paciente se conectar</p>
                   </div>
                 </div>
 
@@ -307,25 +299,15 @@ export default function PatientsPage() {
                         <p className="text-selection font-bold text-3xl font-mono tracking-wider mb-2">
                           {linkCode}
                         </p>
-                        <p className="text-selection/80 text-sm">
-                          ⏰ Expira em 10 minutos
-                        </p>
+                        <p className="text-selection/80 text-sm">⏰ Expira em 10 minutos</p>
                       </div>
                     </div>
 
                     <div className="flex gap-2">
-                      <Button
-                        onClick={copyToClipboard}
-                        variant="orange"
-                        className="flex-1"
-                      >
+                      <Button onClick={copyToClipboard} variant="orange" className="flex-1">
                         📋 Copiar código
                       </Button>
-                      <Button
-                        onClick={() => setLinkCode(null)}
-                        variant="ghost"
-                        className="flex-1"
-                      >
+                      <Button onClick={() => setLinkCode(null)} variant="ghost" className="flex-1">
                         🔄 Novo código
                       </Button>
                     </div>
@@ -344,7 +326,7 @@ export default function PatientsPage() {
                         Gerando código...
                       </div>
                     ) : (
-                      "🎯 Gerar código de conexão"
+                      '🎯 Gerar código de conexão'
                     )}
                   </Button>
                 )}
@@ -368,21 +350,21 @@ export default function PatientsPage() {
             <div className="flex bg-card rounded-xl p-1 mb-6 border border-card-border">
               <button
                 className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  activeTab === "todos"
-                    ? "bg-selection text-white shadow-sm"
-                    : "text-gray2 hover:text-card-foreground hover:bg-card-muted"
+                  activeTab === 'todos'
+                    ? 'bg-selection text-white shadow-sm'
+                    : 'text-gray2 hover:text-card-foreground hover:bg-card-muted'
                 }`}
-                onClick={() => setActiveTab("todos")}
+                onClick={() => setActiveTab('todos')}
               >
                 Todos ({patients.length})
               </button>
               <button
                 className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all duration-200 relative ${
-                  activeTab === "urgentes"
-                    ? "bg-destructive text-white shadow-sm"
-                    : "text-gray2 hover:text-card-foreground hover:bg-card-muted"
+                  activeTab === 'urgentes'
+                    ? 'bg-destructive text-white shadow-sm'
+                    : 'text-gray2 hover:text-card-foreground hover:bg-card-muted'
                 }`}
-                onClick={() => setActiveTab("urgentes")}
+                onClick={() => setActiveTab('urgentes')}
               >
                 🚨 Requerem ajuda ({urgentCount})
                 {urgentCount > 0 && (
@@ -404,28 +386,24 @@ export default function PatientsPage() {
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <div className="w-24 h-24 bg-gray2/10 rounded-full flex items-center justify-center mb-6">
                   <span className="text-4xl">
-                    {searchValue
-                      ? "🔍"
-                      : activeTab === "urgentes"
-                        ? "🚨"
-                        : "👥"}
+                    {searchValue ? '🔍' : activeTab === 'urgentes' ? '🚨' : '👥'}
                   </span>
                 </div>
                 <h3 className="text-typography font-semibold text-lg mb-3">
                   {searchValue
-                    ? "Nenhum paciente encontrado"
-                    : activeTab === "urgentes"
-                      ? "Nenhum paciente precisa de ajuda"
-                      : "Nenhum paciente vinculado"}
+                    ? 'Nenhum paciente encontrado'
+                    : activeTab === 'urgentes'
+                      ? 'Nenhum paciente precisa de ajuda'
+                      : 'Nenhum paciente vinculado'}
                 </h3>
                 <p className="text-gray2 text-sm mb-6 max-w-sm">
                   {searchValue
                     ? `Não encontramos pacientes com "${searchValue}"`
-                    : activeTab === "urgentes"
-                      ? "Todos os pacientes estão bem no momento"
-                      : "Você ainda não possui pacientes vinculados"}
+                    : activeTab === 'urgentes'
+                      ? 'Todos os pacientes estão bem no momento'
+                      : 'Você ainda não possui pacientes vinculados'}
                 </p>
-                {!searchValue && activeTab === "todos" && (
+                {!searchValue && activeTab === 'todos' && (
                   <Button
                     variant="orange"
                     onClick={() => setShowLinkSection(true)}
@@ -446,8 +424,8 @@ export default function PatientsPage() {
                     key={patient.id}
                     className={`bg-card rounded-2xl p-5 border transition-all duration-200 hover:shadow-sm cursor-pointer ${
                       patient.urgent
-                        ? "border-destructive/30 bg-destructive/5"
-                        : "border-card-border hover:border-selection/20"
+                        ? 'border-destructive/30 bg-destructive/5'
+                        : 'border-card-border hover:border-selection/20'
                     }`}
                     onClick={() => navigate(`/provider/patient/${patient.id}`)}
                   >
@@ -456,8 +434,8 @@ export default function PatientsPage() {
                         <div
                           className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
                             patient.urgent
-                              ? "bg-destructive/20 text-destructive"
-                              : "bg-selection/20 text-selection"
+                              ? 'bg-destructive/20 text-destructive'
+                              : 'bg-selection/20 text-selection'
                           }`}
                         >
                           {patient.name.charAt(0).toUpperCase()}
@@ -470,9 +448,7 @@ export default function PatientsPage() {
                               <span className="w-2 h-2 bg-destructive rounded-full animate-pulse" />
                             )}
                           </h3>
-                          <p className="text-gray2 text-sm">
-                            {patient.age} anos
-                          </p>
+                          <p className="text-gray2 text-sm">{patient.age} anos</p>
                         </div>
                       </div>
 
@@ -490,19 +466,15 @@ export default function PatientsPage() {
 
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div>
-                        <p className="text-gray2 text-xs mb-1">
-                          Última consulta
-                        </p>
+                        <p className="text-gray2 text-xs mb-1">Última consulta</p>
                         <p className="text-card-foreground text-sm font-medium">
-                          {patient.lastVisit || "Sem consultas"}
+                          {patient.lastVisit || 'Sem consultas'}
                         </p>
                       </div>
                       <div>
-                        <p className="text-gray2 text-xs mb-1">
-                          Último pedido de ajuda
-                        </p>
+                        <p className="text-gray2 text-xs mb-1">Último pedido de ajuda</p>
                         <p className="text-card-foreground text-sm font-medium">
-                          {patient.lastHelp || "Nenhum pedido"}
+                          {patient.lastHelp || 'Nenhum pedido'}
                         </p>
                       </div>
                     </div>
@@ -510,9 +482,7 @@ export default function PatientsPage() {
                     <div className="flex items-center justify-between pt-3 border-t border-card-border">
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-success rounded-full" />
-                        <span className="text-success text-xs font-medium">
-                          Conectado
-                        </span>
+                        <span className="text-success text-xs font-medium">Conectado</span>
                       </div>
 
                       <Button

@@ -1,7 +1,7 @@
-import type React from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/forms/button";
-import image from "@/lib/images/error.png";
+import type React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/forms/button';
+import image from '@/lib/images/error.png';
 
 /**
  * NotFound component shown when a route doesn't match.
@@ -21,7 +21,7 @@ export const NotFound: React.FC = () => {
         </p>
         <Button
           variant="orange"
-          onClick={() => navigate("/")}
+          onClick={() => navigate('/')}
           className="px-6 py-3 text-desc-titulo font-semibold shadow-md hover:shadow-lg transition-all duration-300 animate-fade-in"
         >
           Voltar para a página inicial

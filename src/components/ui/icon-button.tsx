@@ -1,4 +1,4 @@
-import type React from "react";
+import type React from 'react';
 
 interface TextIconButtonProps {
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -9,9 +9,9 @@ interface TextIconButtonProps {
 
 const TextIconButton: React.FC<TextIconButtonProps> = ({
   onClick,
-  className = "",
-  text = "",
-  icon = "",
+  className = '',
+  text = '',
+  icon = '',
 }) => {
   return (
     <button

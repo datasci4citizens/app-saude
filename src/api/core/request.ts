@@ -1,12 +1,12 @@
 /* enhanced request function with 401 retry logic */
-import { ApiError } from "./ApiError";
-import type { ApiRequestOptions } from "./ApiRequestOptions";
-import type { ApiResult } from "./ApiResult";
-import { CancelablePromise } from "./CancelablePromise";
-import type { OnCancel } from "./CancelablePromise";
-import type { OpenAPIConfig } from "./OpenAPI";
-import { AuthService } from "../services/AuthService";
-import type { TokenRefresh } from "../models/TokenRefresh";
+import { ApiError } from './ApiError';
+import type { ApiRequestOptions } from './ApiRequestOptions';
+import type { ApiResult } from './ApiResult';
+import { CancelablePromise } from './CancelablePromise';
+import type { OnCancel } from './CancelablePromise';
+import type { OpenAPIConfig } from './OpenAPI';
+import { AuthService } from '../services/AuthService';
+import type { TokenRefresh } from '../models/TokenRefresh';
 
 // Your existing utility functions remain the same
 export const isDefined = <T>(
@@ -16,21 +16,21 @@ export const isDefined = <T>(
 };
 
 export const isString = (value: any): value is string => {
-  return typeof value === "string";
+  return typeof value === 'string';
 };
 
 export const isStringWithValue = (value: any): value is string => {
-  return isString(value) && value !== "";
+  return isString(value) && value !== '';
 };
 
 export const isBlob = (value: any): value is Blob => {
   return (
-    typeof value === "object" &&
-    typeof value.type === "string" &&
-    typeof value.stream === "function" &&
-    typeof value.arrayBuffer === "function" &&
-    typeof value.constructor === "function" &&
-    typeof value.constructor.name === "string" &&
+    typeof value === 'object' &&
+    typeof value.type === 'string' &&
+    typeof value.stream === 'function' &&
+    typeof value.arrayBuffer === 'function' &&
+    typeof value.constructor === 'function' &&
+    typeof value.constructor.name === 'string' &&
     /^(Blob|File)$/.test(value.constructor.name) &&
     /^(Blob|File)$/.test(value[Symbol.toStringTag])
   );
@@ -45,7 +45,7 @@ export const base64 = (str: string): string => {
     return btoa(str);
   } catch (err) {
     // @ts-ignore
-    return Buffer.from(str).toString("base64");
+    return Buffer.from(str).toString('base64');
   }
 };
 
@@ -62,7 +62,7 @@ export const getQueryString = (params: Record<string, any>): string => {
         value.forEach((v) => {
           process(key, v);
         });
-      } else if (typeof value === "object") {
+      } else if (typeof value === 'object') {
         Object.entries(value).forEach(([k, v]) => {
           process(`${key}[${k}]`, v);
         });
@@ -77,17 +77,17 @@ export const getQueryString = (params: Record<string, any>): string => {
   });
 
   if (qs.length > 0) {
-    return `?${qs.join("&")}`;
+    return `?${qs.join('&')}`;
   }
 
-  return "";
+  return '';
 };
 
 const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
   const encoder = config.ENCODE_PATH || encodeURI;
 
   const path = options.url
-    .replace("{api-version}", config.VERSION)
+    .replace('{api-version}', config.VERSION)
     .replace(/{(.*?)}/g, (substring: string, group: string) => {
       if (options.path?.hasOwnProperty(group)) {
         return encoder(String(options.path[group]));
@@ -102,9 +102,7 @@ const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
   return url;
 };
 
-export const getFormData = (
-  options: ApiRequestOptions,
-): FormData | undefined => {
+export const getFormData = (options: ApiRequestOptions): FormData | undefined => {
   if (options.formData) {
     const formData = new FormData();
 
@@ -137,7 +135,7 @@ export const resolve = async <T>(
   options: ApiRequestOptions,
   resolver?: T | Resolver<T>,
 ): Promise<T | undefined> => {
-  if (typeof resolver === "function") {
+  if (typeof resolver === 'function') {
     return (resolver as Resolver<T>)(options);
   }
   return resolver;
@@ -155,7 +153,7 @@ export const getHeaders = async (
   ]);
 
   const headers = Object.entries({
-    Accept: "application/json",
+    Accept: 'application/json',
     ...additionalHeaders,
     ...options.headers,
   })
@@ -169,23 +167,23 @@ export const getHeaders = async (
     );
 
   if (isStringWithValue(token)) {
-    headers["Authorization"] = `Bearer ${token}`;
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
   if (isStringWithValue(username) && isStringWithValue(password)) {
     const credentials = base64(`${username}:${password}`);
-    headers["Authorization"] = `Basic ${credentials}`;
+    headers['Authorization'] = `Basic ${credentials}`;
   }
 
   if (options.body !== undefined) {
     if (options.mediaType) {
-      headers["Content-Type"] = options.mediaType;
+      headers['Content-Type'] = options.mediaType;
     } else if (isBlob(options.body)) {
-      headers["Content-Type"] = options.body.type || "application/octet-stream";
+      headers['Content-Type'] = options.body.type || 'application/octet-stream';
     } else if (isString(options.body)) {
-      headers["Content-Type"] = "text/plain";
+      headers['Content-Type'] = 'text/plain';
     } else if (!isFormData(options.body)) {
-      headers["Content-Type"] = "application/json";
+      headers['Content-Type'] = 'application/json';
     }
   }
 
@@ -194,13 +192,9 @@ export const getHeaders = async (
 
 export const getRequestBody = (options: ApiRequestOptions): any => {
   if (options.body !== undefined) {
-    if (options.mediaType?.includes("/json")) {
+    if (options.mediaType?.includes('/json')) {
       return JSON.stringify(options.body);
-    } else if (
-      isString(options.body) ||
-      isBlob(options.body) ||
-      isFormData(options.body)
-    ) {
+    } else if (isString(options.body) || isBlob(options.body) || isFormData(options.body)) {
       return options.body;
     } else {
       return JSON.stringify(options.body);
@@ -252,12 +246,10 @@ export const getResponseHeader = (
 export const getResponseBody = async (response: Response): Promise<any> => {
   if (response.status !== 204) {
     try {
-      const contentType = response.headers.get("Content-Type");
+      const contentType = response.headers.get('Content-Type');
       if (contentType) {
-        const jsonTypes = ["application/json", "application/problem+json"];
-        const isJSON = jsonTypes.some((type) =>
-          contentType.toLowerCase().startsWith(type),
-        );
+        const jsonTypes = ['application/json', 'application/problem+json'];
+        const isJSON = jsonTypes.some((type) => contentType.toLowerCase().startsWith(type));
         if (isJSON) {
           return await response.json();
         } else {
@@ -276,27 +268,27 @@ let isRefreshing = false;
 let refreshPromise: Promise<string> | null = null;
 
 async function refreshToken(): Promise<string> {
-  console.log("Iniciando refresh de token...");
-  const refresh = localStorage.getItem("refreshToken");
+  console.log('Iniciando refresh de token...');
+  const refresh = localStorage.getItem('refreshToken');
 
-  if (!refresh) throw new Error("Refresh token não encontrado");
+  if (!refresh) throw new Error('Refresh token não encontrado');
 
   const tokenRefresh: TokenRefresh = {
-    access: "",
+    access: '',
     refresh,
   };
 
-  console.log("Token de refresh:", tokenRefresh);
+  console.log('Token de refresh:', tokenRefresh);
 
-  localStorage.removeItem("accessToken");
+  localStorage.removeItem('accessToken');
 
   const response = await AuthService.authTokenRefreshCreate(tokenRefresh);
   if (!response || !response.access || !response.refresh) {
-    throw new Error("Erro ao obter novos tokens");
+    throw new Error('Erro ao obter novos tokens');
   }
 
-  localStorage.setItem("accessToken", response.access);
-  localStorage.setItem("refreshToken", response.refresh);
+  localStorage.setItem('accessToken', response.access);
+  localStorage.setItem('refreshToken', response.refresh);
 
   return response.access;
 }
@@ -310,25 +302,25 @@ export const catchErrorCodes = async (
   isRetry: boolean = false,
 ): Promise<ApiResult> => {
   const errors: Record<number, string> = {
-    400: "Bad Request",
-    401: "Unauthorized",
-    403: "Forbidden",
-    404: "Not Found",
-    500: "Internal Server Error",
-    502: "Bad Gateway",
-    503: "Service Unavailable",
+    400: 'Bad Request',
+    401: 'Unauthorized',
+    403: 'Forbidden',
+    404: 'Not Found',
+    500: 'Internal Server Error',
+    502: 'Bad Gateway',
+    503: 'Service Unavailable',
     ...options.errors,
   };
 
   // Handle 401 with token refresh and retry
-  const refresh = localStorage.getItem("refreshToken");
+  const refresh = localStorage.getItem('refreshToken');
   if (result.status === 401 && !isRetry && refresh) {
-    console.log("401 detectado, tentando refresh do token...");
+    console.log('401 detectado, tentando refresh do token...');
 
     try {
       // Prevent multiple simultaneous refresh attempts
       if (isRefreshing && refreshPromise) {
-        console.log("Refresh já em andamento, aguardando...");
+        console.log('Refresh já em andamento, aguardando...');
         await refreshPromise;
       } else if (!isRefreshing) {
         isRefreshing = true;
@@ -338,7 +330,7 @@ export const catchErrorCodes = async (
         refreshPromise = null;
       }
 
-      console.log("Token refreshed, tentando requisição novamente...");
+      console.log('Token refreshed, tentando requisição novamente...');
 
       // Retry the original request with new token
       const url = getUrl(config, options);
@@ -357,10 +349,7 @@ export const catchErrorCodes = async (
           onCancel,
         );
         const retryResponseBody = await getResponseBody(retryResponse);
-        const retryResponseHeader = getResponseHeader(
-          retryResponse,
-          options.responseHeader,
-        );
+        const retryResponseHeader = getResponseHeader(retryResponse, options.responseHeader);
 
         const retryResult: ApiResult = {
           url,
@@ -371,32 +360,22 @@ export const catchErrorCodes = async (
         };
 
         // Recursive call but with isRetry = true to prevent infinite loops
-        return await catchErrorCodes(
-          options,
-          retryResult,
-          config,
-          onCancel,
-          true,
-        );
+        return await catchErrorCodes(options, retryResult, config, onCancel, true);
       }
     } catch (refreshError) {
-      console.error("Erro no refresh do token:", refreshError);
+      console.error('Erro no refresh do token:', refreshError);
       isRefreshing = false;
       refreshPromise = null;
 
       // Clear tokens and potentially redirect to login
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
 
       // You might want to trigger a redirect to login page here
-      window.location.href = "/welcome";
+      window.location.href = '/welcome';
 
       console.log(refreshError);
-      throw new ApiError(
-        options,
-        result,
-        "Session expired - please login again",
-      );
+      throw new ApiError(options, result, 'Session expired - please login again');
     }
   }
 
@@ -407,8 +386,8 @@ export const catchErrorCodes = async (
   }
 
   if (!result.ok) {
-    const errorStatus = result.status ?? "unknown";
-    const errorStatusText = result.statusText ?? "unknown";
+    const errorStatus = result.status ?? 'unknown';
+    const errorStatusText = result.statusText ?? 'unknown';
     const errorBody = (() => {
       try {
         return JSON.stringify(result.body, null, 2);
@@ -446,20 +425,9 @@ export const request = <T>(
       const headers = await getHeaders(config, options);
 
       if (!onCancel.isCancelled) {
-        const response = await sendRequest(
-          config,
-          options,
-          url,
-          body,
-          formData,
-          headers,
-          onCancel,
-        );
+        const response = await sendRequest(config, options, url, body, formData, headers, onCancel);
         const responseBody = await getResponseBody(response);
-        const responseHeader = getResponseHeader(
-          response,
-          options.responseHeader,
-        );
+        const responseHeader = getResponseHeader(response, options.responseHeader);
 
         const result: ApiResult = {
           url,
@@ -470,12 +438,7 @@ export const request = <T>(
         };
 
         // Use enhanced error handling with retry logic
-        const finalResult = await catchErrorCodes(
-          options,
-          result,
-          config,
-          onCancel,
-        );
+        const finalResult = await catchErrorCodes(options, result, config, onCancel);
         resolve(finalResult.body);
       }
     } catch (error) {

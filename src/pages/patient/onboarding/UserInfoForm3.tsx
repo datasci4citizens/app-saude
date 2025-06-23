@@ -1,11 +1,11 @@
-import type React from "react";
-import { useState, useEffect } from "react";
-import { Button } from "@/components/forms/button";
-import { SelectField } from "@/components/forms/select_input";
-import type { ObservationCreate } from "@/api/models/ObservationCreate";
-import type { DrugExposureCreate } from "@/api/models/DrugExposureCreate";
-import { useHealthConcepts } from "@/utils/conceptLoader";
-import { MultiSelectCustom } from "@/components/forms/multi_select_custom";
+import type React from 'react';
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/forms/button';
+import { SelectField } from '@/components/forms/select_input';
+import type { ObservationCreate } from '@/api/models/ObservationCreate';
+import type { DrugExposureCreate } from '@/api/models/DrugExposureCreate';
+import { useHealthConcepts } from '@/utils/conceptLoader';
+import { MultiSelectCustom } from '@/components/forms/multi_select_custom';
 
 // Define form data interface (user-friendly structure)
 // Todos sao conceptIds como String
@@ -56,9 +56,9 @@ export function UserInfoForm3({
   } = useHealthConcepts();
 
   const [formData, setFormData] = useState<FormData>({
-    sleepHealth: "",
-    physicalExercise: "",
-    eatingHabits: "",
+    sleepHealth: '',
+    physicalExercise: '',
+    eatingHabits: '',
     comorbidities: [],
     medications: [],
     substanceUse: [],
@@ -67,9 +67,7 @@ export function UserInfoForm3({
   const [errors, setErrors] = useState<FormErrors>({});
 
   // Handle input change
-  const handleChange: React.ChangeEventHandler<
-    HTMLInputElement | HTMLSelectElement
-  > = (e) => {
+  const handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
     const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
     setFormData({ ...formData, [name]: value });
 
@@ -83,21 +81,18 @@ export function UserInfoForm3({
     const newErrors: FormErrors = {};
 
     // Required fields
-    if (!formData.sleepHealth)
-      newErrors.sleepHealth = "Saúde de sono é obrigatório";
-    if (!formData.physicalExercise)
-      newErrors.physicalExercise = "Exercícios físicos é obrigatório";
-    if (!formData.eatingHabits)
-      newErrors.eatingHabits = "Hábitos alimentares é obrigatório";
+    if (!formData.sleepHealth) newErrors.sleepHealth = 'Saúde de sono é obrigatório';
+    if (!formData.physicalExercise) newErrors.physicalExercise = 'Exercícios físicos é obrigatório';
+    if (!formData.eatingHabits) newErrors.eatingHabits = 'Hábitos alimentares é obrigatório';
 
     return newErrors;
   };
 
   // Transform form data into properly structured API objects
   const transformFormData = (): SubmissionData => {
-    const now = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+    const now = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
-    console.log("Form data before transformation:", formData);
+    console.log('Form data before transformation:', formData);
 
     // Create observations
     const observations: ObservationCreate[] = [
@@ -161,7 +156,7 @@ export function UserInfoForm3({
       })),
     ];
 
-    console.log("Transformed data for submission:", {
+    console.log('Transformed data for submission:', {
       observations,
       drugExposures,
     });

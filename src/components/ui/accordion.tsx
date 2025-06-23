@@ -1,11 +1,7 @@
-import { cn } from "@/lib/utils";
-import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { ChevronDown } from "lucide-react";
-import {
-  type ComponentPropsWithoutRef,
-  type ElementRef,
-  forwardRef,
-} from "react";
+import { cn } from '@/lib/utils';
+import * as AccordionPrimitive from '@radix-ui/react-accordion';
+import { ChevronDown } from 'lucide-react';
+import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react';
 
 const Accordion = AccordionPrimitive.Root;
 
@@ -13,13 +9,9 @@ const AccordionItem = forwardRef<
   ElementRef<typeof AccordionPrimitive.Item>,
   ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
 >(({ className, ...props }, ref) => (
-  <AccordionPrimitive.Item
-    ref={ref}
-    className={cn("border-b", className)}
-    {...props}
-  />
+  <AccordionPrimitive.Item ref={ref} className={cn('border-b', className)} {...props} />
 ));
-AccordionItem.displayName = "AccordionItem";
+AccordionItem.displayName = 'AccordionItem';
 
 const AccordionTrigger = forwardRef<
   ElementRef<typeof AccordionPrimitive.Trigger>,
@@ -29,7 +21,7 @@ const AccordionTrigger = forwardRef<
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(
-        "flex flex-1 items-center justify-between py-4 text-desc-titulo text-typography font-inter transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
+        'flex flex-1 items-center justify-between py-4 text-desc-titulo text-typography font-inter transition-all hover:underline [&[data-state=open]>svg]:rotate-180',
         className,
       )}
       {...props}
@@ -48,12 +40,12 @@ const AccordionContent = forwardRef<
   <AccordionPrimitive.Content
     ref={ref}
     className={cn(
-      "overflow-hidden text-desc-titulo text-gray2 font-inter transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down",
+      'overflow-hidden text-desc-titulo text-gray2 font-inter transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down',
       className,
     )}
     {...props}
   >
-    <div className={cn("pt-0 pb-4", className)}>{children}</div>
+    <div className={cn('pt-0 pb-4', className)}>{children}</div>
   </AccordionPrimitive.Content>
 ));
 

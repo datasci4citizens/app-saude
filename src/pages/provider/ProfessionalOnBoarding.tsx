@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { ProfessionalInfoForm } from "@/pages/provider/ProfessionalInfoForm";
-import { useNavigate } from "react-router-dom";
-import Header from "@/components/ui/header";
-import useSWRMutation from "swr/mutation";
-import type { FullProviderCreate } from "@/api/models/FullProviderCreate";
-import { ApiService, type ProviderCreate } from "@/api";
-import { FullProviderService } from "@/api/services/FullProviderService";
-import { SuccessMessage } from "@/components/ui/success-message";
-import { ErrorMessage } from "@/components/ui/error-message";
+import { useState } from 'react';
+import { ProfessionalInfoForm } from '@/pages/provider/ProfessionalInfoForm';
+import { useNavigate } from 'react-router-dom';
+import Header from '@/components/ui/header';
+import useSWRMutation from 'swr/mutation';
+import type { FullProviderCreate } from '@/api/models/FullProviderCreate';
+import { ApiService, type ProviderCreate } from '@/api';
+import { FullProviderService } from '@/api/services/FullProviderService';
+import { SuccessMessage } from '@/components/ui/success-message';
+import { ErrorMessage } from '@/components/ui/error-message';
 
 // Define the provider data type with proper backend field naming (snake_case)
 interface ProviderData {
@@ -27,12 +27,12 @@ export default function ProfessionalOnboarding() {
 
   // Setup SWR mutation
   const { trigger, isMutating } = useSWRMutation(
-    "fullProviderOnboarding",
+    'fullProviderOnboarding',
     async (_key, { arg }: { arg: ProviderCreate }) => {
       const fullData: FullProviderCreate = {
         provider: arg,
       };
-      console.log("Submitting full provider data:", fullData);
+      console.log('Submitting full provider data:', fullData);
       return FullProviderService.apiFullProviderCreate(fullData);
     },
   );
@@ -43,7 +43,7 @@ export default function ProfessionalOnboarding() {
 
   // Handle form submission
   const handleFormSubmit = async (data: ProviderData) => {
-    console.log("Professional data submitted:", data);
+    console.log('Professional data submitted:', data);
 
     // Clear previous states
     setError(null);
@@ -54,26 +54,22 @@ export default function ProfessionalOnboarding() {
     const fetchUserEntity = async () => {
       try {
         const result = await ApiService.apiUserEntityRetrieve();
-        console.log("User entity result:", result);
+        console.log('User entity result:', result);
 
         if (result.person_id) {
-          setSuccess(
-            `Cadastro realizado com sucesso! Seu Person ID é: ${result.person_id}`,
-          );
+          setSuccess(`Cadastro realizado com sucesso! Seu Person ID é: ${result.person_id}`);
         } else if (result.provider_id) {
-          setSuccess(
-            `Cadastro realizado com sucesso! Seu Provider ID é: ${result.provider_id}`,
-          );
+          setSuccess(`Cadastro realizado com sucesso! Seu Provider ID é: ${result.provider_id}`);
         } else {
-          setSuccess("Cadastro realizado com sucesso!");
+          setSuccess('Cadastro realizado com sucesso!');
         }
 
         // Wait to show success message, then navigate
         await new Promise((resolve) => setTimeout(resolve, 3000));
-        navigate("/acs-main-page");
+        navigate('/acs-main-page');
       } catch (err) {
-        console.error("Erro ao buscar entidade do usuário:", err);
-        setError("Erro ao buscar informações do usuário após o cadastro.");
+        console.error('Erro ao buscar entidade do usuário:', err);
+        setError('Erro ao buscar informações do usuário após o cadastro.');
       }
     };
 
@@ -85,18 +81,16 @@ export default function ProfessionalOnboarding() {
         professional_registration: data.professional_registration ?? undefined,
         specialty_concept: data.specialty_concept,
         care_site: null,
-        profile_picture: localStorage.getItem("profileImage") || "",
+        profile_picture: localStorage.getItem('profileImage') || '',
       };
 
       // Pass the data directly to trigger
       const result = await trigger(providerData);
-      console.log("Submission result:", result);
+      console.log('Submission result:', result);
       await fetchUserEntity();
     } catch (err) {
-      console.error("Registration error:", err);
-      setError(
-        "Erro ao realizar cadastro profissional. Verifique os dados e tente novamente.",
-      );
+      console.error('Registration error:', err);
+      setError('Erro ao realizar cadastro profissional. Verifique os dados e tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
@@ -104,21 +98,15 @@ export default function ProfessionalOnboarding() {
 
   // Handle back button click
   const handleBackClick = (): void => {
-    navigate("/welcome"); // Go back to previous page
+    navigate('/welcome'); // Go back to previous page
   };
 
   return (
-    <div
-      className="h-full bg-homebg overflow-y-auto"
-      style={{ height: "100vh" }}
-    >
+    <div className="h-full bg-homebg overflow-y-auto" style={{ height: '100vh' }}>
       <div className="max-w-md mx-auto">
         {/* Header */}
         <div className="px-8 pt-9">
-          <Header
-            title="Preencha informações profissionais"
-            onBackClick={handleBackClick}
-          />
+          <Header title="Preencha informações profissionais" onBackClick={handleBackClick} />
         </div>
 
         <div className="pl-9 pr-9">
@@ -156,7 +144,7 @@ export default function ProfessionalOnboarding() {
                 Redirecionando para a página principal...
               </p>
               <button
-                onClick={() => navigate("/acs-main-page")}
+                onClick={() => navigate('/acs-main-page')}
                 className="px-6 py-2 bg-selected hover:bg-selected/80 rounded-full text-accent2 font-medium transition-colors"
               >
                 Ir para página principal

@@ -1,5 +1,5 @@
-import type React from "react";
-import { useEffect, useState } from "react";
+import type React from 'react';
+import { useEffect, useState } from 'react';
 
 // TypeScript interface for props
 interface ItemType {
@@ -13,10 +13,7 @@ interface InterestsSelectorProps {
   onSelectionChange?: (selectedItems: (string | number)[]) => void;
 }
 
-const InterestsSelector: React.FC<InterestsSelectorProps> = ({
-  items,
-  onSelectionChange,
-}) => {
+const InterestsSelector: React.FC<InterestsSelectorProps> = ({ items, onSelectionChange }) => {
   const [columnCount, setColumnCount] = useState(4);
   const [selectedItems, setSelectedItems] = useState<(string | number)[]>([]);
 
@@ -34,9 +31,9 @@ const InterestsSelector: React.FC<InterestsSelectorProps> = ({
     };
 
     handleResize();
-    window.addEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -75,23 +72,16 @@ const InterestsSelector: React.FC<InterestsSelectorProps> = ({
     <div className="w-full overflow-x-auto">
       <div className="flex w-full gap-3">
         {columns.map((column, columnIndex) => (
-          <div
-            key={`col-${columnIndex}-${column.length}`}
-            className="flex flex-col w-full gap-3"
-          >
+          <div key={`col-${columnIndex}-${column.length}`} className="flex flex-col w-full gap-3">
             {column.map((item) => (
               <div
                 key={item.id}
                 className={`relative rounded-xl overflow-hidden cursor-pointer transition-all duration-300 ${
-                  selectedItems.includes(item.id)
-                    ? "ring-4 ring-offset-2 ring-selection"
-                    : ""
+                  selectedItems.includes(item.id) ? 'ring-4 ring-offset-2 ring-selection' : ''
                 }`}
                 onClick={() => toggleItem(item.id)}
                 style={{
-                  height: `${
-                    Math.floor(Math.random() * (300 - 150 + 1)) + 150
-                  }px`,
+                  height: `${Math.floor(Math.random() * (300 - 150 + 1)) + 150}px`,
                 }}
               >
                 <div className="absolute inset-0 bg-black bg-opacity-40" />

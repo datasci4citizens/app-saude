@@ -1,6 +1,6 @@
-import type React from "react";
-import Header from "@/components/ui/header";
-import { FaTrash } from "react-icons/fa";
+import type React from 'react';
+import Header from '@/components/ui/header';
+import { FaTrash } from 'react-icons/fa';
 
 interface Reminder {
   title: string;
@@ -21,9 +21,7 @@ const ViewReminder: React.FC<ViewReminderProps> = ({ reminder, onDelete }) => {
 
       {/* Reminder Details */}
       <div className="p-4 rounded-lg bg-offwhite mb-6 shadow-sm">
-        <h2 className="text-2xl font-bold mb-3 text-typography">
-          {reminder.title}
-        </h2>
+        <h2 className="text-2xl font-bold mb-3 text-typography">{reminder.title}</h2>
         <p className="text-base mb-3 text-typography">
           <strong>Observação:</strong> {reminder.observation}
         </p>

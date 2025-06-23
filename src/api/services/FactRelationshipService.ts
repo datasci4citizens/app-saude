@@ -2,24 +2,22 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { FactRelationshipCreate } from "../models/FactRelationshipCreate";
-import type { FactRelationshipRetrieve } from "../models/FactRelationshipRetrieve";
-import type { FactRelationshipUpdate } from "../models/FactRelationshipUpdate";
-import type { PatchedFactRelationshipUpdate } from "../models/PatchedFactRelationshipUpdate";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { FactRelationshipCreate } from '../models/FactRelationshipCreate';
+import type { FactRelationshipRetrieve } from '../models/FactRelationshipRetrieve';
+import type { FactRelationshipUpdate } from '../models/FactRelationshipUpdate';
+import type { PatchedFactRelationshipUpdate } from '../models/PatchedFactRelationshipUpdate';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class FactRelationshipService {
   /**
    * @returns FactRelationshipRetrieve
    * @throws ApiError
    */
-  public static apiFactRelationshipList(): CancelablePromise<
-    Array<FactRelationshipRetrieve>
-  > {
+  public static apiFactRelationshipList(): CancelablePromise<Array<FactRelationshipRetrieve>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/fact-relationship/",
+      method: 'GET',
+      url: '/api/fact-relationship/',
     });
   }
   /**
@@ -31,10 +29,10 @@ export class FactRelationshipService {
     requestBody: FactRelationshipCreate,
   ): CancelablePromise<FactRelationshipCreate> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/fact-relationship/",
+      method: 'POST',
+      url: '/api/fact-relationship/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -46,8 +44,8 @@ export class FactRelationshipService {
     id: number,
   ): CancelablePromise<FactRelationshipRetrieve> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/fact-relationship/{id}/",
+      method: 'GET',
+      url: '/api/fact-relationship/{id}/',
       path: {
         id: id,
       },
@@ -64,13 +62,13 @@ export class FactRelationshipService {
     requestBody: FactRelationshipUpdate,
   ): CancelablePromise<FactRelationshipUpdate> {
     return __request(OpenAPI, {
-      method: "PUT",
-      url: "/api/fact-relationship/{id}/",
+      method: 'PUT',
+      url: '/api/fact-relationship/{id}/',
       path: {
         id: id,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -84,13 +82,13 @@ export class FactRelationshipService {
     requestBody?: PatchedFactRelationshipUpdate,
   ): CancelablePromise<FactRelationshipUpdate> {
     return __request(OpenAPI, {
-      method: "PATCH",
-      url: "/api/fact-relationship/{id}/",
+      method: 'PATCH',
+      url: '/api/fact-relationship/{id}/',
       path: {
         id: id,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -98,12 +96,10 @@ export class FactRelationshipService {
    * @returns void
    * @throws ApiError
    */
-  public static apiFactRelationshipDestroy(
-    id: number,
-  ): CancelablePromise<void> {
+  public static apiFactRelationshipDestroy(id: number): CancelablePromise<void> {
     return __request(OpenAPI, {
-      method: "DELETE",
-      url: "/api/fact-relationship/{id}/",
+      method: 'DELETE',
+      url: '/api/fact-relationship/{id}/',
       path: {
         id: id,
       },

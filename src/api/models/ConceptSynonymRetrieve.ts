@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type ConceptSynonymRetrieve = {
-  readonly id: number;
+  readonly concept_synonym_id: number;
   readonly created_at: string;
   readonly updated_at: string;
   concept_synonym_name?: string | null;

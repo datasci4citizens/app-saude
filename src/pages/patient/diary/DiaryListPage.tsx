@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   ChevronRight,
   PlusCircle,
@@ -9,12 +9,12 @@ import {
   AlertTriangle,
   Share2,
   Clock,
-} from "lucide-react";
-import { DiaryService } from "@/api";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
-import Header from "@/components/ui/header";
-import { Button } from "@/components/forms/button";
-import { TypeEnum } from "@/api/models/TypeEnum";
+} from 'lucide-react';
+import { DiaryService } from '@/api';
+import BottomNavigationBar from '@/components/ui/navigator-bar';
+import Header from '@/components/ui/header';
+import { Button } from '@/components/forms/button';
+import { TypeEnum } from '@/api/models/TypeEnum';
 
 // Interfaces atualizadas para a nova estrutura
 interface DiaryEntry {
@@ -61,7 +61,7 @@ export default function ImprovedDiaryListPage() {
         setError(null);
 
         const response = await DiaryService.personDiariesList();
-        console.log("API response:", response);
+        console.log('API response:', response);
 
         if (Array.isArray(response)) {
           // Transform API response to match new structure
@@ -69,12 +69,12 @@ export default function ImprovedDiaryListPage() {
             const typedItem = item as Record<string, unknown>;
             // Handle case where response might be ApiDiaryRetrieve or already processed
             if (
-              typeof typedItem.entries === "string" ||
-              typeof typedItem.interest_areas === "string"
+              typeof typedItem.entries === 'string' ||
+              typeof typedItem.interest_areas === 'string'
             ) {
               // This is an ApiDiaryRetrieve - parse the JSON strings
               const entries =
-                typeof typedItem.entries === "string"
+                typeof typedItem.entries === 'string'
                   ? typedItem.entries.trim()
                     ? JSON.parse(typedItem.entries)
                     : []
@@ -83,7 +83,7 @@ export default function ImprovedDiaryListPage() {
                     : [];
 
               const interest_areas =
-                typeof typedItem.interest_areas === "string"
+                typeof typedItem.interest_areas === 'string'
                   ? typedItem.interest_areas.trim()
                     ? JSON.parse(typedItem.interest_areas)
                     : []
@@ -96,9 +96,7 @@ export default function ImprovedDiaryListPage() {
                 date: (typedItem.date as string) || new Date().toISOString(),
                 diary_shared: (typedItem.diary_shared as boolean) || false,
                 entries: Array.isArray(entries) ? entries : [],
-                interest_areas: Array.isArray(interest_areas)
-                  ? interest_areas
-                  : [],
+                interest_areas: Array.isArray(interest_areas) ? interest_areas : [],
               };
             }
 
@@ -109,36 +107,33 @@ export default function ImprovedDiaryListPage() {
               diary_shared: (typedItem.diary_shared as boolean) || false,
               entries: Array.isArray(typedItem.entries)
                 ? typedItem.entries
-                : typeof typedItem.entries === "string" &&
-                    typedItem.entries.trim() !== ""
-                  ? [{ text: typedItem.entries, text_shared: false }]
+                : typeof typedItem.entries === 'string' && typedItem.entries.trim() !== ''
+                  ? [
+                      {
+                        text: typedItem.entries,
+                        text_shared: false,
+                      },
+                    ]
                   : [],
               interest_areas: Array.isArray(typedItem.interest_areas)
                 ? (typedItem.interest_areas as Record<string, unknown>[]).map(
                     (area: Record<string, unknown>) => ({
                       interest_area_id: (area.interest_area_id as number) || 0,
-                      name:
-                        (area.interest_name as string) ||
-                        (area.name as string) ||
-                        "Interesse",
-                      is_attention_point:
-                        (area.is_attention_point as boolean) || false,
-                      shared_with_provider:
-                        (area.shared_with_provider as boolean) || false,
+                      name: (area.interest_name as string) || (area.name as string) || 'Interesse',
+                      is_attention_point: (area.is_attention_point as boolean) || false,
+                      shared_with_provider: (area.shared_with_provider as boolean) || false,
                       provider_name: (area.provider_name as string) || null,
                       triggers: Array.isArray(area.triggers)
                         ? (area.triggers as Record<string, unknown>[]).map(
                             (trigger: Record<string, unknown>) => ({
                               trigger_id: (trigger.trigger_id as number) || 0,
                               name:
-                                (trigger.trigger_name as string) ||
-                                (trigger.name as string) ||
-                                "",
+                                (trigger.trigger_name as string) || (trigger.name as string) || '',
                               type: (trigger.type as TypeEnum) || TypeEnum.TEXT,
                               response:
                                 (trigger.value_as_string as string) ||
                                 (trigger.response as string) ||
-                                "",
+                                '',
                             }),
                           )
                         : [],
@@ -149,13 +144,13 @@ export default function ImprovedDiaryListPage() {
           }) as LocalDiaryRetrieve[];
           setDiaries(mapped);
         } else {
-          console.error("Unexpected API response format:", response);
-          setError("Formato de resposta inesperado da API");
+          console.error('Unexpected API response format:', response);
+          setError('Formato de resposta inesperado da API');
           setDiaries([]);
         }
       } catch (_error) {
-        console.error("Error fetching diaries:", _error);
-        setError("Erro ao carregar diários");
+        console.error('Error fetching diaries:', _error);
+        setError('Erro ao carregar diários');
         setDiaries([]);
       } finally {
         setIsLoading(false);
@@ -166,7 +161,7 @@ export default function ImprovedDiaryListPage() {
   }, []);
 
   const handleCreateDiary = () => {
-    navigate("/diary/new");
+    navigate('/diary/new');
   };
 
   const handleViewDiary = (id: number) => {
@@ -177,37 +172,31 @@ export default function ImprovedDiaryListPage() {
   const formatDate = (dateString: string): string => {
     try {
       const date = new Date(dateString);
-      const day = String(date.getDate()).padStart(2, "0");
-      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
       return `${day}/${month}`;
     } catch (_error) {
-      console.warn("Failed to parse date:", dateString);
-      return "Data inválida";
+      console.warn('Failed to parse date:', dateString);
+      return 'Data inválida';
     }
   };
 
   // Get comprehensive diary statistics
   const getDiaryStats = (diary: LocalDiaryRetrieve) => {
-    const hasTextEntry = diary.entries?.some(
-      (e) => e.text && e.text.trim() !== "",
-    );
+    const hasTextEntry = diary.entries?.some((e) => e.text && e.text.trim() !== '');
     const sharedTextEntry = diary.entries?.some((e) => e.text_shared);
 
     const interestStats = diary.interest_areas?.reduce(
       (acc, area) => {
         const answeredTriggers =
-          area.triggers?.filter(
-            (t) => t.response && t.response.trim() !== "",
-          ) || [];
+          area.triggers?.filter((t) => t.response && t.response.trim() !== '') || [];
 
         return {
           totalInterests: acc.totalInterests + 1,
           answeredTriggers: acc.answeredTriggers + answeredTriggers.length,
           totalTriggers: acc.totalTriggers + (area.triggers?.length || 0),
-          attentionPoints:
-            acc.attentionPoints + (area.is_attention_point ? 1 : 0),
-          sharedInterests:
-            acc.sharedInterests + (area.shared_with_provider ? 1 : 0),
+          attentionPoints: acc.attentionPoints + (area.is_attention_point ? 1 : 0),
+          sharedInterests: acc.sharedInterests + (area.shared_with_provider ? 1 : 0),
         };
       },
       {
@@ -241,14 +230,8 @@ export default function ImprovedDiaryListPage() {
   // Get diary summary with improved logic
   const getDiarySummary = (diary: LocalDiaryRetrieve): string => {
     // First, try to get text from entries
-    if (
-      diary.entries &&
-      Array.isArray(diary.entries) &&
-      diary.entries.length > 0
-    ) {
-      const textEntry = diary.entries.find(
-        (e) => e.text && e.text.trim() !== "",
-      );
+    if (diary.entries && Array.isArray(diary.entries) && diary.entries.length > 0) {
+      const textEntry = diary.entries.find((e) => e.text && e.text.trim() !== '');
       if (textEntry?.text) {
         return textEntry.text.length > 100
           ? `${textEntry.text.substring(0, 100)}...`
@@ -261,7 +244,7 @@ export default function ImprovedDiaryListPage() {
       for (const area of diary.interest_areas) {
         if (area.triggers && Array.isArray(area.triggers)) {
           for (const trigger of area.triggers) {
-            if (trigger.response && trigger.response.trim() !== "") {
+            if (trigger.response && trigger.response.trim() !== '') {
               const preview =
                 trigger.response.length > 60
                   ? `${trigger.response.substring(0, 60)}...`
@@ -273,19 +256,19 @@ export default function ImprovedDiaryListPage() {
       }
     }
 
-    return "Diário sem conteúdo de texto";
+    return 'Diário sem conteúdo de texto';
   };
 
   // Get time from date string
   const getTimeFromDate = (dateString: string): string => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
+      return date.toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
       });
     } catch (_error) {
-      return "";
+      return '';
     }
   };
 
@@ -304,30 +287,30 @@ export default function ImprovedDiaryListPage() {
 
   // Get active navigation item
   const getActiveNavId = () => {
-    if (location.pathname.startsWith("/user-main-page")) return "home";
-    if (location.pathname.startsWith("/reminders")) return "meds";
-    if (location.pathname.startsWith("/diary")) return "diary";
-    if (location.pathname.startsWith("/emergency-user")) return "emergency";
-    if (location.pathname.startsWith("/profile")) return "profile";
+    if (location.pathname.startsWith('/user-main-page')) return 'home';
+    if (location.pathname.startsWith('/reminders')) return 'meds';
+    if (location.pathname.startsWith('/diary')) return 'diary';
+    if (location.pathname.startsWith('/emergency-user')) return 'emergency';
+    if (location.pathname.startsWith('/profile')) return 'profile';
     return null;
   };
 
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
-      case "home":
-        navigate("/user-main-page");
+      case 'home':
+        navigate('/user-main-page');
         break;
-      case "meds":
-        navigate("/reminders");
+      case 'meds':
+        navigate('/reminders');
         break;
-      case "diary":
-        navigate("/diary");
+      case 'diary':
+        navigate('/diary');
         break;
-      case "emergency":
-        navigate("/emergency-user");
+      case 'emergency':
+        navigate('/emergency-user');
         break;
-      case "profile":
-        navigate("/profile");
+      case 'profile':
+        navigate('/profile');
         break;
     }
   };
@@ -344,9 +327,7 @@ export default function ImprovedDiaryListPage() {
 
         <div className="flex flex-col items-center justify-center h-64">
           <div className="text-6xl mb-4">⚠️</div>
-          <p className="text-center text-destructive mb-4 font-medium">
-            {error}
-          </p>
+          <p className="text-center text-destructive mb-4 font-medium">{error}</p>
           <Button onClick={() => window.location.reload()} variant="default">
             Tentar Novamente
           </Button>

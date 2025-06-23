@@ -1,11 +1,11 @@
-import type React from "react";
-import { useState } from "react";
-import type { PersonCreate } from "@/api/models/PersonCreate";
-import { Button } from "@/components/forms/button";
-import { DateField } from "@/components/forms/date_input";
-import { SelectField } from "@/components/forms/select_input";
-import { TextField } from "@/components/forms/text_input";
-import { useDemographicConcepts } from "@/utils/conceptLoader";
+import type React from 'react';
+import { useState } from 'react';
+import type { PersonCreate } from '@/api/models/PersonCreate';
+import { Button } from '@/components/forms/button';
+import { DateField } from '@/components/forms/date_input';
+import { SelectField } from '@/components/forms/select_input';
+import { TextField } from '@/components/forms/text_input';
+import { useDemographicConcepts } from '@/utils/conceptLoader';
 
 // Define form data type that extends Person with form-specific fields
 interface UserFormData extends Partial<PersonCreate> {
@@ -43,28 +43,26 @@ export function UserInfoForm({
   } = useDemographicConcepts();
 
   const [formData, setFormData] = useState<UserFormData>({
-    social_name: "",
+    social_name: '',
     gender_concept: null,
     weight: null,
     height: null,
-    birth_datetime: "",
+    birth_datetime: '',
     race_concept: null,
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
 
   // Handle input change
-  const handleChange: React.ChangeEventHandler<
-    HTMLInputElement | HTMLSelectElement
-  > = (e) => {
+  const handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
     const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
 
     // Convert numeric fields to numbers
     if (
-      name === "gender_concept" ||
-      name === "race_concept" ||
-      name === "weight" ||
-      name === "height"
+      name === 'gender_concept' ||
+      name === 'race_concept' ||
+      name === 'weight' ||
+      name === 'height'
     ) {
       setFormData({ ...formData, [name]: value ? Number(value) : null });
     } else {
@@ -103,29 +101,27 @@ export function UserInfoForm({
     const newErrors: FormErrors = {};
 
     // Required fields - add as needed
-    if (formData.gender_concept === null)
-      newErrors.gender_concept = "Gênero é obrigatório";
-    if (formData.race_concept === null)
-      newErrors.race_concept = "Cor/Raça é obrigatório";
+    if (formData.gender_concept === null) newErrors.gender_concept = 'Gênero é obrigatório';
+    if (formData.race_concept === null) newErrors.race_concept = 'Cor/Raça é obrigatório';
 
     // Validate date format
     if (!formData.birth_datetime) {
-      newErrors.birth_datetime = "Data de nascimento é obrigatória";
+      newErrors.birth_datetime = 'Data de nascimento é obrigatória';
     } else {
       // Assuming UI still shows in DD/MM/YYYY but we store in YYYY-MM-DD
       const datePattern = /^\d{4}-\d{2}-\d{2}$/;
       if (!datePattern.test(formData.birth_datetime)) {
-        newErrors.birth_datetime = "Formato de data inválido";
+        newErrors.birth_datetime = 'Formato de data inválido';
       } else {
         // Check if it's a valid date
         const date = new Date(formData.birth_datetime);
         if (Number.isNaN(date.getTime())) {
-          newErrors.birth_datetime = "Data inválida";
+          newErrors.birth_datetime = 'Data inválida';
         } else {
           // Check if date is in future
           const today = new Date();
           if (date > today) {
-            newErrors.birth_datetime = "Data não pode ser no futuro";
+            newErrors.birth_datetime = 'Data não pode ser no futuro';
           }
         }
       }
@@ -133,11 +129,11 @@ export function UserInfoForm({
 
     // Validate weight and height if provided
     if (formData.weight !== null && formData.weight <= 0) {
-      newErrors.weight = "Peso deve ser maior que zero";
+      newErrors.weight = 'Peso deve ser maior que zero';
     }
 
     if (formData.height !== null && formData.height <= 0) {
-      newErrors.height = "Altura deve ser maior que zero";
+      newErrors.height = 'Altura deve ser maior que zero';
     }
 
     return newErrors;
@@ -174,7 +170,7 @@ export function UserInfoForm({
         id="social_name"
         name="social_name"
         label="Nome social (opcional)"
-        value={formData.social_name || ""}
+        value={formData.social_name || ''}
         onChange={handleChange}
         placeholder="Como prefere ser chamado(a)"
         helperText="Apenas para caso de uso interno, não compartilharemos com terceiros"
@@ -185,11 +181,7 @@ export function UserInfoForm({
         id="gender_concept"
         name="gender_concept"
         label="Gênero"
-        value={
-          formData.gender_concept !== null
-            ? formData.gender_concept.toString()
-            : ""
-        }
+        value={formData.gender_concept !== null ? formData.gender_concept.toString() : ''}
         onChange={handleChange}
         options={genderOptions}
         error={errors.gender_concept}
@@ -202,7 +194,7 @@ export function UserInfoForm({
           name="weight"
           type="number"
           label="Peso (kg)"
-          value={formData.weight !== null ? formData.weight.toString() : ""}
+          value={formData.weight !== null ? formData.weight.toString() : ''}
           onChange={handleChange}
           error={errors.weight}
         />
@@ -212,7 +204,7 @@ export function UserInfoForm({
           name="height"
           type="number"
           label="Altura (cm)"
-          value={formData.height !== null ? formData.height.toString() : ""}
+          value={formData.height !== null ? formData.height.toString() : ''}
           onChange={handleChange}
           error={errors.height}
         />
@@ -222,7 +214,7 @@ export function UserInfoForm({
         id="birth_datetime"
         name="birth_datetime"
         label="Data de nascimento"
-        value={formData.birth_datetime || ""}
+        value={formData.birth_datetime || ''}
         onChange={handleDateChange}
         error={errors.birth_datetime}
       />
@@ -231,9 +223,7 @@ export function UserInfoForm({
         id="race_concept"
         name="race_concept"
         label="Cor/Raça"
-        value={
-          formData.race_concept !== null ? formData.race_concept.toString() : ""
-        }
+        value={formData.race_concept !== null ? formData.race_concept.toString() : ''}
         onChange={handleChange}
         options={raceOptions}
         error={errors.race_concept}

@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Header from "@/components/ui/header";
-import { Button } from "@/components/forms/button";
-import { TextField } from "@/components/forms/text_input";
-import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderService";
-import { ApiService } from "@/api/services/ApiService";
-import { SuccessMessage } from "@/components/ui/success-message";
-import { ErrorMessage } from "@/components/ui/error-message";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
-import type { PersonLinkProviderRequest } from "@/api/models/PersonLinkProviderRequest";
-import type { ProviderRetrieve } from "@/api/models/ProviderRetrieve";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Header from '@/components/ui/header';
+import { Button } from '@/components/forms/button';
+import { TextField } from '@/components/forms/text_input';
+import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
+import { ApiService } from '@/api/services/ApiService';
+import { SuccessMessage } from '@/components/ui/success-message';
+import { ErrorMessage } from '@/components/ui/error-message';
+import BottomNavigationBar from '@/components/ui/navigator-bar';
+import type { PersonLinkProviderRequest } from '@/api/models/PersonLinkProviderRequest';
+import type { ProviderRetrieve } from '@/api/models/ProviderRetrieve';
 
 interface Provider {
   provider_id: number;
@@ -39,16 +39,12 @@ export default function ManageProfessionalsPage() {
 
   // Add Professional Dialog states
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [providerCode, setProviderCode] = useState("");
+  const [providerCode, setProviderCode] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [isLinking, setIsLinking] = useState(false);
-  const [foundProvider, setFoundProvider] = useState<ProviderRetrieve | null>(
-    null,
-  );
+  const [foundProvider, setFoundProvider] = useState<ProviderRetrieve | null>(null);
   const [addError, setAddError] = useState<string | null>(null);
-  const [dialogStep, setDialogStep] = useState<"input" | "confirm" | "success">(
-    "input",
-  );
+  const [dialogStep, setDialogStep] = useState<'input' | 'confirm' | 'success'>('input');
 
   useEffect(() => {
     fetchData();
@@ -67,8 +63,8 @@ export default function ManageProfessionalsPage() {
       const result = await LinkPersonProviderService.personProvidersList();
       setProviders(result || []);
     } catch (err) {
-      console.error("Error fetching data:", err);
-      setError("Não foi possível carregar os profissionais vinculados.");
+      console.error('Error fetching data:', err);
+      setError('Não foi possível carregar os profissionais vinculados.');
     } finally {
       setLoading(false);
     }
@@ -77,16 +73,16 @@ export default function ManageProfessionalsPage() {
   // Add Professional Dialog Functions
   const openAddDialog = () => {
     setShowAddDialog(true);
-    setDialogStep("input");
-    setProviderCode("");
+    setDialogStep('input');
+    setProviderCode('');
     setFoundProvider(null);
     setAddError(null);
   };
 
   const closeAddDialog = () => {
     setShowAddDialog(false);
-    setDialogStep("input");
-    setProviderCode("");
+    setDialogStep('input');
+    setProviderCode('');
     setFoundProvider(null);
     setAddError(null);
     setIsSearching(false);
@@ -95,7 +91,7 @@ export default function ManageProfessionalsPage() {
 
   const searchProvider = async () => {
     if (!providerCode || providerCode.length !== 6) {
-      setAddError("O código deve ter exatamente 6 dígitos");
+      setAddError('O código deve ter exatamente 6 dígitos');
       return;
     }
 
@@ -104,19 +100,18 @@ export default function ManageProfessionalsPage() {
 
     try {
       const request: PersonLinkProviderRequest = { code: providerCode };
-      const providerData =
-        await LinkPersonProviderService.providerByLinkCodeCreate(request);
+      const providerData = await LinkPersonProviderService.providerByLinkCodeCreate(request);
 
       // Format provider name
       const fullname = `${providerData.first_name} ${providerData.last_name}`;
       providerData.social_name = providerData.social_name || fullname;
 
       setFoundProvider(providerData);
-      setDialogStep("confirm");
+      setDialogStep('confirm');
     } catch (err) {
-      console.error("Error fetching provider:", err);
+      console.error('Error fetching provider:', err);
       setAddError(
-        "Código não encontrado. Verifique se digitou corretamente ou peça um novo código ao profissional.",
+        'Código não encontrado. Verifique se digitou corretamente ou peça um novo código ao profissional.',
       );
     } finally {
       setIsSearching(false);
@@ -130,38 +125,38 @@ export default function ManageProfessionalsPage() {
     setAddError(null);
 
     try {
-      const linkRequest: PersonLinkProviderRequest = { code: providerCode };
+      const linkRequest: PersonLinkProviderRequest = {
+        code: providerCode,
+      };
       await LinkPersonProviderService.personLinkCodeCreate(linkRequest);
 
-      setDialogStep("success");
+      setDialogStep('success');
 
       // Refresh the providers list
       setTimeout(() => {
         fetchData();
         closeAddDialog();
-        setSuccess(
-          `${getProviderName(foundProvider)} foi vinculado com sucesso!`,
-        );
+        setSuccess(`${getProviderName(foundProvider)} foi vinculado com sucesso!`);
       }, 1500);
     } catch (error) {
-      console.error("Error linking provider:", error);
-      setAddError("Erro ao vincular profissional. Tente novamente.");
+      console.error('Error linking provider:', error);
+      setAddError('Erro ao vincular profissional. Tente novamente.');
     } finally {
       setIsLinking(false);
     }
   };
 
   const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^A-Fa-f0-9]/g, "").slice(0, 6);
+    const value = e.target.value.replace(/[^A-Fa-f0-9]/g, '').slice(0, 6);
     setProviderCode(value);
     setAddError(null);
     setFoundProvider(null);
-    setDialogStep("input");
+    setDialogStep('input');
   };
 
   const handleUnlink = async (provider: Provider) => {
     if (!personId) {
-      setError("ID do usuário não encontrado. Tente recarregar a página.");
+      setError('ID do usuário não encontrado. Tente recarregar a página.');
       return;
     }
 
@@ -176,17 +171,12 @@ export default function ManageProfessionalsPage() {
     setError(null);
 
     try {
-      await LinkPersonProviderService.personProviderUnlinkCreate(
-        personId,
-        provider.provider_id,
-      );
+      await LinkPersonProviderService.personProviderUnlinkCreate(personId, provider.provider_id);
 
-      setProviders((prev) =>
-        prev.filter((p) => p.provider_id !== provider.provider_id),
-      );
+      setProviders((prev) => prev.filter((p) => p.provider_id !== provider.provider_id));
       setSuccess(`${providerName} foi desvinculado com sucesso.`);
     } catch (err) {
-      console.error("Error unlinking provider:", err);
+      console.error('Error unlinking provider:', err);
       setError(`Erro ao desvincular ${providerName}. Tente novamente.`);
     } finally {
       setUnlinkingId(null);
@@ -198,59 +188,59 @@ export default function ManageProfessionalsPage() {
       provider.social_name ||
       provider.full_name ||
       provider.name ||
-      `${provider.first_name || ""} ${provider.last_name || ""}`.trim() ||
-      "Profissional sem nome"
+      `${provider.first_name || ''} ${provider.last_name || ''}`.trim() ||
+      'Profissional sem nome'
     );
   };
 
   const getProviderInitials = (provider: Provider): string => {
     const name = getProviderName(provider);
     return name
-      .split(" ")
+      .split(' ')
       .map((word) => word.charAt(0))
-      .join("")
+      .join('')
       .substring(0, 2)
       .toUpperCase();
   };
 
   const formatDate = (dateString?: string): string => {
-    if (!dateString) return "";
+    if (!dateString) return '';
     try {
-      return new Date(dateString).toLocaleDateString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
+      return new Date(dateString).toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
       });
     } catch {
-      return "";
+      return '';
     }
   };
 
   const getActiveNavId = () => {
-    if (location.pathname.startsWith("/user-main-page")) return "home";
-    if (location.pathname.startsWith("/reminders")) return "meds";
-    if (location.pathname.startsWith("/diary")) return "diary";
-    if (location.pathname.startsWith("/emergency-user")) return "emergency";
-    if (location.pathname.startsWith("/profile")) return "profile";
+    if (location.pathname.startsWith('/user-main-page')) return 'home';
+    if (location.pathname.startsWith('/reminders')) return 'meds';
+    if (location.pathname.startsWith('/diary')) return 'diary';
+    if (location.pathname.startsWith('/emergency-user')) return 'emergency';
+    if (location.pathname.startsWith('/profile')) return 'profile';
     return null;
   };
 
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
-      case "home":
-        navigate("/user-main-page");
+      case 'home':
+        navigate('/user-main-page');
         break;
-      case "meds":
-        navigate("/reminders");
+      case 'meds':
+        navigate('/reminders');
         break;
-      case "diary":
-        navigate("/diary");
+      case 'diary':
+        navigate('/diary');
         break;
-      case "emergency":
-        navigate("/emergency-user");
+      case 'emergency':
+        navigate('/emergency-user');
         break;
-      case "profile":
-        navigate("/profile");
+      case 'profile':
+        navigate('/profile');
         break;
     }
   };
@@ -260,10 +250,7 @@ export default function ManageProfessionalsPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-homebg">
-      <Header
-        title="Gerenciar Profissionais"
-        subtitle="Visualize e gerencie suas conexões"
-      />
+      <Header title="Gerenciar Profissionais" subtitle="Visualize e gerencie suas conexões" />
 
       <div className="flex-1 px-4 py-6 bg-background rounded-t-3xl mt-4 relative z-10">
         {/* Messages */}
@@ -305,8 +292,8 @@ export default function ManageProfessionalsPage() {
               Nenhum profissional vinculado
             </h3>
             <p className="text-gray2 text-sm mb-6 max-w-sm">
-              Você ainda não possui profissionais de saúde vinculados. Adicione
-              um para começar a receber cuidados personalizados.
+              Você ainda não possui profissionais de saúde vinculados. Adicione um para começar a
+              receber cuidados personalizados.
             </p>
             <Button variant="orange" onClick={openAddDialog} className="px-8">
               <span className="mr-2">➕</span>
@@ -321,12 +308,9 @@ export default function ManageProfessionalsPage() {
             {/* Header with count and add button */}
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-typography font-semibold text-lg">
-                  Profissionais Vinculados
-                </h3>
+                <h3 className="text-typography font-semibold text-lg">Profissionais Vinculados</h3>
                 <p className="text-gray2 text-sm">
-                  {providers.length}{" "}
-                  {providers.length === 1 ? "profissional" : "profissionais"}{" "}
+                  {providers.length} {providers.length === 1 ? 'profissional' : 'profissionais'}{' '}
                   conectados
                 </p>
               </div>
@@ -383,20 +367,14 @@ export default function ManageProfessionalsPage() {
 
                       {provider.specialty && (
                         <div className="flex items-center gap-1 mb-1">
-                          <span className="text-xs text-gray2">
-                            Especialidade:
-                          </span>
-                          <span className="text-xs text-card-foreground">
-                            {provider.specialty}
-                          </span>
+                          <span className="text-xs text-gray2">Especialidade:</span>
+                          <span className="text-xs text-card-foreground">{provider.specialty}</span>
                         </div>
                       )}
 
                       {provider.created_at && (
                         <div className="flex items-center gap-1">
-                          <span className="text-xs text-gray2">
-                            Vinculado em:
-                          </span>
+                          <span className="text-xs text-gray2">Vinculado em:</span>
                           <span className="text-xs text-card-foreground">
                             {formatDate(provider.created_at)}
                           </span>
@@ -409,9 +387,7 @@ export default function ManageProfessionalsPage() {
                   <div className="flex items-center justify-between pt-3 border-t border-card-border">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-success rounded-full" />
-                      <span className="text-success text-xs font-medium">
-                        Conectado
-                      </span>
+                      <span className="text-success text-xs font-medium">Conectado</span>
                     </div>
 
                     <Button
@@ -443,13 +419,11 @@ export default function ManageProfessionalsPage() {
               <div className="flex items-start gap-3">
                 <span className="text-lg">💡</span>
                 <div>
-                  <h4 className="text-accent1 font-medium text-sm mb-1">
-                    Sobre a vinculação
-                  </h4>
+                  <h4 className="text-accent1 font-medium text-sm mb-1">Sobre a vinculação</h4>
                   <p className="text-accent1/80 text-xs leading-relaxed">
-                    Profissionais vinculados podem acessar seus dados do diário,
-                    receber pedidos de ajuda e enviar orientações
-                    personalizadas. Você pode desvincular a qualquer momento.
+                    Profissionais vinculados podem acessar seus dados do diário, receber pedidos de
+                    ajuda e enviar orientações personalizadas. Você pode desvincular a qualquer
+                    momento.
                   </p>
                 </div>
               </div>
@@ -465,9 +439,7 @@ export default function ManageProfessionalsPage() {
             {/* Dialog Header - FIXO */}
             <div className="flex-shrink-0 bg-background rounded-t-3xl border-b border-card-border p-6 pb-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-typography font-semibold text-lg">
-                  Adicionar Profissional
-                </h2>
+                <h2 className="text-typography font-semibold text-lg">Adicionar Profissional</h2>
                 <button
                   onClick={closeAddDialog}
                   className="w-8 h-8 rounded-full bg-gray2/10 flex items-center justify-center text-gray2 hover:bg-gray2/20 transition-colors"
@@ -481,39 +453,37 @@ export default function ManageProfessionalsPage() {
                 <div className="flex items-center space-x-2">
                   <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-300 ${
-                      dialogStep === "input"
-                        ? "bg-selection text-white"
-                        : "bg-selection text-white"
+                      dialogStep === 'input' ? 'bg-selection text-white' : 'bg-selection text-white'
                     }`}
                   >
                     1
                   </div>
                   <div
                     className={`w-12 h-1 rounded transition-all duration-300 ${
-                      dialogStep === "confirm" || dialogStep === "success"
-                        ? "bg-selection"
-                        : "bg-gray2/30"
+                      dialogStep === 'confirm' || dialogStep === 'success'
+                        ? 'bg-selection'
+                        : 'bg-gray2/30'
                     }`}
                   />
                   <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-300 ${
-                      dialogStep === "confirm" || dialogStep === "success"
-                        ? "bg-selection text-white"
-                        : "bg-gray2/30 text-gray2"
+                      dialogStep === 'confirm' || dialogStep === 'success'
+                        ? 'bg-selection text-white'
+                        : 'bg-gray2/30 text-gray2'
                     }`}
                   >
                     2
                   </div>
                   <div
                     className={`w-12 h-1 rounded transition-all duration-300 ${
-                      dialogStep === "success" ? "bg-selection" : "bg-gray2/30"
+                      dialogStep === 'success' ? 'bg-selection' : 'bg-gray2/30'
                     }`}
                   />
                   <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-300 ${
-                      dialogStep === "success"
-                        ? "bg-selection text-white"
-                        : "bg-gray2/30 text-gray2"
+                      dialogStep === 'success'
+                        ? 'bg-selection text-white'
+                        : 'bg-gray2/30 text-gray2'
                     }`}
                   >
                     3
@@ -535,7 +505,7 @@ export default function ManageProfessionalsPage() {
               )}
 
               {/* Step 1: Input Code */}
-              {dialogStep === "input" && (
+              {dialogStep === 'input' && (
                 <div className="space-y-6">
                   <div className="text-center">
                     <div className="w-16 h-16 bg-selection/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -579,8 +549,8 @@ export default function ManageProfessionalsPage() {
                           Como obter o código?
                         </h4>
                         <p className="text-accent1/80 text-xs leading-relaxed">
-                          Solicite ao profissional de saúde que compartilhe o
-                          código de vinculação de 6 dígitos.
+                          Solicite ao profissional de saúde que compartilhe o código de vinculação
+                          de 6 dígitos.
                         </p>
                       </div>
                     </div>
@@ -599,14 +569,14 @@ export default function ManageProfessionalsPage() {
                         Buscando...
                       </div>
                     ) : (
-                      "Buscar profissional"
+                      'Buscar profissional'
                     )}
                   </Button>
                 </div>
               )}
 
               {/* Step 2: Confirm Provider */}
-              {dialogStep === "confirm" && foundProvider && (
+              {dialogStep === 'confirm' && foundProvider && (
                 <div className="space-y-6">
                   <div className="text-center">
                     <div className="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -615,9 +585,7 @@ export default function ManageProfessionalsPage() {
                     <h3 className="text-typography font-semibold text-base mb-2">
                       Profissional encontrado!
                     </h3>
-                    <p className="text-gray2 text-sm">
-                      Confirme se este é o profissional correto
-                    </p>
+                    <p className="text-gray2 text-sm">Confirme se este é o profissional correto</p>
                   </div>
 
                   <div className="bg-card rounded-xl p-4 border border-card-border">
@@ -627,7 +595,7 @@ export default function ManageProfessionalsPage() {
                           {foundProvider.profile_picture ? (
                             <img
                               src={foundProvider.profile_picture}
-                              alt={foundProvider.social_name || "Profissional"}
+                              alt={foundProvider.social_name || 'Profissional'}
                               className="w-full h-full object-cover"
                             />
                           ) : (
@@ -656,16 +624,15 @@ export default function ManageProfessionalsPage() {
 
                     <div className="bg-gray2/5 rounded-lg p-3">
                       <p className="text-gray2 text-xs text-center">
-                        Ao confirmar, você permitirá que este profissional
-                        acesse seus dados de saúde e possa te enviar
-                        orientações.
+                        Ao confirmar, você permitirá que este profissional acesse seus dados de
+                        saúde e possa te enviar orientações.
                       </p>
                     </div>
                   </div>
 
                   <div className="flex gap-3">
                     <Button
-                      onClick={() => setDialogStep("input")}
+                      onClick={() => setDialogStep('input')}
                       variant="ghost"
                       className="flex-1 h-11"
                     >
@@ -683,7 +650,7 @@ export default function ManageProfessionalsPage() {
                           Vinculando...
                         </div>
                       ) : (
-                        "Confirmar vínculo"
+                        'Confirmar vínculo'
                       )}
                     </Button>
                   </div>
@@ -691,7 +658,7 @@ export default function ManageProfessionalsPage() {
               )}
 
               {/* Step 3: Success */}
-              {dialogStep === "success" && foundProvider && (
+              {dialogStep === 'success' && foundProvider && (
                 <div className="space-y-6 text-center">
                   <div className="w-20 h-20 bg-success/10 rounded-full flex items-center justify-center mx-auto">
                     <span className="text-3xl">🎉</span>
@@ -702,8 +669,8 @@ export default function ManageProfessionalsPage() {
                       Profissional vinculado com sucesso!
                     </h3>
                     <p className="text-gray2 text-sm leading-relaxed">
-                      <strong>{getProviderName(foundProvider)}</strong> foi
-                      adicionado à sua lista de profissionais.
+                      <strong>{getProviderName(foundProvider)}</strong> foi adicionado à sua lista
+                      de profissionais.
                     </p>
                   </div>
 
@@ -716,33 +683,25 @@ export default function ManageProfessionalsPage() {
                         <span className="w-5 h-5 bg-selection/10 rounded-full flex items-center justify-center text-xs">
                           🚨
                         </span>
-                        <span className="text-gray2 text-sm">
-                          Enviar pedidos de ajuda
-                        </span>
+                        <span className="text-gray2 text-sm">Enviar pedidos de ajuda</span>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="w-5 h-5 bg-selection/10 rounded-full flex items-center justify-center text-xs">
                           📊
                         </span>
-                        <span className="text-gray2 text-sm">
-                          Compartilhar dados do diário
-                        </span>
+                        <span className="text-gray2 text-sm">Compartilhar dados do diário</span>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="w-5 h-5 bg-selection/10 rounded-full flex items-center justify-center text-xs">
                           💬
                         </span>
-                        <span className="text-gray2 text-sm">
-                          Receber orientações
-                        </span>
+                        <span className="text-gray2 text-sm">Receber orientações</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="animate-pulse">
-                    <p className="text-gray2 text-xs">
-                      Fechando automaticamente...
-                    </p>
+                    <p className="text-gray2 text-xs">Fechando automaticamente...</p>
                   </div>
                 </div>
               )}

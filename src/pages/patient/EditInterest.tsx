@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import Header from "@/components/ui/header";
-import { TextField } from "@/components/forms/text_input";
-import { Button } from "@/components/forms/button";
-import { InterestAreasService } from "@/api/services/InterestAreasService";
-import type { InterestArea } from "@/api/models/InterestArea";
-import type { InterestAreaTrigger } from "@/api/models/InterestAreaTrigger";
-import { SuccessMessage } from "@/components/ui/success-message";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import Header from '@/components/ui/header';
+import { TextField } from '@/components/forms/text_input';
+import { Button } from '@/components/forms/button';
+import { InterestAreasService } from '@/api/services/InterestAreasService';
+import type { InterestArea } from '@/api/models/InterestArea';
+import type { InterestAreaTrigger } from '@/api/models/InterestAreaTrigger';
+import { SuccessMessage } from '@/components/ui/success-message';
+import BottomNavigationBar from '@/components/ui/navigator-bar';
 
 // Extended interface for API response that includes the ID
 interface InterestAreaResponse extends InterestArea {
@@ -22,7 +22,7 @@ export default function EditInterest() {
   const [interest, setInterest] = useState<InterestAreaResponse | null>(null);
 
   // New trigger state
-  const [newQuestion, setNewQuestion] = useState("");
+  const [newQuestion, setNewQuestion] = useState('');
   const [questionError, setQuestionError] = useState<string | null>(null);
 
   // Form state
@@ -31,30 +31,30 @@ export default function EditInterest() {
   const [success, setSuccess] = useState<string | null>(null);
 
   const getActiveNavId = () => {
-    if (location.pathname.startsWith("/user-main-page")) return "home";
-    if (location.pathname.startsWith("/reminders")) return "meds";
-    if (location.pathname.startsWith("/diary")) return "diary";
-    if (location.pathname.startsWith("/emergency-user")) return "emergency";
-    if (location.pathname.startsWith("/profile")) return "profile";
+    if (location.pathname.startsWith('/user-main-page')) return 'home';
+    if (location.pathname.startsWith('/reminders')) return 'meds';
+    if (location.pathname.startsWith('/diary')) return 'diary';
+    if (location.pathname.startsWith('/emergency-user')) return 'emergency';
+    if (location.pathname.startsWith('/profile')) return 'profile';
     return null;
   };
 
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
-      case "home":
-        navigate("/user-main-page");
+      case 'home':
+        navigate('/user-main-page');
         break;
-      case "meds":
-        navigate("/reminders");
+      case 'meds':
+        navigate('/reminders');
         break;
-      case "diary":
-        navigate("/diary");
+      case 'diary':
+        navigate('/diary');
         break;
-      case "emergency":
-        navigate("/emergency-user");
+      case 'emergency':
+        navigate('/emergency-user');
         break;
-      case "profile":
-        navigate("/profile");
+      case 'profile':
+        navigate('/profile');
         break;
     }
   };
@@ -74,8 +74,8 @@ export default function EditInterest() {
 
         setInterest(response);
       } catch (err) {
-        console.error("Error fetching interest:", err);
-        setError("Erro ao carregar interesse. Tente novamente.");
+        console.error('Error fetching interest:', err);
+        setError('Erro ao carregar interesse. Tente novamente.');
       } finally {
         setIsLoading(false);
       }
@@ -87,7 +87,7 @@ export default function EditInterest() {
   // Handle adding a new trigger/question
   const handleAddQuestion = async () => {
     if (!newQuestion.trim()) {
-      setQuestionError("Digite uma pergunta");
+      setQuestionError('Digite uma pergunta');
       return;
     }
 
@@ -96,7 +96,7 @@ export default function EditInterest() {
     setError(null);
     setSuccess(null);
 
-    console.log("interest before adding question:", interest);
+    console.log('interest before adding question:', interest);
 
     try {
       // Create new trigger
@@ -116,7 +116,7 @@ export default function EditInterest() {
       };
 
       // Update on the server
-      console.log("Updating interest with new trigger:");
+      console.log('Updating interest with new trigger:');
       console.log(updatedInterest);
       await InterestAreasService.apiInterestAreaCreate(updatedInterest);
 
@@ -131,14 +131,14 @@ export default function EditInterest() {
       );
 
       // Clear input and show success
-      setNewQuestion("");
-      setSuccess("Pergunta adicionada com sucesso!");
+      setNewQuestion('');
+      setSuccess('Pergunta adicionada com sucesso!');
 
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
-      console.error("Error adding question:", err);
-      setError("Erro ao adicionar pergunta. Tente novamente.");
+      console.error('Error adding question:', err);
+      setError('Erro ao adicionar pergunta. Tente novamente.');
     }
   };
 
@@ -172,19 +172,19 @@ export default function EditInterest() {
           : null,
       );
 
-      setSuccess("Pergunta removida com sucesso!");
+      setSuccess('Pergunta removida com sucesso!');
 
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(null), 3000);
     } catch (err) {
-      console.error("Error removing trigger:", err);
-      setError("Erro ao remover pergunta. Tente novamente.");
+      console.error('Error removing trigger:', err);
+      setError('Erro ao remover pergunta. Tente novamente.');
     }
   };
 
   // Handle back navigation
   const handleBack = () => {
-    navigate("/user-selected-interests");
+    navigate('/user-selected-interests');
   };
 
   // Check if this is a custom interest
@@ -195,10 +195,7 @@ export default function EditInterest() {
   return (
     <div className="p-4 bg-primary min-h-screen pb-24">
       {/* Header */}
-      <Header
-        title={interest?.name || "Editar Interesse"}
-        onBackClick={handleBack}
-      />
+      <Header title={interest?.name || 'Editar Interesse'} onBackClick={handleBack} />
 
       <div className="px-4 py-5">
         {/* Loading State */}
@@ -217,9 +214,7 @@ export default function EditInterest() {
 
             {/* Current Triggers */}
             <div className="mb-8">
-              <h2 className="text-lg font-medium text-typography mb-4">
-                Perguntas associadas
-              </h2>
+              <h2 className="text-lg font-medium text-typography mb-4">Perguntas associadas</h2>
 
               {interest.triggers && interest.triggers.length > 0 ? (
                 <div className="space-y-2">
@@ -228,9 +223,7 @@ export default function EditInterest() {
                       key={`trigger-${trigger.id}-${index}`}
                       className="bg-offwhite p-3 rounded-md flex items-center justify-between"
                     >
-                      <span className="text-typography">
-                        {trigger.name || "Sem descrição"}
-                      </span>
+                      <span className="text-typography">{trigger.name || 'Sem descrição'}</span>
                       <Button
                         variant="default"
                         size="sm"
@@ -264,9 +257,7 @@ export default function EditInterest() {
 
             {/* Add New Question */}
             <div className="mt-6">
-              <h2 className="text-lg font-medium text-typography mb-4">
-                Criar nova pergunta
-              </h2>
+              <h2 className="text-lg font-medium text-typography mb-4">Criar nova pergunta</h2>
 
               <TextField
                 id="new-question"
@@ -295,10 +286,7 @@ export default function EditInterest() {
           </>
         ) : null}
       </div>
-      <BottomNavigationBar
-        activeItemId={getActiveNavId()}
-        onItemClick={handleNavigationClick}
-      />
+      <BottomNavigationBar activeItemId={getActiveNavId()} onItemClick={handleNavigationClick} />
     </div>
   );
 }

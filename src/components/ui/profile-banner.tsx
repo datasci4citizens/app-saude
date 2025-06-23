@@ -1,5 +1,5 @@
-import type React from "react";
-import header from "@/lib/images/header.png";
+import type React from 'react';
+import header from '@/lib/images/header.png';
 
 interface ProfileBannerProps {
   name?: string;
@@ -9,7 +9,7 @@ interface ProfileBannerProps {
 }
 
 const ProfileBanner: React.FC<ProfileBannerProps> = ({
-  name = "Nome",
+  name = 'Nome',
   profileImage,
   onClick,
   onEditClick,
@@ -31,11 +31,7 @@ const ProfileBanner: React.FC<ProfileBannerProps> = ({
         {/* Profile image */}
         <div className="w-20 h-20 rounded-full overflow-hidden shadow-lg border-4 border-white bg-white bg-opacity-10 backdrop-blur-sm">
           {profileImage ? (
-            <img
-              src={profileImage}
-              alt={name}
-              className="w-full h-full object-cover"
-            />
+            <img src={profileImage} alt={name} className="w-full h-full object-cover" />
           ) : (
             <span className="mgc_user_3_line text-4xl text-white flex items-center justify-center w-full h-full" />
           )}

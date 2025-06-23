@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { RecurrenceRuleRetrieve } from "./RecurrenceRuleRetrieve";
+import type { RecurrenceRuleRetrieve } from './RecurrenceRuleRetrieve';
 export type DrugExposureRetrieve = {
   readonly drug_exposure_id: number;
   recurrence_rule?: RecurrenceRuleRetrieve;

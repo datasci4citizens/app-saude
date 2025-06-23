@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { RecurrenceRuleCreate } from "./RecurrenceRuleCreate";
+import type { RecurrenceRuleCreate } from './RecurrenceRuleCreate';
 export type VisitOccurrenceCreate = {
   recurrence_rule?: RecurrenceRuleCreate;
   visit_start_date?: string | null;

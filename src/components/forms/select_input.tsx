@@ -1,11 +1,11 @@
-import type React from "react";
+import type React from 'react';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
 interface SelectFieldProps {
   id: string;
@@ -28,7 +28,7 @@ export function SelectField({
   onChange,
   error,
   isLoading = false,
-  placeholder = "Selecione",
+  placeholder = 'Selecione',
 }: SelectFieldProps) {
   // Handle value change and convert to expected event format
   const handleValueChange = (newValue: string) => {
@@ -46,10 +46,7 @@ export function SelectField({
   return (
     <div className="mb-4">
       {label && (
-        <label
-          htmlFor={id}
-          className="block text-sm font-inter font-light text-typography mb-1"
-        >
+        <label htmlFor={id} className="block text-sm font-inter font-light text-typography mb-1">
           {label}
         </label>
       )}
@@ -59,7 +56,7 @@ export function SelectField({
           id={id}
           disabled={isLoading}
           className={`bg-primary h-14 text-typography font-['Inter'] font-normal focus:border-selection ${
-            error ? "border-selection" : "border-gray1"
+            error ? 'border-selection' : 'border-gray1'
           }`}
         >
           <SelectValue placeholder={placeholder} />
@@ -83,11 +80,7 @@ export function SelectField({
         </SelectContent>
       </Select>
 
-      {error && (
-        <p className="text-typography text-xs font-inter font-light mt-1">
-          {error}
-        </p>
-      )}
+      {error && <p className="text-typography text-xs font-inter font-light mt-1">{error}</p>}
     </div>
   );
 }

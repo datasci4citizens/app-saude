@@ -2,12 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { HelpCount } from "../models/HelpCount";
-import type { HelpCreate } from "../models/HelpCreate";
-import type { ObservationRetrieve } from "../models/ObservationRetrieve";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { HelpCount } from '../models/HelpCount';
+import type { HelpCreate } from '../models/HelpCreate';
+import type { ObservationRetrieve } from '../models/ObservationRetrieve';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class HelpService {
   /**
    * @param requestBody
@@ -18,22 +18,20 @@ export class HelpService {
     requestBody: Array<HelpCreate>,
   ): CancelablePromise<Array<ObservationRetrieve>> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/help/send/",
+      method: 'POST',
+      url: '/help/send/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
    * @returns ObservationRetrieve
    * @throws ApiError
    */
-  public static providerHelpList(): CancelablePromise<
-    Array<ObservationRetrieve>
-  > {
+  public static providerHelpList(): CancelablePromise<Array<ObservationRetrieve>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/provider/help/",
+      method: 'GET',
+      url: '/provider/help/',
     });
   }
   /**
@@ -47,8 +45,25 @@ export class HelpService {
    */
   public static providerHelpCountRetrieve(): CancelablePromise<HelpCount> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/provider/help-count/",
+      method: 'GET',
+      url: '/provider/help-count/',
+    });
+  }
+  /**
+   * Marks a help as resolved by updating its value_as_concept_id to the RESOLVED concept.
+   * @param helpId
+   * @returns ObservationRetrieve
+   * @throws ApiError
+   */
+  public static providerHelpResolveCreate(
+    helpId: number,
+  ): CancelablePromise<Array<ObservationRetrieve>> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/provider/help/{help_id}/resolve/',
+      path: {
+        help_id: helpId,
+      },
     });
   }
 }

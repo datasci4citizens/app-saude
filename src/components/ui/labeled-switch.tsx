@@ -1,5 +1,5 @@
-import React from "react";
-import { Switch } from "@/components/ui/switch";
+import React from 'react';
+import { Switch } from '@/components/ui/switch';
 
 interface LabeledSwitchProps {
   label: string;
@@ -12,7 +12,7 @@ export function LabeledSwitch({
   label,
   checked,
   onCheckedChange,
-  id = "switch",
+  id = 'switch',
 }: LabeledSwitchProps) {
   return (
     <div className="flex items-center justify-between">

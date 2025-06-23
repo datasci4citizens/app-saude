@@ -1,8 +1,8 @@
-import type React from "react";
-import { useEffect, useState } from "react";
-import { Button } from "@/components/forms/button";
-import { TextField } from "@/components/forms/text_input";
-import { X, Search, Users, Copy, Plus } from "lucide-react";
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { Button } from '@/components/forms/button';
+import { TextField } from '@/components/forms/text_input';
+import { X, Search, Users, Copy, Plus } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -11,12 +11,8 @@ import {
   DialogFooter,
   DialogDescription,
   DialogOverlay,
-} from "@/components/ui/dialog";
-import {
-  InterestAreasService,
-  type InterestAreaTrigger,
-  TypeEnum,
-} from "@/api";
+} from '@/components/ui/dialog';
+import { InterestAreasService, type InterestAreaTrigger, TypeEnum } from '@/api';
 
 // Define clear interfaces
 interface InterestTemplate {
@@ -52,10 +48,10 @@ interface EditInterestDialogProps {
 
 // Type options for the dropdown
 const TYPE_OPTIONS = [
-  { value: TypeEnum.BOOLEAN, label: "Sim/Não" },
-  { value: TypeEnum.TEXT, label: "Texto" },
-  { value: TypeEnum.INT, label: "Número" },
-  { value: TypeEnum.SCALE, label: "Escala" },
+  { value: TypeEnum.BOOLEAN, label: 'Sim/Não' },
+  { value: TypeEnum.TEXT, label: 'Texto' },
+  { value: TypeEnum.INT, label: 'Número' },
+  { value: TypeEnum.SCALE, label: 'Escala' },
 ];
 
 interface QuestionItemProps {
@@ -65,12 +61,7 @@ interface QuestionItemProps {
   onRemove: (index: number) => void;
 }
 
-const QuestionItem: React.FC<QuestionItemProps> = ({
-  trigger,
-  index,
-  onUpdate,
-  onRemove,
-}) => {
+const QuestionItem: React.FC<QuestionItemProps> = ({ trigger, index, onUpdate, onRemove }) => {
   const handleNameChange = (name: string) => {
     onUpdate(index, { ...trigger, name });
   };
@@ -87,7 +78,7 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
             id={`trigger-name-${index}`}
             name={`trigger-name-${index}`}
             placeholder="Nome da pergunta"
-            value={trigger.name || ""}
+            value={trigger.name || ''}
             onChange={(e) => handleNameChange(e.target.value)}
             className="w-full text-sm"
           />
@@ -131,7 +122,7 @@ const TemplateItem: React.FC<{
     <div
       className="border border-offwhite2 dark:border-offwhite2 rounded-lg p-3 hover:bg-offwhite2 dark:hover:bg-offwhite2 transition-colors cursor-pointer"
       onClick={() => onSelect(template)}
-      onKeyDown={(e) => e.key === "Enter" && onSelect(template)}
+      onKeyDown={(e) => e.key === 'Enter' && onSelect(template)}
       role="button"
       tabIndex={0}
     >
@@ -145,7 +136,7 @@ const TemplateItem: React.FC<{
 
       <div className="text-xs text-typography dark:text-typography mb-2">
         {template.triggers.length} pergunta
-        {template.triggers.length !== 1 ? "s" : ""}
+        {template.triggers.length !== 1 ? 's' : ''}
       </div>
 
       <div className="flex flex-wrap gap-1 mb-2">
@@ -155,7 +146,7 @@ const TemplateItem: React.FC<{
             className="bg-offwhite2 dark:bg-offwhite2 text-typography dark:text-typography px-2 py-1 rounded text-xs max-w-[200px] truncate"
             title={trigger?.name || ""}
           >
-            {trigger?.name || "Pergunta sem nome"}
+            {trigger?.name || 'Pergunta sem nome'}
           </span>
         ))}
         {template.triggers.length > 2 && (
@@ -189,17 +180,15 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
 }) => {
   // Form state
   const [formData, setFormData] = useState<InterestFormData>({
-    interest_name: "",
+    interest_name: '',
     triggers: [],
   });
 
   // Template state
   const [showTemplates, setShowTemplates] = useState(false);
-  const [templateSearch, setTemplateSearch] = useState("");
+  const [templateSearch, setTemplateSearch] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-  const [templateInterests, setTemplateInterests] = useState<
-    InterestTemplate[]
-  >([]);
+  const [templateInterests, setTemplateInterests] = useState<InterestTemplate[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -209,11 +198,11 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
       if (initialData) {
         setFormData({
           id: initialData.id,
-          interest_name: initialData.interest_name || "",
+          interest_name: initialData.interest_name || '',
           triggers: initialData.triggers || [],
         });
       } else {
-        setFormData({ interest_name: "", triggers: [] });
+        setFormData({ interest_name: '', triggers: [] });
       }
       setSelectedTemplate(null);
     }
@@ -240,13 +229,13 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
             try {
               // Handle different response structures
               const interestData = item.interest_area || item;
-              const name = interestData?.name || "";
+              const name = interestData?.name || '';
               const triggers = interestData?.triggers || [];
 
               // Ensure triggers is an array and properly formatted
               const formattedTriggers = Array.isArray(triggers)
                 ? triggers.map((t: InterestAreaTrigger | string) => {
-                    if (typeof t === "string") {
+                    if (typeof t === 'string') {
                       return {
                         name: t,
                         type: TypeEnum.TEXT,
@@ -254,16 +243,16 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
                       };
                     }
                     // Ensure we have a valid trigger object
-                    if (t && typeof t === "object") {
+                    if (t && typeof t === 'object') {
                       return {
-                        name: String(t.name || ""),
+                        name: String(t.name || ''),
                         type: t.type || TypeEnum.TEXT,
                         response: t.response || null,
                       };
                     }
                     // Fallback for invalid triggers
                     return {
-                      name: "Pergunta inválida",
+                      name: 'Pergunta inválida',
                       type: TypeEnum.TEXT,
                       response: null,
                     };
@@ -277,7 +266,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
                 usage_count: Number(item.usage_count) || 0,
               };
             } catch (error) {
-              console.warn("Error processing template item:", error, item);
+              console.warn('Error processing template item:', error, item);
               return null;
             }
           })
@@ -291,8 +280,8 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
 
         setTemplateInterests(data);
       } catch (error) {
-        console.error("Error fetching templates:", error);
-        setError("Não foi possível carregar os modelos");
+        console.error('Error fetching templates:', error);
+        setError('Não foi possível carregar os modelos');
       } finally {
         setIsLoading(false);
       }
@@ -315,14 +304,12 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
 
       return nameMatch || triggerMatch;
     })
-    .filter(
-      (template) => template?.interest_name && Array.isArray(template.triggers),
-    );
+    .filter((template) => template?.interest_name && Array.isArray(template.triggers));
 
   // Handlers
   const handleAddQuestion = () => {
     const newTrigger: InterestAreaTrigger = {
-      name: "",
+      name: '',
       type: TypeEnum.TEXT,
       response: null,
     };
@@ -333,15 +320,10 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
     }));
   };
 
-  const handleUpdateQuestion = (
-    index: number,
-    updatedTrigger: InterestAreaTrigger,
-  ) => {
+  const handleUpdateQuestion = (index: number, updatedTrigger: InterestAreaTrigger) => {
     setFormData((prev) => ({
       ...prev,
-      triggers: prev.triggers.map((trigger, i) =>
-        i === index ? updatedTrigger : trigger,
-      ),
+      triggers: prev.triggers.map((trigger, i) => (i === index ? updatedTrigger : trigger)),
     }));
   };
 
@@ -357,14 +339,14 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
       id: initialData?.id,
       interest_name: template.interest_name,
       triggers: template.triggers.map((trigger) => ({
-        name: trigger.name || "",
+        name: trigger.name || '',
         type: trigger.type || TypeEnum.TEXT,
         response: trigger.response || null,
       })),
     });
     setSelectedTemplate(template.id);
     setShowTemplates(false);
-    setTemplateSearch("");
+    setTemplateSearch('');
   };
 
   const handleSubmit = () => {
@@ -372,9 +354,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
     if (!formData.interest_name.trim()) return;
 
     // Filter out empty triggers
-    const validTriggers = formData.triggers.filter((trigger) =>
-      trigger.name.trim(),
-    );
+    const validTriggers = formData.triggers.filter((trigger) => trigger.name.trim());
 
     if (validTriggers.length === 0) return;
 
@@ -388,9 +368,9 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
   };
 
   const handleClose = () => {
-    setFormData({ interest_name: "", triggers: [] });
+    setFormData({ interest_name: '', triggers: [] });
     setShowTemplates(false);
-    setTemplateSearch("");
+    setTemplateSearch('');
     setSelectedTemplate(null);
     onClose();
   };
@@ -407,12 +387,12 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
       <DialogContent className=" text-[var(--typography)] z-[9999] w-[min(90vw,600px)] rounded-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
-            {initialData ? "Editar interesse" : "Novo interesse"}
+            {initialData ? 'Editar interesse' : 'Novo interesse'}
           </DialogTitle>
           <DialogDescription className="text-sm text-offwhite-500">
             {initialData
-              ? "Altere o nome ou as perguntas desta área de interesse."
-              : "Crie um novo interesse personalizado com suas próprias perguntas."}
+              ? 'Altere o nome ou as perguntas desta área de interesse.'
+              : 'Crie um novo interesse personalizado com suas próprias perguntas.'}
           </DialogDescription>
         </DialogHeader>
 
@@ -426,9 +406,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
                 className="w-full flex items-center justify-center gap-2 text-sm"
               >
                 <Users size={16} />
-                {showTemplates
-                  ? "Ocultar exemplos"
-                  : "Escolher de exemplos existentes"}
+                {showTemplates ? 'Ocultar exemplos' : 'Escolher de exemplos existentes'}
               </Button>
 
               {showTemplates && (
@@ -454,9 +432,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
                         Carregando modelos...
                       </div>
                     ) : error ? (
-                      <div className="text-center py-8 text-red-500">
-                        {error}
-                      </div>
+                      <div className="text-center py-8 text-red-500">{error}</div>
                     ) : filteredTemplates.length === 0 ? (
                       <div className="text-center py-8 text-offwhite-500">
                         Nenhum exemplo encontrado
@@ -548,7 +524,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
             onClick={handleSubmit}
             disabled={!isFormValid}
           >
-            {initialData ? "Salvar Alterações" : "Criar Interesse"}
+            {initialData ? 'Salvar Alterações' : 'Criar Interesse'}
           </Button>
         </DialogFooter>
       </DialogContent>
