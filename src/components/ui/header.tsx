@@ -1,4 +1,4 @@
-import type React from "react";
+import type React from 'react';
 
 interface HeaderProps {
   title: string;
@@ -11,8 +11,8 @@ interface HeaderProps {
   backButtonClassName?: string;
   arrowClassName?: string;
   showBackButton?: boolean; // New: Option to hide back button
-  variant?: "default" | "transparent" | "gradient"; // New: Visual variants
-  size?: "sm" | "md" | "lg"; // New: Size variants
+  variant?: 'default' | 'transparent' | 'gradient'; // New: Visual variants
+  size?: 'sm' | 'md' | 'lg'; // New: Size variants
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -22,12 +22,12 @@ const Header: React.FC<HeaderProps> = ({
   rightIcon,
   subtitleClassName,
   centered = false,
-  headerClassName = "",
+  headerClassName = '',
   backButtonClassName,
   arrowClassName,
   showBackButton = true,
-  variant = "default",
-  size = "md",
+  variant = 'default',
+  size = 'md',
 }) => {
   const handleBackClick = () => {
     if (onBackClick) {
@@ -39,33 +39,33 @@ const Header: React.FC<HeaderProps> = ({
 
   // Variant styles
   const variantStyles = {
-    default: "bg-homebg border-b border-homebg/20",
-    transparent: "bg-transparent",
-    gradient: "bg-gradient-to-r from-homebg to-homebg/80 text-white",
+    default: 'bg-homebg border-b border-homebg/20',
+    transparent: 'bg-transparent',
+    gradient: 'bg-gradient-to-r from-homebg to-homebg/80 text-white',
   };
 
   // Size styles
   const sizeStyles = {
     sm: {
-      container: "py-2",
-      title: "text-lg font-semibold",
-      subtitle: "text-xs",
-      button: "w-8 h-8",
-      icon: "w-5 h-5",
+      container: 'py-2',
+      title: 'text-lg font-semibold',
+      subtitle: 'text-xs',
+      button: 'w-8 h-8',
+      icon: 'w-5 h-5',
     },
     md: {
-      container: "py-3",
-      title: "text-titulo font-bold",
-      subtitle: "text-desc-titulo",
-      button: "w-10 h-10",
-      icon: "w-6 h-6",
+      container: 'py-3',
+      title: 'text-titulo font-bold',
+      subtitle: 'text-desc-titulo',
+      button: 'w-10 h-10',
+      icon: 'w-6 h-6',
     },
     lg: {
-      container: "py-4",
-      title: "text-2xl font-bold",
-      subtitle: "text-base",
-      button: "w-12 h-12",
-      icon: "w-7 h-7",
+      container: 'py-4',
+      title: 'text-2xl font-bold',
+      subtitle: 'text-base',
+      button: 'w-12 h-12',
+      icon: 'w-7 h-7',
     },
   };
 
@@ -74,12 +74,12 @@ const Header: React.FC<HeaderProps> = ({
     if (backButtonClassName) return backButtonClassName;
 
     const baseStyles =
-      "rounded-full transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50";
+      'rounded-full transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50';
 
     switch (variant) {
-      case "transparent":
+      case 'transparent':
         return `${baseStyles} bg-white/10 backdrop-blur-sm hover:bg-white/20`;
-      case "gradient":
+      case 'gradient':
         return `${baseStyles} bg-white/20 backdrop-blur-sm hover:bg-white/30`;
       default:
         return `${baseStyles} bg-gray2/10 hover:bg-gray2/20`;
@@ -91,11 +91,11 @@ const Header: React.FC<HeaderProps> = ({
     if (arrowClassName) return arrowClassName;
 
     switch (variant) {
-      case "transparent":
-        return "text-typography"; // Adapta ao tema
-      case "gradient":
-      case "default":
-        return "text-white"; // Branco para fundos coloridos
+      case 'transparent':
+        return 'text-typography'; // Adapta ao tema
+      case 'gradient':
+      case 'default':
+        return 'text-white'; // Branco para fundos coloridos
     }
   };
 
@@ -104,10 +104,10 @@ const Header: React.FC<HeaderProps> = ({
     const baseStyles = `${sizeStyles[size].title} font-inter m-0`;
 
     switch (variant) {
-      case "transparent":
+      case 'transparent':
         return `${baseStyles} text-typography`; // Adapta ao tema atual
-      case "gradient":
-      case "default":
+      case 'gradient':
+      case 'default':
         return `${baseStyles} text-white`; // Branco para fundos coloridos
     }
   };
@@ -119,10 +119,10 @@ const Header: React.FC<HeaderProps> = ({
     const baseStyles = `${sizeStyles[size].subtitle} font-inter m-0`;
 
     switch (variant) {
-      case "transparent":
+      case 'transparent':
         return `${baseStyles} text-gray2`; // Adapta ao tema
-      case "gradient":
-      case "default":
+      case 'gradient':
+      case 'default':
         return `${baseStyles} text-white/80`; // Branco transparente para fundos coloridos
     }
   };
@@ -166,14 +166,12 @@ const Header: React.FC<HeaderProps> = ({
         <div
           className={`
             flex-1 flex flex-col justify-center
-            ${centered ? "items-center text-center" : "items-start"}
-            ${!showBackButton ? "ml-0" : ""}
+            ${centered ? 'items-center text-center' : 'items-start'}
+            ${!showBackButton ? 'ml-0' : ''}
           `}
         >
           <h1 className={getTitleStyles()}>{title}</h1>
-          {subtitle && (
-            <p className={`${getSubtitleStyles()} mt-0.5`}>{subtitle}</p>
-          )}
+          {subtitle && <p className={`${getSubtitleStyles()} mt-0.5`}>{subtitle}</p>}
         </div>
 
         {/* Right Icon */}
@@ -182,7 +180,7 @@ const Header: React.FC<HeaderProps> = ({
             <div
               className={`
                 ${sizeStyles[size].icon}
-                ${variant === "transparent" ? "text-typography" : "text-white"}
+                ${variant === 'transparent' ? 'text-typography' : 'text-white'}
                 flex items-center justify-center
               `}
               role="button"

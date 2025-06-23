@@ -1,14 +1,14 @@
-import { Button } from "@/components/forms/button";
-import BottomNavigationBar from "@/components/ui/task-bar";
-import AuxIcons from "@/components/ui/aux_icons";
-import PatientsPage from "@/components/ui/patient-button";
-import HomeBanner from "@/components/ui/home-banner";
-import InfoCard from "@/components/ui/info-card";
-import HabitCard from "@/components/ui/habit-card";
-import { RadioCheckbox } from "@/components/forms/radio-checkbox";
-import { Switch } from "@/components/ui/switch";
-import { LabeledSwitch } from "@/components/ui/labeled-switch";
-import { useState } from "react";
+import { Button } from '@/components/forms/button';
+import BottomNavigationBar from '@/components/ui/task-bar';
+import AuxIcons from '@/components/ui/aux_icons';
+import PatientsPage from '@/components/ui/patient-button';
+import HomeBanner from '@/components/ui/home-banner';
+import InfoCard from '@/components/ui/info-card';
+import HabitCard from '@/components/ui/habit-card';
+import { RadioCheckbox } from '@/components/forms/radio-checkbox';
+import { Switch } from '@/components/ui/switch';
+import { LabeledSwitch } from '@/components/ui/labeled-switch';
+import { useState } from 'react';
 
 export default function ComponentCatalog() {
   // variables of the checkboxes
@@ -31,10 +31,7 @@ export default function ComponentCatalog() {
   };
 
   return (
-    <div
-      className="p-6 max-w-4xl mx-auto mx-auto overflow-y-auto"
-      style={{ height: "100vh" }}
-    >
+    <div className="p-6 max-w-4xl mx-auto mx-auto overflow-y-auto" style={{ height: '100vh' }}>
       <h1 className="text-3xl font-bold mb-8">Catálogo de Componentes UI</h1>
 
       {/* Seção de Botões */}
@@ -51,9 +48,7 @@ export default function ComponentCatalog() {
           </Button>
         </div>
 
-        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
-          cards de pacientes
-        </h2>
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">cards de pacientes</h2>
         <div className="flex flex-wrap justify-center">
           <PatientsPage
             variant="patient"
@@ -72,9 +67,7 @@ export default function ComponentCatalog() {
             lastEmergency="15/05/2023"
           />
         </div>
-        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
-          home banners
-        </h2>
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">home banners</h2>
         <div className="flex flex-wrap justify-center">
           <HomeBanner />
           <HomeBanner subtitle="Cheque registro dos seus pacientes" />
@@ -112,34 +105,26 @@ export default function ComponentCatalog() {
             id="demo1"
             label="Label"
             checked={checkboxStates.demo1}
-            onCheckedChange={(checked) =>
-              handleCheckboxChange("demo1", checked)
-            }
+            onCheckedChange={(checked) => handleCheckboxChange('demo1', checked)}
           />
           <RadioCheckbox
             id="demo2"
             label="Checked"
             checked={checkboxStates.demo2}
-            onCheckedChange={(checked) =>
-              handleCheckboxChange("demo2", checked)
-            }
+            onCheckedChange={(checked) => handleCheckboxChange('demo2', checked)}
           />
           <RadioCheckbox
             id="demo-checkbox-checked"
             label="Try clicking!"
             checked={checkboxStates.demo3}
-            onCheckedChange={(checked) =>
-              handleCheckboxChange("demo3", checked)
-            }
+            onCheckedChange={(checked) => handleCheckboxChange('demo3', checked)}
           />
         </div>
       </section>
 
       {/* Seção de Switch */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
-          Toggle Switch
-        </h2>
+        <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Toggle Switch</h2>
 
         <h3 className="text-lg font-medium mt-4 mb-2">Standalone Switch</h3>
         <div className="flex justify-center mb-8">

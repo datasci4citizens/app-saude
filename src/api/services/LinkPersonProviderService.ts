@@ -2,15 +2,15 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { PersonLinkProviderRequest } from "../models/PersonLinkProviderRequest";
-import type { PersonLinkProviderResponse } from "../models/PersonLinkProviderResponse";
-import type { PersonProviderUnlinkResponse } from "../models/PersonProviderUnlinkResponse";
-import type { ProviderLinkCodeResponse } from "../models/ProviderLinkCodeResponse";
-import type { ProviderPersonSummary } from "../models/ProviderPersonSummary";
-import type { ProviderRetrieve } from "../models/ProviderRetrieve";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { PersonLinkProviderRequest } from '../models/PersonLinkProviderRequest';
+import type { PersonLinkProviderResponse } from '../models/PersonLinkProviderResponse';
+import type { PersonProviderUnlinkResponse } from '../models/PersonProviderUnlinkResponse';
+import type { ProviderLinkCodeResponse } from '../models/ProviderLinkCodeResponse';
+import type { ProviderPersonSummary } from '../models/ProviderPersonSummary';
+import type { ProviderRetrieve } from '../models/ProviderRetrieve';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class LinkPersonProviderService {
   /**
    * @param personId
@@ -23,8 +23,8 @@ export class LinkPersonProviderService {
     providerId: number,
   ): CancelablePromise<PersonProviderUnlinkResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/person/{person_id}/provider/{provider_id}/unlink/",
+      method: 'POST',
+      url: '/person/{person_id}/provider/{provider_id}/unlink/',
       path: {
         person_id: personId,
         provider_id: providerId,
@@ -40,22 +40,20 @@ export class LinkPersonProviderService {
     requestBody: PersonLinkProviderRequest,
   ): CancelablePromise<PersonLinkProviderResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/person/link-code/",
+      method: 'POST',
+      url: '/person/link-code/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
    * @returns ProviderRetrieve
    * @throws ApiError
    */
-  public static personProvidersList(): CancelablePromise<
-    Array<ProviderRetrieve>
-  > {
+  public static personProvidersList(): CancelablePromise<Array<ProviderRetrieve>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/person/providers/",
+      method: 'GET',
+      url: '/person/providers/',
     });
   }
   /**
@@ -67,10 +65,10 @@ export class LinkPersonProviderService {
     requestBody: PersonLinkProviderRequest,
   ): CancelablePromise<ProviderRetrieve> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/provider/by-link-code/",
+      method: 'POST',
+      url: '/provider/by-link-code/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -79,8 +77,8 @@ export class LinkPersonProviderService {
    */
   public static providerLinkCodeCreate(): CancelablePromise<ProviderLinkCodeResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/provider/link-code/",
+      method: 'POST',
+      url: '/provider/link-code/',
     });
   }
   /**
@@ -88,12 +86,10 @@ export class LinkPersonProviderService {
    * @returns ProviderPersonSummary
    * @throws ApiError
    */
-  public static providerPersonsList(): CancelablePromise<
-    Array<ProviderPersonSummary>
-  > {
+  public static providerPersonsList(): CancelablePromise<Array<ProviderPersonSummary>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/provider/persons/",
+      method: 'GET',
+      url: '/provider/persons/',
     });
   }
 }

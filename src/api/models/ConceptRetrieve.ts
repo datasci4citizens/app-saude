@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ConceptRelated } from "./ConceptRelated";
+import type { ConceptRelated } from './ConceptRelated';
 export type ConceptRetrieve = {
   readonly concept_id: number;
   concept_name?: string | null;

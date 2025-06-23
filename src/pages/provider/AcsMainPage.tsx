@@ -1,11 +1,11 @@
-import { useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { Button } from "@/components/forms/button";
-import { SuccessMessage } from "@/components/ui/success-message";
-import { ErrorMessage } from "@/components/ui/error-message";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
-import { HelpService } from "@/api/services/HelpService";
-import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderService";
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/forms/button';
+import { SuccessMessage } from '@/components/ui/success-message';
+import { ErrorMessage } from '@/components/ui/error-message';
+import BottomNavigationBar from '@/components/ui/navigator-bar';
+import { HelpService } from '@/api/services/HelpService';
+import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
 
 export default function AcsMainPage() {
   const navigate = useNavigate();
@@ -21,13 +21,13 @@ export default function AcsMainPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const userName = localStorage.getItem("fullname") || "ACS";
+  const userName = localStorage.getItem('fullname') || 'ACS';
   const currentHour = new Date().getHours();
 
   const getGreeting = () => {
-    if (currentHour < 12) return "Bom dia";
-    if (currentHour < 18) return "Boa tarde";
-    return "Boa noite";
+    if (currentHour < 12) return 'Bom dia';
+    if (currentHour < 18) return 'Boa tarde';
+    return 'Boa noite';
   };
 
   useEffect(() => {
@@ -45,8 +45,7 @@ export default function AcsMainPage() {
 
       // Buscar contagem de pacientes
       try {
-        const patientsResponse =
-          await LinkPersonProviderService.providerPersonsList();
+        const patientsResponse = await LinkPersonProviderService.providerPersonsList();
         setPatientsCount(patientsResponse.length || 0);
       } catch {
         setPatientsCount(0);
@@ -55,35 +54,35 @@ export default function AcsMainPage() {
       // Simular consultas de hoje (placeholder)
       // setTodayAppointments(Math.floor(Math.random() * 5));
     } catch (err) {
-      console.error("Erro ao buscar dados do dashboard:", err);
-      setError("Erro ao carregar informações do dashboard.");
+      console.error('Erro ao buscar dados do dashboard:', err);
+      setError('Erro ao carregar informações do dashboard.');
     } finally {
       setLoading(false);
     }
   };
 
   const getActiveNavId = () => {
-    if (location.pathname.startsWith("/acs-main-page")) return "home";
-    if (location.pathname.startsWith("/appointments")) return "consults";
-    if (location.pathname.startsWith("/patients")) return "patients";
-    if (location.pathname.startsWith("/emergencies")) return "emergency";
-    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    if (location.pathname.startsWith('/acs-main-page')) return 'home';
+    if (location.pathname.startsWith('/appointments')) return 'consults';
+    if (location.pathname.startsWith('/patients')) return 'patients';
+    if (location.pathname.startsWith('/emergencies')) return 'emergency';
+    if (location.pathname.startsWith('/acs-profile')) return 'profile';
     return null;
   };
 
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
-      case "home":
-        navigate("/acs-main-page");
+      case 'home':
+        navigate('/acs-main-page');
         break;
-      case "patients":
-        navigate("/patients");
+      case 'patients':
+        navigate('/patients');
         break;
-      case "emergency":
-        navigate("/emergencies");
+      case 'emergency':
+        navigate('/emergencies');
         break;
-      case "profile":
-        navigate("/acs-profile");
+      case 'profile':
+        navigate('/acs-profile');
         break;
     }
   };
@@ -93,22 +92,22 @@ export default function AcsMainPage() {
 
   const quickActions = [
     {
-      id: "patients",
-      title: "Gerenciar Pacientes",
-      subtitle: "Ver todos os pacientes vinculados",
-      icon: "👥",
-      color: "bg-success",
-      textColor: "text-white",
-      onClick: () => navigate("/patients"),
+      id: 'patients',
+      title: 'Gerenciar Pacientes',
+      subtitle: 'Ver todos os pacientes vinculados',
+      icon: '👥',
+      color: 'bg-success',
+      textColor: 'text-white',
+      onClick: () => navigate('/patients'),
     },
     {
-      id: "emergencies",
-      title: "Pedidos de Ajuda",
-      subtitle: "Verificar solicitações",
-      icon: "🚨",
-      color: "bg-yellow",
-      textColor: "text-white",
-      onClick: () => navigate("/emergencies"),
+      id: 'emergencies',
+      title: 'Pedidos de Ajuda',
+      subtitle: 'Verificar solicitações',
+      icon: '🚨',
+      color: 'bg-yellow',
+      textColor: 'text-white',
+      onClick: () => navigate('/emergencies'),
       badge: emergencyCount > 0 ? emergencyCount : undefined,
     },
     // {
@@ -140,9 +139,7 @@ export default function AcsMainPage() {
             <h1 className="text-white text-2xl font-bold">
               {getGreeting()}, {userName}! 👋
             </h1>
-            <p className="text-white/80 text-sm">
-              Como está o seu dia de trabalho?
-            </p>
+            <p className="text-white/80 text-sm">Como está o seu dia de trabalho?</p>
           </div>
 
           <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
@@ -154,14 +151,14 @@ export default function AcsMainPage() {
         <div className="grid grid-cols-2   gap-3">
           <div className="bg-homeblob2 backdrop-blur-sm rounded-2xl p-4 text-center">
             <div className="text-offwhite text-2xl font-bold">
-              {loading ? "..." : patientsCount}
+              {loading ? '...' : patientsCount}
             </div>
             <div className="text-offwhite text-xs">Pacientes</div>
           </div>
 
           <div className="bg-homeblob2 backdrop-blur-sm rounded-2xl p-4 text-center">
             <div className="text-offwhite  text-2xl font-bold">
-              {loading ? "..." : emergencyCount}
+              {loading ? '...' : emergencyCount}
             </div>
             <div className="text-offwhite text-xs">Pedidos</div>
           </div>
@@ -200,9 +197,7 @@ export default function AcsMainPage() {
 
         {/* Quick Actions */}
         <div className="mb-8">
-          <h2 className="text-typography font-semibold text-lg mb-4">
-            Ações Rápidas
-          </h2>
+          <h2 className="text-typography font-semibold text-lg mb-4">Ações Rápidas</h2>
 
           <div className="grid grid-cols-2 gap-4">
             {quickActions.map((action) => (
@@ -224,14 +219,10 @@ export default function AcsMainPage() {
                     )}
                   </div>
 
-                  <h3
-                    className={`${action.textColor} font-semibold text-sm mb-1`}
-                  >
+                  <h3 className={`${action.textColor} font-semibold text-sm mb-1`}>
                     {action.title}
                   </h3>
-                  <p className={`${action.textColor} opacity-80 text-xs`}>
-                    {action.subtitle}
-                  </p>
+                  <p className={`${action.textColor} opacity-80 text-xs`}>{action.subtitle}</p>
                 </div>
               </div>
             ))}
@@ -240,9 +231,7 @@ export default function AcsMainPage() {
 
         {/* Today's Focus */}
         <div className="mb-8">
-          <h2 className="text-typography font-semibold text-lg mb-4">
-            Foco de Hoje
-          </h2>
+          <h2 className="text-typography font-semibold text-lg mb-4">Foco de Hoje</h2>
 
           <div className="space-y-3">
             <div className="bg-card rounded-2xl p-4 border border-card-border">
@@ -254,15 +243,9 @@ export default function AcsMainPage() {
                   <h3 className="text-card-foreground font-medium text-sm">
                     Revisar pedidos de ajuda
                   </h3>
-                  <p className="text-gray2 text-xs">
-                    Verificar solicitações dos últimos 3 dias
-                  </p>
+                  <p className="text-gray2 text-xs">Verificar solicitações dos últimos 3 dias</p>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate("/emergencies")}
-                >
+                <Button variant="ghost" size="sm" onClick={() => navigate('/emergencies')}>
                   <span className="mgc_right_line" />
                 </Button>
               </div>
@@ -274,18 +257,10 @@ export default function AcsMainPage() {
                   <span className="text-selection">👥</span>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-card-foreground font-medium text-sm">
-                    Acompanhar pacientes
-                  </h3>
-                  <p className="text-gray2 text-xs">
-                    Verificar diários e progresso
-                  </p>
+                  <h3 className="text-card-foreground font-medium text-sm">Acompanhar pacientes</h3>
+                  <p className="text-gray2 text-xs">Verificar diários e progresso</p>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate("/patients")}
-                >
+                <Button variant="ghost" size="sm" onClick={() => navigate('/patients')}>
                   <span className="mgc_right_line" />
                 </Button>
               </div>
@@ -323,12 +298,10 @@ export default function AcsMainPage() {
               <span className="text-accent1 text-sm">💡</span>
             </div>
             <div>
-              <h3 className="text-accent1 font-medium text-sm mb-1">
-                Dica do Dia
-              </h3>
+              <h3 className="text-accent1 font-medium text-sm mb-1">Dica do Dia</h3>
               <p className="text-accent1/80 text-xs leading-relaxed">
-                Mantenha contato regular com seus pacientes. Um acompanhamento
-                proativo pode prevenir situações de emergência.
+                Mantenha contato regular com seus pacientes. Um acompanhamento proativo pode
+                prevenir situações de emergência.
               </p>
             </div>
           </div>

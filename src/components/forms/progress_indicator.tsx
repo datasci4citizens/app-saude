@@ -1,4 +1,4 @@
-import type React from "react";
+import type React from 'react';
 
 interface ProgressIndicatorProps {
   currentStep: number;
@@ -11,9 +11,9 @@ interface ProgressIndicatorProps {
 export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   currentStep,
   totalSteps,
-  activeColor = "bg-selected",
-  inactiveColor = "bg-transparent",
-  className = "",
+  activeColor = 'bg-selected',
+  inactiveColor = 'bg-transparent',
+  className = '',
 }) => {
   // Create an array of steps to map through
   const steps = Array.from({ length: totalSteps }, (_, i) => i + 1);

@@ -20,11 +20,13 @@ A propriedade `content` define os caminhos para os arquivos onde as classes do T
 A propriedade `theme` permite personalizar o design do projeto. As principais configurações incluem:
 
 #### Container
+
 - Centralizado (`center: true`)
 - Padding padrão de `2rem`
 - Largura máxima para telas `2xl` de `1400px`
 
 #### Extend
+
 A seção `extend` adiciona ou sobrescreve valores padrão do Tailwind. O projeto utiliza um sistema de cores baseado em CSS Custom Properties (variáveis CSS) que suportam temas claro e escuro automaticamente.
 
 ##### **Sistema de Cores Personalizadas**
@@ -172,7 +174,9 @@ O projeto implementa uma paleta de cores robusta usando CSS variables, permitind
 - **`homeblob2`**: Gradiente blob 2
 
 ##### **Estrutura das Cores**
+
 Cada cor no sistema possui variantes:
+
 - **`DEFAULT`**: Valor principal da cor
 - **`foreground`**: Cor do texto sobre a cor base
 - **`background`**: Cor de fundo (quando aplicável)
@@ -180,7 +184,9 @@ Cada cor no sistema possui variantes:
 - **`input`**: Cor para inputs (para gray2)
 
 ##### **Uso das Classes CSS**
+
 As cores podem ser usadas com as classes padrão do Tailwind:
+
 - Texto: `text-typography`, `text-accent1`, `text-homeblob2`
 - Fundo: `bg-homebg`, `bg-homeblob1`, `bg-primary`
 - Bordas: `border-gray2`, `border-accent1`
@@ -256,21 +262,25 @@ O Tailwind CSS utiliza o plugin `tailwindcss-animate` para adicionar suporte a a
 O projeto implementa um sistema de temas robusto através de CSS Custom Properties definidas em `src/globals.css`:
 
 ### Tema Claro (Padrão)
+
 Aplicado automaticamente na raiz (`:root`)
 
 ### Tema Escuro
+
 Aplicado através da classe `.theme-dark` no elemento body ou container principal
 
 ### Implementação de Cores
+
 As cores são definidas usando variáveis CSS que se adaptam automaticamente ao tema:
+
 ```css
 /* Exemplo de implementação */
 :root {
-  --homeblob2: #2c78f9ff;
+    --homeblob2: #2c78f9ff;
 }
 
 .theme-dark {
-  --homeblob2: #1f478cff;
+    --homeblob2: #1f478cff;
 }
 ```
 
@@ -279,6 +289,7 @@ As cores são definidas usando variáveis CSS que se adaptam automaticamente ao 
 O projeto utiliza duas fontes principais importadas via Google Fonts:
 
 ### **Work Sans** - Fonte Principal
+
 Importada com pesos: 400, 500, 600, 700
 
 <div style="font-family: 'Work Sans', sans-serif; margin: 20px 0; padding: 20px; background-color: #f8f9fa; border-radius: 8px;">
@@ -308,7 +319,8 @@ Importada com pesos: 400, 500, 600, 700
   </div>
 </div>
 
-### **Inter** - Fonte Secundária  
+### **Inter** - Fonte Secundária
+
 Importada com pesos: 400, 500, 600
 
 <div style="font-family: 'Inter', sans-serif; margin: 20px 0; padding: 20px; background-color: #f0f4ff; border-radius: 8px;">
@@ -336,14 +348,14 @@ Importada com pesos: 400, 500, 600
 
 ### **Uso Recomendado**
 
-| Elemento | Fonte | Peso | Tamanho |
-|----------|-------|------|---------|
-| **Títulos principais** | Work Sans | 700 (Bold) | 24px+ |
-| **Subtítulos** | Work Sans | 600 (Semi-bold) | 18-20px |
-| **Corpo do texto** | Work Sans | 400 (Regular) | 16px |
-| **Botões** | Inter | 500 (Medium) | 14-16px |
-| **Labels** | Inter | 400 (Regular) | 14px |
-| **Navegação** | Inter | 500 (Medium) | 14-16px |
+| Elemento               | Fonte     | Peso            | Tamanho |
+| ---------------------- | --------- | --------------- | ------- |
+| **Títulos principais** | Work Sans | 700 (Bold)      | 24px+   |
+| **Subtítulos**         | Work Sans | 600 (Semi-bold) | 18-20px |
+| **Corpo do texto**     | Work Sans | 400 (Regular)   | 16px    |
+| **Botões**             | Inter     | 500 (Medium)    | 14-16px |
+| **Labels**             | Inter     | 400 (Regular)   | 14px    |
+| **Navegação**          | Inter     | 500 (Medium)    | 14-16px |
 
 ### **Implementação no Tailwind**
 
@@ -352,15 +364,16 @@ Com as fontes configuradas no `tailwind.config.ts`, você pode usar as seguintes
 ```css
 /* Classes Tailwind disponíveis */
 .font-work-sans {
-  font-family: 'Work Sans', sans-serif;
+    font-family: 'Work Sans', sans-serif;
 }
 
 .font-inter {
-  font-family: 'Inter', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 ```
 
 **Exemplos de uso:**
+
 ```html
 <!-- Títulos com Work Sans -->
 <h1 class="font-work-sans font-bold text-2xl">SAÚDE</h1>
@@ -375,8 +388,9 @@ Com as fontes configuradas no `tailwind.config.ts`, você pode usar as seguintes
 ```
 
 **Pesos disponíveis:**
+
 - `font-normal` (400)
-- `font-medium` (500) 
+- `font-medium` (500)
 - `font-semibold` (600)
 - `font-bold` (700) - apenas Work Sans
 

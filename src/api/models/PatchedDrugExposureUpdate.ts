@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { RecurrenceRuleUpdate } from "./RecurrenceRuleUpdate";
+import type { RecurrenceRuleUpdate } from './RecurrenceRuleUpdate';
 export type PatchedDrugExposureUpdate = {
   readonly drug_exposure_id?: number;
   recurrence_rule?: RecurrenceRuleUpdate;

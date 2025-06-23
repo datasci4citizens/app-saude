@@ -1,4 +1,4 @@
-import type React from "react";
+import type React from 'react';
 
 interface ViewButtonProps {
   dateText: string;
@@ -7,12 +7,7 @@ interface ViewButtonProps {
   onClick?: () => void;
 }
 
-const ViewButton: React.FC<ViewButtonProps> = ({
-  dateText,
-  mainText,
-  subText,
-  onClick,
-}) => {
+const ViewButton: React.FC<ViewButtonProps> = ({ dateText, mainText, subText, onClick }) => {
   return (
     <button
       onClick={onClick}
@@ -20,11 +15,8 @@ const ViewButton: React.FC<ViewButtonProps> = ({
     >
       <div className="text-left">
         <p className="text-desc-titulo text-typography mb-1">{dateText}</p>
-        <p className="text-topicos2 mb-1">{mainText}</p>{" "}
-        {/* text-topicos2 includes font weight */}
-        <p className="text-campos-preenchimento2 text-typography truncate">
-          {subText}
-        </p>
+        <p className="text-topicos2 mb-1">{mainText}</p> {/* text-topicos2 includes font weight */}
+        <p className="text-campos-preenchimento2 text-typography truncate">{subText}</p>
       </div>
     </button>
   );

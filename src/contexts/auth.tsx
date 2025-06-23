@@ -1,12 +1,6 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from "react";
-import { AuthService } from "@/api/services/AuthService";
-import { AccountService } from "@/api/services/AccountService";
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { AuthService } from '@/api/services/AuthService';
+import { AccountService } from '@/api/services/AccountService';
 
 // Define the shape of the context for authentication
 type AuthContextType = {
@@ -29,7 +23,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
  */
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   // State to hold the authenticated user info
-  const [user, setUser] = useState<AuthContextType["user"]>(null);
+  const [user, setUser] = useState<AuthContextType['user']>(null);
 
   /**
    * Login function to authenticate the user with the provided code.
@@ -41,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // Authenticate using the provided code and store the token in local storage
       const response = await AuthService.authLoginGoogleCreate({ code });
-      localStorage.setItem("token", response.access);
+      localStorage.setItem('token', response.access);
 
       // Retrieve user data after successful login
       const me = await AccountService.accountsRetrieve();
@@ -51,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         person_id: me.person_id, // Assuming the response includes person_id
       });
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error('Login failed:', error);
     }
   };
 
@@ -60,14 +54,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    * It removes the token from local storage and resets the user state.
    */
   const logout = useCallback(() => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     setUser(null);
   }, []);
 
   // Effect to initialize authentication state
   useEffect(() => {
     const initAuth = async () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem('token');
       if (token) {
         try {
           // Validate session and retrieve user data
@@ -77,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             person_id: me.person_id, // Set user state with retrieved person_id
           });
         } catch (error) {
-          console.error("Session validation failed:", error);
+          console.error('Session validation failed:', error);
           logout(); // If validation fails, logout the user
         }
       }
@@ -86,11 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [logout]);
 
   // Provide the user state and actions to the context
-  return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
 }
 
 /**

@@ -1,57 +1,53 @@
-import type React from "react";
+import type React from 'react';
 
 interface BottomNavigationBarProps {
-  variant?: "user" | "acs";
+  variant?: 'user' | 'acs';
   forceActiveId?: string | null;
   onItemClick?: (itemId: string) => void;
 }
 
 const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
-  variant = "user",
+  variant = 'user',
   forceActiveId = null,
   onItemClick,
 }) => {
   const navItemVariants = {
     user: [
       {
-        id: "home",
-        label: "Casa",
+        id: 'home',
+        label: 'Casa',
         icon: <span role="img" aria-label="home" className="mgc_home_4_line" />,
       },
       {
-        id: "diary",
-        label: "Diário",
+        id: 'diary',
+        label: 'Diário',
         icon: <span role="img" aria-label="book" className="mgc_book_6_line" />,
       },
       {
-        id: "emergency",
-        label: "Ajuda",
-        icon: (
-          <span role="img" aria-label="warning" className="mgc_alert_line" />
-        ),
+        id: 'emergency',
+        label: 'Ajuda',
+        icon: <span role="img" aria-label="warning" className="mgc_alert_line" />,
       },
       {
-        id: "profile",
-        label: "Eu",
+        id: 'profile',
+        label: 'Eu',
         icon: <span role="img" aria-label="user" className="mgc_user_3_line" />,
       },
     ],
     acs: [
       {
-        id: "home",
-        label: "Casa",
+        id: 'home',
+        label: 'Casa',
         icon: <span role="img" aria-label="home" className="mgc_home_4_line" />,
       },
       {
-        id: "patients",
-        label: "Pacientes",
-        icon: (
-          <span role="img" aria-label="patients" className="mgc_group_3_line" />
-        ),
+        id: 'patients',
+        label: 'Pacientes',
+        icon: <span role="img" aria-label="patients" className="mgc_group_3_line" />,
       },
       {
-        id: "profile",
-        label: "Eu",
+        id: 'profile',
+        label: 'Eu',
         icon: <span role="img" aria-label="user" className="mgc_user_3_line" />,
       },
     ],
@@ -69,13 +65,13 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
             key={item.id}
             className={`
               flex flex-col items-center font-medium text-xs font-inter
-              ${navItems.length ? `w-[${100 / navItems.length}%]` : "w-1/5"}
+              ${navItems.length ? `w-[${100 / navItems.length}%]` : 'w-1/5'}
               focus:outline-none focus:ring-2 focus:ring-bottom-nav-active focus:ring-opacity-50 rounded-lg
               transition-all duration-200 ease-in-out
               hover:scale-105 active:scale-95
             `}
             onClick={() => onItemClick?.(item.id)}
-            aria-current={isActive ? "page" : undefined}
+            aria-current={isActive ? 'page' : undefined}
           >
             {/* Container do ícone com melhor feedback visual */}
             <div
@@ -84,8 +80,8 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
                 transition-all duration-200 ease-in-out
                 ${
                   isActive
-                    ? "bg-bottom-nav-active text-white shadow-lg shadow-bottom-nav-active/25 scale-110"
-                    : "bg-transparent text-bottom-nav-foreground hover:bg-bottom-nav-active/10 hover:text-bottom-nav-active"
+                    ? 'bg-bottom-nav-active text-white shadow-lg shadow-bottom-nav-active/25 scale-110'
+                    : 'bg-transparent text-bottom-nav-foreground hover:bg-bottom-nav-active/10 hover:text-bottom-nav-active'
                 }
               `}
             >
@@ -99,8 +95,8 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
                 font-inter transition-all duration-200
                 ${
                   isActive
-                    ? "text-bottom-nav-active font-semibold"
-                    : "text-bottom-nav-foreground font-medium"
+                    ? 'text-bottom-nav-active font-semibold'
+                    : 'text-bottom-nav-foreground font-medium'
                 }
               `}
             >

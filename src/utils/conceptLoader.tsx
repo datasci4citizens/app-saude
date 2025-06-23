@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { ConceptService } from "@/api/services/ConceptService";
+import { useState, useEffect } from 'react';
+import { ConceptService } from '@/api/services/ConceptService';
 
 // Shared interfaces to represent a select option
 export interface SelectOption {
@@ -56,19 +56,11 @@ interface InterestAreasConceptsResult extends BaseConceptLoaderResult {
  */
 export function useHealthConcepts(): HealthConceptsResult {
   // Options for selects
-  const [sleepHealthOptions, setSleepHealthOptions] = useState<SelectOption[]>(
-    [],
-  );
+  const [sleepHealthOptions, setSleepHealthOptions] = useState<SelectOption[]>([]);
   const [exerciseOptions, setExerciseOptions] = useState<SelectOption[]>([]);
-  const [eatingHabitsOptions, setEatingHabitsOptions] = useState<
-    SelectOption[]
-  >([]);
-  const [comorbiditiesOptions, setComorbiditiesOptions] = useState<
-    SelectOption[]
-  >([]);
-  const [medicationOptions, setMedicationOptions] = useState<SelectOption[]>(
-    [],
-  );
+  const [eatingHabitsOptions, setEatingHabitsOptions] = useState<SelectOption[]>([]);
+  const [comorbiditiesOptions, setComorbiditiesOptions] = useState<SelectOption[]>([]);
+  const [medicationOptions, setMedicationOptions] = useState<SelectOption[]>([]);
   const [substanceOptions, setSubstanceOptions] = useState<SelectOption[]>([]);
 
   // Loading and error states
@@ -93,16 +85,16 @@ export function useHealthConcepts(): HealthConceptsResult {
 
       try {
         // Define concept classes we want to fetch
-        const FREQUENCY_CLASS = "Frequency";
-        const QUALITY_CLASS = "Quality";
-        const COMORBIDITY_CLASS = "Comorbidity";
-        const MEDICATION_CLASS = "Medication";
-        const SUBSTANCE_CLASS = "Substance";
+        const FREQUENCY_CLASS = 'Frequency';
+        const QUALITY_CLASS = 'Quality';
+        const COMORBIDITY_CLASS = 'Comorbidity';
+        const MEDICATION_CLASS = 'Medication';
+        const SUBSTANCE_CLASS = 'Substance';
 
         // Get concepts from the server
         const concepts = await ConceptService.apiConceptList(
           `${FREQUENCY_CLASS}, ${QUALITY_CLASS}, ${COMORBIDITY_CLASS}, ${MEDICATION_CLASS}, ${SUBSTANCE_CLASS}`,
-          "pt",
+          'pt',
         );
 
         // Process sleep health options
@@ -111,7 +103,7 @@ export function useHealthConcepts(): HealthConceptsResult {
             .filter((concept) => concept.concept_class === QUALITY_CLASS)
             .map((concept) => ({
               value: concept.concept_id.toString(),
-              label: concept.translated_name || concept.concept_name || "",
+              label: concept.translated_name || concept.concept_name || '',
             })),
         );
 
@@ -121,7 +113,7 @@ export function useHealthConcepts(): HealthConceptsResult {
             .filter((concept) => concept.concept_class === FREQUENCY_CLASS)
             .map((concept) => ({
               value: concept.concept_id.toString(),
-              label: concept.translated_name || concept.concept_name || "",
+              label: concept.translated_name || concept.concept_name || '',
             })),
         );
 
@@ -131,7 +123,7 @@ export function useHealthConcepts(): HealthConceptsResult {
             .filter((concept) => concept.concept_class === QUALITY_CLASS)
             .map((concept) => ({
               value: concept.concept_id.toString(),
-              label: concept.translated_name || concept.concept_name || "",
+              label: concept.translated_name || concept.concept_name || '',
             })),
         );
 
@@ -141,7 +133,7 @@ export function useHealthConcepts(): HealthConceptsResult {
             .filter((concept) => concept.concept_class === COMORBIDITY_CLASS)
             .map((concept) => ({
               value: concept.concept_id.toString(),
-              label: concept.translated_name || concept.concept_name || "",
+              label: concept.translated_name || concept.concept_name || '',
             })),
         );
 
@@ -151,7 +143,7 @@ export function useHealthConcepts(): HealthConceptsResult {
             .filter((concept) => concept.concept_class === MEDICATION_CLASS)
             .map((concept) => ({
               value: concept.concept_id.toString(),
-              label: concept.translated_name || concept.concept_name || "",
+              label: concept.translated_name || concept.concept_name || '',
             })),
         );
 
@@ -161,33 +153,31 @@ export function useHealthConcepts(): HealthConceptsResult {
             .filter((concept) => concept.concept_class === SUBSTANCE_CLASS)
             .map((concept) => ({
               value: concept.concept_id.toString(),
-              label: concept.translated_name || concept.concept_name || "",
+              label: concept.translated_name || concept.concept_name || '',
             })),
         );
       } catch (error) {
-        console.error("Error fetching health concepts:", error);
-        setError(
-          "Erro ao carregar opções. Algumas funcionalidades podem estar limitadas.",
-        );
+        console.error('Error fetching health concepts:', error);
+        setError('Erro ao carregar opções. Algumas funcionalidades podem estar limitadas.');
 
         // Set fallback options
         setSleepHealthOptions([
-          { value: "good", label: "Durmo bem" },
-          { value: "fair", label: "Durmo razoavelmente" },
-          { value: "poor", label: "Durmo mal" },
+          { value: 'good', label: 'Durmo bem' },
+          { value: 'fair', label: 'Durmo razoavelmente' },
+          { value: 'poor', label: 'Durmo mal' },
         ]);
 
         setExerciseOptions([
-          { value: "regular", label: "Regularmente" },
-          { value: "occasional", label: "Ocasionalmente" },
-          { value: "rare", label: "Raramente" },
-          { value: "never", label: "Nunca" },
+          { value: 'regular', label: 'Regularmente' },
+          { value: 'occasional', label: 'Ocasionalmente' },
+          { value: 'rare', label: 'Raramente' },
+          { value: 'never', label: 'Nunca' },
         ]);
 
         setEatingHabitsOptions([
-          { value: "good", label: "Me alimento bem" },
-          { value: "fair", label: "Me alimento razoavelmente" },
-          { value: "poor", label: "Me alimento mal" },
+          { value: 'good', label: 'Me alimento bem' },
+          { value: 'fair', label: 'Me alimento razoavelmente' },
+          { value: 'poor', label: 'Me alimento mal' },
         ]);
       } finally {
         setIsLoading(false);
@@ -228,53 +218,48 @@ export function useDemographicConcepts(): DemographicConceptsResult {
 
       try {
         // Fetch gender and race concepts
-        const concepts = await ConceptService.apiConceptList(
-          "Gender,Race",
-          "pt",
-        );
+        const concepts = await ConceptService.apiConceptList('Gender,Race', 'pt');
 
         // Process gender options
         setGenderOptions(
           concepts
-            .filter((concept) => concept.concept_class === "Gender")
+            .filter((concept) => concept.concept_class === 'Gender')
             .filter((concept) => concept.concept_name != null)
             .map((concept) => ({
               value: concept.concept_id,
-              label: concept.translated_name || concept.concept_name || "",
+              label: concept.translated_name || concept.concept_name || '',
             })),
         );
 
         // Process race options
         setRaceOptions(
           concepts
-            .filter((concept) => concept.concept_class === "Race")
+            .filter((concept) => concept.concept_class === 'Race')
             .filter((concept) => concept.concept_name != null)
             .map((concept) => ({
               value: concept.concept_id,
-              label: concept.translated_name || concept.concept_name || "",
+              label: concept.translated_name || concept.concept_name || '',
             })),
         );
       } catch (error) {
-        console.error("Error fetching demographic concepts:", error);
-        setError(
-          "Erro ao carregar opções do servidor. Tente novamente mais tarde.",
-        );
+        console.error('Error fetching demographic concepts:', error);
+        setError('Erro ao carregar opções do servidor. Tente novamente mais tarde.');
 
         // Fallback options
         setGenderOptions([
-          { value: 8532, label: "Feminino" },
-          { value: 8507, label: "Masculino" },
-          { value: 33284, label: "Não-binário" },
-          { value: 0, label: "Outro" },
-          { value: 0, label: "Prefiro não informar" },
+          { value: 8532, label: 'Feminino' },
+          { value: 8507, label: 'Masculino' },
+          { value: 33284, label: 'Não-binário' },
+          { value: 0, label: 'Outro' },
+          { value: 0, label: 'Prefiro não informar' },
         ]);
 
         setRaceOptions([
-          { value: 8527, label: "Branca" },
-          { value: 8516, label: "Preta" },
-          { value: 8514, label: "Parda" },
-          { value: 8515, label: "Amarela" },
-          { value: 38003574, label: "Indígena" },
+          { value: 8527, label: 'Branca' },
+          { value: 8516, label: 'Preta' },
+          { value: 8514, label: 'Parda' },
+          { value: 8515, label: 'Amarela' },
+          { value: 38003574, label: 'Indígena' },
         ]);
       } finally {
         setIsLoading(false);
@@ -309,31 +294,26 @@ export function useLocationConcepts(): LocationConceptsResult {
 
       try {
         // Fetch location concepts
-        const concepts = await ConceptService.apiConceptList(
-          "Brazil States",
-          "pt",
-        );
+        const concepts = await ConceptService.apiConceptList('Brazil States', 'pt');
 
         // Process state options
         setStateOptions(
           concepts
-            .filter((concept) => concept.concept_class === "Brazil States")
+            .filter((concept) => concept.concept_class === 'Brazil States')
             .filter((concept) => concept.concept_name != null)
             .map((concept) => ({
               value: concept.concept_id,
-              label: concept.translated_name || concept.concept_name || "",
+              label: concept.translated_name || concept.concept_name || '',
             })),
         );
       } catch (error) {
-        console.error("Error fetching location concepts:", error);
-        setError(
-          "Erro ao carregar opções do servidor. Tente novamente mais tarde.",
-        );
+        console.error('Error fetching location concepts:', error);
+        setError('Erro ao carregar opções do servidor. Tente novamente mais tarde.');
 
         // Fallback options
         setStateOptions([
-          { value: "AC", label: "AC" },
-          { value: "SP", label: "SP" },
+          { value: 'AC', label: 'AC' },
+          { value: 'SP', label: 'SP' },
         ]);
       } finally {
         setIsLoading(false);
@@ -356,9 +336,7 @@ export function useLocationConcepts(): LocationConceptsResult {
  * @returns {InterestAreasConceptsResult} The interest areas concepts options and loading state.
  */
 export function useInterestAreasConcepts(): InterestAreasConceptsResult {
-  const [interestAreasOptions, setInterestAreasOptions] = useState<
-    SelectOption[]
-  >([]);
+  const [interestAreasOptions, setInterestAreasOptions] = useState<SelectOption[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -369,39 +347,36 @@ export function useInterestAreasConcepts(): InterestAreasConceptsResult {
 
       try {
         // Fetch interest areas concepts
-        const concepts = await ConceptService.apiConceptList("Interest", "pt");
+        const concepts = await ConceptService.apiConceptList('Interest', 'pt');
 
         // Process interest areas options
         setInterestAreasOptions(
           concepts
-            .filter((concept) => concept.concept_class === "Interest")
+            .filter((concept) => concept.concept_class === 'Interest')
             .filter((concept) => concept.concept_name != null)
             .map((concept) => ({
               value: concept.concept_id,
-              label: concept.translated_name || concept.concept_name || "",
+              label: concept.translated_name || concept.concept_name || '',
             }))
             .filter(
               (option) =>
-                option.label !== "Área de Interesse" &&
-                option.label !== "Interesse Personalizado",
+                option.label !== 'Área de Interesse' && option.label !== 'Interesse Personalizado',
             ),
         );
       } catch (error) {
-        console.error("Error fetching interest areas concepts:", error);
-        setError(
-          "Erro ao carregar áreas de interesse. Tente novamente mais tarde.",
-        );
+        console.error('Error fetching interest areas concepts:', error);
+        setError('Erro ao carregar áreas de interesse. Tente novamente mais tarde.');
 
         // Fallback options
         setInterestAreasOptions([
-          { value: 1001, label: "Saúde Mental" },
-          { value: 1002, label: "Nutrição" },
-          { value: 1003, label: "Exercício Físico" },
-          { value: 1004, label: "Saúde da Mulher" },
-          { value: 1005, label: "Saúde do Idoso" },
-          { value: 1006, label: "Saúde Infantil" },
-          { value: 1007, label: "Doenças Crônicas" },
-          { value: 1008, label: "Prevenção" },
+          { value: 1001, label: 'Saúde Mental' },
+          { value: 1002, label: 'Nutrição' },
+          { value: 1003, label: 'Exercício Físico' },
+          { value: 1004, label: 'Saúde da Mulher' },
+          { value: 1005, label: 'Saúde do Idoso' },
+          { value: 1006, label: 'Saúde Infantil' },
+          { value: 1007, label: 'Doenças Crônicas' },
+          { value: 1008, label: 'Prevenção' },
         ]);
       } finally {
         setIsLoading(false);

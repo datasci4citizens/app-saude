@@ -5,8 +5,8 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "../forms/button";
+} from '@/components/ui/dialog';
+import { Button } from '../forms/button';
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -22,8 +22,8 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   open,
   title,
   description,
-  confirmText = "Confirmar",
-  cancelText = "Cancelar",
+  confirmText = 'Confirmar',
+  cancelText = 'Cancelar',
   onConfirm,
   onCancel,
 }) => {
@@ -40,11 +40,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         </DialogHeader>
 
         <DialogFooter className="mt-6 flex justify-end gap-3">
-          <Button
-            variant="outline"
-            onClick={onCancel}
-            className="px-4 py-2 text-sm rounded-md"
-          >
+          <Button variant="outline" onClick={onCancel} className="px-4 py-2 text-sm rounded-md">
             {cancelText}
           </Button>
           <Button

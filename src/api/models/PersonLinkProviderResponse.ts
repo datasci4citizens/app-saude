@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { PersonLinkProviderResponseStatusEnum } from "./PersonLinkProviderResponseStatusEnum";
+import type { PersonLinkProviderResponseStatusEnum } from './PersonLinkProviderResponseStatusEnum';
 export type PersonLinkProviderResponse = {
   /**
    * Linking result

@@ -1,10 +1,10 @@
-import type React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import HabitCard from "@/components/ui/habit-card";
-import { Switch } from "@/components/ui/switch";
-import { TextField } from "@/components/forms/text_input";
-import { Eye } from "lucide-react";
-import type { InterestArea, InterestAreaTrigger } from "@/api";
+import type React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import HabitCard from '@/components/ui/habit-card';
+import { Switch } from '@/components/ui/switch';
+import { TextField } from '@/components/forms/text_input';
+import { Eye } from 'lucide-react';
+import type { InterestArea, InterestAreaTrigger } from '@/api';
 
 export interface UserInterest {
   observation_id?: number;
@@ -31,12 +31,12 @@ const CollapsibleInterestCard: React.FC<CollapsibleInterestCardProps> = ({
   onTriggerResponseChange,
   readOnly = false,
 }) => {
-  const interestName = interest.interest_area.name || "Interesse";
+  const interestName = interest.interest_area.name || 'Interesse';
 
   const handleCardClick = (e: React.MouseEvent) => {
     if (
-      (e.target as HTMLElement).closest("button") ||
-      (e.target as HTMLElement).closest("input") ||
+      (e.target as HTMLElement).closest('button') ||
+      (e.target as HTMLElement).closest('input') ||
       (e.target as HTMLElement).closest("[role='switch']")
     ) {
       return;
@@ -52,10 +52,7 @@ const CollapsibleInterestCard: React.FC<CollapsibleInterestCardProps> = ({
   return (
     <div className="space-y-3">
       {/* Card principal clicável */}
-      <div
-        onClick={handleCardClick}
-        className={readOnly ? "cursor-default" : "cursor-pointer"}
-      >
+      <div onClick={handleCardClick} className={readOnly ? 'cursor-default' : 'cursor-pointer'}>
         <HabitCard
           title={interestName}
           isAttentionPoint={interest.interest_area.is_attention_point}
@@ -71,20 +68,13 @@ const CollapsibleInterestCard: React.FC<CollapsibleInterestCardProps> = ({
           <div className="flex items-center gap-2">
             <Eye size={16} className="text-gray-500" />
             <span className="text-sm text-gray-600">
-              {interest.shared
-                ? "Compartilhado com profissionais"
-                : "Não compartilhado"}
+              {interest.shared ? 'Compartilhado com profissionais' : 'Não compartilhado'}
             </span>
           </div>
         ) : (
           <>
-            <span className="text-sm text-gray-500 italic">
-              Compartilhar com profissionais
-            </span>
-            <Switch
-              checked={interest.shared || false}
-              onCheckedChange={onSharingToggle}
-            />
+            <span className="text-sm text-gray-500 italic">Compartilhar com profissionais</span>
+            <Switch checked={interest.shared || false} onCheckedChange={onSharingToggle} />
           </>
         )}
       </div>
@@ -97,9 +87,9 @@ const CollapsibleInterestCard: React.FC<CollapsibleInterestCardProps> = ({
             <motion.div
               key="triggers-content"
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
+              animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
               className="overflow-hidden ml-4 space-y-4 border-l-2 border-gray2 pl-4"
             >
               {interest.interest_area.triggers.map((trigger, index) => (
@@ -107,9 +97,7 @@ const CollapsibleInterestCard: React.FC<CollapsibleInterestCardProps> = ({
                   key={`${interest.interest_area.name}-trigger-${index}`}
                   trigger={trigger}
                   response={getResponseForTrigger(trigger.name)}
-                  onResponseChange={(response) =>
-                    onTriggerResponseChange(trigger.name, response)
-                  }
+                  onResponseChange={(response) => onTriggerResponseChange(trigger.name, response)}
                   readOnly={readOnly}
                 />
               ))}
@@ -120,14 +108,13 @@ const CollapsibleInterestCard: React.FC<CollapsibleInterestCardProps> = ({
       {/* Mensagem quando não há triggers */}
       <AnimatePresence initial={false}>
         {isOpen &&
-          (!interest.interest_area.triggers ||
-            interest.interest_area.triggers.length === 0) && (
+          (!interest.interest_area.triggers || interest.interest_area.triggers.length === 0) && (
             <motion.div
               key="no-triggers"
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
+              animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
               className="overflow-hidden ml-4 pl-4 border-l-2 border-gray2"
             >
               <div className="py-4 text-center">
@@ -173,7 +160,7 @@ const TriggerItem: React.FC<{
         <TextField
           id={`trigger-${trigger.name}`}
           name={`trigger-${trigger.name}`}
-          value={response || ""}
+          value={response || ''}
           onChange={(e) => onResponseChange(e.target.value)}
           placeholder={`Responda sobre: ${triggerTitle}`}
           className="border-gray-300 border-2 focus:border-orange-400"

@@ -1,6 +1,6 @@
-import type React from "react";
-import { useState, useEffect } from "react";
-import { Checkbox } from "../forms/checkbox";
+import type React from 'react';
+import { useState, useEffect } from 'react';
+import { Checkbox } from '../forms/checkbox';
 
 interface ReminderCardProps {
   title: string;
@@ -40,9 +40,7 @@ const ReminderCard: React.FC<ReminderCardProps> = ({
 
       {/* Text content */}
       <div className="flex-1 ml-4">
-        <h4 className="text-base font-normal m-0 text-typography font-inter">
-          {title}
-        </h4>
+        <h4 className="text-base font-normal m-0 text-typography font-inter">{title}</h4>
         <p className="text-xs m-0 text-gray2 font-inter">{subtitle}</p>
       </div>
 

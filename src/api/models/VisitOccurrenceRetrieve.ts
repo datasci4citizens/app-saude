@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { RecurrenceRuleRetrieve } from "./RecurrenceRuleRetrieve";
+import type { RecurrenceRuleRetrieve } from './RecurrenceRuleRetrieve';
 export type VisitOccurrenceRetrieve = {
   readonly visit_occurrence_id: number;
   recurrence_rule?: RecurrenceRuleRetrieve;

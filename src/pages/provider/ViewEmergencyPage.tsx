@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import Header from "@/components/ui/header";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
-import { ErrorMessage } from "@/components/ui/error-message";
-import { ProviderService } from "@/api/services/ProviderService";
-import type { DiaryRetrieve } from "@/api/models/DiaryRetrieve";
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import Header from '@/components/ui/header';
+import BottomNavigationBar from '@/components/ui/navigator-bar';
+import { ErrorMessage } from '@/components/ui/error-message';
+import { ProviderService } from '@/api/services/ProviderService';
+import type { DiaryRetrieve } from '@/api/models/DiaryRetrieve';
 
 export default function ViewEmergencyPage() {
   const { diaryId, personId } = useParams<{
@@ -22,15 +22,14 @@ export default function ViewEmergencyPage() {
         try {
           setLoading(true);
           setError(null);
-          const diaryData =
-            await ProviderService.providerPatientsDiariesRetrieve(
-              diaryId,
-              Number(personId),
-            );
+          const diaryData = await ProviderService.providerPatientsDiariesRetrieve(
+            diaryId,
+            Number(personId),
+          );
           setDiary(diaryData);
         } catch (err) {
-          console.error("Error fetching diary data:", err);
-          setError("Não foi possível carregar os dados do diário.");
+          console.error('Error fetching diary data:', err);
+          setError('Não foi possível carregar os dados do diário.');
         } finally {
           setLoading(false);
         }
@@ -42,17 +41,17 @@ export default function ViewEmergencyPage() {
 
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
-      case "home":
-        navigate("/acs-main-page");
+      case 'home':
+        navigate('/acs-main-page');
         break;
-      case "patients":
-        navigate("/patients");
+      case 'patients':
+        navigate('/patients');
         break;
-      case "emergency":
-        navigate("/emergencies");
+      case 'emergency':
+        navigate('/emergencies');
         break;
-      case "profile":
-        navigate("/acs-profile");
+      case 'profile':
+        navigate('/acs-profile');
         break;
     }
   };
@@ -89,7 +88,7 @@ export default function ViewEmergencyPage() {
         <div className="bg-white p-6 rounded-lg shadow-sm">
           <h2 className="text-xl font-semibold text-gray-800">{diary.scope}</h2>
           <p className="text-sm text-gray-400 mt-4">
-            {new Date(diary.date).toLocaleString("pt-BR")}
+            {new Date(diary.date).toLocaleString('pt-BR')}
           </p>
         </div>
       </main>

@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Logout } from "../models/Logout";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { Logout } from '../models/Logout';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class LogoutService {
   /**
    * View to logout the user.
@@ -16,10 +16,10 @@ export class LogoutService {
    */
   public static authLogoutCreate(requestBody: Logout): CancelablePromise<any> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/auth/logout/",
+      method: 'POST',
+      url: '/auth/logout/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
 }

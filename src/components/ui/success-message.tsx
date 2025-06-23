@@ -1,4 +1,4 @@
-import type React from "react";
+import type React from 'react';
 
 interface SuccessMessageProps {
   message: string;
@@ -9,7 +9,7 @@ interface SuccessMessageProps {
 
 export const SuccessMessage: React.FC<SuccessMessageProps> = ({
   message,
-  className = "",
+  className = '',
   icon = true,
   onClose,
 }) => {
