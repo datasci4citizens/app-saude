@@ -380,58 +380,59 @@ export default function ImprovedDiaryListPage() {
               </div>
             )}
 
-          {isLoading ? (
-            <div className="flex justify-center items-center py-16">
-              <div className="flex flex-col items-center gap-4">
-                <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection" />
-                <p className="text-muted-foreground font-medium">
-                  Carregando seus diários...
-                </p>
+            {isLoading ? (
+              <div className="flex justify-center items-center py-16">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection" />
+                  <p className="text-muted-foreground font-medium">
+                    Carregando seus diários...
+                  </p>
+                </div>
               </div>
-            </div>
-          ) : !hasDiaries ? (
-            <div className="flex flex-col items-center justify-center py-16">
-              <div className="text-6xl mb-4">📝</div>
-              <p className="text-center text-typography mb-4 font-bold text-xl">
-                Você ainda não possui diários.
-              </p>
-              <p className="text-center text-muted-foreground mb-6 max-w-md">
-                Comece a registrar seus pensamentos, experiências e respostas aos
-                seus interesses para acompanhar seu bem-estar.
-              </p>
-              <Button
-                onClick={handleCreateDiary}
-                variant="gradient"
-                size="xl"
-                className="flex items-center gap-2 text-typography"
-              >
-                <PlusCircle size={20} />
-                Criar Primeiro Diário
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-8">
-              {Object.entries(groupedDiaries)
-                .sort(([a], [b]) => {
-                  const [dayA = 0, monthA = 0] = a
-                    .split("/")
-                    .map((v) => Number(v) || 0);
-                  const [dayB = 0, monthB = 0] = b
-                    .split("/")
-                    .map((v) => Number(v) || 0);
-                  return monthB - monthA || dayB - dayA;
-                })
-                .map(([date, entries]) => (
-                  <div key={date} className="space-y-4">
-                    <div className="flex items-center gap-3 border-b border-card-border pb-3">
-                      <Calendar size={20} className="text-selection" />
-                      <h3 className="font-bold text-xl text-typography">
-                        Dia {date}
-                      </h3>
-                      <span className="text-sm text-muted-foreground px-3 py-1 bg-card rounded-full ml-auto border border-card-border">
-                        {entries.length} entrada{entries.length > 1 ? "s" : ""}
-                      </span>
-                    </div>
+            ) : !hasDiaries ? (
+              <div className="flex flex-col items-center justify-center py-16">
+                <div className="text-6xl mb-4">📝</div>
+                <p className="text-center text-typography mb-4 font-bold text-xl">
+                  Você ainda não possui diários.
+                </p>
+                <p className="text-center text-muted-foreground mb-6 max-w-md">
+                  Comece a registrar seus pensamentos, experiências e respostas
+                  aos seus interesses para acompanhar seu bem-estar.
+                </p>
+                <Button
+                  onClick={handleCreateDiary}
+                  variant="gradient"
+                  size="xl"
+                  className="flex items-center gap-2 text-typography"
+                >
+                  <PlusCircle size={20} />
+                  Criar Primeiro Diário
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-8">
+                {Object.entries(groupedDiaries)
+                  .sort(([a], [b]) => {
+                    const [dayA = 0, monthA = 0] = a
+                      .split("/")
+                      .map((v) => Number(v) || 0);
+                    const [dayB = 0, monthB = 0] = b
+                      .split("/")
+                      .map((v) => Number(v) || 0);
+                    return monthB - monthA || dayB - dayA;
+                  })
+                  .map(([date, entries]) => (
+                    <div key={date} className="space-y-4">
+                      <div className="flex items-center gap-3 border-b border-card-border pb-3">
+                        <Calendar size={20} className="text-selection" />
+                        <h3 className="font-bold text-xl text-typography">
+                          Dia {date}
+                        </h3>
+                        <span className="text-sm text-muted-foreground px-3 py-1 bg-card rounded-full ml-auto border border-card-border">
+                          {entries.length} entrada
+                          {entries.length > 1 ? "s" : ""}
+                        </span>
+                      </div>
 
                       {entries
                         .sort(
