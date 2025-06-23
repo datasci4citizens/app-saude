@@ -356,261 +356,264 @@ export default function ImprovedDiaryListPage() {
   }
 
   return (
-  <div className="flex flex-col h-screen bg-homebg">
-    <Header
-      title="📝 Diário"
-      onBackClick={() => navigate("/user-main-page")}
-    />
+    <div className="flex flex-col h-screen bg-homebg">
+      <Header
+        title="📝 Diário"
+        onBackClick={() => navigate("/user-main-page")}
+      />
 
-    <div className="flex-1 overflow-hidden bg-background rounded-t-3xl mt-4 relative z-10">
-      <div className="h-full overflow-y-auto">
-        <div className="px-4 py-6 pb-24">
-          {/* Create new diary button */}
-          {hasDiaries && (
-            <div className="flex justify-end mb-6">
-              <Button
-                onClick={handleCreateDiary}
-                variant="gradientNew"
-                size="lg"
-                className="flex items-center gap-2 text-typography"
-              >
-                <PlusCircle size={18} className="text-typography"/>
-                Novo Diário
-              </Button>
-            </div>
-          )}
-
-          {isLoading ? (
-            <div className="flex justify-center items-center py-16">
-              <div className="flex flex-col items-center gap-4">
-                <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection" />
-                <p className="text-muted-foreground font-medium">
-                  Carregando seus diários...
-                </p>
+      <div className="flex-1 overflow-hidden bg-background rounded-t-3xl mt-4 relative z-10">
+        <div className="h-full overflow-y-auto">
+          <div className="px-4 py-6 pb-24">
+            {/* Create new diary button */}
+            {hasDiaries && (
+              <div className="flex justify-end mb-6">
+                <Button
+                  onClick={handleCreateDiary}
+                  variant="gradientNew"
+                  size="lg"
+                  className="flex items-center gap-2 text-typography"
+                >
+                  <PlusCircle size={18} className="text-typography" />
+                  Novo Diário
+                </Button>
               </div>
-            </div>
-          ) : !hasDiaries ? (
-            <div className="flex flex-col items-center justify-center py-16">
-              <div className="text-6xl mb-4">📝</div>
-              <p className="text-center text-typography mb-4 font-bold text-xl">
-                Você ainda não possui diários.
-              </p>
-              <p className="text-center text-muted-foreground mb-6 max-w-md">
-                Comece a registrar seus pensamentos, experiências e respostas aos
-                seus interesses para acompanhar seu bem-estar.
-              </p>
-              <Button
-                onClick={handleCreateDiary}
-                variant="gradient"
-                size="xl"
-                className="flex items-center gap-2"
-              >
-                <PlusCircle size={20} />
-                Criar Primeiro Diário
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-8">
-              {Object.entries(groupedDiaries)
-                .sort(([a], [b]) => {
-                  const [dayA = 0, monthA = 0] = a
-                    .split("/")
-                    .map((v) => Number(v) || 0);
-                  const [dayB = 0, monthB = 0] = b
-                    .split("/")
-                    .map((v) => Number(v) || 0);
-                  return monthB - monthA || dayB - dayA;
-                })
-                .map(([date, entries]) => (
-                  <div key={date} className="space-y-4">
-                    <div className="flex items-center gap-3 border-b border-card-border pb-3">
-                      <Calendar size={20} className="text-selection" />
-                      <h3 className="font-bold text-xl text-typography">
-                        Dia {date}
-                      </h3>
-                      <span className="text-sm text-muted-foreground px-3 py-1 bg-card rounded-full ml-auto border border-card-border">
-                        {entries.length} entrada{entries.length > 1 ? "s" : ""}
-                      </span>
-                    </div>
+            )}
 
-                    {entries
-                      .sort(
-                        (a, b) =>
-                          new Date(b.date).getTime() - new Date(a.date).getTime(),
-                      )
-                      .map((diary) => {
-                        const stats = getDiaryStats(diary);
-                        const time = getTimeFromDate(diary.date);
-                        const hasAttentionPoints = stats.attentionPoints > 0;
+            {isLoading ? (
+              <div className="flex justify-center items-center py-16">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection" />
+                  <p className="text-muted-foreground font-medium">
+                    Carregando seus diários...
+                  </p>
+                </div>
+              </div>
+            ) : !hasDiaries ? (
+              <div className="flex flex-col items-center justify-center py-16">
+                <div className="text-6xl mb-4">📝</div>
+                <p className="text-center text-typography mb-4 font-bold text-xl">
+                  Você ainda não possui diários.
+                </p>
+                <p className="text-center text-muted-foreground mb-6 max-w-md">
+                  Comece a registrar seus pensamentos, experiências e respostas
+                  aos seus interesses para acompanhar seu bem-estar.
+                </p>
+                <Button
+                  onClick={handleCreateDiary}
+                  variant="gradient"
+                  size="xl"
+                  className="flex items-center gap-2"
+                >
+                  <PlusCircle size={20} />
+                  Criar Primeiro Diário
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-8">
+                {Object.entries(groupedDiaries)
+                  .sort(([a], [b]) => {
+                    const [dayA = 0, monthA = 0] = a
+                      .split("/")
+                      .map((v) => Number(v) || 0);
+                    const [dayB = 0, monthB = 0] = b
+                      .split("/")
+                      .map((v) => Number(v) || 0);
+                    return monthB - monthA || dayB - dayA;
+                  })
+                  .map(([date, entries]) => (
+                    <div key={date} className="space-y-4">
+                      <div className="flex items-center gap-3 border-b border-card-border pb-3">
+                        <Calendar size={20} className="text-selection" />
+                        <h3 className="font-bold text-xl text-typography">
+                          Dia {date}
+                        </h3>
+                        <span className="text-sm text-muted-foreground px-3 py-1 bg-card rounded-full ml-auto border border-card-border">
+                          {entries.length} entrada
+                          {entries.length > 1 ? "s" : ""}
+                        </span>
+                      </div>
 
-                        return (
-                          <div
-                            key={diary.diary_id}
-                            className={`bg-card border rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer group ${
-                              hasAttentionPoints
-                                ? "border-orange-200 dark:border-orange-800 hover:border-orange-300 dark:hover:border-orange-700 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20"
-                                : "border-card-border hover:border-ring/30 hover:bg-card/90"
-                            }`}
-                            onClick={() => handleViewDiary(diary.diary_id)}
-                          >
-                            {/* Header with time, sharing status and attention warning */}
-                            <div className="flex justify-between items-start mb-4">
-                              <div className="flex items-center gap-3 flex-wrap">
-                                <div className="flex items-center gap-2">
-                                  <Clock
-                                    size={16}
-                                    className="text-muted-foreground"
-                                  />
-                                  <span className="text-sm font-medium text-muted-foreground">
-                                    {time}
-                                  </span>
-                                </div>
+                      {entries
+                        .sort(
+                          (a, b) =>
+                            new Date(b.date).getTime() -
+                            new Date(a.date).getTime(),
+                        )
+                        .map((diary) => {
+                          const stats = getDiaryStats(diary);
+                          const time = getTimeFromDate(diary.date);
+                          const hasAttentionPoints = stats.attentionPoints > 0;
 
-                                {diary.diary_shared && (
-                                  <div className="flex items-center gap-1 px-2 py-1 bg-success/10 text-success rounded-full border border-success/20">
-                                    <Share2 size={12} />
-                                    <span className="text-xs font-medium">
-                                      Compartilhado
+                          return (
+                            <div
+                              key={diary.diary_id}
+                              className={`bg-card border rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer group ${
+                                hasAttentionPoints
+                                  ? "border-orange-200 dark:border-orange-800 hover:border-orange-300 dark:hover:border-orange-700 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20"
+                                  : "border-card-border hover:border-ring/30 hover:bg-card/90"
+                              }`}
+                              onClick={() => handleViewDiary(diary.diary_id)}
+                            >
+                              {/* Header with time, sharing status and attention warning */}
+                              <div className="flex justify-between items-start mb-4">
+                                <div className="flex items-center gap-3 flex-wrap">
+                                  <div className="flex items-center gap-2">
+                                    <Clock
+                                      size={16}
+                                      className="text-muted-foreground"
+                                    />
+                                    <span className="text-sm font-medium text-muted-foreground">
+                                      {time}
                                     </span>
                                   </div>
-                                )}
 
-                                {hasAttentionPoints && (
-                                  <div className="flex items-center gap-1 px-2 py-1 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-full border border-orange-200 dark:border-orange-800">
-                                    <AlertTriangle size={12} />
-                                    <span className="text-xs font-medium">
-                                      Requer Atenção
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-                              <ChevronRight
-                                size={20}
-                                className="text-muted-foreground group-hover:text-typography transition-colors"
-                              />
-                            </div>
-
-                            {/* Content indicators */}
-                            <div className="flex items-center gap-4 mb-4 flex-wrap">
-                              {stats.hasTextEntry && (
-                                <div className="flex items-center gap-2 text-selection">
-                                  <FileText size={16} />
-                                  <span className="text-sm font-medium">
-                                    Observações
-                                  </span>
-                                </div>
-                              )}
-
-                              {stats.totalInterests > 0 && (
-                                <div className="flex items-center gap-2 text-selection">
-                                  <Target size={16} />
-                                  <span className="text-sm font-medium">
-                                    {stats.totalInterests} interesse
-                                    {stats.totalInterests > 1 ? "s" : ""}
-                                  </span>
-                                </div>
-                              )}
-
-                              {stats.attentionPoints > 0 && (
-                                <div className="flex items-center gap-2 text-orange-500">
-                                  <AlertTriangle size={16} />
-                                  <span className="text-sm font-medium">
-                                    {stats.attentionPoints} ponto
-                                    {stats.attentionPoints > 1 ? "s" : ""} de
-                                    atenção
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Interest areas with attention highlights */}
-                            {diary.interest_areas &&
-                              diary.interest_areas.length > 0 && (
-                                <div className="mb-4 space-y-2">
-                                  {diary.interest_areas.map((area, index) => (
-                                    <div
-                                      key={`${area.interest_area_id}-${index}`}
-                                      className={`flex items-center gap-2 text-sm p-2 rounded-lg ${
-                                        area.is_attention_point
-                                          ? "bg-orange-500/10 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800"
-                                          : "bg-card-muted text-muted-foreground border border-card-border"
-                                      }`}
-                                    >
-                                      {area.is_attention_point && (
-                                        <AlertTriangle size={14} />
-                                      )}
-                                      <span className="font-medium">
-                                        {area.name}
-                                      </span>
-                                      <span className="text-xs">
-                                        (
-                                        {area.triggers?.filter(
-                                          (t) =>
-                                            t.response &&
-                                            t.response.trim() !== "",
-                                        ).length || 0}
-                                        /{area.triggers?.length || 0} respondidas)
+                                  {diary.diary_shared && (
+                                    <div className="flex items-center gap-1 px-2 py-1 bg-success/10 text-success rounded-full border border-success/20">
+                                      <Share2 size={12} />
+                                      <span className="text-xs font-medium">
+                                        Compartilhado
                                       </span>
                                     </div>
-                                  ))}
+                                  )}
+
+                                  {hasAttentionPoints && (
+                                    <div className="flex items-center gap-1 px-2 py-1 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-full border border-orange-200 dark:border-orange-800">
+                                      <AlertTriangle size={12} />
+                                      <span className="text-xs font-medium">
+                                        Requer Atenção
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                                <ChevronRight
+                                  size={20}
+                                  className="text-muted-foreground group-hover:text-typography transition-colors"
+                                />
+                              </div>
+
+                              {/* Content indicators */}
+                              <div className="flex items-center gap-4 mb-4 flex-wrap">
+                                {stats.hasTextEntry && (
+                                  <div className="flex items-center gap-2 text-selection">
+                                    <FileText size={16} />
+                                    <span className="text-sm font-medium">
+                                      Observações
+                                    </span>
+                                  </div>
+                                )}
+
+                                {stats.totalInterests > 0 && (
+                                  <div className="flex items-center gap-2 text-selection">
+                                    <Target size={16} />
+                                    <span className="text-sm font-medium">
+                                      {stats.totalInterests} interesse
+                                      {stats.totalInterests > 1 ? "s" : ""}
+                                    </span>
+                                  </div>
+                                )}
+
+                                {stats.attentionPoints > 0 && (
+                                  <div className="flex items-center gap-2 text-orange-500">
+                                    <AlertTriangle size={16} />
+                                    <span className="text-sm font-medium">
+                                      {stats.attentionPoints} ponto
+                                      {stats.attentionPoints > 1 ? "s" : ""} de
+                                      atenção
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Interest areas with attention highlights */}
+                              {diary.interest_areas &&
+                                diary.interest_areas.length > 0 && (
+                                  <div className="mb-4 space-y-2">
+                                    {diary.interest_areas.map((area, index) => (
+                                      <div
+                                        key={`${area.interest_area_id}-${index}`}
+                                        className={`flex items-center gap-2 text-sm p-2 rounded-lg ${
+                                          area.is_attention_point
+                                            ? "bg-orange-500/10 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800"
+                                            : "bg-card-muted text-muted-foreground border border-card-border"
+                                        }`}
+                                      >
+                                        {area.is_attention_point && (
+                                          <AlertTriangle size={14} />
+                                        )}
+                                        <span className="font-medium">
+                                          {area.name}
+                                        </span>
+                                        <span className="text-xs">
+                                          (
+                                          {area.triggers?.filter(
+                                            (t) =>
+                                              t.response &&
+                                              t.response.trim() !== "",
+                                          ).length || 0}
+                                          /{area.triggers?.length || 0}{" "}
+                                          respondidas)
+                                        </span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+
+                              {/* Progress bar for interests */}
+                              {stats.totalTriggers > 0 && (
+                                <div className="mb-4">
+                                  <div className="flex justify-between items-center mb-2">
+                                    <span className="text-sm text-muted-foreground">
+                                      Progresso dos interesses
+                                    </span>
+                                    <span className="text-sm font-medium text-typography">
+                                      {Math.round(stats.progressPercentage)}%
+                                    </span>
+                                  </div>
+                                  <div className="w-full bg-card-muted rounded-full h-2 border border-card-border">
+                                    <div
+                                      className={`h-2 rounded-full transition-all duration-500 ${
+                                        hasAttentionPoints
+                                          ? "bg-gradient-to-r from-orange-400 to-red-500"
+                                          : "bg-gradient-to-r from-selection to-homebg"
+                                      }`}
+                                      style={{
+                                        width: `${stats.progressPercentage}%`,
+                                      }}
+                                    />
+                                  </div>
                                 </div>
                               )}
 
-                            {/* Progress bar for interests */}
-                            {stats.totalTriggers > 0 && (
-                              <div className="mb-4">
-                                <div className="flex justify-between items-center mb-2">
-                                  <span className="text-sm text-muted-foreground">
-                                    Progresso dos interesses
-                                  </span>
-                                  <span className="text-sm font-medium text-typography">
-                                    {Math.round(stats.progressPercentage)}%
-                                  </span>
-                                </div>
-                                <div className="w-full bg-card-muted rounded-full h-2 border border-card-border">
-                                  <div
-                                    className={`h-2 rounded-full transition-all duration-500 ${
-                                      hasAttentionPoints
-                                        ? "bg-gradient-to-r from-orange-400 to-red-500"
-                                        : "bg-gradient-to-r from-selection to-homebg"
-                                    }`}
-                                    style={{
-                                      width: `${stats.progressPercentage}%`,
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Summary text */}
-                            <p
-                              className={`line-clamp-2 leading-relaxed ${
-                                hasAttentionPoints
-                                  ? "text-orange-800 dark:text-orange-200"
-                                  : "text-typography/80"
-                              }`}
-                            >
-                              {getDiarySummary(diary)}
-                            </p>
-                          </div>
-                        );
-                      })}
-                  </div>
-                ))}
-            </div>
-          )}
+                              {/* Summary text */}
+                              <p
+                                className={`line-clamp-2 leading-relaxed ${
+                                  hasAttentionPoints
+                                    ? "text-orange-800 dark:text-orange-200"
+                                    : "text-typography/80"
+                                }`}
+                              >
+                                {getDiarySummary(diary)}
+                              </p>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
 
-    {/* Fixed bottom navigation */}
-    <div className="fixed bottom-0 left-0 right-0 z-50">
-      <BottomNavigationBar
-        variant="user"
-        forceActiveId={getActiveNavId()}
-        onItemClick={handleNavigationClick}
-      />
+      {/* Fixed bottom navigation */}
+      <div className="fixed bottom-0 left-0 right-0 z-50">
+        <BottomNavigationBar
+          variant="user"
+          forceActiveId={getActiveNavId()}
+          onItemClick={handleNavigationClick}
+        />
+      </div>
     </div>
-  </div>
-);
+  );
 }
