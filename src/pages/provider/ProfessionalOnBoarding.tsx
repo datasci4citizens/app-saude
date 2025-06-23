@@ -102,11 +102,15 @@ export default function ProfessionalOnboarding() {
   };
 
   return (
-    <div className="h-full bg-homebg overflow-y-auto" style={{ height: '100vh' }}>
+    <div className="h-full bg-background overflow-y-auto" style={{ height: '100vh' }}>
       <div className="max-w-md mx-auto">
         {/* Header */}
         <div className="px-8 pt-9">
-          <Header title="Preencha informações profissionais" onBackClick={handleBackClick} />
+          <Header
+            title="Preencha informações profissionais"
+            onBackClick={handleBackClick}
+            variant="transparent"
+          />
         </div>
 
         <div className="pl-9 pr-9">

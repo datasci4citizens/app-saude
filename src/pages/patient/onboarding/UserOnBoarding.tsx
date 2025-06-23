@@ -94,11 +94,15 @@ export default function UserOnboarding() {
   };
 
   return (
-    <div className="h-full bg-primary overflow-y-auto" style={{ height: '100vh' }}>
+    <div className="h-full bg-background overflow-y-auto" style={{ height: '100vh' }}>
       <div className="max-w-md mx-auto">
         {/* Header */}
-        <div className="px-8 pt-9">
-          <Header title="Preencha informações sobre você" onBackClick={handleBackClick} />
+        <div className="bg-background px-8 pt-9">
+          <Header
+            title="Preencha informações sobre você"
+            onBackClick={handleBackClick}
+            variant="transparent"
+          />
         </div>
 
         {/* Progress indicator*/}

@@ -42,6 +42,15 @@ export function UserInfoForm({
     error: conceptError,
   } = useDemographicConcepts();
 
+  console.log('Concept loading state:', {
+    isLoadingConcepts,
+    conceptError,
+    genderOptionsLength: genderOptions?.length,
+    raceOptionsLength: raceOptions?.length,
+    genderOptions,
+    raceOptions,
+  });
+
   const [formData, setFormData] = useState<UserFormData>({
     social_name: '',
     gender_concept: null,
@@ -54,8 +63,10 @@ export function UserInfoForm({
   const [errors, setErrors] = useState<FormErrors>({});
 
   // Handle input change
-  const handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLSelectElement> = (e) => {
-    const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
+  const handleChange: React.ChangeEventHandler<
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  > = (e) => {
+    const { name, value } = e.target;
 
     // Convert numeric fields to numbers
     if (

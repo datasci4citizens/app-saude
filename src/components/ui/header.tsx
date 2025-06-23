@@ -74,7 +74,7 @@ const Header: React.FC<HeaderProps> = ({
     if (backButtonClassName) return backButtonClassName;
 
     const baseStyles =
-      'rounded-full transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50';
+      'rounded-full transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-opacity-50';
 
     switch (variant) {
       case 'transparent':
