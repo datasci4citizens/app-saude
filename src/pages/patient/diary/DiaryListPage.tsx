@@ -16,6 +16,36 @@ import Header from "@/components/ui/header";
 import { Button } from "@/components/forms/button";
 import { TypeEnum } from "@/api/models/TypeEnum";
 
+// API Response interfaces
+interface ApiTriggerResponse {
+  trigger_id?: number;
+  trigger_name?: string;
+  name?: string;
+  type?: TypeEnum;
+  value_as_string?: string;
+  response?: string;
+}
+
+interface ApiInterestAreaResponse {
+  interest_name?: string;
+  name?: string;
+  triggers?: ApiTriggerResponse[];
+  interest_area_id?: number;
+  is_attention_point?: boolean;
+  shared_with_provider?: boolean;
+  provider_name?: string | null;
+  [key: string]: unknown;
+}
+
+interface ApiDiaryItemResponse {
+  diary_id?: number;
+  date?: string;
+  diary_shared?: boolean;
+  entries?: DiaryEntry[] | string;
+  interest_areas?: ApiInterestAreaResponse[];
+  [key: string]: unknown;
+}
+
 // Interfaces atualizadas para a nova estrutura
 interface DiaryEntry {
   text: string;
@@ -65,19 +95,24 @@ export default function ImprovedDiaryListPage() {
 
         if (Array.isArray(response)) {
           // Transform API response to match new structure
-          const mapped = response.map((item: any) => ({
-            ...item,
+          const mapped = response.map((item: ApiDiaryItemResponse) => ({
+            diary_id: item.diary_id || 0,
+            date: item.date || new Date().toISOString(),
+            diary_shared: item.diary_shared || false,
             entries: Array.isArray(item.entries)
               ? item.entries
               : typeof item.entries === "string" && item.entries.trim() !== ""
                 ? [{ text: item.entries, text_shared: false }]
                 : [],
             interest_areas: Array.isArray(item.interest_areas)
-              ? item.interest_areas.map((area: any) => ({
-                  ...area,
+              ? item.interest_areas.map((area: ApiInterestAreaResponse) => ({
+                  interest_area_id: area.interest_area_id || 0,
                   name: area.interest_name || area.name || "Interesse",
+                  is_attention_point: area.is_attention_point || false,
+                  shared_with_provider: area.shared_with_provider || false,
+                  provider_name: area.provider_name || null,
                   triggers: Array.isArray(area.triggers)
-                    ? area.triggers.map((trigger: any) => ({
+                    ? area.triggers.map((trigger: ApiTriggerResponse) => ({
                         trigger_id: trigger.trigger_id || 0,
                         name: trigger.trigger_name || trigger.name || "",
                         type: trigger.type || TypeEnum.TEXT,
@@ -87,15 +122,15 @@ export default function ImprovedDiaryListPage() {
                     : [],
                 }))
               : [],
-          }));
+          })) as DiaryRetrieve[];
           setDiaries(mapped);
         } else {
           console.error("Unexpected API response format:", response);
           setError("Formato de resposta inesperado da API");
           setDiaries([]);
         }
-      } catch (error) {
-        console.error("Error fetching diaries:", error);
+      } catch (_error) {
+        console.error("Error fetching diaries:", _error);
         setError("Erro ao carregar diários");
         setDiaries([]);
       } finally {
@@ -121,7 +156,7 @@ export default function ImprovedDiaryListPage() {
       const day = String(date.getDate()).padStart(2, "0");
       const month = String(date.getMonth() + 1).padStart(2, "0");
       return `${day}/${month}`;
-    } catch (error) {
+    } catch (_error) {
       console.warn("Failed to parse date:", dateString);
       return "Data inválida";
     }
@@ -190,7 +225,7 @@ export default function ImprovedDiaryListPage() {
       const textEntry = diary.entries.find(
         (e) => e.text && e.text.trim() !== "",
       );
-      if (textEntry && textEntry.text) {
+      if (textEntry?.text) {
         return textEntry.text.length > 100
           ? `${textEntry.text.substring(0, 100)}...`
           : textEntry.text;
@@ -225,7 +260,7 @@ export default function ImprovedDiaryListPage() {
         hour: "2-digit",
         minute: "2-digit",
       });
-    } catch (error) {
+    } catch (_error) {
       return "";
     }
   };
@@ -235,13 +270,13 @@ export default function ImprovedDiaryListPage() {
 
   // Group diaries by date
   const groupedDiaries: Record<string, DiaryRetrieve[]> = {};
-  filteredDiaries.forEach((diary) => {
+  for (const diary of filteredDiaries) {
     const dateKey = formatDate(diary.date);
     if (!groupedDiaries[dateKey]) {
       groupedDiaries[dateKey] = [];
     }
     groupedDiaries[dateKey].push(diary);
-  });
+  }
 
   // Get active navigation item
   const getActiveNavId = () => {
@@ -322,7 +357,7 @@ export default function ImprovedDiaryListPage() {
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <div className="flex flex-col items-center gap-3">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-homebg/20 border-t-homebg"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-homebg/20 border-t-homebg" />
               <p className="text-muted-foreground font-medium">
                 Carregando seus diários...
               </p>

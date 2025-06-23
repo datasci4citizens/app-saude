@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/dialog";
 import {
   InterestAreasService,
-  type InterestArea,
   type InterestAreaTrigger,
   TypeEnum,
 } from "@/api";
@@ -25,6 +24,17 @@ interface InterestTemplate {
   interest_name: string;
   triggers: InterestAreaTrigger[];
   usage_count?: number;
+}
+
+// Interface for API response items (to replace any)
+interface ApiInterestAreaResponse {
+  person_id: number | null;
+  interest_area?: {
+    name?: string;
+    triggers?: (InterestAreaTrigger | string)[];
+  };
+  // Allow additional properties from API
+  [key: string]: unknown;
 }
 
 interface InterestFormData {
@@ -219,11 +229,11 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
 
       try {
         const response = await InterestAreasService.apiInterestAreaList();
-        const filteredResponse = response.filter((item: any) => item.person_id === null);
+        const filteredResponse = response.filter((item: ApiInterestAreaResponse) => item.person_id === null);
 
         // Map the API response to our template format
         const data = filteredResponse
-          .map((item: any) => { // API response structure differs from InterestArea type
+          .map((item: ApiInterestAreaResponse) => { // API response structure differs from InterestArea type
             try {
               // Handle different response structures
               const interestData = item.interest_area || item;

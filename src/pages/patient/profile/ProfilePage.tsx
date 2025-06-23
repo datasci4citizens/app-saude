@@ -58,7 +58,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   }, []);
 
   const clearError = () => setError(null);
-  const clearSuccess = () => setSuccess(null);
 
   const handleLogout = async () => {
     const refresh = localStorage.getItem("refreshToken");

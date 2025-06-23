@@ -86,7 +86,7 @@ const ScaleTrigger = ({
   value: string;
   onChange: (value: string) => void;
 }) => {
-  const numValue = parseInt(value) || 0;
+  const numValue = Number.parseInt(value) || 0;
   const maxValue = 10;
 
   const getScaleColor = (value: number): string => {
@@ -147,7 +147,7 @@ const IntegerTrigger = ({
   value: string;
   onChange: (value: string) => void;
 }) => {
-  const numValue = parseInt(value) || 0;
+  const numValue = Number.parseInt(value) || 0;
 
   const increment = () => onChange(Math.max(0, numValue + 1).toString());
   const decrement = () => onChange(Math.max(0, numValue - 1).toString());
@@ -295,7 +295,6 @@ const EnhancedInterestCard = ({
         return <ScaleTrigger value={value} onChange={onChange} />;
       case TypeEnum.INT:
         return <IntegerTrigger value={value} onChange={onChange} />;
-      case TypeEnum.TEXT:
       default:
         return (
           <TextTrigger trigger={trigger} value={value} onChange={onChange} />
@@ -545,7 +544,7 @@ export default function DiaryInfoForm() {
       try {
         const userEntity = await ApiService.apiUserEntityRetrieve();
         const interests = await InterestAreasService.apiInterestAreaList(
-          userEntity["person_id"],
+          userEntity.person_id,
         );
         console.log("Interesses recebidos:", interests);
 
@@ -787,7 +786,7 @@ export default function DiaryInfoForm() {
           {isLoadingInterests ? (
             <div className="flex justify-center py-12">
               <div className="text-center">
-                <div className="w-12 h-12 border-4 border-homebg/20 border-t-homebg rounded-full animate-spin mx-auto mb-4"></div>
+                <div className="w-12 h-12 border-4 border-homebg/20 border-t-homebg rounded-full animate-spin mx-auto mb-4" />
                 <p className="text-muted-foreground font-medium">
                   Carregando seus interesses...
                 </p>
@@ -890,7 +889,7 @@ export default function DiaryInfoForm() {
           >
             {isSubmitting ? (
               <span className="flex items-center justify-center gap-3">
-                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 Salvando...
               </span>
             ) : (

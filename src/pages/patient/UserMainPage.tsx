@@ -23,6 +23,7 @@ interface InterestAreaResponse {
   is_modified?: boolean;
   attention_point_date?: string;
   marked_by?: string[];
+  provider_name?: string;
 }
 
 // Interface for the dialog data format
@@ -92,13 +93,13 @@ export default function UserMainPage() {
         }));
 
         // flag is_attention_point
-        normalizedInterests.forEach((interest: InterestAreaResponse) => {
+        for (const interest of normalizedInterests) {
           if (interest.marked_by && interest.marked_by.length > 0) {
             interest.interest_area.is_attention_point = true;
           } else {
             interest.interest_area.is_attention_point = false;
           }
-        });
+        }
 
         setUserInterestObjects(normalizedInterests);
         setOriginalInterests([...normalizedInterests]);
@@ -482,7 +483,7 @@ export default function UserMainPage() {
                         ? "bg-orange-400"
                         : "bg-gradient-interest-indicator"
                     }`}
-                  ></span>
+                  />
                   <span className="break-words min-w-0">
                     {String(interest.interest_area?.name || "")}
                   </span>
