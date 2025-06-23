@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/forms/button";
 import { SelectField } from "@/components/forms/select_input";
 import type { ObservationCreate } from "@/api/models/ObservationCreate";
@@ -102,7 +103,7 @@ export function UserInfoForm3({
     const observations: ObservationCreate[] = [
       // Sleep health observation
       {
-        value_as_concept: parseInt(formData.sleepHealth),
+        value_as_concept: Number.parseInt(formData.sleepHealth),
         observation_date: now,
         observation_concept: conceptIds.sleepHealth,
         shared_with_provider: true,
@@ -110,7 +111,7 @@ export function UserInfoForm3({
       },
       // Physical exercise observation
       {
-        value_as_concept: parseInt(formData.physicalExercise),
+        value_as_concept: Number.parseInt(formData.physicalExercise),
         observation_date: now,
         observation_concept: conceptIds.physicalExercise,
         shared_with_provider: true,
@@ -118,14 +119,14 @@ export function UserInfoForm3({
       },
       // Eating habits observation
       {
-        value_as_concept: parseInt(formData.eatingHabits),
+        value_as_concept: Number.parseInt(formData.eatingHabits),
         observation_date: now,
         observation_concept: conceptIds.eatingHabits,
         shared_with_provider: true,
         observation_type_concept: conceptIds.selfReported,
       },
       ...formData.comorbidities.map((conceptId) => ({
-        value_as_concept: parseInt(conceptId),
+        value_as_concept: Number.parseInt(conceptId),
         observation_date: now,
         observation_concept: conceptIds.comorbidities,
         shared_with_provider: true,
@@ -143,7 +144,7 @@ export function UserInfoForm3({
         dose_times: null,
         sig: null,
         person: null,
-        drug_concept: parseInt(conceptId),
+        drug_concept: Number.parseInt(conceptId),
         drug_type_concept: conceptIds.medications,
       })),
       ...formData.substanceUse.map((conceptId) => ({
@@ -155,7 +156,7 @@ export function UserInfoForm3({
         dose_times: null,
         sig: null,
         person: null,
-        drug_concept: parseInt(conceptId),
+        drug_concept: Number.parseInt(conceptId),
         drug_type_concept: conceptIds.substanceUse,
       })),
     ];

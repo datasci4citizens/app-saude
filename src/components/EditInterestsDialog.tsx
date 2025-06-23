@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/forms/button";
 import { TextField } from "@/components/forms/text_input";
 import { X, Search, Users, Copy, Plus } from "lucide-react";
@@ -23,6 +24,17 @@ interface InterestTemplate {
   interest_name: string;
   triggers: InterestAreaTrigger[];
   usage_count?: number;
+}
+
+// Interface for API response items (to replace any)
+interface ApiInterestAreaResponse {
+  person_id: number | null;
+  interest_area?: {
+    name?: string;
+    triggers?: (InterestAreaTrigger | string)[];
+  };
+  // Allow additional properties from API
+  [key: string]: unknown;
 }
 
 interface InterestFormData {
@@ -119,6 +131,9 @@ const TemplateItem: React.FC<{
     <div
       className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
       onClick={() => onSelect(template)}
+      onKeyDown={(e) => e.key === "Enter" && onSelect(template)}
+      role="button"
+      tabIndex={0}
     >
       <div className="flex items-start justify-between mb-2">
         <h4 className="font-medium text-sm">{template.interest_name}</h4>
@@ -134,9 +149,9 @@ const TemplateItem: React.FC<{
       </div>
 
       <div className="flex flex-wrap gap-1 mb-2">
-        {template.triggers.slice(0, 2).map((trigger, idx) => (
+        {template.triggers.slice(0, 2).map((trigger) => (
           <span
-            key={idx}
+            key={trigger.name}
             className="bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-200 px-2 py-1 rounded text-xs max-w-[200px] truncate"
             title={trigger?.name || ""}
           >
@@ -213,13 +228,15 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
       setError(null);
 
       try {
-        const response = (
-          await InterestAreasService.apiInterestAreaList()
-        ).filter((item: any) => item.person_id === null);
+        const response = await InterestAreasService.apiInterestAreaList();
+        const filteredResponse = response.filter(
+          (item: ApiInterestAreaResponse) => item.person_id === null,
+        );
 
         // Map the API response to our template format
-        const data = response
-          .map((item: any) => {
+        const data = filteredResponse
+          .map((item: ApiInterestAreaResponse) => {
+            // API response structure differs from InterestArea type
             try {
               // Handle different response structures
               const interestData = item.interest_area || item;
@@ -228,7 +245,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
 
               // Ensure triggers is an array and properly formatted
               const formattedTriggers = Array.isArray(triggers)
-                ? triggers.map((t: any) => {
+                ? triggers.map((t: InterestAreaTrigger | string) => {
                     if (typeof t === "string") {
                       return {
                         name: t,
@@ -266,7 +283,6 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
           })
           .filter(
             (template: InterestTemplate | null): template is InterestTemplate =>
-              // Filter out invalid templates and ensure all required fields
               template !== null &&
               !!template.interest_name &&
               template.triggers.length > 0 &&
@@ -300,9 +316,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
       return nameMatch || triggerMatch;
     })
     .filter(
-      (template) =>
-        // Additional safety check
-        template && template.interest_name && Array.isArray(template.triggers),
+      (template) => template?.interest_name && Array.isArray(template.triggers),
     );
 
   // Handlers
@@ -508,7 +522,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
             <div className="space-y-3 max-h-80 overflow-y-auto">
               {formData.triggers.map((trigger, index) => (
                 <QuestionItem
-                  key={index}
+                  key={`trigger-${trigger.name || index}`}
                   trigger={trigger}
                   index={index}
                   onUpdate={handleUpdateQuestion}

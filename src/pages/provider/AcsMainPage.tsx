@@ -14,7 +14,7 @@ export default function AcsMainPage() {
   // Data states
   const [emergencyCount, setEmergencyCount] = useState<number>(0);
   const [patientsCount, setPatientsCount] = useState<number>(0);
-  const [todayAppointments, setTodayAppointments] = useState<number>(0);
+  //const [todayAppointments, setTodayAppointments] = useState<number>(0);
 
   // UI states
   const [loading, setLoading] = useState<boolean>(true);
@@ -212,7 +212,7 @@ export default function AcsMainPage() {
                 onClick={action.onClick}
               >
                 {/* Background decoration */}
-                <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10"></div>
+                <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -mr-10 -mt-10" />
 
                 <div className="relative">
                   <div className="flex items-center justify-between mb-3">
@@ -263,7 +263,7 @@ export default function AcsMainPage() {
                   size="sm"
                   onClick={() => navigate("/emergencies")}
                 >
-                  <span className="mgc_right_line"></span>
+                  <span className="mgc_right_line" />
                 </Button>
               </div>
             </div>
@@ -286,7 +286,7 @@ export default function AcsMainPage() {
                   size="sm"
                   onClick={() => navigate("/patients")}
                 >
-                  <span className="mgc_right_line"></span>
+                  <span className="mgc_right_line" />
                 </Button>
               </div>
             </div>

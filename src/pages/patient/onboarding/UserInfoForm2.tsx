@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useState } from "react";
 import { Button } from "@/components/forms/button";
 import { TextField } from "@/components/forms/text_input";
 import { SelectField } from "@/components/forms/select_input";
@@ -52,9 +53,12 @@ export function UserInfoForm2({
 
   // Handle input change
   const handleChange: React.ChangeEventHandler<
-    HTMLInputElement | HTMLSelectElement
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
   > = (e) => {
-    const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
+    const { name, value } = e.target as
+      | HTMLInputElement
+      | HTMLSelectElement
+      | HTMLTextAreaElement;
     setFormData({ ...formData, [name]: value || null });
 
     // Clear error when user starts typing
@@ -119,14 +123,11 @@ export function UserInfoForm2({
     onSubmit(finalData);
   };
 
-  // Define the SelectOption type
-  interface SelectOption {
-    value: string | number;
-    label: string;
-  }
-
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+      {conceptError && (
+        <div className="text-red-500">Erro ao carregar os estados.</div>
+      )}
       <div className="flex flex-row gap-4 max-[311px]:flex-wrap">
         <TextField
           id="zip"
@@ -146,7 +147,7 @@ export function UserInfoForm2({
           onChange={handleChange}
           options={stateOptions}
           error={errors.state}
-          isLoading={false} // Placeholder for loading state
+          isLoading={isLoading}
         />
       </div>
 

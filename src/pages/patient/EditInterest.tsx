@@ -5,9 +5,8 @@ import { TextField } from "@/components/forms/text_input";
 import { Button } from "@/components/forms/button";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import type { InterestArea } from "@/api/models/InterestArea";
-import type { InterestAreaTriggerCreate } from "@/api/models/InterestAreaTriggerCreate";
+import type { InterestAreaTrigger } from "@/api/models/InterestAreaTrigger";
 import { SuccessMessage } from "@/components/ui/success-message";
-import { ErrorMessage } from "@/components/ui/error-message";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 // Extended interface for API response that includes the ID
@@ -69,10 +68,9 @@ export default function EditInterest() {
       setError(null);
 
       try {
-        const response =
-          (await InterestAreasService.personInterestAreasRetrieve(
-            parseInt(interestId),
-          )) as InterestAreaResponse;
+        const response = (await InterestAreasService.apiInterestAreaRetrieve(
+          Number.parseInt(interestId),
+        )) as InterestAreaResponse;
 
         setInterest(response);
       } catch (err) {
@@ -102,9 +100,9 @@ export default function EditInterest() {
 
     try {
       // Create new trigger
-      const newTrigger: InterestAreaTriggerCreate = {
+      const newTrigger: InterestAreaTrigger = {
         observation_concept_id: 2000301, // Specific concept ID for custom triggers
-        trigger_name: newQuestion.trim(),
+        name: newQuestion.trim(),
         value_as_string: null,
       };
 
@@ -120,7 +118,7 @@ export default function EditInterest() {
       // Update on the server
       console.log("Updating interest with new trigger:");
       console.log(updatedInterest);
-      await InterestAreasService.personInterestAreasCreate(updatedInterest);
+      await InterestAreasService.apiInterestAreaCreate(updatedInterest);
 
       // Update local state
       setInterest((prev) =>
@@ -162,7 +160,7 @@ export default function EditInterest() {
       };
 
       // Update on the server
-      await InterestAreasService.personInterestAreasCreate(updatedInterest);
+      await InterestAreasService.apiInterestAreaCreate(updatedInterest);
 
       // Update local state
       setInterest((prev) =>
@@ -190,19 +188,15 @@ export default function EditInterest() {
   };
 
   // Check if this is a custom interest
-  const isCustomInterest = () => {
-    return !interest?.concept_id && Boolean(interest?.interest_name);
+  const _isCustomInterest = () => {
+    return !interest?.concept_id && Boolean(interest?.name);
   };
 
   return (
     <div className="p-4 bg-primary min-h-screen pb-24">
       {/* Header */}
       <Header
-        title={
-          interest?.interest_name ||
-          interest?.value_as_string ||
-          "Editar Interesse"
-        }
+        title={interest?.name || "Editar Interesse"}
         onBackClick={handleBack}
       />
 
@@ -231,11 +225,11 @@ export default function EditInterest() {
                 <div className="space-y-2">
                   {interest.triggers.map((trigger, index) => (
                     <div
-                      key={index}
+                      key={`trigger-${trigger.id}-${index}`}
                       className="bg-offwhite p-3 rounded-md flex items-center justify-between"
                     >
                       <span className="text-typography">
-                        {trigger.trigger_name || "Sem descrição"}
+                        {trigger.name || "Sem descrição"}
                       </span>
                       <Button
                         variant="default"
@@ -254,8 +248,8 @@ export default function EditInterest() {
                           strokeLinecap="round"
                           strokeLinejoin="round"
                         >
-                          <path d="M18 6L6 18"></path>
-                          <path d="M6 6l12 12"></path>
+                          <path d="M18 6L6 18" />
+                          <path d="M6 6l12 12" />
                         </svg>
                       </Button>
                     </div>
@@ -284,7 +278,7 @@ export default function EditInterest() {
                   if (questionError) setQuestionError(null);
                 }}
                 placeholder="Nova pergunta"
-                error={questionError}
+                error={questionError || undefined}
               />
 
               {/* Add Question Button */}
@@ -299,15 +293,10 @@ export default function EditInterest() {
               </div>
             </div>
           </>
-        ) : (
-          <div className="flex justify-center py-8">
-            <p className="text-typography">Interesse não encontrado.</p>
-          </div>
-        )}
+        ) : null}
       </div>
       <BottomNavigationBar
-        variant="user"
-        forceActiveId={getActiveNavId()} // Controlled active state
+        activeItemId={getActiveNavId()}
         onItemClick={handleNavigationClick}
       />
     </div>

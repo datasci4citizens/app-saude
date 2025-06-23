@@ -38,7 +38,7 @@ interface DiaryInterestArea {
   provider_name: string | null;
 }
 
-interface DiaryRetrieve {
+interface LocalDiaryRetrieve {
   diary_id: number;
   date: string;
   entries: DiaryEntry[];
@@ -47,7 +47,7 @@ interface DiaryRetrieve {
 }
 
 export default function ImprovedDiaryListPage() {
-  const [diaries, setDiaries] = useState<DiaryRetrieve[]>([]);
+  const [diaries, setDiaries] = useState<LocalDiaryRetrieve[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,37 +65,96 @@ export default function ImprovedDiaryListPage() {
 
         if (Array.isArray(response)) {
           // Transform API response to match new structure
-          const mapped = response.map((item: any) => ({
-            ...item,
-            entries: Array.isArray(item.entries)
-              ? item.entries
-              : typeof item.entries === "string" && item.entries.trim() !== ""
-                ? [{ text: item.entries, text_shared: false }]
+          const mapped = response.map((item: unknown) => {
+            const typedItem = item as Record<string, unknown>;
+            // Handle case where response might be ApiDiaryRetrieve or already processed
+            if (
+              typeof typedItem.entries === "string" ||
+              typeof typedItem.interest_areas === "string"
+            ) {
+              // This is an ApiDiaryRetrieve - parse the JSON strings
+              const entries =
+                typeof typedItem.entries === "string"
+                  ? typedItem.entries.trim()
+                    ? JSON.parse(typedItem.entries)
+                    : []
+                  : Array.isArray(typedItem.entries)
+                    ? typedItem.entries
+                    : [];
+
+              const interest_areas =
+                typeof typedItem.interest_areas === "string"
+                  ? typedItem.interest_areas.trim()
+                    ? JSON.parse(typedItem.interest_areas)
+                    : []
+                  : Array.isArray(typedItem.interest_areas)
+                    ? typedItem.interest_areas
+                    : [];
+
+              return {
+                diary_id: (typedItem.diary_id as number) || 0,
+                date: (typedItem.date as string) || new Date().toISOString(),
+                diary_shared: (typedItem.diary_shared as boolean) || false,
+                entries: Array.isArray(entries) ? entries : [],
+                interest_areas: Array.isArray(interest_areas)
+                  ? interest_areas
+                  : [],
+              };
+            }
+
+            // This is already in the expected format or ApiDiaryItemResponse
+            return {
+              diary_id: (typedItem.diary_id as number) || 0,
+              date: (typedItem.date as string) || new Date().toISOString(),
+              diary_shared: (typedItem.diary_shared as boolean) || false,
+              entries: Array.isArray(typedItem.entries)
+                ? typedItem.entries
+                : typeof typedItem.entries === "string" &&
+                    typedItem.entries.trim() !== ""
+                  ? [{ text: typedItem.entries, text_shared: false }]
+                  : [],
+              interest_areas: Array.isArray(typedItem.interest_areas)
+                ? (typedItem.interest_areas as Record<string, unknown>[]).map(
+                    (area: Record<string, unknown>) => ({
+                      interest_area_id: (area.interest_area_id as number) || 0,
+                      name:
+                        (area.interest_name as string) ||
+                        (area.name as string) ||
+                        "Interesse",
+                      is_attention_point:
+                        (area.is_attention_point as boolean) || false,
+                      shared_with_provider:
+                        (area.shared_with_provider as boolean) || false,
+                      provider_name: (area.provider_name as string) || null,
+                      triggers: Array.isArray(area.triggers)
+                        ? (area.triggers as Record<string, unknown>[]).map(
+                            (trigger: Record<string, unknown>) => ({
+                              trigger_id: (trigger.trigger_id as number) || 0,
+                              name:
+                                (trigger.trigger_name as string) ||
+                                (trigger.name as string) ||
+                                "",
+                              type: (trigger.type as TypeEnum) || TypeEnum.TEXT,
+                              response:
+                                (trigger.value_as_string as string) ||
+                                (trigger.response as string) ||
+                                "",
+                            }),
+                          )
+                        : [],
+                    }),
+                  )
                 : [],
-            interest_areas: Array.isArray(item.interest_areas)
-              ? item.interest_areas.map((area: any) => ({
-                  ...area,
-                  name: area.interest_name || area.name || "Interesse",
-                  triggers: Array.isArray(area.triggers)
-                    ? area.triggers.map((trigger: any) => ({
-                        trigger_id: trigger.trigger_id || 0,
-                        name: trigger.trigger_name || trigger.name || "",
-                        type: trigger.type || TypeEnum.TEXT,
-                        response:
-                          trigger.value_as_string || trigger.response || "",
-                      }))
-                    : [],
-                }))
-              : [],
-          }));
+            };
+          }) as LocalDiaryRetrieve[];
           setDiaries(mapped);
         } else {
           console.error("Unexpected API response format:", response);
           setError("Formato de resposta inesperado da API");
           setDiaries([]);
         }
-      } catch (error) {
-        console.error("Error fetching diaries:", error);
+      } catch (_error) {
+        console.error("Error fetching diaries:", _error);
         setError("Erro ao carregar diários");
         setDiaries([]);
       } finally {
@@ -121,14 +180,14 @@ export default function ImprovedDiaryListPage() {
       const day = String(date.getDate()).padStart(2, "0");
       const month = String(date.getMonth() + 1).padStart(2, "0");
       return `${day}/${month}`;
-    } catch (error) {
+    } catch (_error) {
       console.warn("Failed to parse date:", dateString);
       return "Data inválida";
     }
   };
 
   // Get comprehensive diary statistics
-  const getDiaryStats = (diary: DiaryRetrieve) => {
+  const getDiaryStats = (diary: LocalDiaryRetrieve) => {
     const hasTextEntry = diary.entries?.some(
       (e) => e.text && e.text.trim() !== "",
     );
@@ -180,7 +239,7 @@ export default function ImprovedDiaryListPage() {
   };
 
   // Get diary summary with improved logic
-  const getDiarySummary = (diary: DiaryRetrieve): string => {
+  const getDiarySummary = (diary: LocalDiaryRetrieve): string => {
     // First, try to get text from entries
     if (
       diary.entries &&
@@ -190,7 +249,7 @@ export default function ImprovedDiaryListPage() {
       const textEntry = diary.entries.find(
         (e) => e.text && e.text.trim() !== "",
       );
-      if (textEntry && textEntry.text) {
+      if (textEntry?.text) {
         return textEntry.text.length > 100
           ? `${textEntry.text.substring(0, 100)}...`
           : textEntry.text;
@@ -225,7 +284,7 @@ export default function ImprovedDiaryListPage() {
         hour: "2-digit",
         minute: "2-digit",
       });
-    } catch (error) {
+    } catch (_error) {
       return "";
     }
   };
@@ -234,14 +293,14 @@ export default function ImprovedDiaryListPage() {
   const filteredDiaries = diaries;
 
   // Group diaries by date
-  const groupedDiaries: Record<string, DiaryRetrieve[]> = {};
-  filteredDiaries.forEach((diary) => {
+  const groupedDiaries: Record<string, LocalDiaryRetrieve[]> = {};
+  for (const diary of filteredDiaries) {
     const dateKey = formatDate(diary.date);
     if (!groupedDiaries[dateKey]) {
       groupedDiaries[dateKey] = [];
     }
     groupedDiaries[dateKey].push(diary);
-  });
+  }
 
   // Get active navigation item
   const getActiveNavId = () => {
@@ -322,7 +381,7 @@ export default function ImprovedDiaryListPage() {
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <div className="flex flex-col items-center gap-3">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-homebg/20 border-t-homebg"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-homebg/20 border-t-homebg" />
               <p className="text-muted-foreground font-medium">
                 Carregando seus diários...
               </p>

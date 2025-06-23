@@ -3,9 +3,7 @@ import { UserInfoForm } from "@/pages/patient/onboarding/UserInfoForm";
 import { UserInfoForm2 } from "@/pages/patient/onboarding/UserInfoForm2";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
-import useSWRMutation from "swr/mutation";
 import type { PersonCreate } from "@/api/models/PersonCreate";
-import type { LocationCreate } from "@/api/models/LocationCreate";
 import { ProgressIndicator } from "@/components/forms/progress_indicator";
 import { FullPersonService } from "@/api/services/FullPersonService";
 import type { FullPersonCreate } from "@/api/models/FullPersonCreate";
@@ -29,24 +27,9 @@ export default function UserOnboarding() {
   // Track form step and collected data
   const [step, setStep] = useState(1);
   const [person, setPerson] = useState<PersonCreate>({});
-  const [location, setLocation] = useState<LocationCreate>({});
   const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMutating, setIsMutating] = useState(false);
   const [success, setSuccess] = useState<boolean>(false);
-
-  // Setup SWR mutation
-  const { trigger, isMutating } = useSWRMutation(
-    "fullPersonOnboarding",
-    async () => {
-      const fullData: FullPersonCreate = {
-        person,
-        location,
-        observations: [], // we don't gather this data
-        drug_exposures: [], // we don't gather this data
-      };
-      return await FullPersonService.apiFullPersonCreate(fullData);
-    },
-  );
 
   const handleFirstFormSubmit = (data: PersonData) => {
     console.log("First form data submitted:", data);
@@ -70,10 +53,8 @@ export default function UserOnboarding() {
 
     setError(null);
     setSuccess(false);
-    setIsSubmitting(true);
+    setIsMutating(true);
 
-    // Save location data
-    setLocation(data);
     try {
       // Create the submission data with the updated location
       const fullData: FullPersonCreate = {
@@ -94,7 +75,7 @@ export default function UserOnboarding() {
       console.error("Registration error:", err);
       setError("Erro ao realizar cadastro. Tente novamente.");
     } finally {
-      setIsSubmitting(false);
+      setIsMutating(false);
     }
   };
 
@@ -146,7 +127,7 @@ export default function UserOnboarding() {
 
           {isMutating ? (
             <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-selected"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-selected" />
             </div>
           ) : step === 1 ? (
             <UserInfoForm onSubmit={handleFirstFormSubmit} />

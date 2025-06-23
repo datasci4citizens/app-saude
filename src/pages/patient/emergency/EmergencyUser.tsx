@@ -1,18 +1,18 @@
+import type { ObservationCreate } from "@/api/models/ObservationCreate";
+import type { ProviderRetrieve } from "@/api/models/ProviderRetrieve";
+import { ApiService } from "@/api/services/ApiService";
+import { HelpService } from "@/api/services/HelpService";
+import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderService";
+import { Button } from "@/components/forms/button";
+import { RadioCheckbox } from "@/components/forms/radio-checkbox";
+import { TextField } from "@/components/forms/text_input";
+import { ErrorMessage } from "@/components/ui/error-message";
+import Header from "@/components/ui/header";
+import BottomNavigationBar from "@/components/ui/navigator-bar";
+import { SuccessMessage } from "@/components/ui/success-message";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useSWR from "swr";
-import { RadioCheckbox } from "@/components/forms/radio-checkbox";
-import { Button } from "@/components/forms/button";
-import { TextField } from "@/components/forms/text_input";
-import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderService";
-import { ApiService } from "@/api/services/ApiService";
-import type { ProviderRetrieve } from "@/api/models/ProviderRetrieve";
-import { HelpService } from "@/api/services/HelpService";
-import Header from "@/components/ui/header";
-import type { ObservationCreate } from "@/api/models/ObservationCreate";
-import { SuccessMessage } from "@/components/ui/success-message";
-import { ErrorMessage } from "@/components/ui/error-message";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
 
 // Fetcher function for SWR
 const fetcher = async (url: string) => {
@@ -96,19 +96,40 @@ export default function EmergencyScreen() {
       setTimeout(() => {
         navigate("/user-main-page");
       }, 2000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Erro ao enviar pedido de ajuda:", error);
 
-      if (error?.response?.status === 400) {
+      // Best effort to get a status code
+      const status =
+        error &&
+        typeof error === "object" &&
+        "response" in error &&
+        error.response &&
+        typeof error.response === "object" &&
+        "status" in error.response &&
+        typeof error.response.status === "number"
+          ? error.response.status
+          : null;
+
+      // Best effort to get a message
+      const message =
+        error &&
+        typeof error === "object" &&
+        "message" in error &&
+        typeof error.message === "string"
+          ? error.message
+          : null;
+
+      if (status === 400) {
         setError(
           "Dados inválidos. Verifique as informações e tente novamente.",
         );
-      } else if (error?.response?.status === 404) {
+      } else if (status === 404) {
         setError("Profissional não encontrado. Tente atualizar a página.");
-      } else if (error?.response?.status >= 500) {
+      } else if (status && status >= 500) {
         setError("Erro no servidor. Tente novamente em alguns minutos.");
-      } else if (error?.message) {
-        setError(`Erro ao enviar pedido de ajuda: ${error.message}`);
+      } else if (message) {
+        setError(`Erro ao enviar pedido de ajuda: ${message}`);
       } else {
         setError(
           "Erro ao enviar pedido de ajuda. Verifique sua conexão e tente novamente.",
@@ -153,9 +174,8 @@ export default function EmergencyScreen() {
     setSelectedProviders((prev) => {
       if (prev.includes(providerId)) {
         return prev.filter((id) => id !== providerId);
-      } else {
-        return [...prev, providerId];
       }
+      return [...prev, providerId];
     });
   }, []);
 
@@ -167,7 +187,7 @@ export default function EmergencyScreen() {
         <div className="flex-1 flex items-center justify-center px-4">
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="relative">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-selection"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-selection" />
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="text-lg">⚕️</span>
               </div>
@@ -440,7 +460,7 @@ export default function EmergencyScreen() {
             {isSubmitting && (
               <div className="bg-card rounded-2xl p-6 border border-card-border shadow-sm">
                 <div className="flex items-center justify-center gap-3">
-                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-selection/20 border-t-selection"></div>
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-selection/20 border-t-selection" />
                   <span className="text-typography text-base font-medium">
                     Enviando seu pedido de ajuda...
                   </span>
@@ -459,7 +479,7 @@ export default function EmergencyScreen() {
               >
                 {isSubmitting ? (
                   <div className="flex items-center gap-3">
-                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/20 border-t-white"></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/20 border-t-white" />
                     <span>Enviando pedido...</span>
                   </div>
                 ) : (

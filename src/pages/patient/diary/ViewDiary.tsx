@@ -4,7 +4,7 @@ import Header from "@/components/ui/header";
 import { DiaryService } from "@/api/services/DiaryService";
 import { ErrorMessage } from "@/components/ui/error-message";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
-import { TypeEnum } from "@/api/models/TypeEnum";
+import type { TypeEnum } from "@/api/models/TypeEnum";
 import { Clock } from "lucide-react";
 
 // Updated interfaces to match new server response structure
@@ -58,18 +58,18 @@ export default function ImprovedViewDiaryEntry() {
         const response = await DiaryService.diariesRetrieve2(diaryId);
         console.log("Diary API response:", response);
 
-        if (response && response.diary_id) {
+        if (response?.diary_id) {
           const parsedInterestAreas =
             typeof response.interest_areas === "string"
               ? JSON.parse(response.interest_areas)
               : response.interest_areas;
 
           // Set is_attention_point and provider_name if they are not present
-          parsedInterestAreas.forEach((area: DiaryInterestArea) => {
+          for (const area of parsedInterestAreas) {
             if (area.marked_by && area.marked_by.length > 0) {
               area.is_attention_point = true;
             }
-          });
+          }
 
           setDiary({
             diary_id: response.diary_id,
@@ -119,7 +119,7 @@ export default function ImprovedViewDiaryEntry() {
       const month = (date.getMonth() + 1).toString().padStart(2, "0");
       const year = date.getFullYear();
       return `${day}/${month}/${year}`;
-    } catch (e) {
+    } catch (_e) {
       return dateString;
     }
   };
@@ -132,7 +132,7 @@ export default function ImprovedViewDiaryEntry() {
         hour: "2-digit",
         minute: "2-digit",
       });
-    } catch (error) {
+    } catch (_error) {
       return "";
     }
   };
@@ -212,7 +212,7 @@ export default function ImprovedViewDiaryEntry() {
         />
         <div className="flex-1 flex justify-center items-center">
           <div className="flex flex-col items-center gap-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-foreground/20 border-t-primary-foreground"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-foreground/20 border-t-primary-foreground" />
             <p className="text-primary-foreground/80 font-medium">
               Carregando diário...
             </p>
@@ -384,7 +384,7 @@ export default function ImprovedViewDiaryEntry() {
                                     trigger.response &&
                                     trigger.response.trim() !== "" && (
                                       <div
-                                        key={index}
+                                        key={`${trigger.name}-${index}`}
                                         className="bg-card-muted p-3 rounded-lg border-l-4 border-selection"
                                       >
                                         <div className="text-sm">
@@ -410,7 +410,7 @@ export default function ImprovedViewDiaryEntry() {
             )}
 
             {/* General Text Section */}
-            {textEntry && textEntry.text && (
+            {textEntry?.text && (
               <div className="space-y-3 mb-6">
                 <div className="flex flex-col gap-1">
                   <h3 className="font-semibold text-lg text-typography mb-1">

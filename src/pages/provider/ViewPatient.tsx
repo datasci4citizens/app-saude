@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Header from "@/components/ui/header";
-import { Button } from "@/components/forms/button";
 import { TextField } from "@/components/forms/text_input";
 import { PersonService } from "@/api/services/PersonService";
 import { HelpService } from "@/api/services/HelpService";
@@ -10,13 +9,17 @@ import { SuccessMessage } from "@/components/ui/success-message";
 import { ErrorMessage } from "@/components/ui/error-message";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
-import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
+
+interface DiaryEntryItem {
+  question: string;
+  answer: string;
+}
 
 interface DiaryEntry {
   diary_id: number;
   date: string;
   scope: string;
-  entries: any[];
+  entries: DiaryEntryItem[];
 }
 
 interface HelpRequest {
@@ -85,11 +88,21 @@ export default function ViewPatient() {
       const diariesData =
         await ProviderService.providerPatientsDiariesList(personId);
 
-      const sortedDiaries = (diariesData as DiaryEntry[]).sort((a, b) => {
-        const dateA = new Date(a.date).getTime();
-        const dateB = new Date(b.date).getTime();
-        return dateB - dateA;
-      });
+      const sortedDiaries = diariesData
+        .map((d) => ({
+          diary_id: d.diary_id,
+          date: d.date,
+          scope: d.scope,
+          entries:
+            typeof d.entries === "string"
+              ? JSON.parse(d.entries)
+              : (d.entries ?? []),
+        }))
+        .sort((a, b) => {
+          const dateA = new Date(a.date).getTime();
+          const dateB = new Date(b.date).getTime();
+          return dateB - dateA;
+        });
 
       setDiaries(sortedDiaries);
     } catch (err) {
@@ -107,11 +120,11 @@ export default function ViewPatient() {
       const allHelpRequests = await HelpService.providerHelpList();
 
       const patientHelpRequests = allHelpRequests.filter(
-        (help: ObservationRetrieve) => help.person === Number(id),
+        (help) => help.person === Number(id),
       );
 
       const formattedHelpRequests: HelpRequest[] = patientHelpRequests.map(
-        (help: ObservationRetrieve) => ({
+        (help) => ({
           id: help.observation_id,
           created_at: help.created_at,
           observation_date: help.observation_date,
@@ -142,7 +155,7 @@ export default function ViewPatient() {
         month: "2-digit",
         year: "numeric",
       });
-    } catch (e) {
+    } catch (_e) {
       return "Data inválida";
     }
   };
@@ -157,7 +170,7 @@ export default function ViewPatient() {
         hour: "2-digit",
         minute: "2-digit",
       });
-    } catch (e) {
+    } catch (_e) {
       return "Data inválida";
     }
   };
@@ -176,7 +189,7 @@ export default function ViewPatient() {
       if (diffInDays === 1) return "Ontem";
       if (diffInDays < 7) return `Há ${diffInDays} dias`;
       return formatDate(dateString);
-    } catch (e) {
+    } catch (_e) {
       return "Data inválida";
     }
   };
@@ -225,10 +238,34 @@ export default function ViewPatient() {
   const clearError = () => setError(null);
   const clearSuccess = () => setSuccess(null);
 
+  const calculateAge = (
+    birthDatetime?: string | null,
+    yearOfBirth?: number | null,
+  ) => {
+    if (birthDatetime) {
+      const birthDate = new Date(birthDatetime);
+      const today = new Date();
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age;
+    }
+    if (yearOfBirth) {
+      return new Date().getFullYear() - yearOfBirth;
+    }
+    return null;
+  };
+
   const patientName =
     patient?.social_name ||
     `${patient?.first_name || ""} ${patient?.last_name || ""}`.trim() ||
     "Paciente";
+
+  const patientAge = patient
+    ? calculateAge(patient.birth_datetime, patient.year_of_birth)
+    : null;
 
   const urgentHelpRequests = helpRequests.filter((help) => {
     const helpDate = new Date(help.observation_date || help.created_at);
@@ -275,7 +312,7 @@ export default function ViewPatient() {
         {/* Loading State */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection mb-4" />
             <p className="text-gray2 text-sm">
               Carregando dados do paciente...
             </p>
@@ -298,8 +335,10 @@ export default function ViewPatient() {
                     {patientName}
                   </h2>
                   <p className="text-gray2 text-sm">ID: {patient.person_id}</p>
-                  {patient.age && (
-                    <p className="text-gray2 text-sm">{patient.age} anos</p>
+                  {patientAge !== null && (
+                    <p className="text-gray2 text-sm mt-1">
+                      Idade: {patientAge} anos
+                    </p>
                   )}
                 </div>
 
@@ -364,7 +403,7 @@ export default function ViewPatient() {
               >
                 🚨 Pedidos de Ajuda ({filteredHelpRequests.length})
                 {urgentHelpRequests.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full animate-pulse"></span>
+                  <span className="absolute -top-1 -right-1 w-3 h-3 bg-destructive rounded-full animate-pulse" />
                 )}
               </button>
             </div>
@@ -374,7 +413,7 @@ export default function ViewPatient() {
               <div className="space-y-4">
                 {diariesLoading && (
                   <div className="flex items-center justify-center py-8">
-                    <div className="animate-spin rounded-full h-6 w-6 border-2 border-selection/20 border-t-selection mr-2"></div>
+                    <div className="animate-spin rounded-full h-6 w-6 border-2 border-selection/20 border-t-selection mr-2" />
                     <span className="text-gray2 text-sm">
                       Carregando diários...
                     </span>
@@ -399,58 +438,54 @@ export default function ViewPatient() {
                   </div>
                 )}
 
-                {!diariesLoading && filteredDiaries.length > 0 && (
-                  <>
-                    {filteredDiaries.map((diary) => {
-                      const entriesCount = diary.entries?.length || 0;
+                {!diariesLoading &&
+                  filteredDiaries.length > 0 &&
+                  filteredDiaries.map((diary) => {
+                    const entriesCount = diary.entries?.length || 0;
 
-                      return (
-                        <div
-                          key={diary.diary_id}
-                          className="bg-card rounded-2xl p-4 border border-card-border hover:border-selection/20 transition-all duration-200 cursor-pointer hover:shadow-sm"
-                          onClick={() =>
-                            navigate(
-                              `/provider/patient/${id}/diary/${diary.diary_id}`,
-                            )
-                          }
-                        >
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-selection/10 rounded-full flex items-center justify-center">
-                                <span className="text-selection text-lg">
-                                  📖
-                                </span>
-                              </div>
-                              <div>
-                                <h4 className="text-card-foreground font-medium text-sm">
-                                  Diário - {formatDate(diary.date)}
-                                </h4>
-                                <p className="text-gray2 text-xs">
-                                  {getRelativeTime(diary.date)}
-                                </p>
-                              </div>
+                    return (
+                      <div
+                        key={diary.diary_id}
+                        className="bg-card rounded-2xl p-4 border border-card-border hover:border-selection/20 transition-all duration-200 cursor-pointer hover:shadow-sm"
+                        onClick={() =>
+                          navigate(
+                            `/provider/patient/${id}/diary/${diary.diary_id}`,
+                          )
+                        }
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-selection/10 rounded-full flex items-center justify-center">
+                              <span className="text-selection text-lg">📖</span>
                             </div>
-                            <span className="text-gray2 text-lg">
-                              <span className="mgc_right_line"></span>
+                            <div>
+                              <h4 className="text-card-foreground font-medium text-sm">
+                                Diário - {formatDate(diary.date)}
+                              </h4>
+                              <p className="text-gray2 text-xs">
+                                {getRelativeTime(diary.date)}
+                              </p>
+                            </div>
+                          </div>
+                          <span className="text-gray2 text-lg">
+                            <span className="mgc_right_line" />
+                          </span>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="bg-selection/10 text-selection text-xs px-2 py-1 rounded-full font-medium">
+                              {diary.scope || "Geral"}
                             </span>
                           </div>
-
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <span className="bg-selection/10 text-selection text-xs px-2 py-1 rounded-full font-medium">
-                                {diary.scope || "Geral"}
-                              </span>
-                            </div>
-                            <p className="text-gray2 text-xs">
-                              {entriesCount}{" "}
-                              {entriesCount === 1 ? "entrada" : "entradas"}
-                            </p>
-                          </div>
+                          <p className="text-gray2 text-xs">
+                            {entriesCount}{" "}
+                            {entriesCount === 1 ? "entrada" : "entradas"}
+                          </p>
                         </div>
-                      );
-                    })}
-                  </>
-                )}
+                      </div>
+                    );
+                  })}
               </div>
             )}
 
@@ -458,7 +493,7 @@ export default function ViewPatient() {
               <div className="space-y-4">
                 {helpRequestsLoading && (
                   <div className="flex items-center justify-center py-8">
-                    <div className="animate-spin rounded-full h-6 w-6 border-2 border-destructive/20 border-t-destructive mr-2"></div>
+                    <div className="animate-spin rounded-full h-6 w-6 border-2 border-destructive/20 border-t-destructive mr-2" />
                     <span className="text-gray2 text-sm">
                       Carregando pedidos de ajuda...
                     </span>
@@ -483,83 +518,81 @@ export default function ViewPatient() {
                   </div>
                 )}
 
-                {!helpRequestsLoading && filteredHelpRequests.length > 0 && (
-                  <>
-                    {filteredHelpRequests.map((helpRequest) => {
-                      const isUrgent = urgentHelpRequests.some(
-                        (urgent) => urgent.id === helpRequest.id,
-                      );
+                {!helpRequestsLoading &&
+                  filteredHelpRequests.length > 0 &&
+                  filteredHelpRequests.map((helpRequest) => {
+                    const isUrgent = urgentHelpRequests.some(
+                      (urgent) => urgent.id === helpRequest.id,
+                    );
 
-                      return (
-                        <div
-                          key={helpRequest.id}
-                          className={`bg-card rounded-2xl p-4 border transition-all duration-200 cursor-pointer hover:shadow-sm ${
-                            isUrgent
-                              ? "border-destructive/30 bg-destructive/5"
-                              : "border-card-border hover:border-destructive/20"
-                          }`}
-                          onClick={() =>
-                            navigate(`/provider/help/${id}/${helpRequest.id}`)
-                          }
-                        >
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-3">
-                              <div
-                                className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                                  isUrgent
-                                    ? "bg-destructive/20"
-                                    : "bg-destructive/10"
-                                }`}
-                              >
-                                <span className="text-destructive text-lg">
-                                  🚨
-                                </span>
-                              </div>
-                              <div>
-                                <h4 className="text-card-foreground font-medium text-sm flex items-center gap-2">
-                                  Pedido de Ajuda
-                                  {isUrgent && (
-                                    <span className="w-2 h-2 bg-destructive rounded-full animate-pulse"></span>
-                                  )}
-                                </h4>
-                                <p className="text-gray2 text-xs">
-                                  {formatDateWithTime(
-                                    helpRequest.observation_date ||
-                                      helpRequest.created_at,
-                                  )}
-                                </p>
-                              </div>
-                            </div>
-                            <span className="text-gray2 text-lg">
-                              <span className="mgc_right_line"></span>
-                            </span>
-                          </div>
-
-                          <div className="bg-gray2/5 rounded-lg p-3">
-                            <p className="text-card-foreground text-sm">
-                              {helpRequest.value_as_string ||
-                                "Pedido de ajuda sem descrição"}
-                            </p>
-                          </div>
-
-                          {isUrgent && (
-                            <div className="mt-3 flex items-center gap-2">
-                              <span className="bg-destructive/20 text-destructive text-xs px-2 py-1 rounded-full font-medium">
-                                ⚠️ Recente
+                    return (
+                      <div
+                        key={helpRequest.id}
+                        className={`bg-card rounded-2xl p-4 border transition-all duration-200 cursor-pointer hover:shadow-sm ${
+                          isUrgent
+                            ? "border-destructive/30 bg-destructive/5"
+                            : "border-card-border hover:border-destructive/20"
+                        }`}
+                        onClick={() =>
+                          navigate(`/provider/help/${id}/${helpRequest.id}`)
+                        }
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                                isUrgent
+                                  ? "bg-destructive/20"
+                                  : "bg-destructive/10"
+                              }`}
+                            >
+                              <span className="text-destructive text-lg">
+                                🚨
                               </span>
-                              <span className="text-gray2 text-xs">
-                                {getRelativeTime(
+                            </div>
+                            <div>
+                              <h4 className="text-card-foreground font-medium text-sm flex items-center gap-2">
+                                Pedido de Ajuda
+                                {isUrgent && (
+                                  <span className="w-2 h-2 bg-destructive rounded-full animate-pulse" />
+                                )}
+                              </h4>
+                              <p className="text-gray2 text-xs">
+                                {formatDateWithTime(
                                   helpRequest.observation_date ||
                                     helpRequest.created_at,
                                 )}
-                              </span>
+                              </p>
                             </div>
-                          )}
+                          </div>
+                          <span className="text-gray2 text-lg">
+                            <span className="mgc_right_line" />
+                          </span>
                         </div>
-                      );
-                    })}
-                  </>
-                )}
+
+                        <div className="bg-gray2/5 rounded-lg p-3">
+                          <p className="text-card-foreground text-sm">
+                            {helpRequest.value_as_string ||
+                              "Pedido de ajuda sem descrição"}
+                          </p>
+                        </div>
+
+                        {isUrgent && (
+                          <div className="mt-3 flex items-center gap-2">
+                            <span className="bg-destructive/20 text-destructive text-xs px-2 py-1 rounded-full font-medium">
+                              ⚠️ Recente
+                            </span>
+                            <span className="text-gray2 text-xs">
+                              {getRelativeTime(
+                                helpRequest.observation_date ||
+                                  helpRequest.created_at,
+                              )}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
               </div>
             )}
           </>

@@ -5,7 +5,7 @@ import BottomNavigationBar from "@/components/ui/navigator-bar";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
 import { Button } from "@/components/forms/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { type InterestAreaTrigger } from "@/api/models/InterestAreaTrigger";
+import type { InterestAreaTrigger } from "@/api/models/InterestAreaTrigger";
 import { AccountService } from "@/api";
 
 // Extended interface for API response that includes the ID
@@ -183,8 +183,8 @@ export default function ViewSelectedInterests() {
                             strokeLinecap="round"
                             strokeLinejoin="round"
                           >
-                            <path d="M18 6L6 18"></path>
-                            <path d="M6 6l12 12"></path>
+                            <path d="M18 6L6 18" />
+                            <path d="M6 6l12 12" />
                           </svg>
                         </Button>
                       </CardTitle>
@@ -194,7 +194,10 @@ export default function ViewSelectedInterests() {
                       {interest.triggers && interest.triggers.length > 0 ? (
                         <ul className="text-sm pl-1 space-y-1">
                           {interest.triggers.map((trigger, index) => (
-                            <li key={index} className="flex items-start">
+                            <li
+                              key={`${trigger.name}-${index}`}
+                              className="flex items-start"
+                            >
                               <span className="mr-2">•</span>
                               <span>{trigger.name || "Sem descrição"}</span>
                             </li>

@@ -14,7 +14,7 @@ const ProgressIndicator = ({
       <div className="flex justify-center space-x-3">
         {Array.from({ length: totalSteps }, (_, index) => (
           <div
-            key={index}
+            key={`step-${index}-${totalSteps}`}
             className={`
               h-2 rounded-full transition-all duration-500 ease-out
               ${

@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
@@ -29,7 +29,7 @@ export function DateField({
     if (cursorPosition !== null && inputRef.current) {
       inputRef.current.setSelectionRange(cursorPosition, cursorPosition);
     }
-  }, [value, cursorPosition]);
+  }, [cursorPosition]);
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target;
     const originalPosition = input.selectionStart || 0;

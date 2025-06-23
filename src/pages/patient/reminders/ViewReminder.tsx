@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import Header from "@/components/ui/header";
 import { FaTrash } from "react-icons/fa";
 

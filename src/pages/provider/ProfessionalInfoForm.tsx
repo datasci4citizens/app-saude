@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import { useState } from "react";
 import { Button } from "@/components/forms/button";
 import { TextField } from "@/components/forms/text_input";

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/ui/header";
 import Card from "@/components/ui/reminder-card";
@@ -78,7 +79,8 @@ const Reminders: React.FC = () => {
 
     if (reminder.repeatPattern === "daily") {
       return currentDate >= startDate;
-    } else if (reminder.repeatPattern === "weekly") {
+    }
+    if (reminder.repeatPattern === "weekly") {
       return (
         currentDate >= startDate && currentDate.getDay() === startDate.getDay()
       );
@@ -92,7 +94,17 @@ const Reminders: React.FC = () => {
     order: "asc" | "desc",
   ): Reminder[] => {
     return [...reminders].sort((a, b) => {
-      return 0;
+      const timeA = a.subtitle.match(/\d{2}:\d{2}/)?.[0];
+      const timeB = b.subtitle.match(/\d{2}:\d{2}/)?.[0];
+
+      if (!timeA || !timeB) {
+        return 0;
+      }
+
+      if (order === "asc") {
+        return timeA.localeCompare(timeB);
+      }
+      return timeB.localeCompare(timeA);
     });
   };
 
@@ -163,7 +175,7 @@ const Reminders: React.FC = () => {
           <hr className="border-none border-t border-gray2 border-opacity-20 mb-3" />
           {relevantConsultations.map((reminder, index) => (
             <Card
-              key={index}
+              key={`consultation-${reminder.title}-${index}`}
               title={reminder.title}
               subtitle={reminder.subtitle}
               icon={reminder.icon}
@@ -195,7 +207,7 @@ const Reminders: React.FC = () => {
           <hr className="border-none border-t border-gray2 border-opacity-20 mb-3" />
           {relevantMedicines.map((reminder, index) => (
             <Card
-              key={index}
+              key={`medicine-${reminder.title}-${index}`}
               title={reminder.title}
               subtitle={reminder.subtitle}
               icon={reminder.icon}

@@ -1,12 +1,24 @@
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+
+// Define interfaces for better type safety
+interface Concept {
+  concept_id: number;
+  concept_name: string;
+}
+
+interface Domain {
+  domain_name: string;
+  concepts: Concept[];
+}
 
 export default function CompleteProfile() {
   const [token, setToken] = useState<string | null>(null);
   const [userType, setUserType] = useState<"person" | "provider" | null>(null);
-  const [formData, setFormData] = useState<Record<string, any>>({});
+  const [formData, setFormData] = useState<Record<string, string | number>>({});
   const [done, setDone] = useState(false);
-  const [domains, setDomains] = useState<any[]>([]);
+  const [domains, setDomains] = useState<Domain[]>([]);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("accessToken");
@@ -37,7 +49,7 @@ export default function CompleteProfile() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    let validToken = token;
+    const validToken = token;
 
     const endpoint =
       userType === "person"
@@ -70,7 +82,7 @@ export default function CompleteProfile() {
     console.log(formData);
     if (userType === "provider") {
       window.location.href = "/AcsMainPage";
-    } else if (userType == "person") {
+    } else if (userType === "person") {
       window.location.href = "/PacientMainPage";
     } else {
       window.location.href = "/complete-profile";
@@ -195,7 +207,7 @@ export default function CompleteProfile() {
                       <option value="" disabled hidden>
                         Selecione uma opção
                       </option>
-                      {domain.concepts.map((concept: any) => (
+                      {domain.concepts.map((concept: Concept) => (
                         <option
                           key={concept.concept_id}
                           value={concept.concept_id}
@@ -206,7 +218,8 @@ export default function CompleteProfile() {
                     </select>
                   </div>
                 );
-              } else if (domain.domain_name === "Race") {
+              }
+              if (domain.domain_name === "Race") {
                 return (
                   <div key={domain.domain_name} style={fieldStyle}>
                     <label style={labelStyle}>Raça</label>
@@ -219,7 +232,7 @@ export default function CompleteProfile() {
                       <option value="" disabled hidden>
                         Selecione uma opção
                       </option>
-                      {domain.concepts.map((concept: any) => (
+                      {domain.concepts.map((concept: Concept) => (
                         <option
                           key={concept.concept_id}
                           value={concept.concept_id}
@@ -230,7 +243,8 @@ export default function CompleteProfile() {
                     </select>
                   </div>
                 );
-              } else if (domain.domain_name === "Biological Sex") {
+              }
+              if (domain.domain_name === "Biological Sex") {
                 return (
                   <div key={domain.domain_name} style={fieldStyle}>
                     <label style={labelStyle}>Sexo Biológico</label>
@@ -243,7 +257,7 @@ export default function CompleteProfile() {
                       <option value="" disabled hidden>
                         Selecione uma opção
                       </option>
-                      {domain.concepts.map((concept: any) => (
+                      {domain.concepts.map((concept: Concept) => (
                         <option
                           key={concept.concept_id}
                           value={concept.concept_id}
