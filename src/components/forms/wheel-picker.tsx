@@ -1,6 +1,6 @@
-import type React from "react";
-import { useState, useRef, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import type React from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { cn } from '@/lib/utils';
 
 interface WheelPickerProps {
   data: string[];
@@ -42,8 +42,7 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
 
   useEffect(() => {
     return () => {
-      if (scrollTimeoutRef.current)
-        window.clearTimeout(scrollTimeoutRef.current);
+      if (scrollTimeoutRef.current) window.clearTimeout(scrollTimeoutRef.current);
     };
   }, []);
 
@@ -52,7 +51,7 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
       const scrollPosition = index * itemHeight;
       containerRef.current.scrollTo({
         top: scrollPosition,
-        behavior: smooth ? "smooth" : "auto",
+        behavior: smooth ? 'smooth' : 'auto',
       });
     }
   };
@@ -131,10 +130,10 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
                   scrollToIndex(index);
                 }}
                 className={cn(
-                  "text-center text-base cursor-pointer transition-opacity duration-200",
+                  'text-center text-base cursor-pointer transition-opacity duration-200',
                   data.indexOf(item) === selectedIndex
-                    ? "font-bold text-typography"
-                    : "font-normal text-gray2-foreground",
+                    ? 'font-bold text-typography'
+                    : 'font-normal text-gray2-foreground',
                 )}
                 style={{
                   height: `${itemHeight}px`,

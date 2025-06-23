@@ -1,29 +1,29 @@
-import type React from "react";
-import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { Button } from "@/components/forms/button";
+import type React from 'react';
+import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Button } from '@/components/forms/button';
 import {
   SelectField,
   //SelectTrigger,
   //SelectContent,
   //SelectItem,
   //SelectValue,
-} from "@/components/forms/select_input";
-import { TextField } from "@/components/forms/text_input";
-import Header from "@/components/ui/header";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
+} from '@/components/forms/select_input';
+import { TextField } from '@/components/forms/text_input';
+import Header from '@/components/ui/header';
+import BottomNavigationBar from '@/components/ui/navigator-bar';
 
 const ModifyHabits = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [habitName, setHabitName] = useState("");
-  const [measurementType, setMeasurementType] = useState<
-    "scale" | "hours" | "times" | "yesno"
-  >("scale");
+  const [habitName, setHabitName] = useState('');
+  const [measurementType, setMeasurementType] = useState<'scale' | 'hours' | 'times' | 'yesno'>(
+    'scale',
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/diary", {
+    navigate('/diary', {
       state: {
         newHabit: {
           id: Date.now().toString(),
@@ -34,47 +34,45 @@ const ModifyHabits = () => {
     });
   };
   const getActiveNavId = () => {
-    if (location.pathname.startsWith("/user-main-page")) return "home";
-    if (location.pathname.startsWith("/reminders")) return "meds";
-    if (location.pathname.startsWith("/diary")) return "diary";
-    if (location.pathname.startsWith("/emergency-user")) return "emergency";
-    if (location.pathname.startsWith("/profile")) return "profile";
+    if (location.pathname.startsWith('/user-main-page')) return 'home';
+    if (location.pathname.startsWith('/reminders')) return 'meds';
+    if (location.pathname.startsWith('/diary')) return 'diary';
+    if (location.pathname.startsWith('/emergency-user')) return 'emergency';
+    if (location.pathname.startsWith('/profile')) return 'profile';
     return null;
   };
 
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
-      case "home":
-        navigate("/user-main-page");
+      case 'home':
+        navigate('/user-main-page');
         break;
-      case "meds":
-        navigate("/reminders");
+      case 'meds':
+        navigate('/reminders');
         break;
-      case "diary":
-        navigate("/diary");
+      case 'diary':
+        navigate('/diary');
         break;
-      case "emergency":
-        navigate("/emergency-user");
+      case 'emergency':
+        navigate('/emergency-user');
         break;
-      case "profile":
-        navigate("/profile");
+      case 'profile':
+        navigate('/profile');
         break;
     }
   };
 
   // Define measurement type options
   const measurementTypeOptions = [
-    { value: "scale", label: "Escala (1-10)" },
-    { value: "hours", label: "Horas" },
-    { value: "times", label: "Vezes" },
-    { value: "yesno", label: "Sim/Não" },
+    { value: 'scale', label: 'Escala (1-10)' },
+    { value: 'hours', label: 'Horas' },
+    { value: 'times', label: 'Vezes' },
+    { value: 'yesno', label: 'Sim/Não' },
   ];
 
   // Handle change from SelectField
-  const handleMeasurementTypeChange = (
-    e: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    setMeasurementType(e.target.value as "scale" | "hours" | "times" | "yesno");
+  const handleMeasurementTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setMeasurementType(e.target.value as 'scale' | 'hours' | 'times' | 'yesno');
   };
 
   return (

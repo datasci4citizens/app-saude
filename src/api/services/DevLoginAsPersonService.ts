@@ -2,9 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class DevLoginAsPersonService {
   /**
    * @returns any No response body
@@ -12,8 +12,8 @@ export class DevLoginAsPersonService {
    */
   public static devLoginAsPersonCreate(): CancelablePromise<any> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/dev-login-as-person/",
+      method: 'POST',
+      url: '/dev-login-as-person/',
     });
   }
 }

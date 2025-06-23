@@ -1,18 +1,18 @@
-import { useNavigate } from "react-router-dom";
-import HomeBanner from "@/components/ui/home-banner";
-import { X } from "lucide-react";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
-import { useState, useEffect } from "react";
-import { InterestAreasService } from "@/api/services/InterestAreasService";
-import type { InterestArea } from "@/api/models/InterestArea";
-import type { InterestAreaTrigger } from "@/api/models/InterestAreaTrigger";
-import { Button } from "@/components/forms/button";
-import SuccessMessage from "@/components/ui/success-message";
-import ErrorMessage from "@/components/ui/error-message";
-import EditInterestDialog from "../../components/EditInterestsDialog";
-import { ConfirmDialog } from "@/components/ui/confirmDialog";
-import { ApiService } from "@/api";
-import { TypeEnum } from "@/api/models/TypeEnum";
+import { useNavigate } from 'react-router-dom';
+import HomeBanner from '@/components/ui/home-banner';
+import { X } from 'lucide-react';
+import BottomNavigationBar from '@/components/ui/navigator-bar';
+import { useState, useEffect } from 'react';
+import { InterestAreasService } from '@/api/services/InterestAreasService';
+import type { InterestArea } from '@/api/models/InterestArea';
+import type { InterestAreaTrigger } from '@/api/models/InterestAreaTrigger';
+import { Button } from '@/components/forms/button';
+import SuccessMessage from '@/components/ui/success-message';
+import ErrorMessage from '@/components/ui/error-message';
+import EditInterestDialog from '../../components/EditInterestsDialog';
+import { ConfirmDialog } from '@/components/ui/confirmDialog';
+import { ApiService } from '@/api';
+import { TypeEnum } from '@/api/models/TypeEnum';
 
 interface InterestAreaResponse {
   observation_id?: number;
@@ -37,20 +37,14 @@ export default function UserMainPage() {
   const navigate = useNavigate();
 
   // Estados principais
-  const [userInterestObjects, setUserInterestObjects] = useState<
-    InterestAreaResponse[]
-  >([]);
-  const [originalInterests, setOriginalInterests] = useState<
-    InterestAreaResponse[]
-  >([]);
+  const [userInterestObjects, setUserInterestObjects] = useState<InterestAreaResponse[]>([]);
+  const [originalInterests, setOriginalInterests] = useState<InterestAreaResponse[]>([]);
 
   // Para comparar mudanças
   const [editionMode, setEditionMode] = useState(false);
-  const [editingInterest, setEditingInterest] =
-    useState<InterestAreaResponse | null>(null);
+  const [editingInterest, setEditingInterest] = useState<InterestAreaResponse | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [interestToDelete, setInterestToDelete] =
-    useState<InterestAreaResponse | null>(null);
+  const [interestToDelete, setInterestToDelete] = useState<InterestAreaResponse | null>(null);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   // Estados de sincronização
@@ -64,41 +58,33 @@ export default function UserMainPage() {
     const loadExistingInterests = async () => {
       try {
         const userEntity = await ApiService.apiUserEntityRetrieve();
-        const userInterests = await InterestAreasService.apiInterestAreaList(
-          userEntity.person_id,
-        );
+        const userInterests = await InterestAreasService.apiInterestAreaList(userEntity.person_id);
 
-        console.log("Dados da API:", userInterests);
+        console.log('Dados da API:', userInterests);
 
         // Ensure all interests have proper structure
-        const normalizedInterests = userInterests.map(
-          (interest: InterestAreaResponse) => ({
-            ...interest,
-            interest_area: {
-              ...interest.interest_area,
-              name: String(interest.interest_area?.name || ""),
-              triggers: Array.isArray(interest.interest_area?.triggers)
-                ? interest.interest_area.triggers.map(
-                    (trigger: InterestAreaTrigger) => ({
-                      name: String(trigger?.name || trigger || ""),
-                      type: trigger?.type || TypeEnum.TEXT,
-                      response: trigger?.response || null,
-                    }),
-                  )
-                : [],
-            },
-            marked_by: Array.isArray(interest.marked_by)
-              ? interest.marked_by.map((provider: string) =>
-                  String(provider || ""),
-                )
+        const normalizedInterests = userInterests.map((interest: InterestAreaResponse) => ({
+          ...interest,
+          interest_area: {
+            ...interest.interest_area,
+            name: String(interest.interest_area?.name || ''),
+            triggers: Array.isArray(interest.interest_area?.triggers)
+              ? interest.interest_area.triggers.map((trigger: InterestAreaTrigger) => ({
+                  name: String(trigger?.name || trigger || ''),
+                  type: trigger?.type || TypeEnum.TEXT,
+                  response: trigger?.response || null,
+                }))
               : [],
-            is_temporary: false,
-            is_deleted: false,
-            is_modified: false,
-          }),
-        );
+          },
+          marked_by: Array.isArray(interest.marked_by)
+            ? interest.marked_by.map((provider: string) => String(provider || ''))
+            : [],
+          is_temporary: false,
+          is_deleted: false,
+          is_modified: false,
+        }));
 
-        console.log("Interesses normalizados:", normalizedInterests);
+        console.log('Interesses normalizados:', normalizedInterests);
 
         // flag is_attention_point
         for (const interest of normalizedInterests) {
@@ -113,8 +99,8 @@ export default function UserMainPage() {
         setOriginalInterests([...normalizedInterests]);
         setHasChanges(false);
       } catch (error) {
-        console.error("Error loading user interests:", error);
-        setSyncError("Erro ao carregar interesses. Tente novamente.");
+        console.error('Error loading user interests:', error);
+        setSyncError('Erro ao carregar interesses. Tente novamente.');
       }
     };
 
@@ -130,9 +116,7 @@ export default function UserMainPage() {
     } else {
       setUserInterestObjects((prev) =>
         prev.map((i) =>
-          i.observation_id === interest.observation_id
-            ? { ...i, is_deleted: true }
-            : i,
+          i.observation_id === interest.observation_id ? { ...i, is_deleted: true } : i,
         ),
       );
     }
@@ -141,7 +125,7 @@ export default function UserMainPage() {
 
   // Função para salvar interesse APENAS LOCALMENTE
   const saveInterestLocally = (interestData: DialogInterestData) => {
-    console.log("saveInterestLocally chamado:", interestData);
+    console.log('saveInterestLocally chamado:', interestData);
 
     if (interestData.id) {
       // Editando interesse existente
@@ -154,7 +138,7 @@ export default function UserMainPage() {
                   ...interest.interest_area,
                   name: interestData.interest_name,
                   triggers: interestData.triggers.map((trigger) => ({
-                    name: String(trigger.name || ""),
+                    name: String(trigger.name || ''),
                     type: trigger.type || TypeEnum.TEXT,
                     response: trigger.response || null,
                   })),
@@ -174,7 +158,7 @@ export default function UserMainPage() {
           is_attention_point: false,
           marked_by: [],
           triggers: interestData.triggers.map((trigger) => ({
-            name: String(trigger.name || ""),
+            name: String(trigger.name || ''),
             type: trigger.type || TypeEnum.TEXT,
             response: trigger.response || null,
           })),
@@ -188,7 +172,7 @@ export default function UserMainPage() {
       setUserInterestObjects((prev) => [...prev, tempInterest]);
     }
 
-    console.log("Marcando hasChanges = true");
+    console.log('Marcando hasChanges = true');
     setHasChanges(true);
   };
 
@@ -199,22 +183,16 @@ export default function UserMainPage() {
 
     try {
       // 1. Delete marked interests
-      const toDelete = userInterestObjects.filter(
-        (i) => i.is_deleted && !i.is_temporary,
-      );
+      const toDelete = userInterestObjects.filter((i) => i.is_deleted && !i.is_temporary);
 
       for (const interest of toDelete) {
         if (interest.observation_id) {
-          await InterestAreasService.apiInterestAreaDestroy(
-            interest.observation_id.toString(),
-          );
+          await InterestAreasService.apiInterestAreaDestroy(interest.observation_id.toString());
         }
       }
 
       // 2. Create new temporary interests
-      const toCreate = userInterestObjects.filter(
-        (i) => i.is_temporary && !i.is_deleted,
-      );
+      const toCreate = userInterestObjects.filter((i) => i.is_temporary && !i.is_deleted);
       const createdInterests = [];
 
       for (const interest of toCreate) {
@@ -224,7 +202,7 @@ export default function UserMainPage() {
               name: interest.interest_area.name,
               triggers:
                 interest.interest_area.triggers?.map((t) => ({
-                  name: String(t.name || ""),
+                  name: String(t.name || ''),
                   type: t.type || TypeEnum.TEXT,
                   response: t.response || null,
                 })) || [],
@@ -234,25 +212,22 @@ export default function UserMainPage() {
             },
           };
 
-          const result =
-            await InterestAreasService.apiInterestAreaCreate(newInterestArea);
+          const result = await InterestAreasService.apiInterestAreaCreate(newInterestArea);
 
           if (result) {
             createdInterests.push({
               observation_id: result.observation_id,
               person_id: result.person_id,
               interest_area: result.interest_area,
-              provider_name: "",
+              provider_name: '',
               is_temporary: false,
               is_deleted: false,
               is_modified: false,
             } as InterestAreaResponse);
           }
         } catch (error) {
-          console.error("Error creating interest:", error);
-          setSyncError(
-            `Erro ao criar interesse: ${interest.interest_area.name}`,
-          );
+          console.error('Error creating interest:', error);
+          setSyncError(`Erro ao criar interesse: ${interest.interest_area.name}`);
         }
       }
 
@@ -271,15 +246,13 @@ export default function UserMainPage() {
               name: interest.interest_area.name,
               triggers:
                 interest.interest_area.triggers?.map((t) => ({
-                  name: String(t.name || ""),
+                  name: String(t.name || ''),
                   type: t.type || TypeEnum.TEXT,
                   response: t.response || null,
                 })) || [],
-              is_attention_point:
-                interest.interest_area.is_attention_point || false,
+              is_attention_point: interest.interest_area.is_attention_point || false,
               marked_by: interest.interest_area.marked_by || [],
-              shared_with_provider:
-                interest.interest_area.shared_with_provider || false,
+              shared_with_provider: interest.interest_area.shared_with_provider || false,
             },
           };
 
@@ -301,19 +274,14 @@ export default function UserMainPage() {
             } as InterestAreaResponse);
           }
         } catch (error: unknown) {
-          console.error(
-            `Error updating interest ${interest.observation_id}:`,
-            error,
-          );
+          console.error(`Error updating interest ${interest.observation_id}:`, error);
           setSyncError(`Erro ao atualizar: ${interest.interest_area.name}`);
         }
       }
 
       // 4. Build final state
       const finalInterests = [
-        ...userInterestObjects.filter(
-          (i) => !i.is_temporary && !i.is_deleted && !i.is_modified,
-        ),
+        ...userInterestObjects.filter((i) => !i.is_temporary && !i.is_deleted && !i.is_modified),
         ...createdInterests,
         ...updatedInterests,
       ];
@@ -324,8 +292,8 @@ export default function UserMainPage() {
       setSyncSuccess(true);
       setTimeout(() => setSyncSuccess(false), 3000);
     } catch (error: unknown) {
-      console.error("Error syncing with server:", error);
-      setSyncError("Erro ao salvar interesses. Tente novamente.");
+      console.error('Error syncing with server:', error);
+      setSyncError('Erro ao salvar interesses. Tente novamente.');
     } finally {
       setIsSyncing(false);
     }
@@ -333,34 +301,34 @@ export default function UserMainPage() {
 
   // Navigation functions
   const handleBannerIconClick = () => {
-    navigate("/diary");
+    navigate('/diary');
   };
 
   const getActiveNavId = () => {
-    if (location.pathname.startsWith("/user-main-page")) return "home";
-    if (location.pathname.startsWith("/reminders")) return "meds";
-    if (location.pathname.startsWith("/diary")) return "diary";
-    if (location.pathname.startsWith("/emergency-user")) return "emergency";
-    if (location.pathname.startsWith("/profile")) return "profile";
+    if (location.pathname.startsWith('/user-main-page')) return 'home';
+    if (location.pathname.startsWith('/reminders')) return 'meds';
+    if (location.pathname.startsWith('/diary')) return 'diary';
+    if (location.pathname.startsWith('/emergency-user')) return 'emergency';
+    if (location.pathname.startsWith('/profile')) return 'profile';
     return null;
   };
 
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
-      case "home":
-        navigate("/user-main-page");
+      case 'home':
+        navigate('/user-main-page');
         break;
-      case "meds":
-        navigate("/reminders");
+      case 'meds':
+        navigate('/reminders');
         break;
-      case "diary":
-        navigate("/diary");
+      case 'diary':
+        navigate('/diary');
         break;
-      case "emergency":
-        navigate("/emergency-user");
+      case 'emergency':
+        navigate('/emergency-user');
         break;
-      case "profile":
-        navigate("/profile");
+      case 'profile':
+        navigate('/profile');
         break;
     }
   };
@@ -432,16 +400,17 @@ export default function UserMainPage() {
       {/* ÁREA SCROLLÁVEL - Lista de Interesses COMPACTA E PRETTY */}
       <div
         className="px-4 overflow-y-auto"
-        style={{ paddingBottom: "180px", maxHeight: "calc(100vh - 140px)" }}
+        style={{
+          paddingBottom: '180px',
+          maxHeight: 'calc(100vh - 140px)',
+        }}
       >
         {visibleInterests.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="w-20 h-20 bg-gradient-to-br from-homebg/20 to-selection/20 rounded-2xl flex items-center justify-center mb-6 shadow-xl">
               <span className="text-4xl">🎯</span>
             </div>
-            <p className="text-typography text-xl font-bold mb-3">
-              Nenhum interesse selecionado
-            </p>
+            <p className="text-typography text-xl font-bold mb-3">Nenhum interesse selecionado</p>
             <p className="text-muted-foreground text-base max-w-md">
               Adicione seus interesses para começar a acompanhar seu bem-estar!
             </p>
@@ -461,14 +430,10 @@ export default function UserMainPage() {
                   shadow-lg hover:shadow-xl
                   ${
                     interest.interest_area.is_attention_point
-                      ? "border-orange-300 bg-gradient-to-br from-orange-50/80 to-red-50/80 dark:from-orange-900/10 dark:to-red-900/10 dark:border-orange-400 shadow-orange-200/50 dark:shadow-orange-900/20"
-                      : "border-card-border hover:border-ring/40 shadow-slate-200/80 dark:shadow-slate-900/40"
+                      ? 'border-orange-300 bg-gradient-to-br from-orange-50/80 to-red-50/80 dark:from-orange-900/10 dark:to-red-900/10 dark:border-orange-400 shadow-orange-200/50 dark:shadow-orange-900/20'
+                      : 'border-card-border hover:border-ring/40 shadow-slate-200/80 dark:shadow-slate-900/40'
                   }
-                  ${
-                    editionMode
-                      ? "cursor-pointer hover:scale-[1.02] hover:bg-accent/20"
-                      : ""
-                  }
+                  ${editionMode ? 'cursor-pointer hover:scale-[1.02] hover:bg-accent/20' : ''}
                 `}
               >
                 {/* Botão de deletar compacto */}
@@ -493,13 +458,13 @@ export default function UserMainPage() {
                   <div
                     className={`w-3 h-3 rounded-full flex-shrink-0 shadow-sm ${
                       interest.interest_area.is_attention_point
-                        ? "bg-gradient-to-r from-orange-400 to-red-500"
-                        : "bg-[var(--gradient-interest-indicator)]"
+                        ? 'bg-gradient-to-r from-orange-400 to-red-500'
+                        : 'bg-[var(--gradient-interest-indicator)]'
                     }`}
                   />
 
                   <h3 className="font-bold text-base text-typography break-words leading-tight flex-1">
-                    {String(interest.interest_area?.name || "")}
+                    {String(interest.interest_area?.name || '')}
                   </h3>
 
                   {/* Badges compactos */}
@@ -526,22 +491,16 @@ export default function UserMainPage() {
                 {interest.interest_area.is_attention_point && (
                   <div className="mb-3 p-3 bg-orange-100/90 dark:bg-orange-900/20 border border-orange-300 dark:border-orange-800 rounded-lg shadow-inner">
                     <div className="flex items-center gap-2">
-                      <span className="text-orange-700 dark:text-orange-400 text-xs">
-                        👤
-                      </span>
+                      <span className="text-orange-700 dark:text-orange-400 text-xs">👤</span>
                       <span className="text-xs font-medium text-orange-800 dark:text-orange-300">
-                        {String(
-                          interest.marked_by?.join(", ") || "Profissional",
-                        )}
+                        {String(interest.marked_by?.join(', ') || 'Profissional')}
                       </span>
                       {interest.attention_point_date && (
                         <span className="text-xs text-orange-700 dark:text-orange-400 ml-auto">
-                          📅{" "}
-                          {new Date(
-                            interest.attention_point_date,
-                          ).toLocaleDateString("pt-BR", {
-                            day: "2-digit",
-                            month: "2-digit",
+                          📅{' '}
+                          {new Date(interest.attention_point_date).toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
                           })}
                         </span>
                       )}
@@ -558,39 +517,37 @@ export default function UserMainPage() {
                         switch (triggerType) {
                           case TypeEnum.BOOLEAN:
                             return {
-                              icon: "✓",
-                              color: "text-green-700 dark:text-green-400",
-                              bg: "bg-green-200 dark:bg-green-900/30",
-                              label: "Sim/Não",
+                              icon: '✓',
+                              color: 'text-green-700 dark:text-green-400',
+                              bg: 'bg-green-200 dark:bg-green-900/30',
+                              label: 'Sim/Não',
                             };
                           case TypeEnum.SCALE:
                             return {
-                              icon: "📊",
-                              color: "text-blue-700 dark:text-blue-400",
-                              bg: "bg-blue-200 dark:bg-blue-900/30",
-                              label: "Escala",
+                              icon: '📊',
+                              color: 'text-blue-700 dark:text-blue-400',
+                              bg: 'bg-blue-200 dark:bg-blue-900/30',
+                              label: 'Escala',
                             };
                           case TypeEnum.INT:
                             return {
-                              icon: "🔢",
-                              color: "text-purple-700 dark:text-purple-400",
-                              bg: "bg-purple-200 dark:bg-purple-900/30",
-                              label: "Número",
+                              icon: '🔢',
+                              color: 'text-purple-700 dark:text-purple-400',
+                              bg: 'bg-purple-200 dark:bg-purple-900/30',
+                              label: 'Número',
                             };
                           case TypeEnum.TEXT:
                           default:
                             return {
-                              icon: "📝",
-                              color: "text-slate-700 dark:text-slate-400",
-                              bg: "bg-slate-200 dark:bg-slate-800/50",
-                              label: "Texto",
+                              icon: '📝',
+                              color: 'text-slate-700 dark:text-slate-400',
+                              bg: 'bg-slate-200 dark:bg-slate-800/50',
+                              label: 'Texto',
                             };
                         }
                       };
 
-                      const typeInfo = getTriggerTypeInfo(
-                        trigger.type || TypeEnum.TEXT,
-                      );
+                      const typeInfo = getTriggerTypeInfo(trigger.type || TypeEnum.TEXT);
 
                       return (
                         <div
@@ -603,7 +560,7 @@ export default function UserMainPage() {
                             <span className="text-xs">{typeInfo.icon}</span>
                           </div>
                           <span className="text-sm text-typography break-words leading-relaxed flex-1 min-w-0">
-                            {String(trigger?.name || "")}
+                            {String(trigger?.name || '')}
                           </span>
                           <span
                             className={`text-xs font-medium px-2 py-0.5 rounded-full ${typeInfo.bg} ${typeInfo.color} shadow-sm flex-shrink-0`}
@@ -621,9 +578,7 @@ export default function UserMainPage() {
                     <span className="flex items-center gap-1.5 text-muted-foreground">
                       <div className="w-1.5 h-1.5 bg-muted-foreground/60 rounded-full" />
                       {interest.interest_area.triggers?.length || 0} pergunta
-                      {(interest.interest_area.triggers?.length || 0) !== 1
-                        ? "s"
-                        : ""}
+                      {(interest.interest_area.triggers?.length || 0) !== 1 ? 's' : ''}
                     </span>
                     {editionMode && (
                       <span className="text-selection font-medium hover:text-selection/80 transition-colors">
@@ -676,15 +631,11 @@ export default function UserMainPage() {
             <Button
               onClick={handleSaveChanges}
               className={`flex-1 bg-gradient-button-save hover:bg-gradient-button-save-hover text-white shadow-lg hover:shadow-xl transition-all duration-200 border-0 text-desc-titulo py-2 ${
-                !hasChanges ? "opacity-50 cursor-not-allowed" : ""
+                !hasChanges ? 'opacity-50 cursor-not-allowed' : ''
               }`}
               disabled={isSyncing || !hasChanges}
             >
-              {isSyncing
-                ? "..."
-                : hasChanges
-                  ? "✓ Salvar Mudanças"
-                  : "✓ Salvar"}
+              {isSyncing ? '...' : hasChanges ? '✓ Salvar Mudanças' : '✓ Salvar'}
             </Button>
             <Button
               onClick={handleCreateNewInterest}
@@ -723,12 +674,10 @@ export default function UserMainPage() {
           editingInterest
             ? {
                 id: editingInterest.observation_id?.toString(),
-                interest_name: String(
-                  editingInterest.interest_area?.name || "",
-                ),
+                interest_name: String(editingInterest.interest_area?.name || ''),
                 triggers: Array.isArray(editingInterest.interest_area?.triggers)
                   ? editingInterest.interest_area.triggers.map((t) => ({
-                      name: String(t?.name || ""),
+                      name: String(t?.name || ''),
                       type: t?.type || TypeEnum.TEXT,
                       response: t?.response || null,
                     }))
@@ -746,7 +695,7 @@ export default function UserMainPage() {
       <ConfirmDialog
         open={confirmDeleteOpen}
         title="Excluir Interesse"
-        description={`Tem certeza que deseja excluir "${String(interestToDelete?.interest_area?.name || "")}"?`}
+        description={`Tem certeza que deseja excluir "${String(interestToDelete?.interest_area?.name || '')}"?`}
         onCancel={() => {
           setConfirmDeleteOpen(false);
           setInterestToDelete(null);

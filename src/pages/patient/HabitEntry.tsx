@@ -1,5 +1,5 @@
-type HabitMeasurementType = "scale" | "hours" | "times" | "yesno";
-type HabitFrequency = "daily" | "weekly" | "monthly";
+type HabitMeasurementType = 'scale' | 'hours' | 'times' | 'yesno';
+type HabitFrequency = 'daily' | 'weekly' | 'monthly';
 
 interface Habit {
   id: string;
@@ -16,11 +16,7 @@ interface HabitEntryProps {
   onRemove?: () => void;
 }
 
-export default function HabitEntry({
-  habit,
-  onChange,
-  onRemove,
-}: HabitEntryProps) {
+export default function HabitEntry({ habit, onChange, onRemove }: HabitEntryProps) {
   return (
     <div className="p-4 border rounded-lg space-y-3">
       {/* Habit Name */}
@@ -56,7 +52,10 @@ export default function HabitEntry({
         <select
           value={habit.frequency}
           onChange={(e) =>
-            onChange({ ...habit, frequency: e.target.value as HabitFrequency })
+            onChange({
+              ...habit,
+              frequency: e.target.value as HabitFrequency,
+            })
           }
           className="p-2 border rounded"
           disabled={!onRemove}
@@ -69,14 +68,17 @@ export default function HabitEntry({
 
       {/* Input Based on Measurement Type */}
       <div className="pt-2">
-        {habit.measurementType === "scale" && (
+        {habit.measurementType === 'scale' && (
           <input
             type="range"
             min="1"
             max="10"
             value={(habit.value as number) || 5}
             onChange={(e) =>
-              onChange({ ...habit, value: Number.parseInt(e.target.value) })
+              onChange({
+                ...habit,
+                value: Number.parseInt(e.target.value),
+              })
             }
             className="w-full"
           />
@@ -97,11 +99,7 @@ export default function HabitEntry({
 
       {/* Remove Button (only for custom habits) */}
       {onRemove && (
-        <button
-          type="button"
-          onClick={onRemove}
-          className="text-sm text-red-500 mt-2"
-        >
+        <button type="button" onClick={onRemove} className="text-sm text-red-500 mt-2">
           Remove this habit
         </button>
       )}

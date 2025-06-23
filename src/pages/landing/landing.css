@@ -3,7 +3,7 @@
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 .onboarding-slider .slider-background {
@@ -204,7 +204,7 @@
   color: #333;
 }
 
-.onboarding-slider .radio-option input[type="radio"] {
+.onboarding-slider .radio-option input[type='radio'] {
   margin-right: 10px;
 }
 

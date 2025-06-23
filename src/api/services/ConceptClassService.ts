@@ -2,24 +2,22 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ConceptClassCreate } from "../models/ConceptClassCreate";
-import type { ConceptClassRetrieve } from "../models/ConceptClassRetrieve";
-import type { ConceptClassUpdate } from "../models/ConceptClassUpdate";
-import type { PatchedConceptClassUpdate } from "../models/PatchedConceptClassUpdate";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { ConceptClassCreate } from '../models/ConceptClassCreate';
+import type { ConceptClassRetrieve } from '../models/ConceptClassRetrieve';
+import type { ConceptClassUpdate } from '../models/ConceptClassUpdate';
+import type { PatchedConceptClassUpdate } from '../models/PatchedConceptClassUpdate';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class ConceptClassService {
   /**
    * @returns ConceptClassRetrieve
    * @throws ApiError
    */
-  public static apiConceptClassList(): CancelablePromise<
-    Array<ConceptClassRetrieve>
-  > {
+  public static apiConceptClassList(): CancelablePromise<Array<ConceptClassRetrieve>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/concept-class/",
+      method: 'GET',
+      url: '/api/concept-class/',
     });
   }
   /**
@@ -31,10 +29,10 @@ export class ConceptClassService {
     requestBody?: ConceptClassCreate,
   ): CancelablePromise<ConceptClassCreate> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/concept-class/",
+      method: 'POST',
+      url: '/api/concept-class/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -46,8 +44,8 @@ export class ConceptClassService {
     conceptClassId: string,
   ): CancelablePromise<ConceptClassRetrieve> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/concept-class/{concept_class_id}/",
+      method: 'GET',
+      url: '/api/concept-class/{concept_class_id}/',
       path: {
         concept_class_id: conceptClassId,
       },
@@ -64,13 +62,13 @@ export class ConceptClassService {
     requestBody: ConceptClassUpdate,
   ): CancelablePromise<ConceptClassUpdate> {
     return __request(OpenAPI, {
-      method: "PUT",
-      url: "/api/concept-class/{concept_class_id}/",
+      method: 'PUT',
+      url: '/api/concept-class/{concept_class_id}/',
       path: {
         concept_class_id: conceptClassId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -84,13 +82,13 @@ export class ConceptClassService {
     requestBody?: PatchedConceptClassUpdate,
   ): CancelablePromise<ConceptClassUpdate> {
     return __request(OpenAPI, {
-      method: "PATCH",
-      url: "/api/concept-class/{concept_class_id}/",
+      method: 'PATCH',
+      url: '/api/concept-class/{concept_class_id}/',
       path: {
         concept_class_id: conceptClassId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -98,12 +96,10 @@ export class ConceptClassService {
    * @returns void
    * @throws ApiError
    */
-  public static apiConceptClassDestroy(
-    conceptClassId: string,
-  ): CancelablePromise<void> {
+  public static apiConceptClassDestroy(conceptClassId: string): CancelablePromise<void> {
     return __request(OpenAPI, {
-      method: "DELETE",
-      url: "/api/concept-class/{concept_class_id}/",
+      method: 'DELETE',
+      url: '/api/concept-class/{concept_class_id}/',
       path: {
         concept_class_id: conceptClassId,
       },

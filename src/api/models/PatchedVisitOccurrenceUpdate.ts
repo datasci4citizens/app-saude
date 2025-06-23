@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { RecurrenceRuleUpdate } from "./RecurrenceRuleUpdate";
+import type { RecurrenceRuleUpdate } from './RecurrenceRuleUpdate';
 export type PatchedVisitOccurrenceUpdate = {
   readonly visit_occurrence_id?: number;
   recurrence_rule?: RecurrenceRuleUpdate;

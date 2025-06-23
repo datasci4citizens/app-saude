@@ -1,4 +1,4 @@
-import type React from "react";
+import type React from 'react';
 
 interface Icon {
   label: string;
@@ -8,12 +8,12 @@ interface Icon {
 
 const icon: Icon[] = [
   {
-    label: "Remedio",
+    label: 'Remedio',
     icon: <span role="img" aria-label="capsule" className="mgc_capsule_line" />,
     shouldFlip: true,
   },
   {
-    label: "Lapis",
+    label: 'Lapis',
     icon: <span role="img" aria-label="pencil" className="mgc_pencil_line" />,
     shouldFlip: false,
   },
@@ -29,7 +29,7 @@ const AuxIcons: React.FC = () => {
         >
           <div
             className={`text-2xl mb-0.5 p-0.5 bg-transparent rounded-lg ${
-              item.shouldFlip ? "scale-x-[-1]" : ""
+              item.shouldFlip ? 'scale-x-[-1]' : ''
             }`}
           >
             {item.icon}

@@ -1,13 +1,13 @@
-import type React from "react";
-import { useState } from "react";
-import GoogleSignin from "@/components/ui/google-signin";
-import landingImage from "@/lib/images/landing.png";
-import { GoogleAuth } from "@codetrix-studio/capacitor-google-auth";
-import { AuthService } from "@/api/services/AuthService";
-import { Capacitor } from "@capacitor/core";
-import { useGoogleLogin } from "@react-oauth/google";
-import type { AuthTokenResponse } from "@/api";
-import type { Auth } from "@/api/models/Auth";
+import type React from 'react';
+import { useState } from 'react';
+import GoogleSignin from '@/components/ui/google-signin';
+import landingImage from '@/lib/images/landing.png';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+import { AuthService } from '@/api/services/AuthService';
+import { Capacitor } from '@capacitor/core';
+import { useGoogleLogin } from '@react-oauth/google';
+import type { AuthTokenResponse } from '@/api';
+import type { Auth } from '@/api/models/Auth';
 
 const isMobile = Capacitor.isNativePlatform();
 
@@ -29,47 +29,45 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
       await GoogleAuth.signOut(); // força novo login completo
       const googleUser = await GoogleAuth.signIn();
       const idToken = googleUser.authentication.idToken;
-      localStorage.removeItem("accessToken");
+      localStorage.removeItem('accessToken');
 
       const tokenRequest = {
         token: idToken,
       };
-      const loginResponse =
-        await AuthService.authLoginGoogleCreate(tokenRequest);
+      const loginResponse = await AuthService.authLoginGoogleCreate(tokenRequest);
 
       handleLoginSuccess(loginResponse);
     } catch (err: unknown) {
       const full = JSON.stringify(err, Object.getOwnPropertyNames(err));
-      console.error("Erro ao logar (mobile):", full);
+      console.error('Erro ao logar (mobile):', full);
       alert(`Erro ao logar (mobile): ${full}`);
-      setError("Falha ao fazer login. Por favor, tente novamente.");
+      setError('Falha ao fazer login. Por favor, tente novamente.');
     } finally {
       setIsLoading(false);
     }
   };
 
   const loginWeb = useGoogleLogin({
-    flow: "auth-code",
+    flow: 'auth-code',
     onSuccess: async ({ code }) => {
       try {
-        localStorage.removeItem("accessToken");
+        localStorage.removeItem('accessToken');
         const codeRequest: Auth = {
           code: code,
         };
-        const loginResponse =
-          await AuthService.authLoginGoogleCreate(codeRequest);
+        const loginResponse = await AuthService.authLoginGoogleCreate(codeRequest);
 
         handleLoginSuccess(loginResponse);
       } catch (err) {
-        console.error("Erro ao logar (web):", err);
-        setError("Falha ao fazer login. Por favor, tente novamente.");
+        console.error('Erro ao logar (web):', err);
+        setError('Falha ao fazer login. Por favor, tente novamente.');
       } finally {
         setIsLoading(false);
       }
     },
     onError: (error) => {
-      console.error("Erro ao logar (web):", error);
-      setError("Falha ao fazer login. Por favor, tente novamente.");
+      console.error('Erro ao logar (web):', error);
+      setError('Falha ao fazer login. Por favor, tente novamente.');
       setIsLoading(false);
     },
   });
@@ -83,19 +81,19 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
   };
 
   const handleLoginSuccess = async (loginResponse: AuthTokenResponse) => {
-    localStorage.setItem("accessToken", loginResponse.access);
-    localStorage.setItem("refreshToken", loginResponse.refresh);
-    localStorage.setItem("role", loginResponse.role);
-    localStorage.setItem("userId", String(loginResponse.user_id));
-    localStorage.setItem("fullname", loginResponse.full_name || "");
-    localStorage.setItem("social_name", loginResponse.social_name || "");
-    localStorage.setItem("profileImage", loginResponse.profile_picture || "");
+    localStorage.setItem('accessToken', loginResponse.access);
+    localStorage.setItem('refreshToken', loginResponse.refresh);
+    localStorage.setItem('role', loginResponse.role);
+    localStorage.setItem('userId', String(loginResponse.user_id));
+    localStorage.setItem('fullname', loginResponse.full_name || '');
+    localStorage.setItem('social_name', loginResponse.social_name || '');
+    localStorage.setItem('profileImage', loginResponse.profile_picture || '');
 
     // Usar o role para decidir navegação
-    if (loginResponse.role === "provider") {
-      window.location.href = "/acs-main-page";
-    } else if (loginResponse.role === "person") {
-      window.location.href = "/user-main-page";
+    if (loginResponse.role === 'provider') {
+      window.location.href = '/acs-main-page';
+    } else if (loginResponse.role === 'person') {
+      window.location.href = '/user-main-page';
     } else {
       // Se o usuário não tem role definido, continua no onboarding
       onNext();
@@ -110,9 +108,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
     <div className="onboarding-screen landing-screen relative">
       <div className="content">
         <h1>SAÚDE</h1>
-        <p className="subtitle">
-          Aplicativo dedicado à sua saúde mental e tratamento
-        </p>
+        <p className="subtitle">Aplicativo dedicado à sua saúde mental e tratamento</p>
 
         {/* Error Message Display */}
         {error && (
@@ -141,22 +137,15 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
         <div className="illustration-container">
           <div className="meditation-circles">
             {[...Array(3)].map((_, i) => (
-              <div
-                key={`circle-${i + 1}`}
-                className={`circle circle-${i + 1}`}
-              />
+              <div key={`circle-${i + 1}`} className={`circle circle-${i + 1}`} />
             ))}
           </div>
-          <img
-            src={landingImage}
-            alt="Landing illustration"
-            className="landing-illustration"
-          />
+          <img src={landingImage} alt="Landing illustration" className="landing-illustration" />
         </div>
 
         {/* Área do botão com espaçamento adequado */}
         <div className="button-bottom mb-20">
-          {" "}
+          {' '}
           {/* Adicionada margem bottom para evitar sobreposição */}
           <GoogleSignin onClick={handleLogin} disabled={isLoading} />
           {/* Loading indicator melhorado */}
@@ -170,9 +159,7 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({ onNext }) => {
                 </div>
 
                 {/* Texto de loading */}
-                <div className="text-white/90 text-sm font-medium">
-                  Fazendo login...
-                </div>
+                <div className="text-white/90 text-sm font-medium">Fazendo login...</div>
 
                 {/* Barra de progresso animada */}
                 <div className="w-32 h-1 bg-white/20 rounded-full overflow-hidden">

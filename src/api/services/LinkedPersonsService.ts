@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { NextVisit } from "../models/NextVisit";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { NextVisit } from '../models/NextVisit';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class LinkedPersonsService {
   /**
    * Get the next scheduled visit for the authenticated provider
@@ -20,8 +20,8 @@ export class LinkedPersonsService {
    */
   public static providerNextVisitRetrieve(): CancelablePromise<NextVisit> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/provider/next-visit/",
+      method: 'GET',
+      url: '/provider/next-visit/',
     });
   }
 }

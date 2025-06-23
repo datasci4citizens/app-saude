@@ -2,13 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { InterestAreaCreate } from "../models/InterestAreaCreate";
-import type { InterestAreaUpdate } from "../models/InterestAreaUpdate";
-import type { PatchedInterestArea } from "../models/PatchedInterestArea";
-import type { PatchedMarkAttentionPoint } from "../models/PatchedMarkAttentionPoint";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { InterestAreaCreate } from '../models/InterestAreaCreate';
+import type { InterestAreaUpdate } from '../models/InterestAreaUpdate';
+import type { PatchedInterestArea } from '../models/PatchedInterestArea';
+import type { PatchedMarkAttentionPoint } from '../models/PatchedMarkAttentionPoint';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class InterestAreasService {
   /**
    * @param personId Filter interest areas by person ID
@@ -17,8 +17,8 @@ export class InterestAreasService {
    */
   public static apiInterestAreaList(personId?: number): CancelablePromise<any> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/interest-area/",
+      method: 'GET',
+      url: '/api/interest-area/',
       query: {
         person_id: personId,
       },
@@ -35,13 +35,13 @@ export class InterestAreasService {
     personId?: number,
   ): CancelablePromise<any> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/interest-area/",
+      method: 'POST',
+      url: '/api/interest-area/',
       query: {
         person_id: personId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -50,13 +50,10 @@ export class InterestAreasService {
    * @returns any No response body
    * @throws ApiError
    */
-  public static apiInterestAreaRetrieve(
-    id: string,
-    personId?: number,
-  ): CancelablePromise<any> {
+  public static apiInterestAreaRetrieve(id: string, personId?: number): CancelablePromise<any> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/interest-area/{id}/",
+      method: 'GET',
+      url: '/api/interest-area/{id}/',
       path: {
         id: id,
       },
@@ -78,8 +75,8 @@ export class InterestAreasService {
     personId?: number,
   ): CancelablePromise<any> {
     return __request(OpenAPI, {
-      method: "PUT",
-      url: "/api/interest-area/{id}/",
+      method: 'PUT',
+      url: '/api/interest-area/{id}/',
       path: {
         id: id,
       },
@@ -87,7 +84,7 @@ export class InterestAreasService {
         person_id: personId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -103,8 +100,8 @@ export class InterestAreasService {
     requestBody?: PatchedInterestArea,
   ): CancelablePromise<any> {
     return __request(OpenAPI, {
-      method: "PATCH",
-      url: "/api/interest-area/{id}/",
+      method: 'PATCH',
+      url: '/api/interest-area/{id}/',
       path: {
         id: id,
       },
@@ -112,7 +109,7 @@ export class InterestAreasService {
         person_id: personId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -121,13 +118,10 @@ export class InterestAreasService {
    * @returns any No response body
    * @throws ApiError
    */
-  public static apiInterestAreaDestroy(
-    id: string,
-    personId?: number,
-  ): CancelablePromise<any> {
+  public static apiInterestAreaDestroy(id: string, personId?: number): CancelablePromise<any> {
     return __request(OpenAPI, {
-      method: "DELETE",
-      url: "/api/interest-area/{id}/",
+      method: 'DELETE',
+      url: '/api/interest-area/{id}/',
       path: {
         id: id,
       },
@@ -146,10 +140,10 @@ export class InterestAreasService {
     requestBody?: PatchedMarkAttentionPoint,
   ): CancelablePromise<void> {
     return __request(OpenAPI, {
-      method: "PATCH",
-      url: "/person/interest-areas/mark-attention-point/",
+      method: 'PATCH',
+      url: '/person/interest-areas/mark-attention-point/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
 }

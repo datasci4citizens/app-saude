@@ -1,5 +1,5 @@
-import { Checkbox } from "@/components/forms/checkbox";
-import { Label } from "@/components/ui/label";
+import { Checkbox } from '@/components/forms/checkbox';
+import { Label } from '@/components/ui/label';
 
 interface RadioCheckboxProps {
   id?: string;
@@ -9,8 +9,8 @@ interface RadioCheckboxProps {
 }
 
 export function RadioCheckbox({
-  id = "checkbox",
-  label = "Label",
+  id = 'checkbox',
+  label = 'Label',
   checked = false,
   onCheckedChange = () => {},
 }: RadioCheckboxProps) {

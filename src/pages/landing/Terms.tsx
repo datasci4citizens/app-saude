@@ -1,9 +1,9 @@
-import TermsText from "./TermsText";
-import { Check, ScrollText, ArrowLeft } from "lucide-react";
-import { useState, useEffect } from "react";
-import ContinueButton from "@/components/ui/ContinueButton";
-import Header from "@/components/ui/header";
-import { useNavigate, useLocation } from "react-router-dom";
+import TermsText from './TermsText';
+import { Check, ScrollText, ArrowLeft } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import ContinueButton from '@/components/ui/ContinueButton';
+import Header from '@/components/ui/header';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface TermsScreenProps {
   onNext?: () => void;
@@ -33,27 +33,27 @@ const TermsScreen = ({
   useEffect(() => {
     // Múltiplas formas de detectar se veio do perfil
     const urlParams = new URLSearchParams(location.search);
-    const fromQuery = urlParams.get("from");
+    const fromQuery = urlParams.get('from');
 
     const fromProfile =
       // Via query parameter (mais confiável)
-      fromQuery === "profile" ||
+      fromQuery === 'profile' ||
       // Via state passado na navegação
-      location.state?.from === "profile" ||
+      location.state?.from === 'profile' ||
       // Via pathname atual
-      location.pathname.includes("/profile/terms") ||
+      location.pathname.includes('/profile/terms') ||
       // Via referrer
-      document.referrer.includes("/profile") ||
-      document.referrer.includes("/acs-profile") ||
-      document.referrer.includes("/user-profile") ||
+      document.referrer.includes('/profile') ||
+      document.referrer.includes('/acs-profile') ||
+      document.referrer.includes('/user-profile') ||
       // Via props
       isViewOnly ||
       // Via histórico do navegador
-      window.history.state?.from === "profile" ||
+      window.history.state?.from === 'profile' ||
       // Via localStorage (backup)
-      localStorage.getItem("navigatedFromProfile") === "true";
+      localStorage.getItem('navigatedFromProfile') === 'true';
 
-    console.log("Terms Screen Debug:", {
+    console.log('Terms Screen Debug:', {
       fromQuery,
       locationState: location.state,
       pathname: location.pathname,
@@ -65,8 +65,8 @@ const TermsScreen = ({
     setIsFromProfile(fromProfile);
 
     // Limpar flag do localStorage se existir
-    if (localStorage.getItem("navigatedFromProfile")) {
-      localStorage.removeItem("navigatedFromProfile");
+    if (localStorage.getItem('navigatedFromProfile')) {
+      localStorage.removeItem('navigatedFromProfile');
     }
   }, [location, isViewOnly]);
 
@@ -117,29 +117,29 @@ const TermsScreen = ({
 
   // Título baseado no contexto
   const getPageTitle = () => {
-    if (isFromProfile) return "Termos e Condições";
-    return "Aceitar Termos";
+    if (isFromProfile) return 'Termos e Condições';
+    return 'Aceitar Termos';
   };
 
   // Texto do botão baseado no contexto
   const getButtonText = () => {
-    if (isFromProfile) return "VOLTAR";
-    if (isLastStep) return "FINALIZAR";
-    return "CONTINUAR";
+    if (isFromProfile) return 'VOLTAR';
+    if (isLastStep) return 'FINALIZAR';
+    return 'CONTINUAR';
   };
 
   // Mensagem de instrução baseada no contexto
   const getInstructionMessage = () => {
     if (isFromProfile) {
-      return "Consulte os termos a qualquer momento";
+      return 'Consulte os termos a qualquer momento';
     }
     if (!isScrolledToBottom) {
-      return "Role até o final para continuar";
+      return 'Role até o final para continuar';
     }
     if (isLastStep) {
-      return "Pronto para finalizar o processo";
+      return 'Pronto para finalizar o processo';
     }
-    return "Pronto para o próximo passo";
+    return 'Pronto para o próximo passo';
   };
 
   return (
@@ -217,21 +217,14 @@ const TermsScreen = ({
             {!isFromProfile && !isScrolledToBottom && (
               <div className="flex items-center space-x-2 text-white/80 animate-bounce">
                 <ScrollText className="h-4 w-4" />
-                <p className="text-sm font-inter font-medium">
-                  Role até o final para continuar
-                </p>
+                <p className="text-sm font-inter font-medium">Role até o final para continuar</p>
               </div>
             )}
 
             {/* Mensagem contextual */}
-            {(isFromProfile ||
-              (!isFromProfile &&
-                isScrolledToBottom &&
-                !showSuccessMessage)) && (
+            {(isFromProfile || (!isFromProfile && isScrolledToBottom && !showSuccessMessage)) && (
               <div className="text-center">
-                <p className="text-white/80 text-sm font-inter">
-                  {getInstructionMessage()}
-                </p>
+                <p className="text-white/80 text-sm font-inter">{getInstructionMessage()}</p>
               </div>
             )}
 
@@ -255,12 +248,10 @@ const TermsScreen = ({
                     <span className="text-white text-sm">ℹ️</span>
                   </div>
                   <div>
-                    <h4 className="text-white font-medium text-sm mb-1">
-                      Já aceito anteriormente
-                    </h4>
+                    <h4 className="text-white font-medium text-sm mb-1">Já aceito anteriormente</h4>
                     <p className="text-white/70 text-xs leading-relaxed">
-                      Você já aceitou estes termos durante o cadastro. Esta é
-                      apenas uma consulta para referência.
+                      Você já aceitou estes termos durante o cadastro. Esta é apenas uma consulta
+                      para referência.
                     </p>
                   </div>
                 </div>

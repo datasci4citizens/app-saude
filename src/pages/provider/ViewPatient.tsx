@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import Header from "@/components/ui/header";
-import { TextField } from "@/components/forms/text_input";
-import { PersonService } from "@/api/services/PersonService";
-import { HelpService } from "@/api/services/HelpService";
-import { ProviderService } from "@/api";
-import { SuccessMessage } from "@/components/ui/success-message";
-import { ErrorMessage } from "@/components/ui/error-message";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
-import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import Header from '@/components/ui/header';
+import { TextField } from '@/components/forms/text_input';
+import { PersonService } from '@/api/services/PersonService';
+import { HelpService } from '@/api/services/HelpService';
+import { ProviderService } from '@/api/services/ProviderService';
+import { ConceptService } from '@/api/services/ConceptService';
+import { SuccessMessage } from '@/components/ui/success-message';
+import { ErrorMessage } from '@/components/ui/error-message';
+import BottomNavigationBar from '@/components/ui/navigator-bar';
+import type { PersonRetrieve } from '@/api/models/PersonRetrieve';
 
 interface DiaryEntryItem {
   question: string;
@@ -48,8 +49,8 @@ export default function ViewPatient() {
   const [helpRequestsLoading, setHelpRequestsLoading] = useState(true);
 
   // UI states
-  const [activeTab, setActiveTab] = useState("diarios");
-  const [searchValue, setSearchValue] = useState("");
+  const [activeTab, setActiveTab] = useState('diarios');
+  const [searchValue, setSearchValue] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -75,8 +76,8 @@ export default function ViewPatient() {
       // Fetch help requests
       await fetchHelpRequests();
     } catch (err) {
-      console.error("Error fetching patient data:", err);
-      setError("Não foi possível carregar os dados do paciente.");
+      console.error('Error fetching patient data:', err);
+      setError('Não foi possível carregar os dados do paciente.');
     } finally {
       setLoading(false);
     }
@@ -85,18 +86,14 @@ export default function ViewPatient() {
   const fetchDiaries = async (personId: number) => {
     try {
       setDiariesLoading(true);
-      const diariesData =
-        await ProviderService.providerPatientsDiariesList(personId);
+      const diariesData = await ProviderService.providerPatientsDiariesList(personId);
 
       const sortedDiaries = diariesData
         .map((d) => ({
           diary_id: d.diary_id,
           date: d.date,
           scope: d.scope,
-          entries:
-            typeof d.entries === "string"
-              ? JSON.parse(d.entries)
-              : (d.entries ?? []),
+          entries: typeof d.entries === 'string' ? JSON.parse(d.entries) : (d.entries ?? []),
         }))
         .sort((a, b) => {
           const dateA = new Date(a.date).getTime();
@@ -106,7 +103,7 @@ export default function ViewPatient() {
 
       setDiaries(sortedDiaries);
     } catch (err) {
-      console.error("Error fetching diaries:", err);
+      console.error('Error fetching diaries:', err);
     } finally {
       setDiariesLoading(false);
     }
@@ -118,20 +115,26 @@ export default function ViewPatient() {
     try {
       setHelpRequestsLoading(true);
       const allHelpRequests = await HelpService.providerHelpList();
+      const resolvedConcept = await ConceptService.apiConceptList(undefined, 'RESOLVED');
 
-      const patientHelpRequests = allHelpRequests.filter(
-        (help) => help.person === Number(id),
-      );
+      const patientHelpRequests = allHelpRequests
+        .filter((help) => help.person === Number(id))
+        .filter((help) => {
+          // Filter out resolved help requests
+          if (!help.value_as_string) return true; // Keep if no value_as_string
+          return !resolvedConcept.some((concept) => concept.concept_id === help.value_as_concept);
+        });
 
-      const formattedHelpRequests: HelpRequest[] = patientHelpRequests.map(
-        (help) => ({
-          id: help.observation_id,
-          created_at: help.created_at,
-          observation_date: help.observation_date,
-          value_as_string: help.value_as_string,
-          person: help.person,
-        }),
-      );
+      ('teste');
+      ('teste');
+
+      const formattedHelpRequests: HelpRequest[] = patientHelpRequests.map((help) => ({
+        id: help.observation_id,
+        created_at: help.created_at,
+        observation_date: help.observation_date,
+        value_as_string: help.value_as_string,
+        person: help.person,
+      }));
 
       formattedHelpRequests.sort((a, b) => {
         const dateA = new Date(a.observation_date || a.created_at).getTime();
@@ -141,7 +144,7 @@ export default function ViewPatient() {
 
       setHelpRequests(formattedHelpRequests);
     } catch (err) {
-      console.error("Error fetching help requests:", err);
+      console.error('Error fetching help requests:', err);
     } finally {
       setHelpRequestsLoading(false);
     }
@@ -150,28 +153,28 @@ export default function ViewPatient() {
   const formatDate = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
+      return date.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
       });
     } catch (_e) {
-      return "Data inválida";
+      return 'Data inválida';
     }
   };
 
   const formatDateWithTime = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
+      return date.toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
       });
     } catch (_e) {
-      return "Data inválida";
+      return 'Data inválida';
     }
   };
 
@@ -179,43 +182,41 @@ export default function ViewPatient() {
     try {
       const date = new Date(dateString);
       const now = new Date();
-      const diffInHours = Math.floor(
-        (now.getTime() - date.getTime()) / (1000 * 60 * 60),
-      );
+      const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
       const diffInDays = Math.floor(diffInHours / 24);
 
-      if (diffInHours < 1) return "Há poucos minutos";
+      if (diffInHours < 1) return 'Há poucos minutos';
       if (diffInHours < 24) return `Há ${diffInHours}h`;
-      if (diffInDays === 1) return "Ontem";
+      if (diffInDays === 1) return 'Ontem';
       if (diffInDays < 7) return `Há ${diffInDays} dias`;
       return formatDate(dateString);
     } catch (_e) {
-      return "Data inválida";
+      return 'Data inválida';
     }
   };
 
   const getActiveNavId = () => {
-    if (location.pathname.startsWith("/acs-main-page")) return "home";
-    if (location.pathname.startsWith("/appointments")) return "consults";
-    if (location.pathname.startsWith("/patients")) return "patients";
-    if (location.pathname.startsWith("/emergencies")) return "emergency";
-    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    if (location.pathname.startsWith('/acs-main-page')) return 'home';
+    if (location.pathname.startsWith('/appointments')) return 'consults';
+    if (location.pathname.startsWith('/patients')) return 'patients';
+    if (location.pathname.startsWith('/emergencies')) return 'emergency';
+    if (location.pathname.startsWith('/acs-profile')) return 'profile';
     return null;
   };
 
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
-      case "home":
-        navigate("/acs-main-page");
+      case 'home':
+        navigate('/acs-main-page');
         break;
-      case "patients":
-        navigate("/patients");
+      case 'patients':
+        navigate('/patients');
         break;
-      case "emergency":
-        navigate("/emergencies");
+      case 'emergency':
+        navigate('/emergencies');
         break;
-      case "profile":
-        navigate("/acs-profile");
+      case 'profile':
+        navigate('/acs-profile');
         break;
     }
   };
@@ -230,18 +231,13 @@ export default function ViewPatient() {
   const filteredHelpRequests = helpRequests.filter(
     (help) =>
       help.value_as_string?.toLowerCase().includes(searchValue.toLowerCase()) ||
-      formatDate(help.observation_date || help.created_at).includes(
-        searchValue,
-      ),
+      formatDate(help.observation_date || help.created_at).includes(searchValue),
   );
 
   const clearError = () => setError(null);
   const clearSuccess = () => setSuccess(null);
 
-  const calculateAge = (
-    birthDatetime?: string | null,
-    yearOfBirth?: number | null,
-  ) => {
+  const calculateAge = (birthDatetime?: string | null, yearOfBirth?: number | null) => {
     if (birthDatetime) {
       const birthDate = new Date(birthDatetime);
       const today = new Date();
@@ -260,19 +256,15 @@ export default function ViewPatient() {
 
   const patientName =
     patient?.social_name ||
-    `${patient?.first_name || ""} ${patient?.last_name || ""}`.trim() ||
-    "Paciente";
+    `${patient?.first_name || ''} ${patient?.last_name || ''}`.trim() ||
+    'Paciente';
 
-  const patientAge = patient
-    ? calculateAge(patient.birth_datetime, patient.year_of_birth)
-    : null;
+  const patientAge = patient ? calculateAge(patient.birth_datetime, patient.year_of_birth) : null;
 
   const urgentHelpRequests = helpRequests.filter((help) => {
     const helpDate = new Date(help.observation_date || help.created_at);
     const now = new Date();
-    const diffInDays = Math.floor(
-      (now.getTime() - helpDate.getTime()) / (1000 * 60 * 60 * 24),
-    );
+    const diffInDays = Math.floor((now.getTime() - helpDate.getTime()) / (1000 * 60 * 60 * 24));
     return diffInDays <= 3;
   });
 
@@ -281,9 +273,7 @@ export default function ViewPatient() {
       <Header
         title={`Paciente: ${patientName}`}
         subtitle={
-          context === "emergency"
-            ? "🚨 Contexto: Emergência"
-            : `ID: ${patient?.person_id || id}`
+          context === 'emergency' ? '🚨 Contexto: Emergência' : `ID: ${patient?.person_id || id}`
         }
       />
 
@@ -313,9 +303,7 @@ export default function ViewPatient() {
         {loading && (
           <div className="flex flex-col items-center justify-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection mb-4" />
-            <p className="text-gray2 text-sm">
-              Carregando dados do paciente...
-            </p>
+            <p className="text-gray2 text-sm">Carregando dados do paciente...</p>
           </div>
         )}
 
@@ -331,22 +319,16 @@ export default function ViewPatient() {
                 </div>
 
                 <div className="flex-1">
-                  <h2 className="text-card-foreground font-semibold text-lg">
-                    {patientName}
-                  </h2>
+                  <h2 className="text-card-foreground font-semibold text-lg">{patientName}</h2>
                   <p className="text-gray2 text-sm">ID: {patient.person_id}</p>
                   {patientAge !== null && (
-                    <p className="text-gray2 text-sm mt-1">
-                      Idade: {patientAge} anos
-                    </p>
+                    <p className="text-gray2 text-sm mt-1">Idade: {patientAge} anos</p>
                   )}
                 </div>
 
-                {context === "emergency" && (
+                {context === 'emergency' && (
                   <div className="bg-destructive/10 px-3 py-1 rounded-full">
-                    <span className="text-destructive text-xs font-medium">
-                      🚨 Emergência
-                    </span>
+                    <span className="text-destructive text-xs font-medium">🚨 Emergência</span>
                   </div>
                 )}
               </div>
@@ -354,15 +336,11 @@ export default function ViewPatient() {
               {/* Quick Stats */}
               <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-card-border">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-selection">
-                    {diaries.length}
-                  </p>
+                  <p className="text-2xl font-bold text-selection">{diaries.length}</p>
                   <p className="text-gray2 text-xs">Diários</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-destructive">
-                    {helpRequests.length}
-                  </p>
+                  <p className="text-2xl font-bold text-destructive">{helpRequests.length}</p>
                   <p className="text-gray2 text-xs">Pedidos de ajuda</p>
                 </div>
               </div>
@@ -385,21 +363,21 @@ export default function ViewPatient() {
             <div className="flex bg-card rounded-xl p-1 mb-6 border border-card-border">
               <button
                 className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  activeTab === "diarios"
-                    ? "bg-selection text-white shadow-sm"
-                    : "text-gray2 hover:text-card-foreground hover:bg-card-muted"
+                  activeTab === 'diarios'
+                    ? 'bg-selection text-white shadow-sm'
+                    : 'text-gray2 hover:text-card-foreground hover:bg-card-muted'
                 }`}
-                onClick={() => setActiveTab("diarios")}
+                onClick={() => setActiveTab('diarios')}
               >
                 📖 Diários ({filteredDiaries.length})
               </button>
               <button
                 className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 relative ${
-                  activeTab === "ajuda"
-                    ? "bg-destructive text-white shadow-sm"
-                    : "text-gray2 hover:text-card-foreground hover:bg-card-muted"
+                  activeTab === 'ajuda'
+                    ? 'bg-destructive text-white shadow-sm'
+                    : 'text-gray2 hover:text-card-foreground hover:bg-card-muted'
                 }`}
-                onClick={() => setActiveTab("ajuda")}
+                onClick={() => setActiveTab('ajuda')}
               >
                 🚨 Pedidos de Ajuda ({filteredHelpRequests.length})
                 {urgentHelpRequests.length > 0 && (
@@ -409,14 +387,12 @@ export default function ViewPatient() {
             </div>
 
             {/* Content based on active tab */}
-            {activeTab === "diarios" && (
+            {activeTab === 'diarios' && (
               <div className="space-y-4">
                 {diariesLoading && (
                   <div className="flex items-center justify-center py-8">
                     <div className="animate-spin rounded-full h-6 w-6 border-2 border-selection/20 border-t-selection mr-2" />
-                    <span className="text-gray2 text-sm">
-                      Carregando diários...
-                    </span>
+                    <span className="text-gray2 text-sm">Carregando diários...</span>
                   </div>
                 )}
 
@@ -426,14 +402,12 @@ export default function ViewPatient() {
                       <span className="text-2xl">📖</span>
                     </div>
                     <h3 className="text-typography font-semibold text-base mb-2">
-                      {searchValue
-                        ? "Nenhum diário encontrado"
-                        : "Nenhum diário registrado"}
+                      {searchValue ? 'Nenhum diário encontrado' : 'Nenhum diário registrado'}
                     </h3>
                     <p className="text-gray2 text-sm">
                       {searchValue
                         ? `Não encontramos diários com "${searchValue}"`
-                        : "Este paciente ainda não possui diários registrados"}
+                        : 'Este paciente ainda não possui diários registrados'}
                     </p>
                   </div>
                 )}
@@ -447,11 +421,7 @@ export default function ViewPatient() {
                       <div
                         key={diary.diary_id}
                         className="bg-card rounded-2xl p-4 border border-card-border hover:border-selection/20 transition-all duration-200 cursor-pointer hover:shadow-sm"
-                        onClick={() =>
-                          navigate(
-                            `/provider/patient/${id}/diary/${diary.diary_id}`,
-                          )
-                        }
+                        onClick={() => navigate(`/provider/patient/${id}/diary/${diary.diary_id}`)}
                       >
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
@@ -462,9 +432,7 @@ export default function ViewPatient() {
                               <h4 className="text-card-foreground font-medium text-sm">
                                 Diário - {formatDate(diary.date)}
                               </h4>
-                              <p className="text-gray2 text-xs">
-                                {getRelativeTime(diary.date)}
-                              </p>
+                              <p className="text-gray2 text-xs">{getRelativeTime(diary.date)}</p>
                             </div>
                           </div>
                           <span className="text-gray2 text-lg">
@@ -475,12 +443,11 @@ export default function ViewPatient() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <span className="bg-selection/10 text-selection text-xs px-2 py-1 rounded-full font-medium">
-                              {diary.scope || "Geral"}
+                              {diary.scope || 'Geral'}
                             </span>
                           </div>
                           <p className="text-gray2 text-xs">
-                            {entriesCount}{" "}
-                            {entriesCount === 1 ? "entrada" : "entradas"}
+                            {entriesCount} {entriesCount === 1 ? 'entrada' : 'entradas'}
                           </p>
                         </div>
                       </div>
@@ -489,14 +456,12 @@ export default function ViewPatient() {
               </div>
             )}
 
-            {activeTab === "ajuda" && (
+            {activeTab === 'ajuda' && (
               <div className="space-y-4">
                 {helpRequestsLoading && (
                   <div className="flex items-center justify-center py-8">
                     <div className="animate-spin rounded-full h-6 w-6 border-2 border-destructive/20 border-t-destructive mr-2" />
-                    <span className="text-gray2 text-sm">
-                      Carregando pedidos de ajuda...
-                    </span>
+                    <span className="text-gray2 text-sm">Carregando pedidos de ajuda...</span>
                   </div>
                 )}
 
@@ -506,14 +471,12 @@ export default function ViewPatient() {
                       <span className="text-2xl">🚨</span>
                     </div>
                     <h3 className="text-typography font-semibold text-base mb-2">
-                      {searchValue
-                        ? "Nenhum pedido encontrado"
-                        : "Nenhum pedido de ajuda"}
+                      {searchValue ? 'Nenhum pedido encontrado' : 'Nenhum pedido de ajuda'}
                     </h3>
                     <p className="text-gray2 text-sm">
                       {searchValue
                         ? `Não encontramos pedidos com "${searchValue}"`
-                        : "Este paciente não fez pedidos de ajuda ainda"}
+                        : 'Este paciente não fez pedidos de ajuda ainda'}
                     </p>
                   </div>
                 )}
@@ -530,25 +493,19 @@ export default function ViewPatient() {
                         key={helpRequest.id}
                         className={`bg-card rounded-2xl p-4 border transition-all duration-200 cursor-pointer hover:shadow-sm ${
                           isUrgent
-                            ? "border-destructive/30 bg-destructive/5"
-                            : "border-card-border hover:border-destructive/20"
+                            ? 'border-destructive/30 bg-destructive/5'
+                            : 'border-card-border hover:border-destructive/20'
                         }`}
-                        onClick={() =>
-                          navigate(`/provider/help/${id}/${helpRequest.id}`)
-                        }
+                        onClick={() => navigate(`/provider/help/${id}/${helpRequest.id}`)}
                       >
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center gap-3">
                             <div
                               className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                                isUrgent
-                                  ? "bg-destructive/20"
-                                  : "bg-destructive/10"
+                                isUrgent ? 'bg-destructive/20' : 'bg-destructive/10'
                               }`}
                             >
-                              <span className="text-destructive text-lg">
-                                🚨
-                              </span>
+                              <span className="text-destructive text-lg">🚨</span>
                             </div>
                             <div>
                               <h4 className="text-card-foreground font-medium text-sm flex items-center gap-2">
@@ -559,8 +516,7 @@ export default function ViewPatient() {
                               </h4>
                               <p className="text-gray2 text-xs">
                                 {formatDateWithTime(
-                                  helpRequest.observation_date ||
-                                    helpRequest.created_at,
+                                  helpRequest.observation_date || helpRequest.created_at,
                                 )}
                               </p>
                             </div>
@@ -572,8 +528,7 @@ export default function ViewPatient() {
 
                         <div className="bg-gray2/5 rounded-lg p-3">
                           <p className="text-card-foreground text-sm">
-                            {helpRequest.value_as_string ||
-                              "Pedido de ajuda sem descrição"}
+                            {helpRequest.value_as_string || 'Pedido de ajuda sem descrição'}
                           </p>
                         </div>
 
@@ -584,8 +539,7 @@ export default function ViewPatient() {
                             </span>
                             <span className="text-gray2 text-xs">
                               {getRelativeTime(
-                                helpRequest.observation_date ||
-                                  helpRequest.created_at,
+                                helpRequest.observation_date || helpRequest.created_at,
                               )}
                             </span>
                           </div>

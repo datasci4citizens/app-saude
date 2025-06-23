@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import Header from "@/components/ui/header";
-import { DiaryService } from "@/api/services/DiaryService";
-import { ErrorMessage } from "@/components/ui/error-message";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
-import type { TypeEnum } from "@/api/models/TypeEnum";
-import { Clock } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import Header from '@/components/ui/header';
+import { DiaryService } from '@/api/services/DiaryService';
+import { ErrorMessage } from '@/components/ui/error-message';
+import BottomNavigationBar from '@/components/ui/navigator-bar';
+import type { TypeEnum } from '@/api/models/TypeEnum';
+import { Clock } from 'lucide-react';
 
 // Updated interfaces to match new server response structure
 interface DiaryTrigger {
@@ -43,9 +43,7 @@ export default function ImprovedViewDiaryEntry() {
   const [isLoading, setIsLoading] = useState(true);
   const [diary, setDiary] = useState<DiaryData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [expandedInterests, setExpandedInterests] = useState<Set<string>>(
-    new Set(),
-  );
+  const [expandedInterests, setExpandedInterests] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchDiaryData = async () => {
@@ -56,11 +54,11 @@ export default function ImprovedViewDiaryEntry() {
         setError(null);
 
         const response = await DiaryService.diariesRetrieve2(diaryId);
-        console.log("Diary API response:", response);
+        console.log('Diary API response:', response);
 
         if (response?.diary_id) {
           const parsedInterestAreas =
-            typeof response.interest_areas === "string"
+            typeof response.interest_areas === 'string'
               ? JSON.parse(response.interest_areas)
               : response.interest_areas;
 
@@ -74,9 +72,9 @@ export default function ImprovedViewDiaryEntry() {
           setDiary({
             diary_id: response.diary_id,
             date: response.date,
-            scope: "today", // Provide a default since 'scope' is missing in response
+            scope: 'today', // Provide a default since 'scope' is missing in response
             entries:
-              typeof response.entries === "string"
+              typeof response.entries === 'string'
                 ? JSON.parse(response.entries)
                 : response.entries,
             interest_areas: parsedInterestAreas,
@@ -85,22 +83,17 @@ export default function ImprovedViewDiaryEntry() {
           const interestsWithResponses =
             parsedInterestAreas
               ?.filter((area: DiaryInterestArea) =>
-                area.triggers?.some(
-                  (t) => t.response && t.response.trim() !== "",
-                ),
+                area.triggers?.some((t) => t.response && t.response.trim() !== ''),
               )
               .map((area: DiaryInterestArea) => area.name) || [];
           setExpandedInterests(new Set(interestsWithResponses));
         } else {
-          console.error(
-            "Diary not found or invalid response format:",
-            response,
-          );
-          setError("Diário não encontrado ou formato inválido.");
+          console.error('Diary not found or invalid response format:', response);
+          setError('Diário não encontrado ou formato inválido.');
         }
       } catch (error) {
-        console.error("Error fetching diary:", error);
-        setError("Falha ao carregar o diário. Por favor, tente novamente.");
+        console.error('Error fetching diary:', error);
+        setError('Falha ao carregar o diário. Por favor, tente novamente.');
       } finally {
         setIsLoading(false);
       }
@@ -115,8 +108,8 @@ export default function ImprovedViewDiaryEntry() {
   const formatDate = (dateString: string): string => {
     try {
       const date = new Date(dateString);
-      const day = date.getDate().toString().padStart(2, "0");
-      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
       const year = date.getFullYear();
       return `${day}/${month}/${year}`;
     } catch (_e) {
@@ -128,27 +121,26 @@ export default function ImprovedViewDiaryEntry() {
   const getTimeFromDate = (dateString: string): string => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleTimeString("pt-BR", {
-        hour: "2-digit",
-        minute: "2-digit",
+      return date.toLocaleTimeString('pt-BR', {
+        hour: '2-digit',
+        minute: '2-digit',
       });
     } catch (_error) {
-      return "";
+      return '';
     }
   };
 
   // Get general text entry if available
-  const getGeneralTextEntry = (): { text: string; shared: boolean } | null => {
+  const getGeneralTextEntry = (): {
+    text: string;
+    shared: boolean;
+  } | null => {
     if (!diary || !diary.entries || diary.entries.length === 0) {
       return null;
     }
 
     for (const entry of diary.entries) {
-      if (
-        entry.text &&
-        typeof entry.text === "string" &&
-        entry.text.trim() !== ""
-      ) {
+      if (entry.text && typeof entry.text === 'string' && entry.text.trim() !== '') {
         return {
           text: entry.text,
           shared: entry.text_shared || false,
@@ -173,30 +165,30 @@ export default function ImprovedViewDiaryEntry() {
 
   // Navigation helpers
   const getActiveNavId = () => {
-    if (location.pathname.startsWith("/user-main-page")) return "home";
-    if (location.pathname.startsWith("/reminders")) return "meds";
-    if (location.pathname.startsWith("/diary")) return "diary";
-    if (location.pathname.startsWith("/emergency-user")) return "emergency";
-    if (location.pathname.startsWith("/profile")) return "profile";
+    if (location.pathname.startsWith('/user-main-page')) return 'home';
+    if (location.pathname.startsWith('/reminders')) return 'meds';
+    if (location.pathname.startsWith('/diary')) return 'diary';
+    if (location.pathname.startsWith('/emergency-user')) return 'emergency';
+    if (location.pathname.startsWith('/profile')) return 'profile';
     return null;
   };
 
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
-      case "home":
-        navigate("/user-main-page");
+      case 'home':
+        navigate('/user-main-page');
         break;
-      case "meds":
-        navigate("/reminders");
+      case 'meds':
+        navigate('/reminders');
         break;
-      case "diary":
-        navigate("/diary");
+      case 'diary':
+        navigate('/diary');
         break;
-      case "emergency":
-        navigate("/emergency-user");
+      case 'emergency':
+        navigate('/emergency-user');
         break;
-      case "profile":
-        navigate("/profile");
+      case 'profile':
+        navigate('/profile');
         break;
     }
   };
@@ -206,16 +198,11 @@ export default function ImprovedViewDiaryEntry() {
   if (isLoading) {
     return (
       <div className="flex flex-col h-screen bg-homebg">
-        <Header
-          title="📝 Visualizar Diário"
-          onBackClick={() => navigate("/diary")}
-        />
+        <Header title="📝 Visualizar Diário" onBackClick={() => navigate('/diary')} />
         <div className="flex-1 flex justify-center items-center">
           <div className="flex flex-col items-center gap-4">
             <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-foreground/20 border-t-primary-foreground" />
-            <p className="text-primary-foreground/80 font-medium">
-              Carregando diário...
-            </p>
+            <p className="text-primary-foreground/80 font-medium">Carregando diário...</p>
           </div>
         </div>
       </div>
@@ -225,21 +212,18 @@ export default function ImprovedViewDiaryEntry() {
   if (error || !diary) {
     return (
       <div className="flex flex-col h-screen bg-homebg">
-        <Header
-          title="📝 Visualizar Diário"
-          onBackClick={() => navigate("/diary")}
-        />
+        <Header title="📝 Visualizar Diário" onBackClick={() => navigate('/diary')} />
         <div className="flex-1 overflow-hidden bg-background rounded-t-3xl mt-4 relative z-10">
           <div className="px-4 py-6">
             <ErrorMessage
-              message={error || "Diário não encontrado"}
+              message={error || 'Diário não encontrado'}
               variant="destructive"
               onClose={clearError}
               className="mb-6"
             />
             <div className="text-center">
               <button
-                onClick={() => navigate("/diary")}
+                onClick={() => navigate('/diary')}
                 className="px-6 py-3 bg-homebg text-primary-foreground rounded-lg transition-colors font-medium"
               >
                 Voltar aos Diários
@@ -252,19 +236,19 @@ export default function ImprovedViewDiaryEntry() {
   }
 
   const textEntry = getGeneralTextEntry();
-  const time = diary.date ? getTimeFromDate(diary.date) : "";
+  const time = diary.date ? getTimeFromDate(diary.date) : '';
   const hasContent =
     textEntry?.text ||
     diary.interest_areas?.some((area) =>
-      area.triggers?.some((t) => t.response && t.response.trim() !== ""),
+      area.triggers?.some((t) => t.response && t.response.trim() !== ''),
     );
 
   return (
     <div className="flex flex-col h-screen bg-homebg">
       <Header
         title="📝 Visualizar Diário"
-        onBackClick={() => navigate("/diary")}
-        subtitle={diary.date ? formatDate(diary.date) : "Data não disponível"}
+        onBackClick={() => navigate('/diary')}
+        subtitle={diary.date ? formatDate(diary.date) : 'Data não disponível'}
       />
 
       <div className="flex-1 overflow-hidden bg-background rounded-t-3xl mt-4 relative z-10">
@@ -281,14 +265,12 @@ export default function ImprovedViewDiaryEntry() {
 
             {/* Time Range Section */}
             <div className="space-y-3 mb-6">
-              <h3 className="font-semibold text-lg text-typography mb-1">
-                Período de tempo
-              </h3>
+              <h3 className="font-semibold text-lg text-typography mb-1">Período de tempo</h3>
               <div className="bg-card p-4 rounded-lg border border-card-border flex items-center justify-between">
                 <span className="text-typography">
-                  {diary.scope === "today"
-                    ? "Registros do dia de hoje"
-                    : "Registros desde a última entrada"}
+                  {diary.scope === 'today'
+                    ? 'Registros do dia de hoje'
+                    : 'Registros desde a última entrada'}
                 </span>
                 {time && (
                   <div className="flex items-center gap-2 text-muted-foreground">
@@ -302,14 +284,12 @@ export default function ImprovedViewDiaryEntry() {
             {/* Interest Areas Section */}
             {diary.interest_areas && diary.interest_areas.length > 0 && (
               <div className="space-y-3 mb-6">
-                <h3 className="font-semibold text-lg text-typography mb-1">
-                  Áreas de Interesse
-                </h3>
+                <h3 className="font-semibold text-lg text-typography mb-1">Áreas de Interesse</h3>
                 <div className="space-y-4">
                   {diary.interest_areas.map((interest) => {
                     const isExpanded = expandedInterests.has(interest.name);
                     const hasResponses = interest.triggers?.some(
-                      (t) => t.response && t.response.trim() !== "",
+                      (t) => t.response && t.response.trim() !== '',
                     );
 
                     if (!hasResponses) return null;
@@ -319,8 +299,8 @@ export default function ImprovedViewDiaryEntry() {
                         key={interest.name}
                         className={`border rounded-xl shadow-sm ${
                           interest.is_attention_point
-                            ? "bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border-orange-200 dark:border-orange-800"
-                            : "bg-card border-card-border"
+                            ? 'bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border-orange-200 dark:border-orange-800'
+                            : 'bg-card border-card-border'
                         }`}
                       >
                         <div
@@ -332,17 +312,15 @@ export default function ImprovedViewDiaryEntry() {
                               <span
                                 className={`w-2 h-2 rounded-full flex-shrink-0 ${
                                   interest.is_attention_point
-                                    ? "bg-gradient-to-r from-orange-400 to-red-500"
-                                    : "bg-[var(--gradient-interest-indicator)]"
+                                    ? 'bg-gradient-to-r from-orange-400 to-red-500'
+                                    : 'bg-[var(--gradient-interest-indicator)]'
                                 }`}
                               />
                               <h4 className="font-bold text-lg text-card-foreground">
                                 {interest.name}
                               </h4>
                               {interest.is_attention_point && (
-                                <span className="text-orange-500 text-lg">
-                                  ⚠️
-                                </span>
+                                <span className="text-orange-500 text-lg">⚠️</span>
                               )}
                             </div>
                             <div className="flex items-center gap-2">
@@ -353,7 +331,7 @@ export default function ImprovedViewDiaryEntry() {
                               )}
                               <span
                                 className={`transform transition-transform duration-200 ${
-                                  isExpanded ? "rotate-180" : ""
+                                  isExpanded ? 'rotate-180' : ''
                                 }`}
                               >
                                 ▼
@@ -361,15 +339,13 @@ export default function ImprovedViewDiaryEntry() {
                             </div>
                           </div>
 
-                          {interest.is_attention_point &&
-                            interest.marked_by && (
-                              <div className="mt-2">
-                                <span className="text-xs text-orange-600 dark:text-orange-400 italic">
-                                  Marcado como ponto de atenção por{" "}
-                                  {interest.marked_by.join(", ")}
-                                </span>
-                              </div>
-                            )}
+                          {interest.is_attention_point && interest.marked_by && (
+                            <div className="mt-2">
+                              <span className="text-xs text-orange-600 dark:text-orange-400 italic">
+                                Marcado como ponto de atenção por {interest.marked_by.join(', ')}
+                              </span>
+                            </div>
+                          )}
                         </div>
 
                         {isExpanded && (
@@ -382,7 +358,7 @@ export default function ImprovedViewDiaryEntry() {
                                 {interest.triggers?.map(
                                   (trigger, index) =>
                                     trigger.response &&
-                                    trigger.response.trim() !== "" && (
+                                    trigger.response.trim() !== '' && (
                                       <div
                                         key={`${trigger.name}-${index}`}
                                         className="bg-card-muted p-3 rounded-lg border-l-4 border-selection"
@@ -413,20 +389,16 @@ export default function ImprovedViewDiaryEntry() {
             {textEntry?.text && (
               <div className="space-y-3 mb-6">
                 <div className="flex flex-col gap-1">
-                  <h3 className="font-semibold text-lg text-typography mb-1">
-                    Observações Gerais
-                  </h3>
+                  <h3 className="font-semibold text-lg text-typography mb-1">Observações Gerais</h3>
                   <div className="flex items-center gap-3">
                     <span
                       className={`text-sm font-medium ${
-                        textEntry.shared
-                          ? "text-success"
-                          : "text-muted-foreground"
+                        textEntry.shared ? 'text-success' : 'text-muted-foreground'
                       }`}
                     >
                       {textEntry.shared
-                        ? "✓ Compartilhado com profissionais"
-                        : "○ Não compartilhado"}
+                        ? '✓ Compartilhado com profissionais'
+                        : '○ Não compartilhado'}
                     </span>
                   </div>
                 </div>
@@ -440,7 +412,7 @@ export default function ImprovedViewDiaryEntry() {
             {/* Action button */}
             <div className="text-center mt-8">
               <button
-                onClick={() => navigate("/diary")}
+                onClick={() => navigate('/diary')}
                 className="px-8 py-3 bg-selection hover:bg-selection/80 text-white rounded-lg 
                          transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
               >

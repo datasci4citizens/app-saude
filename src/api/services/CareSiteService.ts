@@ -2,13 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { CareSiteCreate } from "../models/CareSiteCreate";
-import type { CareSiteRetrieve } from "../models/CareSiteRetrieve";
-import type { CareSiteUpdate } from "../models/CareSiteUpdate";
-import type { PatchedCareSiteUpdate } from "../models/PatchedCareSiteUpdate";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { CareSiteCreate } from '../models/CareSiteCreate';
+import type { CareSiteRetrieve } from '../models/CareSiteRetrieve';
+import type { CareSiteUpdate } from '../models/CareSiteUpdate';
+import type { PatchedCareSiteUpdate } from '../models/PatchedCareSiteUpdate';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class CareSiteService {
   /**
    * @returns CareSiteRetrieve
@@ -16,8 +16,8 @@ export class CareSiteService {
    */
   public static apiCareSiteList(): CancelablePromise<Array<CareSiteRetrieve>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/care-site/",
+      method: 'GET',
+      url: '/api/care-site/',
     });
   }
   /**
@@ -25,14 +25,12 @@ export class CareSiteService {
    * @returns CareSiteCreate
    * @throws ApiError
    */
-  public static apiCareSiteCreate(
-    requestBody?: CareSiteCreate,
-  ): CancelablePromise<CareSiteCreate> {
+  public static apiCareSiteCreate(requestBody?: CareSiteCreate): CancelablePromise<CareSiteCreate> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/care-site/",
+      method: 'POST',
+      url: '/api/care-site/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -40,12 +38,10 @@ export class CareSiteService {
    * @returns CareSiteRetrieve
    * @throws ApiError
    */
-  public static apiCareSiteRetrieve(
-    careSiteId: number,
-  ): CancelablePromise<CareSiteRetrieve> {
+  public static apiCareSiteRetrieve(careSiteId: number): CancelablePromise<CareSiteRetrieve> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/care-site/{care_site_id}/",
+      method: 'GET',
+      url: '/api/care-site/{care_site_id}/',
       path: {
         care_site_id: careSiteId,
       },
@@ -62,13 +58,13 @@ export class CareSiteService {
     requestBody?: CareSiteUpdate,
   ): CancelablePromise<CareSiteUpdate> {
     return __request(OpenAPI, {
-      method: "PUT",
-      url: "/api/care-site/{care_site_id}/",
+      method: 'PUT',
+      url: '/api/care-site/{care_site_id}/',
       path: {
         care_site_id: careSiteId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -82,13 +78,13 @@ export class CareSiteService {
     requestBody?: PatchedCareSiteUpdate,
   ): CancelablePromise<CareSiteUpdate> {
     return __request(OpenAPI, {
-      method: "PATCH",
-      url: "/api/care-site/{care_site_id}/",
+      method: 'PATCH',
+      url: '/api/care-site/{care_site_id}/',
       path: {
         care_site_id: careSiteId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -96,12 +92,10 @@ export class CareSiteService {
    * @returns void
    * @throws ApiError
    */
-  public static apiCareSiteDestroy(
-    careSiteId: number,
-  ): CancelablePromise<void> {
+  public static apiCareSiteDestroy(careSiteId: number): CancelablePromise<void> {
     return __request(OpenAPI, {
-      method: "DELETE",
-      url: "/api/care-site/{care_site_id}/",
+      method: 'DELETE',
+      url: '/api/care-site/{care_site_id}/',
       path: {
         care_site_id: careSiteId,
       },

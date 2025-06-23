@@ -1,4 +1,4 @@
-import type React from "react";
+import type React from 'react';
 
 interface NavItem {
   label: string;
@@ -8,32 +8,24 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   {
-    label: "Casa",
+    label: 'Casa',
     icon: <span role="img" aria-label="home" className="mgc_home_4_line" />,
     active: true,
   },
   {
-    label: "Remédios e consultas",
-    icon: (
-      <span role="img" aria-label="calendar" className="mgc_calendar_line" />
-    ),
+    label: 'Remédios e consultas',
+    icon: <span role="img" aria-label="calendar" className="mgc_calendar_line" />,
   },
   {
-    label: "Diário",
+    label: 'Diário',
     icon: <span role="img" aria-label="book" className="mgc_book_6_line" />,
   },
   {
-    label: "Pedidos de Ajuda",
-    icon: (
-      <span
-        role="img"
-        aria-label="warning"
-        className="mgc_emergency_flashers_line"
-      />
-    ),
+    label: 'Pedidos de Ajuda',
+    icon: <span role="img" aria-label="warning" className="mgc_emergency_flashers_line" />,
   },
   {
-    label: "Eu",
+    label: 'Eu',
     icon: <span role="img" aria-label="user" className="mgc_user_2_line" />,
   },
 ];
@@ -45,12 +37,10 @@ const BottomNavigationBar: React.FC = () => {
         <div
           key={`nav-${item.label}-${index}`}
           className={`flex flex-col items-center text-gray2 font-medium text-xs font-inter cursor-pointer ${
-            item.active ? "text-primary" : ""
+            item.active ? 'text-primary' : ''
           }`}
         >
-          <div className="text-2xl mb-0.5 p-0.5 bg-transparent rounded-lg">
-            {item.icon}
-          </div>
+          <div className="text-2xl mb-0.5 p-0.5 bg-transparent rounded-lg">{item.icon}</div>
           <div className="text-[10px]">{item.label}</div>
         </div>
       ))}

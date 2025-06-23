@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import Header from "@/components/ui/header";
-import { PersonService } from "@/api/services/PersonService";
-import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
-import { ProviderService } from "@/api/services/ProviderService";
-import { ErrorMessage } from "@/components/ui/error-message";
-import { InterestAreasService } from "@/api/services/InterestAreasService";
-import type { PatchedMarkAttentionPoint } from "@/api/models/PatchedMarkAttentionPoint";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
-import type { TypeEnum } from "@/api/models/TypeEnum";
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import Header from '@/components/ui/header';
+import { PersonService } from '@/api/services/PersonService';
+import type { PersonRetrieve } from '@/api/models/PersonRetrieve';
+import { ProviderService } from '@/api/services/ProviderService';
+import { ErrorMessage } from '@/components/ui/error-message';
+import { InterestAreasService } from '@/api/services/InterestAreasService';
+import type { PatchedMarkAttentionPoint } from '@/api/models/PatchedMarkAttentionPoint';
+import BottomNavigationBar from '@/components/ui/navigator-bar';
+import type { TypeEnum } from '@/api/models/TypeEnum';
 
 // Updated interfaces to match new server response structure
 interface DiaryEntryDetail {
@@ -52,9 +52,7 @@ export default function ViewDiary() {
   const [patient, setPatient] = useState<PersonRetrieve | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [expandedInterests, setExpandedInterests] = useState<Set<string>>(
-    new Set(),
-  );
+  const [expandedInterests, setExpandedInterests] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (diaryId && personId) {
@@ -64,17 +62,14 @@ export default function ViewDiary() {
           setError(null);
 
           // Buscar dados do paciente
-          const patientData = await PersonService.apiPersonRetrieve(
-            Number(personId),
-          );
+          const patientData = await PersonService.apiPersonRetrieve(Number(personId));
           setPatient(patientData);
 
           // Buscar o diário específico diretamente
-          const diaryData =
-            await ProviderService.providerPatientsDiariesRetrieve(
-              diaryId,
-              Number(personId),
-            );
+          const diaryData = await ProviderService.providerPatientsDiariesRetrieve(
+            diaryId,
+            Number(personId),
+          );
 
           for (const interest of diaryData.interest_areas) {
             if (interest.marked_by && interest.marked_by.length > 0) {
@@ -87,11 +82,11 @@ export default function ViewDiary() {
           if (diaryData) {
             setDiary(diaryData);
           } else {
-            setError("Diário não encontrado.");
+            setError('Diário não encontrado.');
           }
         } catch (err) {
-          console.error("Error fetching diary data:", err);
-          setError("Não foi possível carregar os dados do diário.");
+          console.error('Error fetching diary data:', err);
+          setError('Não foi possível carregar os dados do diário.');
         } finally {
           setLoading(false);
         }
@@ -110,8 +105,8 @@ export default function ViewDiary() {
   const formatDate = (dateString: string): string => {
     try {
       const date = new Date(dateString);
-      const day = date.getDate().toString().padStart(2, "0");
-      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
       const year = date.getFullYear();
 
       return `${day}/${month}/${year}`;
@@ -134,13 +129,16 @@ export default function ViewDiary() {
   };
 
   // Get general text entry if available
-  const getGeneralTextEntry = (): { text: string; shared: boolean } | null => {
+  const getGeneralTextEntry = (): {
+    text: string;
+    shared: boolean;
+  } | null => {
     if (!diary || !diary.entries || diary.entries.length === 0) {
       return null;
     }
 
     for (const entry of diary.entries) {
-      if (entry.text && entry.text.trim() !== "") {
+      if (entry.text && entry.text.trim() !== '') {
         return {
           text: entry.text,
           shared: entry.shared, // Provider only sees shared entries
@@ -151,10 +149,7 @@ export default function ViewDiary() {
     return null;
   };
 
-  const handleAttentionToggle = async (
-    areaId: number,
-    isCurrentlyFlagged: boolean,
-  ) => {
+  const handleAttentionToggle = async (areaId: number, isCurrentlyFlagged: boolean) => {
     try {
       const request: PatchedMarkAttentionPoint = {
         area_id: areaId,
@@ -172,33 +167,33 @@ export default function ViewDiary() {
         setDiary(diaryData);
       }
     } catch (error) {
-      console.error("Erro ao marcar ponto de atenção:", error);
+      console.error('Erro ao marcar ponto de atenção:', error);
     }
   };
 
   const location = useLocation();
   const getActiveNavId = () => {
-    if (location.pathname.startsWith("/acs-main-page")) return "home";
-    if (location.pathname.startsWith("/appointments")) return "consults";
-    if (location.pathname.startsWith("/patients")) return "patients";
-    if (location.pathname.startsWith("/emergencies")) return "emergency";
-    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    if (location.pathname.startsWith('/acs-main-page')) return 'home';
+    if (location.pathname.startsWith('/appointments')) return 'consults';
+    if (location.pathname.startsWith('/patients')) return 'patients';
+    if (location.pathname.startsWith('/emergencies')) return 'emergency';
+    if (location.pathname.startsWith('/acs-profile')) return 'profile';
     return null;
   };
 
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
-      case "home":
-        navigate("/acs-main-page");
+      case 'home':
+        navigate('/acs-main-page');
         break;
-      case "patients":
-        navigate("/patients");
+      case 'patients':
+        navigate('/patients');
         break;
-      case "emergency":
-        navigate("/emergencies");
+      case 'emergency':
+        navigate('/emergencies');
         break;
-      case "profile":
-        navigate("/acs-profile");
+      case 'profile':
+        navigate('/acs-profile');
         break;
     }
   };
@@ -212,8 +207,8 @@ export default function ViewDiary() {
           diary?.date
             ? formatDate(diary.date)
             : patient?.first_name
-              ? `${patient.first_name} ${patient.last_name || ""}`.trim()
-              : "Visualização do Diário"
+              ? `${patient.first_name} ${patient.last_name || ''}`.trim()
+              : 'Visualização do Diário'
         }
       />
 
@@ -232,7 +227,7 @@ export default function ViewDiary() {
             {error && (
               <div className="mb-6">
                 <ErrorMessage
-                  message={error || "Erro ao carregar diário"}
+                  message={error || 'Erro ao carregar diário'}
                   variant="destructive"
                   onClose={clearError}
                   className="animate-in slide-in-from-top-2 duration-300"
@@ -250,19 +245,17 @@ export default function ViewDiary() {
                     </h3>
                     <div className="space-y-2 text-sm">
                       <p>
-                        <span className="font-medium">Nome:</span>{" "}
+                        <span className="font-medium">Nome:</span>{' '}
                         {patient.social_name ||
-                          `${patient.first_name} ${patient.last_name || ""}`.trim() ||
-                          "Não informado"}
+                          `${patient.first_name} ${patient.last_name || ''}`.trim() ||
+                          'Não informado'}
                       </p>
                       <p>
-                        <span className="font-medium">ID:</span>{" "}
-                        {patient.person_id}
+                        <span className="font-medium">ID:</span> {patient.person_id}
                       </p>
                       {patient.email && (
                         <p>
-                          <span className="font-medium">Email:</span>{" "}
-                          {patient.email}
+                          <span className="font-medium">Email:</span> {patient.email}
                         </p>
                       )}
                     </div>
@@ -270,14 +263,12 @@ export default function ViewDiary() {
                 )}
                 {/* Time Range Section */}
                 <div className="space-y-3 mb-6">
-                  <h3 className="font-semibold text-lg text-typography mb-1">
-                    Período de tempo
-                  </h3>
+                  <h3 className="font-semibold text-lg text-typography mb-1">Período de tempo</h3>
                   <div className="bg-card p-4 rounded-lg border border-card-border">
                     <span className="text-sm text-typography">
-                      {diary.scope === "today"
-                        ? "Registros do dia de hoje"
-                        : "Registros desde a última entrada"}
+                      {diary.scope === 'today'
+                        ? 'Registros do dia de hoje'
+                        : 'Registros desde a última entrada'}
                     </span>
                   </div>
                 </div>
@@ -292,7 +283,7 @@ export default function ViewDiary() {
                         const interestId = interest.observation_id || 0;
                         const isExpanded = expandedInterests.has(interest.name);
                         const hasResponses = interest.triggers?.some(
-                          (t) => t.response && t.response.trim() !== "",
+                          (t) => t.response && t.response.trim() !== '',
                         );
                         return (
                           <div
@@ -303,7 +294,7 @@ export default function ViewDiary() {
                               className="p-5 cursor-pointer"
                               onClick={() => toggleInterest(interest.name)}
                             >
-                              {" "}
+                              {' '}
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3 flex-1">
                                   <span className="w-2 h-2 bg-gradient-interest-indicator rounded-full flex-shrink-0" />
@@ -311,9 +302,7 @@ export default function ViewDiary() {
                                     {interest.name}
                                   </h4>
                                   {interest.is_attention_point && (
-                                    <span className="text-destructive text-lg">
-                                      ⚠️
-                                    </span>
+                                    <span className="text-destructive text-lg">⚠️</span>
                                   )}
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -322,22 +311,21 @@ export default function ViewDiary() {
                                   </span>
                                   <span
                                     className={`transform transition-transform duration-200 ${
-                                      isExpanded ? "rotate-180" : ""
+                                      isExpanded ? 'rotate-180' : ''
                                     }`}
                                   >
                                     ▼
                                   </span>
                                 </div>
                               </div>
-                              {interest.is_attention_point &&
-                                interest.marked_by && (
-                                  <div className="mt-2">
-                                    <span className="text-xs text-destructive italic">
-                                      Marcado como ponto de atenção por{" "}
-                                      {interest.marked_by.join(", ")}
-                                    </span>
-                                  </div>
-                                )}
+                              {interest.is_attention_point && interest.marked_by && (
+                                <div className="mt-2">
+                                  <span className="text-xs text-destructive italic">
+                                    Marcado como ponto de atenção por{' '}
+                                    {interest.marked_by.join(', ')}
+                                  </span>
+                                </div>
+                              )}
                             </div>
 
                             {isExpanded && (
@@ -356,13 +344,13 @@ export default function ViewDiary() {
                                         }}
                                         className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                                           interest.is_attention_point
-                                            ? "bg-destructive text-white hover:bg-destructive/80"
-                                            : "bg-orange-500 text-white hover:bg-orange-600"
+                                            ? 'bg-destructive text-white hover:bg-destructive/80'
+                                            : 'bg-orange-500 text-white hover:bg-orange-600'
                                         }`}
                                       >
                                         {interest.is_attention_point
-                                          ? "Remover atenção ⚠️"
-                                          : "Marcar atenção ⚠️"}
+                                          ? 'Remover atenção ⚠️'
+                                          : 'Marcar atenção ⚠️'}
                                       </button>
                                     </div>
                                   ) : (
@@ -382,7 +370,7 @@ export default function ViewDiary() {
                                       {interest.triggers?.map(
                                         (trigger, index) =>
                                           trigger.response &&
-                                          trigger.response.trim() !== "" && (
+                                          trigger.response.trim() !== '' && (
                                             <div
                                               key={`${trigger.name}-${index}`}
                                               className="bg-card-muted p-3 rounded-lg border-l-4 border-selection"
@@ -401,8 +389,7 @@ export default function ViewDiary() {
                                     </div>
                                   ) : (
                                     <p className="text-sm text-muted-foreground italic">
-                                      Nenhuma resposta registrada para esta
-                                      área.
+                                      Nenhuma resposta registrada para esta área.
                                     </p>
                                   )}
                                 </div>
@@ -414,7 +401,7 @@ export default function ViewDiary() {
                     </div>
                   </div>
                 )}
-                {/* General Text Section */}{" "}
+                {/* General Text Section */}{' '}
                 {(() => {
                   const textEntry = getGeneralTextEntry();
                   return textEntry?.text ? (

@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Switch } from "@/components/ui/switch";
-import { TextField } from "@/components/forms/text_input";
-import { Button } from "@/components/forms/button";
-import { DiaryService } from "@/api/services/DiaryService";
-import { DateRangeTypeEnum } from "@/api/models/DateRangeTypeEnum";
-import { InterestAreasService } from "@/api/services/InterestAreasService";
-import type { InterestArea } from "@/api/models/InterestArea";
-import type { InterestAreaTrigger } from "@/api/models/InterestAreaTrigger";
-import { TypeEnum } from "@/api/models/TypeEnum";
-import { ApiService } from "@/api/services/ApiService";
-import { SuccessMessage } from "@/components/ui/success-message";
-import { ErrorMessage } from "@/components/ui/error-message";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Switch } from '@/components/ui/switch';
+import { TextField } from '@/components/forms/text_input';
+import { Button } from '@/components/forms/button';
+import { DiaryService } from '@/api/services/DiaryService';
+import { DateRangeTypeEnum } from '@/api/models/DateRangeTypeEnum';
+import { InterestAreasService } from '@/api/services/InterestAreasService';
+import type { InterestArea } from '@/api/models/InterestArea';
+import type { InterestAreaTrigger } from '@/api/models/InterestAreaTrigger';
+import { TypeEnum } from '@/api/models/TypeEnum';
+import { ApiService } from '@/api/services/ApiService';
+import { SuccessMessage } from '@/components/ui/success-message';
+import { ErrorMessage } from '@/components/ui/error-message';
 import {
   ChevronDown,
   Share2,
@@ -22,7 +22,7 @@ import {
   Calendar,
   Sparkles,
   AlertTriangle,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface UserInterest {
   observation_id: number;
@@ -40,39 +40,33 @@ const BooleanTrigger = ({
   value: string;
   onChange: (value: string) => void;
 }) => {
-  const isYes = value === "true" || value === "sim" || value === "yes";
-  const isNo = value === "false" || value === "não" || value === "no";
+  const isYes = value === 'true' || value === 'sim' || value === 'yes';
+  const isNo = value === 'false' || value === 'não' || value === 'no';
 
   return (
     <div className="flex gap-3">
       <button
         type="button"
-        onClick={() => onChange("sim")}
+        onClick={() => onChange('sim')}
         className={`flex-1 py-3 px-4 rounded-xl border-2 transition-all duration-200 flex items-center justify-center gap-2 font-medium ${
           isYes
-            ? "bg-success border-success text-success-foreground shadow-lg"
-            : "bg-card border-card-border text-typography hover:border-success/30 hover:bg-success/10"
+            ? 'bg-success border-success text-success-foreground shadow-lg'
+            : 'bg-card border-card-border text-typography hover:border-success/30 hover:bg-success/10'
         }`}
       >
-        <Check
-          size={18}
-          className={isYes ? "text-success-foreground" : "text-success"}
-        />
+        <Check size={18} className={isYes ? 'text-success-foreground' : 'text-success'} />
         Sim
       </button>
       <button
         type="button"
-        onClick={() => onChange("não")}
+        onClick={() => onChange('não')}
         className={`flex-1 py-3 px-4 rounded-xl border-2 transition-all duration-200 flex items-center justify-center gap-2 font-medium ${
           isNo
-            ? "bg-destructive border-destructive text-destructive-foreground shadow-lg"
-            : "bg-card border-card-border text-typography hover:border-destructive/30 hover:bg-destructive/10"
+            ? 'bg-destructive border-destructive text-destructive-foreground shadow-lg'
+            : 'bg-card border-card-border text-typography hover:border-destructive/30 hover:bg-destructive/10'
         }`}
       >
-        <X
-          size={18}
-          className={isNo ? "text-destructive-foreground" : "text-destructive"}
-        />
+        <X size={18} className={isNo ? 'text-destructive-foreground' : 'text-destructive'} />
         Não
       </button>
     </div>
@@ -90,18 +84,18 @@ const ScaleTrigger = ({
   const maxValue = 10;
 
   const getScaleColor = (value: number): string => {
-    if (value <= 3) return "from-red-400 to-red-600";
-    if (value <= 6) return "from-yellow-400 to-orange-500";
-    return "from-green-400 to-green-600";
+    if (value <= 3) return 'from-red-400 to-red-600';
+    if (value <= 6) return 'from-yellow-400 to-orange-500';
+    return 'from-green-400 to-green-600';
   };
 
   const getScaleLabel = (value: number): string => {
-    if (value === 0) return "Nenhum";
-    if (value <= 2) return "Muito baixo";
-    if (value <= 4) return "Baixo";
-    if (value <= 6) return "Moderado";
-    if (value <= 8) return "Alto";
-    return "Muito alto";
+    if (value === 0) return 'Nenhum';
+    if (value <= 2) return 'Muito baixo';
+    if (value <= 4) return 'Baixo';
+    if (value <= 6) return 'Moderado';
+    if (value <= 8) return 'Alto';
+    return 'Muito alto';
   };
 
   return (
@@ -121,7 +115,7 @@ const ScaleTrigger = ({
         {Array.from({ length: maxValue + 1 }, (_, i) => (
           <span
             key={`scale-value-${i}-${maxValue}`}
-            className={numValue === i ? "font-bold text-typography" : ""}
+            className={numValue === i ? 'font-bold text-typography' : ''}
           >
             {i}
           </span>
@@ -170,7 +164,7 @@ const IntegerTrigger = ({
           value={value}
           onChange={(e) => {
             const inputValue = e.target.value;
-            if (inputValue === "" || /^\d+$/.test(inputValue)) {
+            if (inputValue === '' || /^\d+$/.test(inputValue)) {
               onChange(inputValue);
             }
           }}
@@ -178,9 +172,7 @@ const IntegerTrigger = ({
                      bg-input text-input-foreground rounded-xl focus:border-ring focus:outline-none shadow-inner"
           placeholder="0"
         />
-        <span className="text-xs text-muted-foreground font-medium">
-          Quantidade
-        </span>
+        <span className="text-xs text-muted-foreground font-medium">Quantidade</span>
       </div>
 
       <button
@@ -215,9 +207,7 @@ const TextTrigger = ({
         multiline={true}
         rows={3}
       />
-      <div className="text-right text-xs text-muted-foreground">
-        {value.length} caracteres
-      </div>
+      <div className="text-right text-xs text-muted-foreground">{value.length} caracteres</div>
     </div>
   );
 };
@@ -239,52 +229,48 @@ const EnhancedInterestCard = ({
   const answeredTriggers =
     interest.interest_area.triggers?.filter((trigger) => {
       const response = interest.triggerResponses?.[trigger.name];
-      return response && response.trim() !== "";
+      return response && response.trim() !== '';
     }).length || 0;
 
   const totalTriggers = interest.interest_area.triggers?.length || 0;
-  const progressPercentage =
-    totalTriggers > 0 ? (answeredTriggers / totalTriggers) * 100 : 0;
+  const progressPercentage = totalTriggers > 0 ? (answeredTriggers / totalTriggers) * 100 : 0;
 
   const getProgressGradient = () => {
     if (progressPercentage === 0)
-      return "from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-700";
-    if (progressPercentage < 50) return "from-orange-400 to-red-500";
-    if (progressPercentage < 100) return "from-yellow-400 to-orange-500";
-    return "from-green-400 to-emerald-500";
+      return 'from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-700';
+    if (progressPercentage < 50) return 'from-orange-400 to-red-500';
+    if (progressPercentage < 100) return 'from-yellow-400 to-orange-500';
+    return 'from-green-400 to-emerald-500';
   };
 
   const getStatusBadge = () => {
     if (progressPercentage === 0)
       return {
-        text: "Não iniciado",
-        className: "bg-muted text-muted-foreground",
+        text: 'Não iniciado',
+        className: 'bg-muted text-muted-foreground',
       };
     if (progressPercentage < 50)
       return {
-        text: "Iniciado",
-        className:
-          "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300",
+        text: 'Iniciado',
+        className: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
       };
     if (progressPercentage < 100)
       return {
-        text: "Em progresso",
-        className:
-          "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300",
+        text: 'Em progresso',
+        className: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
       };
     return {
-      text: "Completo",
-      className:
-        "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
+      text: 'Completo',
+      className: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
     };
   };
 
   const status = getStatusBadge();
 
   const renderTriggerInput = (trigger: InterestAreaTrigger): JSX.Element => {
-    const value: string = interest.triggerResponses?.[trigger.name] || "";
+    const value: string = interest.triggerResponses?.[trigger.name] || '';
     const onChange = (newValue: string) => {
-      console.log("Trigger change:", trigger.name, newValue); // Debug
+      console.log('Trigger change:', trigger.name, newValue); // Debug
       onTriggerResponseChange(trigger.name, newValue);
     };
 
@@ -296,15 +282,13 @@ const EnhancedInterestCard = ({
       case TypeEnum.INT:
         return <IntegerTrigger value={value} onChange={onChange} />;
       default:
-        return (
-          <TextTrigger trigger={trigger} value={value} onChange={onChange} />
-        );
+        return <TextTrigger trigger={trigger} value={value} onChange={onChange} />;
     }
   };
 
   const handleSharingClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    console.log("Sharing toggle:", !interest.shared); // Debug
+    console.log('Sharing toggle:', !interest.shared); // Debug
     onSharingToggle(!interest.shared);
   };
 
@@ -318,7 +302,7 @@ const EnhancedInterestCard = ({
         className="relative p-6 cursor-pointer transition-all duration-300 
                    hover:bg-gradient-to-r hover:from-accent/50 hover:to-muted/50"
         onClick={() => {
-          console.log("Card toggle clicked"); // Debug
+          console.log('Card toggle clicked'); // Debug
           onToggle();
         }}
       >
@@ -326,8 +310,8 @@ const EnhancedInterestCard = ({
         <div
           className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
             interest.interest_area.is_attention_point
-              ? "bg-gradient-to-r from-orange-500/5 to-red-500/5"
-              : "bg-gradient-to-r from-homebg/5 to-selection/5"
+              ? 'bg-gradient-to-r from-orange-500/5 to-red-500/5'
+              : 'bg-gradient-to-r from-homebg/5 to-selection/5'
           }`}
         />
 
@@ -339,8 +323,8 @@ const EnhancedInterestCard = ({
               <div
                 className={`relative w-3 h-3 rounded-full transition-all duration-300 shadow-lg ${
                   interest.interest_area.is_attention_point
-                    ? "bg-gradient-to-r from-orange-400 to-red-500 shadow-orange-500/30"
-                    : "bg-[var(--gradient-interest-indicator)] shadow-homebg/30"
+                    ? 'bg-gradient-to-r from-orange-400 to-red-500 shadow-orange-500/30'
+                    : 'bg-[var(--gradient-interest-indicator)] shadow-homebg/30'
                 }`}
               >
                 {progressPercentage === 100 && (
@@ -393,12 +377,12 @@ const EnhancedInterestCard = ({
                 <div
                   className={`text-lg font-bold ${
                     progressPercentage === 100
-                      ? "text-success"
+                      ? 'text-success'
                       : progressPercentage > 50
-                        ? "text-yellow-500"
+                        ? 'text-yellow-500'
                         : progressPercentage > 0
-                          ? "text-orange-500"
-                          : "text-muted-foreground"
+                          ? 'text-orange-500'
+                          : 'text-muted-foreground'
                   }`}
                 >
                   {Math.round(progressPercentage)}%
@@ -426,9 +410,7 @@ const EnhancedInterestCard = ({
                     <div
                       key={mark}
                       className={`w-0.5 h-1 rounded-full transition-colors ${
-                        progressPercentage >= mark
-                          ? "bg-white/50"
-                          : "bg-muted-foreground/30"
+                        progressPercentage >= mark ? 'bg-white/50' : 'bg-muted-foreground/30'
                       }`}
                     />
                   ))}
@@ -444,15 +426,13 @@ const EnhancedInterestCard = ({
               <Share2
                 size={16}
                 className={`transition-colors duration-200 ${
-                  interest.shared
-                    ? "text-selection"
-                    : "text-muted-foreground hover:text-typography"
+                  interest.shared ? 'text-selection' : 'text-muted-foreground hover:text-typography'
                 }`}
               />
               <Switch
                 checked={interest.shared || false}
                 onCheckedChange={(checked) => {
-                  console.log("Switch changed:", checked); // Debug
+                  console.log('Switch changed:', checked); // Debug
                   onSharingToggle(checked);
                 }}
                 onClick={handleSharingClick}
@@ -462,7 +442,7 @@ const EnhancedInterestCard = ({
             {/* Expand Icon */}
             <div
               className={`transition-all duration-300 text-muted-foreground 
-                             group-hover:text-typography ${isOpen ? "rotate-180" : "rotate-0"}`}
+                             group-hover:text-typography ${isOpen ? 'rotate-180' : 'rotate-0'}`}
             >
               <ChevronDown size={24} />
             </div>
@@ -473,43 +453,39 @@ const EnhancedInterestCard = ({
       {/* Expanded Content */}
       <div
         className={`transition-all duration-300 overflow-hidden ${
-          isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+          isOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
         <div className="border-t border-card-border bg-card-muted">
           <div className="p-6 space-y-6">
-            {interest.interest_area.triggers?.map(
-              (trigger: InterestAreaTrigger, index: number) => (
-                <div key={`${trigger.name}-${index}`} className="space-y-3">
-                  {/* Label */}
-                  <div className="flex items-center justify-between">
-                    <label className="font-semibold text-base text-typography">
-                      {trigger.name}
-                    </label>
-                    <span
-                      className="text-xs font-medium px-3 py-1 rounded-full 
+            {interest.interest_area.triggers?.map((trigger: InterestAreaTrigger, index: number) => (
+              <div key={`${trigger.name}-${index}`} className="space-y-3">
+                {/* Label */}
+                <div className="flex items-center justify-between">
+                  <label className="font-semibold text-base text-typography">{trigger.name}</label>
+                  <span
+                    className="text-xs font-medium px-3 py-1 rounded-full 
                                  bg-muted text-muted-foreground"
-                    >
-                      {trigger.type === TypeEnum.BOOLEAN && "✓ Sim/Não"}
-                      {trigger.type === TypeEnum.SCALE && "📊 Escala 0-10"}
-                      {trigger.type === TypeEnum.INT && "🔢 Número"}
-                      {trigger.type === TypeEnum.TEXT && "📝 Texto"}
-                    </span>
-                  </div>
-
-                  {/* Input container */}
-                  <div
-                    className={`rounded-xl p-4 border transition-all duration-200 ${
-                      interest.triggerResponses?.[trigger.name]
-                        ? "bg-card border-ring/30 shadow-inner"
-                        : "bg-card border-card-border hover:border-ring/20"
-                    }`}
                   >
-                    {renderTriggerInput(trigger)}
-                  </div>
+                    {trigger.type === TypeEnum.BOOLEAN && '✓ Sim/Não'}
+                    {trigger.type === TypeEnum.SCALE && '📊 Escala 0-10'}
+                    {trigger.type === TypeEnum.INT && '🔢 Número'}
+                    {trigger.type === TypeEnum.TEXT && '📝 Texto'}
+                  </span>
                 </div>
-              ),
-            )}
+
+                {/* Input container */}
+                <div
+                  className={`rounded-xl p-4 border transition-all duration-200 ${
+                    interest.triggerResponses?.[trigger.name]
+                      ? 'bg-card border-ring/30 shadow-inner'
+                      : 'bg-card border-card-border hover:border-ring/20'
+                  }`}
+                >
+                  {renderTriggerInput(trigger)}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -528,28 +504,24 @@ export default function DiaryInfoForm() {
 
   // Estados do formulário
   const [openTriggers, setOpenTriggers] = useState<Record<number, boolean>>({});
-  const [timeRange, setTimeRange] = useState<"today" | "sinceLast">(
-    "sinceLast",
-  );
-  const [freeText, setFreeText] = useState("");
+  const [timeRange, setTimeRange] = useState<'today' | 'sinceLast'>('sinceLast');
+  const [freeText, setFreeText] = useState('');
   const [shareText, setShareText] = useState(false);
   const [userInterests, setUserInterests] = useState<UserInterest[]>([]);
 
   // Carrega interesses do usuário
   useEffect(() => {
     const fetchUserInterests = async () => {
-      console.log("Carregando interesses do usuário...");
+      console.log('Carregando interesses do usuário...');
       setIsLoadingInterests(true);
 
       try {
         const userEntity = await ApiService.apiUserEntityRetrieve();
-        const interests = await InterestAreasService.apiInterestAreaList(
-          userEntity.person_id,
-        );
-        console.log("Interesses recebidos:", interests);
+        const interests = await InterestAreasService.apiInterestAreaList(userEntity.person_id);
+        console.log('Interesses recebidos:', interests);
 
         if (!interests || interests.length === 0) {
-          console.warn("Nenhum interesse encontrado");
+          console.warn('Nenhum interesse encontrado');
           setUserInterests([]);
           return;
         }
@@ -587,17 +559,15 @@ export default function DiaryInfoForm() {
           (interest: ApiInterestData): UserInterest => ({
             observation_id: interest.observation_id || 0,
             interest_area: {
-              name: interest.interest_area?.name || "Interesse sem nome",
+              name: interest.interest_area?.name || 'Interesse sem nome',
               is_attention_point:
-                interest.interest_area?.marked_by &&
-                interest.interest_area.marked_by.length > 0,
+                interest.interest_area?.marked_by && interest.interest_area.marked_by.length > 0,
               marked_by: interest.interest_area?.marked_by || [],
-              shared_with_provider:
-                interest.interest_area?.shared_with_provider || false,
+              shared_with_provider: interest.interest_area?.shared_with_provider || false,
               triggers: Array.isArray(interest.interest_area?.triggers)
                 ? interest.interest_area.triggers.map(
                     (trigger: ApiTriggerData): FormattedTrigger => ({
-                      name: String(trigger?.name || trigger || ""),
+                      name: String(trigger?.name || trigger || ''),
                       type: trigger?.type || TypeEnum.TEXT,
                       response: trigger?.response || null,
                     }),
@@ -610,7 +580,7 @@ export default function DiaryInfoForm() {
 
         setUserInterests(formattedInterests);
       } catch (error) {
-        console.error("Erro ao carregar interesses:", error);
+        console.error('Erro ao carregar interesses:', error);
       } finally {
         setIsLoadingInterests(false);
       }
@@ -630,9 +600,7 @@ export default function DiaryInfoForm() {
   const handleInterestSharingToggle = (interestId: number, shared: boolean) => {
     setUserInterests((prev) =>
       prev.map((interest) =>
-        interest.observation_id === interestId
-          ? { ...interest, shared }
-          : interest,
+        interest.observation_id === interestId ? { ...interest, shared } : interest,
       ),
     );
   };
@@ -668,7 +636,7 @@ export default function DiaryInfoForm() {
         .filter((interest) => {
           const triggerResponses = interest.triggerResponses || {};
           return Object.values(triggerResponses).some(
-            (response) => response && response.trim() !== "",
+            (response) => response && response.trim() !== '',
           );
         })
         .map((interest) => {
@@ -678,20 +646,18 @@ export default function DiaryInfoForm() {
             interest.interest_area.triggers
               ?.filter(
                 (trigger) =>
-                  triggerResponses[trigger.name] &&
-                  triggerResponses[trigger.name]?.trim() !== "",
+                  triggerResponses[trigger.name] && triggerResponses[trigger.name]?.trim() !== '',
               )
               .map((trigger) => ({
                 name: trigger.name,
                 type: trigger.type || TypeEnum.TEXT,
-                response: triggerResponses[trigger.name] || "",
+                response: triggerResponses[trigger.name] || '',
               })) || [];
 
           return {
             name: interest.interest_area.name,
             is_attention_point:
-              interest.interest_area.marked_by &&
-              interest.interest_area.marked_by.length > 0,
+              interest.interest_area.marked_by && interest.interest_area.marked_by.length > 0,
             marked_by: interest.interest_area.marked_by || [],
             triggers: triggersWithResponses,
             interest_area_id: interest.observation_id,
@@ -700,33 +666,28 @@ export default function DiaryInfoForm() {
         })
         .filter((interest) => interest.triggers.length > 0);
 
-      const diary_shared =
-        shareText || userInterests.some((interest) => interest.shared);
+      const diary_shared = shareText || userInterests.some((interest) => interest.shared);
 
       const diary = {
         date_range_type:
-          timeRange === "today"
-            ? DateRangeTypeEnum.TODAY
-            : DateRangeTypeEnum.SINCE_LAST,
+          timeRange === 'today' ? DateRangeTypeEnum.TODAY : DateRangeTypeEnum.SINCE_LAST,
         text: freeText,
         text_shared: shareText,
         interest_areas: formattedInterestAreas,
         diary_shared: diary_shared,
       };
 
-      console.log("Enviando diário:", diary);
+      console.log('Enviando diário:', diary);
 
       await DiaryService.diariesCreate(diary);
       setSubmitSuccess(true);
 
       setTimeout(() => {
-        navigate("/diary");
+        navigate('/diary');
       }, 2000);
     } catch (error) {
-      console.error("Erro ao salvar diário:", error);
-      setSubmitError(
-        "Ocorreu um erro ao salvar o diário. Por favor, tente novamente.",
-      );
+      console.error('Erro ao salvar diário:', error);
+      setSubmitError('Ocorreu um erro ao salvar o diário. Por favor, tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
@@ -740,16 +701,14 @@ export default function DiaryInfoForm() {
   const totalInterests = userInterests.length;
   const answeredInterests = userInterests.filter((interest) => {
     const responses = interest.triggerResponses || {};
-    return Object.values(responses).some((resp) => resp && resp.trim() !== "");
+    return Object.values(responses).some((resp) => resp && resp.trim() !== '');
   }).length;
 
   return (
     <div className="max-w-4xl mx-auto px-4 space-y-8 pb-8">
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Mensagens de status */}
-        {submitSuccess && (
-          <SuccessMessage message="Diário salvo com sucesso! Redirecionando..." />
-        )}
+        {submitSuccess && <SuccessMessage message="Diário salvo com sucesso! Redirecionando..." />}
 
         {submitError && (
           <ErrorMessage
@@ -770,22 +729,22 @@ export default function DiaryInfoForm() {
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
-              onClick={() => setTimeRange("today")}
+              onClick={() => setTimeRange('today')}
               className={`py-4 px-6 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
-                timeRange === "today"
-                  ? "bg-homebg text-primary-foreground shadow-lg border-2 border-homebg"
-                  : "bg-transparent text-typography border-2 border-card-border hover:border-homebg/50 hover:bg-accent hover:text-homebg"
+                timeRange === 'today'
+                  ? 'bg-homebg text-primary-foreground shadow-lg border-2 border-homebg'
+                  : 'bg-transparent text-typography border-2 border-card-border hover:border-homebg/50 hover:bg-accent hover:text-homebg'
               }`}
             >
               🕐 Hoje
             </button>
             <button
               type="button"
-              onClick={() => setTimeRange("sinceLast")}
+              onClick={() => setTimeRange('sinceLast')}
               className={`py-4 px-6 rounded-xl font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
-                timeRange === "sinceLast"
-                  ? "bg-selection text-primary-foreground shadow-lg border-2 border-selection"
-                  : "bg-transparent text-typography border-2 border-card-border hover:border-selection/50 hover:bg-accent hover:text-selection"
+                timeRange === 'sinceLast'
+                  ? 'bg-selection text-primary-foreground shadow-lg border-2 border-selection'
+                  : 'bg-transparent text-typography border-2 border-card-border hover:border-selection/50 hover:bg-accent hover:text-selection'
               }`}
             >
               📅 Desde o último
@@ -796,9 +755,7 @@ export default function DiaryInfoForm() {
         {/* Seção de Interesses do Usuário */}
         <section className="space-y-6">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-2xl text-typography">
-              🎯 Seus Interesses
-            </h3>
+            <h3 className="font-bold text-2xl text-typography">🎯 Seus Interesses</h3>
             {totalInterests > 0 && (
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground bg-gradient-to-r from-homebg/10 to-selection/10 px-3 py-2 rounded-full font-medium border border-card-border">
@@ -812,9 +769,7 @@ export default function DiaryInfoForm() {
             <div className="flex justify-center py-12">
               <div className="text-center">
                 <div className="w-12 h-12 border-4 border-homebg/20 border-t-homebg rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-muted-foreground font-medium">
-                  Carregando seus interesses...
-                </p>
+                <p className="text-muted-foreground font-medium">Carregando seus interesses...</p>
               </div>
             </div>
           ) : totalInterests === 0 ? (
@@ -824,14 +779,13 @@ export default function DiaryInfoForm() {
                 Você ainda não tem interesses cadastrados.
               </p>
               <p className="text-muted-foreground mb-6">
-                Adicione seus interesses para começar a acompanhar seu
-                progresso!
+                Adicione seus interesses para começar a acompanhar seu progresso!
               </p>
               <Button
                 type="button"
                 variant="default"
                 size="lg"
-                onClick={() => navigate("/user-main-page")}
+                onClick={() => navigate('/user-main-page')}
               >
                 🎯 Adicionar Interesses
               </Button>
@@ -848,11 +802,7 @@ export default function DiaryInfoForm() {
                     handleInterestSharingToggle(interest.observation_id, shared)
                   }
                   onTriggerResponseChange={(triggerName, response) =>
-                    handleTriggerResponseChange(
-                      interest.observation_id,
-                      triggerName,
-                      response,
-                    )
+                    handleTriggerResponseChange(interest.observation_id, triggerName, response)
                   }
                 />
               ))}
@@ -862,14 +812,12 @@ export default function DiaryInfoForm() {
 
         <section className="bg-card rounded-2xl shadow-lg p-6 border border-card-border">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="font-bold text-xl text-typography">
-              💭 Observações Gerais
-            </h3>
+            <h3 className="font-bold text-xl text-typography">💭 Observações Gerais</h3>
             <div className="flex items-center gap-3">
               <Share2
                 size={18}
                 className={`transition-colors duration-200 ${
-                  shareText ? "text-selection" : "text-muted-foreground"
+                  shareText ? 'text-selection' : 'text-muted-foreground'
                 }`}
               />
               <span className="text-sm text-muted-foreground font-medium">
@@ -891,7 +839,7 @@ export default function DiaryInfoForm() {
             />
             <div className="flex justify-between items-center">
               <div className="text-sm text-muted-foreground">
-                💡{" "}
+                💡{' '}
                 <span className="italic">
                   Suas observações nos ajudam a entender melhor seu bem-estar
                 </span>
@@ -918,9 +866,7 @@ export default function DiaryInfoForm() {
                 Salvando...
               </span>
             ) : (
-              <span className="flex items-center justify-center gap-2">
-                💾 SALVAR DIÁRIO
-              </span>
+              <span className="flex items-center justify-center gap-2">💾 SALVAR DIÁRIO</span>
             )}
           </Button>
         </div>

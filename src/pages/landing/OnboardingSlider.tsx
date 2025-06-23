@@ -1,23 +1,21 @@
-import { useState } from "react";
-import LandingScreen from "./Landing";
-import TermsScreen from "./Terms";
-import EntryOptionsScreen from "./EntryOption";
-import "./landing.css";
+import { useState } from 'react';
+import LandingScreen from './Landing';
+import TermsScreen from './Terms';
+import EntryOptionsScreen from './EntryOption';
+import './landing.css';
 
 // Componente de Indicador de Progresso
 const ProgressIndicator = ({
   currentStep,
   totalSteps,
-  className = "",
+  className = '',
 }: {
   currentStep: number;
   totalSteps: number;
   className?: string;
 }) => {
   return (
-    <div
-      className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 ${className}`}
-    >
+    <div className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 ${className}`}>
       <div className="bg-black/20 backdrop-blur-sm rounded-full px-6 py-3">
         <div className="flex justify-center items-center space-x-4">
           {/* Indicadores visuais */}
@@ -29,10 +27,10 @@ const ProgressIndicator = ({
                   h-2 rounded-full transition-all duration-500 ease-out
                   ${
                     index === currentStep
-                      ? "w-8 bg-white shadow-lg"
+                      ? 'w-8 bg-white shadow-lg'
                       : index < currentStep
-                        ? "w-3 bg-white/80"
-                        : "w-2 bg-white/30"
+                        ? 'w-3 bg-white/80'
+                        : 'w-2 bg-white/30'
                   }
                 `}
                 style={{
@@ -82,10 +80,10 @@ const OnboardingSlider = () => {
 
     // Adiciona um pequeno delay para feedback visual
     setTimeout(() => {
-      if (userType === "professional") {
-        window.location.href = "/forms-prof";
+      if (userType === 'professional') {
+        window.location.href = '/forms-prof';
       } else {
-        window.location.href = "/forms-user";
+        window.location.href = '/forms-user';
       }
     }, 800);
   };
@@ -109,20 +107,16 @@ const OnboardingSlider = () => {
       <div
         className={`
           slider-container transition-transform duration-500 ease-in-out
-          ${animating ? "pointer-events-none" : ""}
+          ${animating ? 'pointer-events-none' : ''}
         `}
         style={{
           transform: `translateY(-${currentStep * (100 / totalSteps)}%)`,
           // Adiciona um leve blur durante a transição para suavizar
-          filter: animating ? "blur(1px)" : "blur(0px)",
+          filter: animating ? 'blur(1px)' : 'blur(0px)',
         }}
       >
         {/* Slide 1: Landing */}
-        <LandingScreen
-          onNext={handleNext}
-          currentStep={currentStep}
-          totalSteps={totalSteps}
-        />
+        <LandingScreen onNext={handleNext} currentStep={currentStep} totalSteps={totalSteps} />
 
         {/* Slide 2: Terms */}
         <TermsScreen
@@ -154,7 +148,7 @@ const OnboardingSlider = () => {
       )}
 
       {/* Debug controls (remover em produção) */}
-      {process.env.NODE_ENV === "development" && (
+      {process.env.NODE_ENV === 'development' && (
         <div className="fixed top-4 right-4 z-50 bg-black/50 rounded-lg p-2 space-x-2">
           {Array.from({ length: totalSteps }, (_, index) => (
             <button
@@ -164,8 +158,8 @@ const OnboardingSlider = () => {
                 px-2 py-1 rounded text-xs font-medium transition-colors
                 ${
                   currentStep === index
-                    ? "bg-white text-black"
-                    : "bg-white/20 text-white hover:bg-white/40"
+                    ? 'bg-white text-black'
+                    : 'bg-white/20 text-white hover:bg-white/40'
                 }
               `}
             >

@@ -1,6 +1,6 @@
 // components/ui/bottom-sheet.tsx
-import type React from "react";
-import { useEffect, useRef } from "react";
+import type React from 'react';
+import { useEffect, useRef } from 'react';
 
 interface BottomSheetProps {
   isOpen: boolean;
@@ -9,32 +9,24 @@ interface BottomSheetProps {
   title?: string;
 }
 
-const BottomSheet: React.FC<BottomSheetProps> = ({
-  isOpen,
-  onClose,
-  children,
-  title,
-}) => {
+const BottomSheet: React.FC<BottomSheetProps> = ({ isOpen, onClose, children, title }) => {
   const sheetRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        sheetRef.current &&
-        !sheetRef.current.contains(event.target as Node)
-      ) {
+      if (sheetRef.current && !sheetRef.current.contains(event.target as Node)) {
         onClose();
       }
     };
 
     if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-      document.body.style.overflow = "hidden"; // Prevent scrolling on body
+      document.addEventListener('mousedown', handleClickOutside);
+      document.body.style.overflow = 'hidden'; // Prevent scrolling on body
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.body.style.overflow = ""; // Restore scrolling
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.body.style.overflow = ''; // Restore scrolling
     };
   }, [isOpen, onClose]);
 
@@ -46,7 +38,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         ref={sheetRef}
         className="bg-primary rounded-t-2xl w-full max-h-[90vh] overflow-y-auto transform transition-transform duration-300 ease-out"
         style={{
-          boxShadow: "0px -4px 20px rgba(0, 0, 0, 0.25)",
+          boxShadow: '0px -4px 20px rgba(0, 0, 0, 0.25)',
         }}
       >
         <div className="flex justify-center py-2">
@@ -59,9 +51,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
           </div>
         )}
 
-        <div className="max-h-[calc(90vh-60px)] overflow-y-auto">
-          {children}
-        </div>
+        <div className="max-h-[calc(90vh-60px)] overflow-y-auto">{children}</div>
       </div>
     </div>
   );
