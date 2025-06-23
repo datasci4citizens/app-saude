@@ -86,28 +86,35 @@ export default function PatientsPage() {
       interface ApiPatient {
         person_id: number;
         name: string;
-        age?: number;
-        last_visit_date?: string;
-        last_help_date?: string;
+        age: number | null;
+        last_visit_date: string | null;
+        last_help_date: string | null;
         email?: string;
         phone?: string;
       }
 
-      // ...existing code...
-
       const formattedPatients: Patient[] = apiPatients.map(
-        (patient: ApiPatient) => ({
-          id: patient.person_id,
-          name: patient.name,
-          age: patient.age || 0,
-          lastVisit: formatDisplayDate(patient.last_visit_date),
-          lastHelp: formatDisplayDate(patient.last_help_date),
-          email: patient.email,
-          phone: patient.phone,
-          urgent: patient.last_help_date
-            ? getDaysAgo(patient.last_help_date) <= 3
-            : false,
-        }),
+        (patient: ApiPatient) => {
+          // Check if last_help_date is valid
+          let isUrgent = false;
+          if (patient.last_help_date) {
+        const helpDate = new Date(patient.last_help_date);
+        if (!Number.isNaN(helpDate.getTime())) {
+          isUrgent = getDaysAgo(patient.last_help_date) <= 3;
+        }
+          }
+          
+          return {
+        id: patient.person_id,
+        name: patient.name,
+        age: patient.age || 0,
+        lastVisit: formatDisplayDate(patient.last_visit_date),
+        lastHelp: formatDisplayDate(patient.last_help_date),
+        email: patient.email,
+        phone: patient.phone,
+        urgent: isUrgent,
+          };
+        }
       );
 
       setPatients(formattedPatients);
