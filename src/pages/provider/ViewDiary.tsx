@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Header from "@/components/ui/header";
 import { PersonService } from "@/api/services/PersonService";
 import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
 import { ProviderService } from "@/api/services/ProviderService";
 import { ErrorMessage } from "@/components/ui/error-message";
 import { InterestAreasService } from "@/api/services/InterestAreasService";
+import type { PatchedMarkAttentionPoint } from "@/api/models/PatchedMarkAttentionPoint";
 import BottomNavigationBar from "@/components/ui/navigator-bar";
 import type { TypeEnum } from "@/api/models/TypeEnum";
 
@@ -46,6 +47,7 @@ export default function ViewDiary() {
     diaryId: string;
     personId: string;
   }>();
+  const navigate = useNavigate();
   const [diary, setDiary] = useState<DiaryDetail | null>(null);
   const [patient, setPatient] = useState<PersonRetrieve | null>(null);
   const [loading, setLoading] = useState(true);
@@ -97,6 +99,26 @@ export default function ViewDiary() {
     }
   }, [diaryId, personId]);
 
+  // Função para limpar erro
+  const clearError = () => {
+    setError(null);
+  };
+
+  // Format date for display
+  const formatDate = (dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const year = date.getFullYear();
+
+      return `${day}/${month}/${year}`;
+    } catch {
+      return dateString;
+    }
+  };
+
+  // Toggle interest expansion - now using name as the identifier
   const toggleInterest = (interestName: string) => {
     setExpandedInterests((prev) => {
       const newSet = new Set(prev);
@@ -109,237 +131,338 @@ export default function ViewDiary() {
     });
   };
 
-  const handleMarkAsAttentionPoint = async (interestAreaName: string) => {
-    if (!personId || !diary) return;
-    const interestArea = diary.interest_areas.find(
-      (ia) => ia.name === interestAreaName,
-    );
-    if (!interestArea || !interestArea.observation_id) return;
+  // Get general text entry if available
+  const getGeneralTextEntry = (): { text: string; shared: boolean } | null => {
+    if (!diary || !diary.entries || diary.entries.length === 0) {
+      return null;
+    }
 
-    try {
-      await InterestAreasService.markObservationAsAttentionPoint({
-        area_id: interestArea.observation_id,
-        is_attention_point: true,
-      });
-
-      // Atualizar o estado para refletir a mudança
-      setDiary((prevDiary) => {
-        if (!prevDiary) return null;
+    for (const entry of diary.entries) {
+      if (entry.text && entry.text.trim() !== "") {
         return {
-          ...prevDiary,
-          interest_areas: prevDiary.interest_areas.map((ia) => {
-            if (ia.name === interestAreaName) {
-              const providerName = localStorage.getItem("social_name") || "";
-              return {
-                ...ia,
-                is_attention_point: true,
-                marked_by: [...(ia.marked_by || []), providerName],
-              };
-            }
-            return ia;
-          }),
+          text: entry.text,
+          shared: entry.shared, // Provider only sees shared entries
         };
-      });
-    } catch (err) {
-      console.error("Failed to mark as attention point:", err);
-      setError("Falha ao marcar como ponto de atenção.");
+      }
+    }
+
+    return null;
+  };
+
+  const handleAttentionToggle = async (
+    areaId: number,
+    isCurrentlyFlagged: boolean,
+  ) => {
+    try {
+      const request: PatchedMarkAttentionPoint = {
+        area_id: areaId,
+        is_attention_point: !isCurrentlyFlagged,
+      };
+      console.log(request);
+      await InterestAreasService.markObservationAsAttentionPoint(request);
+
+      // Refresh diary data after toggling
+      if (diaryId && personId) {
+        const diaryData = await ProviderService.providerPatientsDiariesRetrieve(
+          diaryId,
+          Number(personId),
+        );
+        setDiary(diaryData);
+      }
+    } catch (error) {
+      console.error("Erro ao marcar ponto de atenção:", error);
     }
   };
 
-  const handleRemoveAttentionPoint = async (interestAreaName: string) => {
-    if (!personId || !diary) return;
-
-    const interestArea = diary.interest_areas.find(
-      (ia) => ia.name === interestAreaName,
-    );
-    if (!interestArea || !interestArea.observation_id) return;
-
-    try {
-      await InterestAreasService.markObservationAsAttentionPoint({
-        area_id: interestArea.observation_id,
-        is_attention_point: false,
-      });
-
-      // Atualizar o estado
-      setDiary((prevDiary) => {
-        if (!prevDiary) return null;
-        const providerName = localStorage.getItem("social_name");
-        return {
-          ...prevDiary,
-          interest_areas: prevDiary.interest_areas.map((ia) => {
-            if (ia.name === interestAreaName) {
-              return {
-                ...ia,
-                is_attention_point: false,
-                marked_by:
-                  ia.marked_by?.filter((name) => name !== providerName) || [],
-              };
-            }
-            return ia;
-          }),
-        };
-      });
-    } catch (err) {
-      console.error("Failed to remove attention point:", err);
-      setError("Falha ao remover ponto de atenção.");
-    }
+  const location = useLocation();
+  const getActiveNavId = () => {
+    if (location.pathname.startsWith("/acs-main-page")) return "home";
+    if (location.pathname.startsWith("/appointments")) return "consults";
+    if (location.pathname.startsWith("/patients")) return "patients";
+    if (location.pathname.startsWith("/emergencies")) return "emergency";
+    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    return null;
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-4">
-        <ErrorMessage message={error} />
-      </div>
-    );
-  }
-
-  if (!diary || !patient) {
-    return (
-      <div className="p-4">
-        <ErrorMessage message="Dados do diário ou paciente não encontrados." />
-      </div>
-    );
-  }
+  const handleNavigationClick = (itemId: string) => {
+    switch (itemId) {
+      case "home":
+        navigate("/acs-main-page");
+        break;
+      case "patients":
+        navigate("/patients");
+        break;
+      case "emergency":
+        navigate("/emergencies");
+        break;
+      case "profile":
+        navigate("/acs-profile");
+        break;
+    }
+  };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 font-inter">
+    <div className="flex flex-col h-screen bg-homebg">
       <Header
-        title={`Diário de ${patient.social_name}`}
-        subtitle={`Referente a ${new Date(diary.date).toLocaleDateString(
-          "pt-BR",
-          { timeZone: "UTC" },
-        )}`}
-        showBackButton
+        title="Visualizar Diário do Paciente"
+        onBackClick={() => navigate(-1)}
+        subtitle={
+          diary?.date
+            ? formatDate(diary.date)
+            : patient?.first_name
+              ? `${patient.first_name} ${patient.last_name || ""}`.trim()
+              : "Visualização do Diário"
+        }
       />
 
-      <main className="flex-grow p-4 space-y-8 mb-20">
-        {/* Seção de Entradas do Diário */}
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            Entradas do Diário
-          </h3>
-          <div className="space-y-4">
-            {diary.entries.map((entry) => (
-              <div
-                key={entry.created_at}
-                className="pb-4 border-b border-gray-200 last:border-b-0"
-              >
-                <p className="text-gray-700 leading-relaxed">{entry.text}</p>
-                <span className="text-xs text-gray-400 mt-2 block">
-                  {new Date(entry.created_at).toLocaleString("pt-BR", {
-                    timeZone: "UTC",
-                  })}{" "}
-                  - {entry.shared ? "Compartilhado" : "Privado"}
-                </span>
+      <div className="flex-1 overflow-hidden bg-background rounded-t-3xl mt-4 relative z-10">
+        <div className="h-full overflow-y-auto">
+          <div className="px-4 py-6 pb-24">
+            {loading && (
+              <div className="flex justify-center items-center py-16">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-selection/20 border-t-selection" />
+                  <p className="text-gray2 text-sm">Carregando diário...</p>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
+            )}
 
-        {/* Seção de Áreas de Interesse e Gatilhos */}
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            Áreas de Interesse e Gatilhos
-          </h3>
-          <div className="space-y-6 mt-4">
-            {diary.interest_areas.map((interest) => {
-              const isExpanded = expandedInterests.has(interest.name);
-              const isPoint = isAttentionPoint(interest);
+            {error && (
+              <div className="mb-6">
+                <ErrorMessage
+                  message={error || "Erro ao carregar diário"}
+                  variant="destructive"
+                  onClose={clearError}
+                  className="animate-in slide-in-from-top-2 duration-300"
+                />
+              </div>
+            )}
 
-              return (
-                <div
-                  key={interest.name}
-                  className={`p-4 rounded-lg transition-all duration-300 ${
-                    isPoint
-                      ? "bg-red-50 border-2 border-red-200 shadow-md"
-                      : "bg-white shadow-sm"
-                  }`}
-                >
-                  <div
-                    className="flex justify-between items-center cursor-pointer"
-                    onClick={() => toggleInterest(interest.name)}
-                  >
-                    <h4 className="text-lg font-semibold text-gray-800">
-                      {interest.name}
-                    </h4>
-                    <div className="flex items-center space-x-4">
-                      {isPoint ? (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveAttentionPoint(interest.name);
-                          }}
-                          className="text-red-500 hover:text-red-700 transition-colors"
-                        >
-                          <i className="mgc_delete_line text-xl" />
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleMarkAsAttentionPoint(interest.name);
-                          }}
-                          className="text-gray-400 hover:text-blue-500 transition-colors"
-                        >
-                          <i className="mgc_add_line text-xl" />
-                        </button>
-                      )}
-                      <i
-                        className={`mgc_down_line text-xl text-gray-500 transition-transform duration-300 ${
-                          isExpanded ? "rotate-180" : ""
-                        }`}
-                      />
-                    </div>
-                  </div>
-
-                  {isExpanded && (
-                    <div className="mt-4 pt-4 border-t border-gray-200">
-                      {interest.triggers.length > 0 ? (
-                        <ul className="space-y-4">
-                          {interest.triggers.map((trigger) => (
-                            <li
-                              key={trigger.name}
-                              className="pl-4 border-l-2 border-blue-200"
-                            >
-                              <p className="font-semibold text-gray-700">
-                                {trigger.name}
-                              </p>
-                              <p className="text-gray-600 italic">
-                                Resposta: "{trigger.response}"
-                              </p>
-                              <span className="text-xs text-gray-400 mt-1 block">
-                                {trigger.shared_with_provider
-                                  ? "Compartilhado"
-                                  : "Não compartilhado"}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="text-gray-500 italic">
-                          Nenhum gatilho registrado para esta área.
+            {!loading && !error && diary && (
+              <>
+                {/* Patient Info Section */}
+                {patient && (
+                  <div className="bg-card p-4 rounded-lg border border-card-border mb-6">
+                    <h3 className="font-semibold text-lg text-card-foreground mb-3">
+                      Informações do Paciente
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      <p>
+                        <span className="font-medium">Nome:</span>{" "}
+                        {patient.social_name ||
+                          `${patient.first_name} ${patient.last_name || ""}`.trim() ||
+                          "Não informado"}
+                      </p>
+                      <p>
+                        <span className="font-medium">ID:</span>{" "}
+                        {patient.person_id}
+                      </p>
+                      {patient.email && (
+                        <p>
+                          <span className="font-medium">Email:</span>{" "}
+                          {patient.email}
                         </p>
                       )}
                     </div>
-                  )}
+                  </div>
+                )}
+
+                {/* Time Range Section */}
+                <div className="space-y-3 mb-6">
+                  <h3 className="font-semibold text-lg text-typography mb-1">
+                    Período de tempo
+                  </h3>
+                  <div className="bg-card p-4 rounded-lg border border-card-border">
+                    <span className="text-sm text-typography">
+                      {diary.scope === "today"
+                        ? "Registros do dia de hoje"
+                        : "Registros desde a última entrada"}
+                    </span>
+                  </div>
                 </div>
-              );
-            })}
+
+                {/* Interest Areas Section */}
+                {diary.interest_areas && diary.interest_areas.length > 0 && (
+                  <div className="space-y-3 mb-6">
+                    <h3 className="font-semibold text-lg text-typography mb-1">
+                      Áreas de Interesse
+                    </h3>
+                    <div className="space-y-4">
+                      {diary.interest_areas.map((interest) => {
+                        const interestId = interest.observation_id || 0;
+                        const isExpanded = expandedInterests.has(interest.name);
+                        const hasResponses =
+                          interest.triggers?.some(
+                            (t) => t.response && t.response.trim() !== "",
+                          );
+                        const isAttentionPointFlag = isAttentionPoint(interest);
+                        return (
+                          <div
+                            key={interest.name}
+                            className="bg-card border border-card-border rounded-xl shadow-sm"
+                          >
+                            <div
+                              className="p-5 cursor-pointer"
+                              onClick={() => toggleInterest(interest.name)}
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3 flex-1">
+                                  <span className="w-2 h-2 bg-gradient-interest-indicator rounded-full flex-shrink-0" />
+                                  <h4 className="font-bold text-lg text-card-foreground">
+                                    {interest.name}
+                                  </h4>
+                                  {isAttentionPointFlag && (
+                                    <span className="text-destructive text-lg">
+                                      ⚠️
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-success text-sm font-medium">
+                                    ✓ Compartilhado
+                                  </span>
+                                  <span
+                                    className={`transform transition-transform duration-200 ${
+                                      isExpanded ? "rotate-180" : ""
+                                    }`}
+                                  >
+                                    ▼
+                                  </span>
+                                </div>
+                              </div>
+
+                              {isAttentionPointFlag &&
+                                interest.provider_name && (
+                                  <div className="mt-2">
+                                    <span className="text-xs text-destructive italic">
+                                      Marcado como ponto de atenção por{" "}
+                                      {interest.provider_name}
+                                    </span>
+                                  </div>
+                                )}
+                            </div>
+
+                            {isExpanded && (
+                              <div className="px-5 pb-5">
+                                <div className="border-t border-card-border pt-4">
+                                  {/* Check if interest area exists */}
+                                  {interestId > 0 ? (
+                                    <div className="mb-4">
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleAttentionToggle(
+                                            interestId,
+                                            isAttentionPointFlag,
+                                          );
+                                        }}
+                                        className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                                          isAttentionPointFlag
+                                            ? "bg-destructive text-white hover:bg-destructive/80"
+                                            : "bg-orange-500 text-white hover:bg-orange-600"
+                                        }`}
+                                      >
+                                        {isAttentionPointFlag
+                                          ? "Remover atenção ⚠️"
+                                          : "Marcar atenção ⚠️"}
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <div className="mb-4">
+                                      <p className="text-sm text-destructive font-medium italic">
+                                        Área de interesse deletada
+                                      </p>
+                                    </div>
+                                  )}
+
+                                  {/* Responses */}
+                                  {hasResponses ? (
+                                    <div className="space-y-3">
+                                      <h5 className="font-medium text-sm text-muted-foreground mb-2">
+                                        Respostas:
+                                      </h5>
+                                      {interest.triggers?.map(
+                                        (trigger, index) =>
+                                          trigger.response &&
+                                          trigger.response.trim() !== "" && (
+                                            <div
+                                              key={`${interest.name}-trigger-${trigger.name}-${index}`}
+                                              className="bg-card-muted p-3 rounded-lg border-l-4 border-selection"
+                                            >
+                                              <div className="text-sm">
+                                                <span className="font-medium text-card-foreground">
+                                                  {trigger.name}:
+                                                </span>
+                                                <span className="ml-2 text-muted-foreground">
+                                                  {trigger.response}
+                                                </span>
+                                              </div>
+                                            </div>
+                                          ),
+                                      )}
+                                    </div>
+                                  ) : (
+                                    <p className="text-sm text-muted-foreground italic">
+                                      Nenhuma resposta registrada para esta
+                                      área.
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* General Text Section */}
+                {(() => {
+                  const textEntry = getGeneralTextEntry();
+                  return textEntry?.text ? (
+                    <div className="space-y-3 mb-6">
+                      <div className="flex flex-col gap-1">
+                        <h3 className="font-semibold text-lg text-typography mb-1">
+                          Observações Gerais
+                        </h3>
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-medium text-success">
+                            ✓ Compartilhado com profissionais
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="bg-card p-4 rounded-lg whitespace-pre-wrap min-h-[150px] border border-card-border">
+                        {textEntry.text}
+                      </div>
+                    </div>
+                  ) : null;
+                })()}
+
+                {/* Action button */}
+                <div className="text-center">
+                  <button
+                    onClick={() => navigate(-1)}
+                    className="px-6 py-3 bg-selection hover:bg-selection/80 text-white rounded-lg transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
+                  >
+                    Voltar
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
-      </main>
+      </div>
 
-      <BottomNavigationBar variant="acs" forceActiveId="patients" />
+      {/* Fixed bottom navigation */}
+      <div className="fixed bottom-0 left-0 right-0 z-50">
+        <BottomNavigationBar
+          variant="acs"
+          forceActiveId={getActiveNavId()}
+          onItemClick={handleNavigationClick}
+        />
+      </div>
     </div>
   );
 }
