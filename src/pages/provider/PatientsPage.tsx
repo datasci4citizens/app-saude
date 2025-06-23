@@ -98,23 +98,23 @@ export default function PatientsPage() {
           // Check if last_help_date is valid
           let isUrgent = false;
           if (patient.last_help_date) {
-        const helpDate = new Date(patient.last_help_date);
-        if (!Number.isNaN(helpDate.getTime())) {
-          isUrgent = getDaysAgo(patient.last_help_date) <= 3;
-        }
+            const helpDate = new Date(patient.last_help_date);
+            if (!Number.isNaN(helpDate.getTime())) {
+              isUrgent = getDaysAgo(patient.last_help_date) <= 3;
+            }
           }
-          
+
           return {
-        id: patient.person_id,
-        name: patient.name,
-        age: patient.age || 0,
-        lastVisit: formatDisplayDate(patient.last_visit_date),
-        lastHelp: formatDisplayDate(patient.last_help_date),
-        email: patient.email,
-        phone: patient.phone,
-        urgent: isUrgent,
+            id: patient.person_id,
+            name: patient.name,
+            age: patient.age || 0,
+            lastVisit: formatDisplayDate(patient.last_visit_date),
+            lastHelp: formatDisplayDate(patient.last_help_date),
+            email: patient.email,
+            phone: patient.phone,
+            urgent: isUrgent,
           };
-        }
+        },
       );
 
       setPatients(formattedPatients);
