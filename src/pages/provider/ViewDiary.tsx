@@ -268,7 +268,6 @@ export default function ViewDiary() {
                     </div>
                   </div>
                 )}
-
                 {/* Time Range Section */}
                 <div className="space-y-3 mb-6">
                   <h3 className="font-semibold text-lg text-typography mb-1">
@@ -282,7 +281,6 @@ export default function ViewDiary() {
                     </span>
                   </div>
                 </div>
-
                 {/* Interest Areas Section */}
                 {diary.interest_areas && diary.interest_areas.length > 0 && (
                   <div className="space-y-3 mb-6">
@@ -293,10 +291,9 @@ export default function ViewDiary() {
                       {diary.interest_areas.map((interest) => {
                         const interestId = interest.observation_id || 0;
                         const isExpanded = expandedInterests.has(interest.name);
-                        const hasResponses =
-                          interest.triggers?.some(
-                            (t) => t.response && t.response.trim() !== "",
-                          );
+                        const hasResponses = interest.triggers?.some(
+                          (t) => t.response && t.response.trim() !== "",
+                        );
                         return (
                           <div
                             key={interest.name}
@@ -305,10 +302,12 @@ export default function ViewDiary() {
                             <div
                               className="p-5 cursor-pointer"
                               onClick={() => toggleInterest(interest.name)}
-                            >                                <div className="flex items-center justify-between">
-                                  <div className="flex items-center gap-3 flex-1">
-                                    <span className="w-2 h-2 bg-gradient-interest-indicator rounded-full flex-shrink-0" />
-                                    <h4 className="font-bold text-lg text-card-foreground">
+                            >
+                              {" "}
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3 flex-1">
+                                  <span className="w-2 h-2 bg-gradient-interest-indicator rounded-full flex-shrink-0" />
+                                  <h4 className="font-bold text-lg text-card-foreground">
                                     {interest.name}
                                   </h4>
                                   {interest.is_attention_point && (
@@ -330,7 +329,6 @@ export default function ViewDiary() {
                                   </span>
                                 </div>
                               </div>
-
                               {interest.is_attention_point &&
                                 interest.marked_by && (
                                   <div className="mt-2">
@@ -416,10 +414,10 @@ export default function ViewDiary() {
                     </div>
                   </div>
                 )}
-
-                {/* General Text Section */}                  {(() => {
-                    const textEntry = getGeneralTextEntry();
-                    return textEntry?.text ? (
+                {/* General Text Section */}{" "}
+                {(() => {
+                  const textEntry = getGeneralTextEntry();
+                  return textEntry?.text ? (
                     <div className="space-y-3 mb-6">
                       <div className="flex flex-col gap-1">
                         <h3 className="font-semibold text-lg text-typography mb-1">
@@ -438,7 +436,6 @@ export default function ViewDiary() {
                     </div>
                   ) : null;
                 })()}
-
                 {/* Action button */}
                 <div className="text-center">
                   <button

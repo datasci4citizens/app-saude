@@ -194,7 +194,10 @@ export default function ViewSelectedInterests() {
                       {interest.triggers && interest.triggers.length > 0 ? (
                         <ul className="text-sm pl-1 space-y-1">
                           {interest.triggers.map((trigger, index) => (
-                            <li key={`${trigger.name}-${index}`} className="flex items-start">
+                            <li
+                              key={`${trigger.name}-${index}`}
+                              className="flex items-start"
+                            >
                               <span className="mr-2">•</span>
                               <span>{trigger.name || "Sem descrição"}</span>
                             </li>
