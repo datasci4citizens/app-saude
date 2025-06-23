@@ -6,6 +6,7 @@ import { CancelablePromise } from "./CancelablePromise";
 import type { OnCancel } from "./CancelablePromise";
 import type { OpenAPIConfig } from "./OpenAPI";
 import { AuthService } from "../services/AuthService";
+import type { TokenRefresh } from "../models/TokenRefresh";
 
 // Your existing utility functions remain the same
 export const isDefined = <T>(
@@ -270,12 +271,6 @@ export const getResponseBody = async (response: Response): Promise<any> => {
   return undefined;
 };
 
-// 🔄 TOKEN REFRESH LOGIC
-interface TokenRefresh {
-  access: string;
-  refresh: string;
-}
-
 // Track if we're already refreshing to avoid multiple simultaneous refresh attempts
 let isRefreshing = false;
 let refreshPromise: Promise<string> | null = null;
@@ -287,7 +282,7 @@ async function refreshToken(): Promise<string> {
   if (!refresh) throw new Error("Refresh token não encontrado");
 
   const tokenRefresh: TokenRefresh = {
-    access: localStorage.getItem("accessToken") || "",
+    access: "",
     refresh,
   };
 
@@ -296,6 +291,9 @@ async function refreshToken(): Promise<string> {
   localStorage.removeItem("accessToken");
 
   const response = await AuthService.authTokenRefreshCreate(tokenRefresh);
+  if (!response || !response.access || !response.refresh) {
+    throw new Error("Erro ao obter novos tokens");
+  }
 
   localStorage.setItem("accessToken", response.access);
   localStorage.setItem("refreshToken", response.refresh);

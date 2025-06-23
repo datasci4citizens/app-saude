@@ -28,14 +28,18 @@ function run() {
     // 2. Gerar nova API
     log("⚙️ Gerando nova API...");
     execSync(
-      `npx openapi-typescript-codegen --input http://localhost:8000/api/schema --output ${TMP_DIR} --client fetch`,
+      `npx openapi-typescript-codegen --input https://server-saude-staging.paas.ic.unicamp.br/api/schema --output ${TMP_DIR} --client fetch`,
       { stdio: "inherit" }
     );
 
     // 3. Remover API antiga
     log("📁 Substituindo API antiga...");
     rmSync(TARGET_DIR, { recursive: true, force: true });
-    renameSync(TMP_DIR, TARGET_DIR);
+
+    setTimeout(() => {
+        renameSync(TMP_DIR, TARGET_DIR);
+        log("✅ API substituída com sucesso!");
+    }, 300);
 
     // 4. Restaurar arquivos
     log("♻️ Restaurando arquivos OpenAPI...");

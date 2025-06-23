@@ -28,7 +28,7 @@ interface InterestAreaDetail {
   name: string;
   shared: boolean;
   triggers: TriggerDetail[];
-  is_attention_point?: boolean;
+  is_attention_point: boolean;
   provider_name?: string | null;
   observation_id?: number;
   marked_by?: string[];
@@ -56,12 +56,6 @@ export default function ViewDiary() {
     new Set(),
   );
 
-  const isAttentionPoint = (interest: InterestAreaDetail) => {
-    if (!interest || !interest.marked_by) return false;
-    const providerName = localStorage.getItem("social_name");
-    return interest.marked_by.includes(providerName || "");
-  };
-
   useEffect(() => {
     if (diaryId && personId) {
       const fetchData = async () => {
@@ -81,6 +75,14 @@ export default function ViewDiary() {
               diaryId,
               Number(personId),
             );
+
+          diaryData.interest_areas.forEach((interest: InterestAreaDetail) => {
+            if (interest.marked_by && interest.marked_by.length > 0) {
+              interest.is_attention_point = true;
+            } else {
+              interest.is_attention_point = false;
+            }
+          });
 
           if (diaryData) {
             setDiary(diaryData);
@@ -296,7 +298,6 @@ export default function ViewDiary() {
                           interest.triggers.some(
                             (t) => t.response && t.response.trim() !== "",
                           );
-                        const isAttentionPointFlag = isAttentionPoint(interest);
                         return (
                           <div
                             key={interest.name}
@@ -312,7 +313,7 @@ export default function ViewDiary() {
                                   <h4 className="font-bold text-lg text-card-foreground">
                                     {interest.name}
                                   </h4>
-                                  {isAttentionPointFlag && (
+                                  {interest.is_attention_point && (
                                     <span className="text-destructive text-lg">
                                       ⚠️
                                     </span>
@@ -332,12 +333,12 @@ export default function ViewDiary() {
                                 </div>
                               </div>
 
-                              {isAttentionPointFlag &&
-                                interest.provider_name && (
+                              {interest.is_attention_point &&
+                                interest.marked_by && (
                                   <div className="mt-2">
                                     <span className="text-xs text-destructive italic">
                                       Marcado como ponto de atenção por{" "}
-                                      {interest.provider_name}
+                                      {interest.marked_by.join(", ")}
                                     </span>
                                   </div>
                                 )}
@@ -354,16 +355,16 @@ export default function ViewDiary() {
                                           e.stopPropagation();
                                           handleAttentionToggle(
                                             interestId,
-                                            isAttentionPointFlag,
+                                            interest.is_attention_point,
                                           );
                                         }}
                                         className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                                          isAttentionPointFlag
+                                          interest.is_attention_point
                                             ? "bg-destructive text-white hover:bg-destructive/80"
                                             : "bg-orange-500 text-white hover:bg-orange-600"
                                         }`}
                                       >
-                                        {isAttentionPointFlag
+                                        {interest.is_attention_point
                                           ? "Remover atenção ⚠️"
                                           : "Marcar atenção ⚠️"}
                                       </button>

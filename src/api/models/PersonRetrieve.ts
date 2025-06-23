@@ -13,6 +13,7 @@ export type PersonRetrieve = {
   social_name?: string | null;
   birth_datetime?: string | null;
   profile_picture?: string | null;
+  use_dark_mode?: boolean;
   year_of_birth?: number | null;
   user: number;
   gender_concept?: number | null;

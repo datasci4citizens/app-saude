@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/forms/button";
 import { TextField } from "@/components/forms/text_input";
-import { X, Search, Users, Copy } from "lucide-react";
+import { X, Search, Users, Copy, Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/dialog";
 import {
   InterestAreasService,
-  type InterestArea,
   type InterestAreaTrigger,
+  TypeEnum,
 } from "@/api";
 
 // Define clear interfaces
@@ -28,7 +28,7 @@ interface InterestTemplate {
 interface InterestFormData {
   id?: string;
   interest_name: string;
-  triggers: string[];
+  triggers: InterestAreaTrigger[];
 }
 
 interface EditInterestDialogProps {
@@ -38,14 +38,83 @@ interface EditInterestDialogProps {
   onSave: (updatedData: InterestFormData) => void;
 }
 
+// Type options for the dropdown
+const TYPE_OPTIONS = [
+  { value: TypeEnum.BOOLEAN, label: "Sim/Não" },
+  { value: TypeEnum.TEXT, label: "Texto" },
+  { value: TypeEnum.INT, label: "Número" },
+  { value: TypeEnum.SCALE, label: "Escala" },
+];
+
+interface QuestionItemProps {
+  trigger: InterestAreaTrigger;
+  index: number;
+  onUpdate: (index: number, updatedTrigger: InterestAreaTrigger) => void;
+  onRemove: (index: number) => void;
+}
+
+const QuestionItem: React.FC<QuestionItemProps> = ({
+  trigger,
+  index,
+  onUpdate,
+  onRemove,
+}) => {
+  const handleNameChange = (name: string) => {
+    onUpdate(index, { ...trigger, name });
+  };
+
+  const handleTypeChange = (type: TypeEnum) => {
+    onUpdate(index, { ...trigger, type });
+  };
+
+  return (
+    <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 space-y-3">
+      <div className="flex items-start gap-2">
+        <div className="flex-1">
+          <TextField
+            id={`trigger-name-${index}`}
+            name={`trigger-name-${index}`}
+            placeholder="Nome da pergunta"
+            value={trigger.name || ""}
+            onChange={(e) => handleNameChange(e.target.value)}
+            className="w-full text-sm"
+          />
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onRemove(index)}
+          className="text-red-500 hover:text-red-700 p-1"
+        >
+          <X size={16} />
+        </Button>
+      </div>
+
+      <div>
+        <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Tipo de resposta
+        </label>
+        <select
+          value={trigger.type || TypeEnum.TEXT}
+          onChange={(e) => handleTypeChange(e.target.value as TypeEnum)}
+          className="w-full text-sm border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+        >
+          {TYPE_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+};
+
 // Template list item component
-const TemplateItem = ({
-  template,
-  onSelect,
-}: {
+const TemplateItem: React.FC<{
   template: InterestTemplate;
   onSelect: (template: InterestTemplate) => void;
-}) => {
+}> = ({ template, onSelect }) => {
   return (
     <div
       className="border border-gray-200 dark:border-gray-600 rounded-lg p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
@@ -69,9 +138,9 @@ const TemplateItem = ({
           <span
             key={idx}
             className="bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-200 px-2 py-1 rounded text-xs max-w-[200px] truncate"
-            title={trigger.name}
+            title={trigger?.name || ""}
           >
-            {trigger.name}
+            {trigger?.name || "Pergunta sem nome"}
           </span>
         ))}
         {template.triggers.length > 2 && (
@@ -96,27 +165,6 @@ const TemplateItem = ({
   );
 };
 
-// Question tag component
-const QuestionTag = ({
-  question,
-  onRemove,
-}: {
-  question: string;
-  onRemove: () => void;
-}) => (
-  <span
-    className="bg-selection text-white px-3 py-1 rounded-full flex items-center gap-2 max-w-[240px] animate-fade-in"
-    title={question}
-  >
-    <span className="truncate flex-1 min-w-0">{question}</span>
-    <X
-      size={14}
-      className="cursor-pointer hover:scale-110 transition-transform flex-shrink-0"
-      onClick={onRemove}
-    />
-  </span>
-);
-
 // Main component
 const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
   open,
@@ -129,7 +177,6 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
     interest_name: "",
     triggers: [],
   });
-  const [newQuestion, setNewQuestion] = useState("");
 
   // Template state
   const [showTemplates, setShowTemplates] = useState(false);
@@ -153,7 +200,6 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
       } else {
         setFormData({ interest_name: "", triggers: [] });
       }
-      setNewQuestion("");
       setSelectedTemplate(null);
     }
   }, [open, initialData]);
@@ -174,24 +220,57 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
         // Map the API response to our template format
         const data = response
           .map((item: any) => {
-            // Handle different response structures
-            const interestData = item.interest_area || item;
-            const name = interestData?.name || "";
-            const triggers = interestData?.triggers || [];
+            try {
+              // Handle different response structures
+              const interestData = item.interest_area || item;
+              const name = interestData?.name || "";
+              const triggers = interestData?.triggers || [];
 
-            return {
-              id: item.observation_id?.toString() || Math.random().toString(),
-              interest_name: name,
-              triggers: triggers.map((t: any) =>
-                typeof t === "string" ? { name: t } : t,
-              ),
-              usage_count: 0,
-            };
+              // Ensure triggers is an array and properly formatted
+              const formattedTriggers = Array.isArray(triggers)
+                ? triggers.map((t: any) => {
+                    if (typeof t === "string") {
+                      return {
+                        name: t,
+                        type: TypeEnum.TEXT,
+                        response: null,
+                      };
+                    }
+                    // Ensure we have a valid trigger object
+                    if (t && typeof t === "object") {
+                      return {
+                        name: String(t.name || ""),
+                        type: t.type || TypeEnum.TEXT,
+                        response: t.response || null,
+                      };
+                    }
+                    // Fallback for invalid triggers
+                    return {
+                      name: "Pergunta inválida",
+                      type: TypeEnum.TEXT,
+                      response: null,
+                    };
+                  })
+                : [];
+
+              return {
+                id: String(item.observation_id || Math.random()),
+                interest_name: String(name),
+                triggers: formattedTriggers,
+                usage_count: Number(item.usage_count) || 0,
+              };
+            } catch (error) {
+              console.warn("Error processing template item:", error, item);
+              return null;
+            }
           })
           .filter(
-            (template: InterestTemplate) =>
-              // Filter out invalid templates
-              template.interest_name && template.triggers.length > 0,
+            (template: InterestTemplate | null): template is InterestTemplate =>
+              // Filter out invalid templates and ensure all required fields
+              template !== null &&
+              !!template.interest_name &&
+              template.triggers.length > 0 &&
+              Array.isArray(template.triggers),
           );
 
         setTemplateInterests(data);
@@ -207,29 +286,49 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
   }, [open, initialData, templateInterests.length]);
 
   // Filter templates based on search
-  const filteredTemplates = templateInterests.filter((template) => {
-    if (!template || !templateSearch) return true;
+  const filteredTemplates = templateInterests
+    .filter((template) => {
+      if (!template || !templateSearch) return true;
 
-    const nameMatch = template.interest_name
-      ?.toLowerCase()
-      .includes(templateSearch.toLowerCase());
-    const triggerMatch = template.triggers?.some((trigger) =>
-      trigger?.name?.toLowerCase().includes(templateSearch.toLowerCase()),
+      const nameMatch = template.interest_name
+        ?.toLowerCase()
+        .includes(templateSearch.toLowerCase());
+      const triggerMatch = template.triggers?.some((trigger) =>
+        trigger?.name?.toLowerCase().includes(templateSearch.toLowerCase()),
+      );
+
+      return nameMatch || triggerMatch;
+    })
+    .filter(
+      (template) =>
+        // Additional safety check
+        template && template.interest_name && Array.isArray(template.triggers),
     );
-
-    return nameMatch || triggerMatch;
-  });
 
   // Handlers
   const handleAddQuestion = () => {
-    const trimmed = newQuestion.trim();
-    if (trimmed && !formData.triggers.includes(trimmed)) {
-      setFormData((prev) => ({
-        ...prev,
-        triggers: [...prev.triggers, trimmed],
-      }));
-      setNewQuestion("");
-    }
+    const newTrigger: InterestAreaTrigger = {
+      name: "",
+      type: TypeEnum.TEXT,
+      response: null,
+    };
+
+    setFormData((prev) => ({
+      ...prev,
+      triggers: [...prev.triggers, newTrigger],
+    }));
+  };
+
+  const handleUpdateQuestion = (
+    index: number,
+    updatedTrigger: InterestAreaTrigger,
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      triggers: prev.triggers.map((trigger, i) =>
+        i === index ? updatedTrigger : trigger,
+      ),
+    }));
   };
 
   const handleRemoveQuestion = (index: number) => {
@@ -243,7 +342,11 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
     setFormData({
       id: initialData?.id,
       interest_name: template.interest_name,
-      triggers: template.triggers.map((trigger) => trigger.name),
+      triggers: template.triggers.map((trigger) => ({
+        name: trigger.name || "",
+        type: trigger.type || TypeEnum.TEXT,
+        response: trigger.response || null,
+      })),
     });
     setSelectedTemplate(template.id);
     setShowTemplates(false);
@@ -251,25 +354,43 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
   };
 
   const handleSubmit = () => {
-    if (!formData.interest_name.trim() || formData.triggers.length === 0)
-      return;
-    onSave(formData);
+    // Validate form data
+    if (!formData.interest_name.trim()) return;
+
+    // Filter out empty triggers
+    const validTriggers = formData.triggers.filter((trigger) =>
+      trigger.name.trim(),
+    );
+
+    if (validTriggers.length === 0) return;
+
+    // Submit with cleaned data
+    onSave({
+      ...formData,
+      triggers: validTriggers,
+    });
+
     handleClose();
   };
 
   const handleClose = () => {
     setFormData({ interest_name: "", triggers: [] });
-    setNewQuestion("");
     setShowTemplates(false);
     setTemplateSearch("");
     setSelectedTemplate(null);
     onClose();
   };
 
+  // Check if form is valid
+  const isFormValid =
+    formData.interest_name.trim() &&
+    formData.triggers.length > 0 &&
+    formData.triggers.some((trigger) => trigger.name?.trim());
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogOverlay className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9998]" />
-      <DialogContent className="bg-[var(--primary)] text-[var(--typography)] z-[9999] w-[min(90vw,500px)] rounded-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-[var(--primary)] text-[var(--typography)] z-[9999] w-[min(90vw,600px)] rounded-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
             {initialData ? "Editar interesse" : "Novo interesse"}
@@ -371,49 +492,34 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
 
           {/* Questions Section */}
           <div>
-            <label className="block text-base font-semibold text-[var(--typography)] mb-1">
-              Perguntas ({formData.triggers.length})
-            </label>
-            <div className="flex gap-2 mb-2">
-              <div className="flex-1">
-                <TextField
-                  id="new-question"
-                  name="new-question"
-                  placeholder="Nova pergunta"
-                  value={newQuestion}
-                  onChange={(e) => setNewQuestion(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddQuestion();
-                    }
-                  }}
-                  className="w-full text-sm"
-                />
-              </div>
-              {newQuestion.trim() && (
-                <Button
-                  onClick={handleAddQuestion}
-                  className="bg-selection text-white text-sm px-3 py-1 transition-opacity duration-200"
-                >
-                  Adicionar
-                </Button>
-              )}
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-base font-semibold text-[var(--typography)]">
+                Perguntas ({formData.triggers.length})
+              </label>
+              <Button
+                onClick={handleAddQuestion}
+                className="bg-selection text-white text-sm px-3 py-1 flex items-center gap-1"
+              >
+                <Plus size={14} />
+                Adicionar
+              </Button>
             </div>
 
-            <div className="flex flex-wrap gap-2 max-h-32 overflow-y-hidden hover:overflow-y-auto scrollbar-thin pr-1 transition-all">
-              {formData.triggers.map((question, index) => (
-                <QuestionTag
-                  key={`${question}-${index}`}
-                  question={question}
-                  onRemove={() => handleRemoveQuestion(index)}
+            <div className="space-y-3 max-h-80 overflow-y-auto">
+              {formData.triggers.map((trigger, index) => (
+                <QuestionItem
+                  key={index}
+                  trigger={trigger}
+                  index={index}
+                  onUpdate={handleUpdateQuestion}
+                  onRemove={handleRemoveQuestion}
                 />
               ))}
             </div>
 
             {formData.triggers.length === 0 && (
-              <p className="text-xs text-gray-500 mt-2 italic">
-                Adicione pelo menos uma pergunta para continuar
+              <p className="text-xs text-gray-500 mt-2 italic text-center py-8 border border-dashed border-gray-300 rounded-lg">
+                Clique em "Adicionar" para criar sua primeira pergunta
               </p>
             )}
           </div>
@@ -426,9 +532,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
           <Button
             className="bg-selection text-white"
             onClick={handleSubmit}
-            disabled={
-              !formData.interest_name.trim() || formData.triggers.length === 0
-            }
+            disabled={!isFormValid}
           >
             {initialData ? "Salvar Alterações" : "Criar Interesse"}
           </Button>

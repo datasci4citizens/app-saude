@@ -61,6 +61,11 @@ const buttonVariants = cva(
         pressed: "bg-gray2 text-typography active:scale-95 hover:bg-gray2/80",
         toggle:
           "bg-transparent text-typography data-[state=on]:bg-primary data-[state=on]:text-offwhite hover:bg-gray2/10",
+
+        periodActive:
+          "bg-homebg text-primary-foreground hover:bg-homebg/90 shadow-lg border-2 border-homebg transform hover:scale-[1.02]",
+        periodInactive:
+          "bg-card text-typography border-2 border-card-border hover:border-homebg/50 hover:bg-accent hover:text-homebg shadow-sm",
       },
       size: {
         default: "h-10 px-4 py-2",

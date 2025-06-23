@@ -22,6 +22,7 @@ export class PersonService {
    * @param search A search term.
    * @param socialName
    * @param updatedAt
+   * @param useDarkMode
    * @param user
    * @param yearOfBirth
    * @returns PersonRetrieve
@@ -39,6 +40,7 @@ export class PersonService {
     search?: string,
     socialName?: string,
     updatedAt?: string,
+    useDarkMode?: boolean,
     user?: number,
     yearOfBirth?: number,
   ): CancelablePromise<Array<PersonRetrieve>> {
@@ -57,6 +59,7 @@ export class PersonService {
         search: search,
         social_name: socialName,
         updated_at: updatedAt,
+        use_dark_mode: useDarkMode,
         user: user,
         year_of_birth: yearOfBirth,
       },
