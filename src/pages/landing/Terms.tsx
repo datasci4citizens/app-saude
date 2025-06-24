@@ -1,7 +1,8 @@
 import TermsText from './TermsText';
-import { Check, ScrollText, ArrowLeft } from 'lucide-react';
+import { ScrollText } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import ContinueButton from '@/components/ui/ContinueButton';
+import SuccessMessage from '@/components/ui/success-message';
 import Header from '@/components/ui/header';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -10,7 +11,6 @@ interface TermsScreenProps {
   onPrevious?: () => void;
   currentStep?: number;
   totalSteps?: number;
-  // Nova prop para identificar contexto
   isViewOnly?: boolean;
 }
 
@@ -26,31 +26,21 @@ const TermsScreen = ({
 
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-
-  // Detectar se veio do perfil
   const [isFromProfile, setIsFromProfile] = useState(false);
 
   useEffect(() => {
-    // Múltiplas formas de detectar se veio do perfil
     const urlParams = new URLSearchParams(location.search);
     const fromQuery = urlParams.get('from');
 
     const fromProfile =
-      // Via query parameter (mais confiável)
       fromQuery === 'profile' ||
-      // Via state passado na navegação
       location.state?.from === 'profile' ||
-      // Via pathname atual
       location.pathname.includes('/profile/terms') ||
-      // Via referrer
       document.referrer.includes('/profile') ||
       document.referrer.includes('/acs-profile') ||
       document.referrer.includes('/user-profile') ||
-      // Via props
       isViewOnly ||
-      // Via histórico do navegador
       window.history.state?.from === 'profile' ||
-      // Via localStorage (backup)
       localStorage.getItem('navigatedFromProfile') === 'true';
 
     console.log('Terms Screen Debug:', {
@@ -64,7 +54,6 @@ const TermsScreen = ({
 
     setIsFromProfile(fromProfile);
 
-    // Limpar flag do localStorage se existir
     if (localStorage.getItem('navigatedFromProfile')) {
       localStorage.removeItem('navigatedFromProfile');
     }
@@ -88,12 +77,10 @@ const TermsScreen = ({
 
   const handleContinue = () => {
     if (isFromProfile) {
-      // Se veio do perfil, apenas voltar
       navigate(-1);
       return;
     }
 
-    // Fluxo normal de cadastro/onboarding
     setShowSuccessMessage(true);
     setTimeout(() => {
       if (onNext) {
@@ -107,28 +94,20 @@ const TermsScreen = ({
     navigate(-1);
   };
 
-  // Propriedades condicionais
   const isFirstStep = currentStep === 0;
   const isLastStep = currentStep === totalSteps - 1;
-  const stepNumber = currentStep + 1;
 
-  // Determinar se deve mostrar o botão de aceitar
-  const _shouldShowAcceptButton = !isFromProfile;
-
-  // Título baseado no contexto
   const getPageTitle = () => {
     if (isFromProfile) return 'Termos e Condições';
     return 'Aceitar Termos';
   };
 
-  // Texto do botão baseado no contexto
   const getButtonText = () => {
     if (isFromProfile) return 'VOLTAR';
     if (isLastStep) return 'FINALIZAR';
     return 'CONTINUAR';
   };
 
-  // Mensagem de instrução baseada no contexto
   const getInstructionMessage = () => {
     if (isFromProfile) {
       return 'Consulte os termos a qualquer momento';
@@ -158,13 +137,6 @@ const TermsScreen = ({
             backButtonClassName="bg-transparent hover:bg-white/10"
             arrowClassName="text-white"
           />
-
-          {/* Progresso no header - apenas se não for do perfil */}
-          {!isFromProfile && (
-            <div className="text-white/60 text-sm font-inter">
-              {stepNumber} de {totalSteps}
-            </div>
-          )}
 
           {/* Badge "Somente leitura" se for do perfil */}
           {isFromProfile && (
@@ -207,8 +179,6 @@ const TermsScreen = ({
                   isEnabled={isScrolledToBottom}
                   onClick={handleContinue}
                   text={getButtonText()}
-                  successText="ACEITO E CONCORDO"
-                  showShimmer={false}
                 />
               )}
             </div>
@@ -228,15 +198,14 @@ const TermsScreen = ({
               </div>
             )}
 
-            {/* Mensagem de sucesso - apenas no fluxo de cadastro */}
+            {/* Mensagem de sucesso usando o componente SuccessMessage */}
             {!isFromProfile && showSuccessMessage && (
-              <div className="bg-success/90 text-white px-6 py-3 rounded-xl shadow-lg backdrop-blur-sm animate-in slide-in-from-bottom-2 duration-300">
-                <div className="flex items-center justify-center space-x-2">
-                  <Check className="h-4 w-4" />
-                  <span className="font-inter font-medium text-sm">
-                    Termos aceitos com sucesso!
-                  </span>
-                </div>
+              <div className="w-full max-w-xs mx-auto">
+                <SuccessMessage
+                  message="Termos aceitos com sucesso!"
+                  className="animate-in slide-in-from-bottom-2 duration-300 mb-0 mt-0"
+                  icon={true}
+                />
               </div>
             )}
 

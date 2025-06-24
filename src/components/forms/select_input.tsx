@@ -16,7 +16,10 @@ interface SelectFieldProps {
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   error?: string;
   placeholder?: string;
+  height?: number;
   isLoading: boolean;
+  // Nova prop para controlar z-index em diálogos
+  inDialog?: boolean;
 }
 
 export function SelectField({
@@ -27,8 +30,10 @@ export function SelectField({
   options,
   onChange,
   error,
+  height = 14,
   isLoading = false,
   placeholder = 'Selecione',
+  inDialog = false,
 }: SelectFieldProps) {
   // Handle value change and convert to expected event format
   const handleValueChange = (newValue: string) => {
@@ -55,17 +60,23 @@ export function SelectField({
         <SelectTrigger
           id={id}
           disabled={isLoading}
-          className={`bg-background h-14 text-typography font-['Inter'] font-normal focus:border-selection ${
+          className={`bg-background h-${height} text-typography font-['Inter'] font-normal focus:border-selection ${
             error ? 'border-selection' : 'border-gray1'
           }`}
         >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
-        <SelectContent className="bg-background">
+        <SelectContent
+          className={`bg-background ${inDialog ? 'z-[10000]' : ''}`}
+          // Força o portal para fora do dialog quando necessário
+          position="popper"
+          side="bottom"
+          align="start"
+        >
           {isLoading ? (
-            <option value="" disabled>
+            <SelectItem value="loading" disabled>
               Carregando...
-            </option>
+            </SelectItem>
           ) : (
             options.map((option) => (
               <SelectItem

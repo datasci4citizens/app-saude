@@ -242,9 +242,6 @@ const TermsText = () => {
           riscos e benefícios, aceito participar voluntariamente.
         </p>
       </div>
-
-      {/* Espaçamento final */}
-      <div className="h-8" />
     </div>
   );
 };
