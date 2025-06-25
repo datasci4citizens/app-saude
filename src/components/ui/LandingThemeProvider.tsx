@@ -57,7 +57,7 @@ export function LandingThemeProvider({ children }: LandingThemeProviderProps) {
   // Garante que o tema permaneça light durante toda a renderização
   useEffect(() => {
     const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
+      for (const mutation of mutations) {
         if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
           const root = document.documentElement;
           if (root.classList.contains('theme-dark') && root.hasAttribute('data-landing-theme')) {
@@ -65,7 +65,7 @@ export function LandingThemeProvider({ children }: LandingThemeProviderProps) {
             root.classList.remove('theme-dark');
           }
         }
-      });
+      }
     });
 
     observer.observe(document.documentElement, {

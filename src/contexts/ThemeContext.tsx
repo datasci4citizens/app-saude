@@ -29,7 +29,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       // Convert string to boolean and then to theme
       if (useDarkMode === 'true') {
         return 'dark';
-      } else if (useDarkMode === 'false') {
+      }
+      if (useDarkMode === 'false') {
         return 'light';
       }
       // Fallback to old key for compatibility
