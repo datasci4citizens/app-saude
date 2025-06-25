@@ -84,9 +84,9 @@ const ScaleTrigger = ({
   const maxValue = 10;
 
   const getScaleColor = (value: number): string => {
-    if (value <= 3) return 'from-red-400 to-red-600';
-    if (value <= 6) return 'from-yellow-400 to-orange-500';
-    return 'from-green-400 to-green-600';
+    if (value <= 3) return 'from-destructive/40 to-destructive/60';
+    if (value <= 6) return 'from-accent1/40 to-accent1/60';
+    return 'from-success/40 to-success/60';
   };
 
   const getScaleLabel = (value: number): string => {
@@ -235,11 +235,10 @@ const EnhancedInterestCard = ({
   const progressPercentage = totalTriggers > 0 ? (answeredTriggers / totalTriggers) * 100 : 0;
 
   const getProgressGradient = () => {
-    if (progressPercentage === 0)
-      return 'from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-700';
-    if (progressPercentage < 50) return 'from-orange-400 to-red-500';
-    if (progressPercentage < 100) return 'from-yellow-400 to-orange-500';
-    return 'from-green-400 to-emerald-500';
+    if (progressPercentage === 0) return 'from-gray1 to-gray2';
+    if (progressPercentage < 50) return 'from-destructive to-accent1';
+    if (progressPercentage < 100) return 'from-destructive to-accent1';
+    return 'from-success to-success';
   };
 
   const getStatusBadge = () => {
@@ -251,16 +250,16 @@ const EnhancedInterestCard = ({
     if (progressPercentage < 50)
       return {
         text: 'Iniciado',
-        className: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
+        className: 'bg-accent/70 text-accent/10',
       };
     if (progressPercentage < 100)
       return {
         text: 'Em progresso',
-        className: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300',
+        className: 'bg-accent/70 text-accent/10',
       };
     return {
       text: 'Completo',
-      className: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
+      className: 'bg-success/40 text-success/70',
     };
   };
 
@@ -308,8 +307,8 @@ const EnhancedInterestCard = ({
         {/* Overlay sutil */}
         <div
           className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
-            interest.interest_area.is_attention_point
-              ? 'bg-gradient-to-r from-orange-500/5 to-red-500/5'
+            interest.interest_area.marked_by && interest.interest_area.marked_by.length > 0
+              ? 'bg-gradient-to-r from-destructive to-accent1'
               : 'bg-gradient-to-r from-homebg/5 to-selection/5'
           }`}
         />
@@ -321,8 +320,8 @@ const EnhancedInterestCard = ({
               {/* Indicator dot */}
               <div
                 className={`relative w-3 h-3 rounded-full transition-all duration-300 shadow-lg ${
-                  interest.interest_area.is_attention_point
-                    ? 'bg-gradient-to-r from-orange-400 to-red-500 shadow-orange-500/30'
+                  interest.interest_area.marked_by && interest.interest_area.marked_by.length > 0
+                    ? 'bg-gradient-to-r from-destructive to-accent1 shadow-accent1/30'
                     : 'bg-[var(--gradient-interest-indicator)] shadow-homebg/30'
                 }`}
               >
@@ -345,14 +344,12 @@ const EnhancedInterestCard = ({
               </h4>
 
               {/* Badge de atenção */}
-              {interest.interest_area.is_attention_point && (
+              {interest.interest_area.marked_by && interest.interest_area.marked_by.length > 0 && (
                 <div
                   className="flex items-center gap-1 px-3 py-1 
-                              bg-gradient-to-r from-orange-100 to-red-100 
-                              dark:from-orange-900/30 dark:to-red-900/30
-                              text-orange-800 dark:text-orange-300 
-                              text-xs font-medium rounded-full border border-orange-200 
-                              dark:border-orange-700 shadow-sm"
+                              bg-gradient-to-r from-accent1/100 to-destructive/100
+                              text-accent1 text-xs font-medium rounded-full border border-accent1/200 
+                              shadow-sm"
                 >
                   <AlertTriangle size={12} />
                   <span>Atenção</span>
@@ -378,9 +375,9 @@ const EnhancedInterestCard = ({
                     progressPercentage === 100
                       ? 'text-success'
                       : progressPercentage > 50
-                        ? 'text-yellow-500'
+                        ? 'text-yellow'
                         : progressPercentage > 0
-                          ? 'text-orange-500'
+                          ? 'text-accent1'
                           : 'text-muted-foreground'
                   }`}
                 >
@@ -559,8 +556,6 @@ export default function DiaryInfoForm() {
             observation_id: interest.observation_id || 0,
             interest_area: {
               name: interest.interest_area?.name || 'Interesse sem nome',
-              is_attention_point:
-                interest.interest_area?.marked_by && interest.interest_area.marked_by.length > 0,
               marked_by: interest.interest_area?.marked_by || [],
               shared_with_provider: interest.interest_area?.shared_with_provider || false,
               triggers: Array.isArray(interest.interest_area?.triggers)
@@ -840,7 +835,8 @@ export default function DiaryInfoForm() {
               <div className="text-sm text-muted-foreground">
                 💡{' '}
                 <span className="italic">
-                  Suas observações nos ajudam a entender melhor seu bem-estar
+                  Dica: Use este espaço para registrar seus sentimentos, pensamentos ou qualquer
+                  coisa que queira registrar.
                 </span>
               </div>
               <div className="text-sm text-muted-foreground font-medium">

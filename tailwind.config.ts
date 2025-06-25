@@ -192,6 +192,10 @@ export default {
                     text: 'rgb(var(--hover-text) / <alpha-value>)',
                     'text-muted': 'rgb(var(--hover-text-muted) / <alpha-value>)',
                 },
+                'background-hero': {
+                    DEFAULT: 'var(--background-hero)',
+                    gradient: 'var(--gradient-background-hero)',
+                }
             },
             boxShadow: {
                 hover: 'var(--hover-shadow)',

@@ -345,7 +345,7 @@ export default function ViewDiary() {
                                         className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                                           interest.is_attention_point
                                             ? 'bg-destructive text-white hover:bg-destructive/80'
-                                            : 'bg-orange-500 text-white hover:bg-orange-600'
+                                            : 'bg-accent1 text-white hover:bg-accent1/80'
                                         }`}
                                       >
                                         {interest.is_attention_point

@@ -51,7 +51,7 @@ const HabitCard: React.FC<HabitCardProps> = ({
   // ✨ Ajuste de opacidade no modo read-only
   const colorClasses = isAttentionPoint
     ? `bg-destructive border-2 border-yellow text-white ${readOnly ? 'opacity-75' : ''}`
-    : `bg-selection text-white dark:bg-selection ${readOnly ? 'opacity-75' : ''}`;
+    : `bg-selection text-white ${readOnly ? 'opacity-75' : ''}`;
 
   return (
     <div className={`${baseClasses} ${colorClasses} ${className}`}>

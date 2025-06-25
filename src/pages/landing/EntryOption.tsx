@@ -106,7 +106,7 @@ const EntryOptionsScreen: React.FC<EntryOptionsScreenProps> = ({
                 key={option.id}
                 label={option.label}
                 description={option.description}
-                icon={option.icon}
+                Icon={option.icon}
                 selected={userType === option.id}
                 onClick={() => setUserType(option.id)}
                 delay={option.delay}
@@ -161,7 +161,6 @@ const EntryOptionsScreen: React.FC<EntryOptionsScreenProps> = ({
             isEnabled={userType !== ''}
             onClick={handleContinue}
             text={isLastStep ? 'FINALIZAR' : 'CONTINUAR'}
-            successText="PERFEITO!"
           />
         </div>
       </div>

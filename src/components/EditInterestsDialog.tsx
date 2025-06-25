@@ -483,7 +483,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
                         Carregando modelos...
                       </div>
                     ) : error ? (
-                      <div className="text-center py-8 text-yellow-600 text-sm">{error}</div>
+                      <div className="text-center py-8 text-yellow text-sm">{error}</div>
                     ) : filteredTemplates.length === 0 ? (
                       <div className="text-center py-8 text-muted-foreground text-sm">
                         Nenhum exemplo encontrado

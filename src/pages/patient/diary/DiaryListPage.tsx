@@ -413,7 +413,7 @@ export default function ImprovedDiaryListPage() {
                               key={diary.diary_id}
                               className={`bg-card border rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer group ${
                                 hasAttentionPoints
-                                  ? 'border-orange-200 dark:border-orange-800 hover:border-orange-300 dark:hover:border-orange-700 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20'
+                                  ? 'border-accent1 hover:border-accent1 bg-gradient-to-r from-accent1 to-destructive'
                                   : 'border-card-border hover:border-ring/30 hover:bg-card/90'
                               }`}
                               onClick={() => handleViewDiary(diary.diary_id)}
@@ -436,7 +436,7 @@ export default function ImprovedDiaryListPage() {
                                   )}
 
                                   {hasAttentionPoints && (
-                                    <div className="flex items-center gap-1 px-2 py-1 bg-orange-500/10 text-orange-600 dark:text-orange-400 rounded-full border border-orange-200 dark:border-orange-800">
+                                    <div className="flex items-center gap-1 px-2 py-1 bg-accent1/10 text-accent1 rounded-full border border-accent1/20">
                                       <AlertTriangle size={12} />
                                       <span className="text-xs font-medium">Requer Atenção</span>
                                     </div>
@@ -468,7 +468,7 @@ export default function ImprovedDiaryListPage() {
                                 )}
 
                                 {stats.attentionPoints > 0 && (
-                                  <div className="flex items-center gap-2 text-orange-500">
+                                  <div className="flex items-center gap-2 text-accent1">
                                     <AlertTriangle size={16} />
                                     <span className="text-sm font-medium">
                                       {stats.attentionPoints} ponto
@@ -486,8 +486,8 @@ export default function ImprovedDiaryListPage() {
                                       key={`${area.interest_area_id}-${index}`}
                                       className={`flex items-center gap-2 text-sm p-2 rounded-lg ${
                                         area.is_attention_point
-                                          ? 'bg-orange-500/10 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800'
-                                          : 'bg-card-muted text-muted-foreground border border-card-border'
+                                          ? 'bg-accent1/10 text-accent1 border border-accent1/20'
+                                          : 'border border-card-border'
                                       }`}
                                     >
                                       {area.is_attention_point && <AlertTriangle size={14} />}
@@ -519,7 +519,7 @@ export default function ImprovedDiaryListPage() {
                                     <div
                                       className={`h-2 rounded-full transition-all duration-500 ${
                                         hasAttentionPoints
-                                          ? 'bg-gradient-to-r from-orange-400 to-red-500'
+                                          ? 'bg-gradient-to-r from-accent1 to-destructive'
                                           : 'bg-gradient-to-r from-selection to-homebg'
                                       }`}
                                       style={{
@@ -533,9 +533,7 @@ export default function ImprovedDiaryListPage() {
                               {/* Summary text */}
                               <p
                                 className={`line-clamp-2 leading-relaxed ${
-                                  hasAttentionPoints
-                                    ? 'text-orange-800 dark:text-orange-200'
-                                    : 'text-typography/80'
+                                  hasAttentionPoints ? 'text-accent1/80' : 'text-typography/80'
                                 }`}
                               >
                                 {getDiarySummary(diary)}
