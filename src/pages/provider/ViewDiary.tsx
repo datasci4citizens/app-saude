@@ -332,38 +332,38 @@ export default function ViewDiary() {
                                 )}
                               </div>
 
-                            {isExpanded && (
-                              <div className="px-5 pb-5">
-                                <div className="border-t border-card-border pt-4">
-                                  {/* Check if interest area exists */}
-                                  {interestId > 0 ? (
-                                    <div className="mb-4">
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleAttentionToggle(
-                                            interestId,
-                                            interest.is_attention_point,
-                                          );
-                                        }}
-                                        className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                                          interest.is_attention_point
-                                            ? 'bg-destructive text-white hover:bg-destructive/80'
-                                            : 'bg-accent1 text-white hover:bg-accent1/80'
-                                        }`}
-                                      >
-                                        {interest.is_attention_point
-                                          ? 'Remover atenção ⚠️'
-                                          : 'Marcar atenção ⚠️'}
-                                      </button>
-                                    </div>
-                                  ) : (
-                                    <div className="mb-4">
-                                      <p className="text-sm text-destructive font-medium italic">
-                                        Área de interesse deletada
-                                      </p>
-                                    </div>
-                                  )}
+                              {isExpanded && (
+                                <div className="px-5 pb-5">
+                                  <div className="border-t border-card-border pt-4">
+                                    {/* Check if interest area exists */}
+                                    {interestId > 0 ? (
+                                      <div className="mb-4">
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleAttentionToggle(
+                                              interestId,
+                                              interest.is_attention_point,
+                                            );
+                                          }}
+                                          className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                                            interest.is_attention_point
+                                              ? 'bg-destructive text-white hover:bg-destructive/80'
+                                              : 'bg-accent1 text-white hover:bg-accent1/80'
+                                          }`}
+                                        >
+                                          {interest.is_attention_point
+                                            ? 'Remover atenção ⚠️'
+                                            : 'Marcar atenção ⚠️'}
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      <div className="mb-4">
+                                        <p className="text-sm text-destructive font-medium italic">
+                                          Área de interesse deletada
+                                        </p>
+                                      </div>
+                                    )}
 
                                     {/* Responses */}
                                     {hasResponses ? (
