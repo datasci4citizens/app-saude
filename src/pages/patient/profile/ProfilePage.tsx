@@ -270,7 +270,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       case 'warning':
         return `${baseStyles} bg-yellow/10 border-yellow/20 hover:bg-yellow/20 hover:border-yellow/30 hover:shadow-lg`;
       default:
-        return `${baseStyles} bg-card border-card-border hover:bg-card-muted hover:border-selection/20 hover:shadow-lg`;
+        return `${baseStyles} bg-card border-card-border hover:border-selection/20 hover:shadow-lg`;
     }
   };
 

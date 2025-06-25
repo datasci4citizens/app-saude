@@ -8,8 +8,8 @@
 @layer base {
   :root {
     /* Tema claro (padrão) - MELHORADO */
-    --selection: #e11d48; /* Mudou de #fa6e5a para rosa mais vibrante */
-    --selection-background: #e11d48;
+    --selection: #3b82f6; /* Azul piscina, leve, calmo e feliz */
+    --selection-background: #3b82f6;
     --homebg: #3b82f6; /* Mudou de #5a96fa para azul mais consistente */
     --homebg-background: #3b82f6;
     --selected: #22c55e; /* Mudou de #cefa5a para verde mais legível */
@@ -43,7 +43,7 @@
     --card: #ffffff;
     --card-foreground: #0f172a; /* Mudou de #1f2937 para mais consistência */
     --card-border: #e2e8f0;
-    --card-muted: #f8fafc; /* Mudou de #f9fafb para mais consistência */
+    --card-muted: #e6f0ff; /* Mudou de #f9fafb para mais consistência */
     --muted: #f1f5f9;
     --muted-foreground: #64748b;
     --accent: #f1f5f9;
@@ -58,9 +58,9 @@
     --foreground: #0f172a;
 
     /* Bottom Navigation - Modo Claro */
-    --bottom-nav: #ffffff; /* Fundo branco limpo */
+    --bottom-nav: #f1f5f9; /* Fundo branco limpo */
     --bottom-nav-foreground: #64748b; /* Ícones inativos em cinza médio */
-    --bottom-nav-active: #e11d48; /* Ícone ativo em rosa vibrante */
+    --bottom-nav-active: #3b82f6; /* Ícone ativo em rosa vibrante */
     --bottom-nav-border: #e2e8f0; /* Borda sutil no topo */
 
     /* Gradientes UserMainPage - MELHORADOS */
@@ -80,7 +80,6 @@
 
     /* Cores de superficie para hover */
     --hover-surface: 248 250 252; /* Slate 50 */
-    --hover-surface-dark: 241 245 249; /* Slate 100 */
 
     /* Cores de borda para hover */
     --hover-border: 203 213 225; /* Slate 300 */
@@ -93,12 +92,46 @@
     /* Sombras suaves */
     --hover-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     --hover-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+    /* Cores do botão - Modo claro */
+    --button-primary: #2563eb; /* Azul vibrante */
+    --button-primary-hover: #1d4ed8;
+    --button-primary-active: #1e40af;
+    --button-primary-disabled: #94a3b8;
+
+    --button-primary-gradient-from: #3b82f6;
+    --button-primary-gradient-to: #1e40af;
+
+    --button-accent: #fbbf24; /* Amarelo dourado */
+    --button-accent-foreground: #1f2937;
+
+    --button-glass: rgba(255, 255, 255, 0.1);
+    --button-glass-border: rgba(255, 255, 255, 0.2);
+    --button-glass-backdrop: rgba(255, 255, 255, 0.05);
+
+    /* Gradientes */
+    --gradient-button-primary: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1e40af 100%);
+    --gradient-button-primary-hover: linear-gradient(135deg, #1d4ed8 0%, #1e40af 50%, #1e3a8a 100%);
+    --gradient-button-glass: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+
+    /* Sombras */
+    --button-shadow-soft: 0 4px 20px rgba(37, 99, 235, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+    --button-shadow-hover: 0 8px 30px rgba(37, 99, 235, 0.25), 0 4px 12px rgba(0, 0, 0, 0.15);
+    --button-shadow-active: 0 2px 10px rgba(37, 99, 235, 0.2), inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    --button-shadow-glass: 0 8px 32px rgba(37, 99, 235, 0.15);
+    --button-shadow-glow: 0 0 30px rgba(37, 99, 235, 0.4), 0 8px 30px rgba(37, 99, 235, 0.25);
+
+    --background-hero: #eef4ff;
   }
 
   .theme-dark {
     /* Tema escuro - MELHORADO */
-    --selection: #f43f5e; /* Rosa mais vibrante no escuro */
-    --selection-background: #f43f5e;
+    --selection: #60a5fa; /* azul royal, mas menos neon */
+    --selection-background: #1e3a8a;
     --homebg: #2563eb; /* Azul mais escuro e elegante */
     --homebg-background: #1e40af;
     --selected: #22c55e; /* Verde mantido - funcionava bem */
@@ -132,7 +165,7 @@
     --card: #1e293b; /* Mantido - funcionava bem */
     --card-foreground: #f8fafc; /* Melhorado */
     --card-border: #334155;
-    --card-muted: #0f172a;
+    --card-muted: #3a5f85;
     --muted: #334155; /* Mudou de #1e293b para mais contraste */
     --muted-foreground: #cbd5e1; /* Melhorado contraste */
     --accent: #1e293b;
@@ -142,14 +175,14 @@
     --input-foreground: #f8fafc; /* Texto claro no input escuro */
     --input-placeholder: #94a3b8; /* Placeholder claro e legível */
     --input-border: #475569; /* Borda mais escura */
-    --ring: #60a5fa; /* Azul mais claro para foco */
+    --ring: #3b82f6; /* um azul um pouco mais sóbrio */
     --background: #0f172a;
     --foreground: #f8fafc;
 
     /* Bottom Navigation - Modo Escuro */
     --bottom-nav: #1e293b; /* Mesmo tom dos cards para consistência */
     --bottom-nav-foreground: #94a3b8; /* Ícones inativos em cinza claro */
-    --bottom-nav-active: #f43f5e; /* Ícone ativo em rosa vibrante */
+    --bottom-nav-active: #3b82f6; /* Ícone ativo em azul */
     --bottom-nav-border: #334155; /* Borda sutil no topo */
 
     /* Gradientes UserMainPage - Tema Dark MELHORADOS */
@@ -169,7 +202,6 @@
 
     /* Cores de superficie para hover no dark */
     --hover-surface: 51 65 85; /* Slate 700 */
-    --hover-surface-dark: 71 85 105; /* Slate 600 */
 
     /* Cores de borda para hover no dark */
     --hover-border: 100 116 139; /* Slate 500 */
@@ -182,6 +214,40 @@
     /* Sombras mais sutis no dark */
     --hover-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
     --hover-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.25), 0 4px 6px -4px rgb(0 0 0 / 0.25);
+
+    /* Cores do botão - Modo escuro */
+    --button-primary: #3b82f6;
+    --button-primary-hover: #2563eb;
+    --button-primary-active: #1d4ed8;
+    --button-primary-disabled: #475569;
+
+    --button-primary-gradient-from: #60a5fa;
+    --button-primary-gradient-to: #2563eb;
+
+    --button-accent: #fcd34d; /* Amarelo mais suave no escuro */
+    --button-accent-foreground: #111827;
+
+    --button-glass: rgba(255, 255, 255, 0.05);
+    --button-glass-border: rgba(255, 255, 255, 0.1);
+    --button-glass-backdrop: rgba(255, 255, 255, 0.02);
+
+    /* Gradientes para modo escuro */
+    --gradient-button-primary: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #2563eb 100%);
+    --gradient-button-primary-hover: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+    --gradient-button-glass: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.03) 100%
+    );
+
+    /* Sombras para modo escuro */
+    --button-shadow-soft: 0 4px 20px rgba(59, 130, 246, 0.2), 0 2px 8px rgba(0, 0, 0, 0.3);
+    --button-shadow-hover: 0 8px 30px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.4);
+    --button-shadow-active: 0 2px 10px rgba(59, 130, 246, 0.25), inset 0 1px 3px rgba(0, 0, 0, 0.2);
+    --button-shadow-glass: 0 8px 32px rgba(59, 130, 246, 0.2);
+    --button-shadow-glow: 0 0 30px rgba(59, 130, 246, 0.5), 0 8px 30px rgba(59, 130, 246, 0.3);
+
+    --background-hero: #1e293b;
   }
 
   [class^='mgc_']::before,
@@ -358,5 +424,76 @@
   .ripple:hover::before {
     width: 300px;
     height: 300px;
+  }
+
+  /* Animação customizada para shimmer */
+  @keyframes button-shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @keyframes button-glow-pulse {
+    0%,
+    100% {
+      box-shadow: var(--button-shadow-glow);
+      opacity: 0.7;
+    }
+    50% {
+      box-shadow: var(--button-shadow-hover);
+      opacity: 1;
+    }
+  }
+
+  @keyframes button-border-glow {
+    0%,
+    100% {
+      box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.3);
+      opacity: 0.6;
+    }
+    50% {
+      box-shadow:
+        inset 0 0 0 1px rgba(59, 130, 246, 0.6),
+        0 0 15px rgba(59, 130, 246, 0.4);
+      opacity: 1;
+    }
+  }
+
+  @keyframes button-shimmer-diagonal {
+    0% {
+      transform: translateX(-120%) translateY(-120%) rotate(45deg);
+      opacity: 0;
+    }
+    20% {
+      opacity: 1;
+    }
+    80% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(120%) translateY(120%) rotate(45deg);
+      opacity: 0;
+    }
+  }
+
+  @keyframes button-press {
+    0% {
+      transform: scale(1) translateY(0);
+    }
+    100% {
+      transform: scale(0.98) translateY(1px);
+    }
+  }
+
+  @keyframes button-release {
+    0% {
+      transform: scale(0.98) translateY(1px);
+    }
+    100% {
+      transform: scale(1) translateY(0);
+    }
   }
 }

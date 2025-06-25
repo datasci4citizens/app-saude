@@ -299,7 +299,7 @@ export default function ImprovedViewDiaryEntry() {
                         key={interest.name}
                         className={`border rounded-xl shadow-sm ${
                           interest.is_attention_point
-                            ? 'bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 border-orange-200 dark:border-orange-800'
+                            ? 'bg-gradient-to-r from-destructive to-accent1 border-accent1'
                             : 'bg-card border-card-border'
                         }`}
                       >
@@ -312,7 +312,7 @@ export default function ImprovedViewDiaryEntry() {
                               <span
                                 className={`w-2 h-2 rounded-full flex-shrink-0 ${
                                   interest.is_attention_point
-                                    ? 'bg-gradient-to-r from-orange-400 to-red-500'
+                                    ? 'bg-gradient-to-r from-destructive to-accent1'
                                     : 'bg-[var(--gradient-interest-indicator)]'
                                 }`}
                               />
@@ -320,7 +320,7 @@ export default function ImprovedViewDiaryEntry() {
                                 {interest.name}
                               </h4>
                               {interest.is_attention_point && (
-                                <span className="text-orange-500 text-lg">⚠️</span>
+                                <span className="text-accent1 text-lg">⚠️</span>
                               )}
                             </div>
                             <div className="flex items-center gap-2">
@@ -341,7 +341,7 @@ export default function ImprovedViewDiaryEntry() {
 
                           {interest.is_attention_point && interest.marked_by && (
                             <div className="mt-2">
-                              <span className="text-xs text-orange-600 dark:text-orange-400 italic">
+                              <span className="text-xs text-accent1 italic">
                                 Marcado como ponto de atenção por {interest.marked_by.join(', ')}
                               </span>
                             </div>

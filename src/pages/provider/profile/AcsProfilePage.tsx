@@ -301,7 +301,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
       case 'danger':
         return 'text-destructive';
       case 'warning':
-        return 'text-yellow-600';
+        return 'text-yellow';
       default:
         return 'text-card-foreground';
     }

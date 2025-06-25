@@ -103,12 +103,25 @@ export interface ButtonProps
   position?: 'default' | 'bottom';
 }
 
+const gradientMap = {
+  gradient: '--gradient-button-background',
+  gradientNew: '--gradient-button-new',
+  gradientSave: '--gradient-button-save',
+  gradientEdit: '--gradient-button-edit',
+} as const;
+
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, position, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
+
+    const style = gradientMap[variant as keyof typeof gradientMap]
+      ? { background: `var(${gradientMap[variant as keyof typeof gradientMap]})` }
+      : undefined;
+
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, position, className }))}
+        style={style}
         ref={ref}
         {...props}
       />

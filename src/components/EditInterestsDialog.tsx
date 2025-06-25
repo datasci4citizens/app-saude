@@ -1,7 +1,8 @@
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { Button } from '@/components/forms/button';
 import { TextField } from '@/components/forms/text_input';
+import { SelectField } from '@/components/forms/select_input';
+import { Button } from '@/components/forms/button';
 import { X, Search, Users, Copy, Plus } from 'lucide-react';
 import {
   Dialog,
@@ -64,52 +65,54 @@ interface QuestionItemProps {
 }
 
 const QuestionItem: React.FC<QuestionItemProps> = ({ trigger, index, onUpdate, onRemove }) => {
-  const handleNameChange = (name: string) => {
-    onUpdate(index, { ...trigger, name });
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    onUpdate(index, { ...trigger, name: e.target.value });
   };
 
-  const handleTypeChange = (type: TypeEnum) => {
-    onUpdate(index, { ...trigger, type });
+  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onUpdate(index, { ...trigger, type: e.target.value as TypeEnum });
   };
 
   return (
-    <div className="border border-offwhite2 dark:border-offwhite2 rounded-lg p-3 space-y-3">
-      <div className="flex items-start gap-2">
-        <div className="flex-1">
+    <div className="relative rounded-lg border border-border bg-card px-4 py-4 shadow-md group hover:shadow-lg transition-all duration-200">
+      {/* Delete Button */}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => onRemove(index)}
+        className="absolute top-3 right-3 w-6 h-6 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200 opacity-0 group-hover:opacity-100"
+      >
+        <X size={14} />
+      </Button>
+
+      <div className="space-y-4">
+        {/* Question Text */}
+        <div className="space-y-2">
           <TextField
-            id={`trigger-name-${trigger._id}`}
-            name={`trigger-name-${trigger._id}`}
-            placeholder="Nome da pergunta"
+            id={`question-${index}`}
+            name={`question-${index}`}
+            label="Pergunta"
+            placeholder="Ex: Você tem histórico familiar?"
             value={trigger.name || ''}
-            onChange={(e) => handleNameChange(e.target.value)}
-            className="w-full text-sm"
+            onChange={handleNameChange}
+            className="focus-within:ring-2 focus-within:ring-accent1"
           />
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onRemove(index)}
-          className="text-destructive hover:text-destructive p-1"
-        >
-          <X size={16} />
-        </Button>
-      </div>
 
-      <div>
-        <label className="block text-xs font-medium text-typography dark:text-typography mb-1">
-          Tipo de resposta
-        </label>
-        <select
-          value={trigger.type || TypeEnum.TEXT}
-          onChange={(e) => handleTypeChange(e.target.value as TypeEnum)}
-          className="w-full text-sm border border-offwhite2 dark:border-offwhite2 rounded-md px-3 py-2 bg-offwhite dark:bg-offwhite2 text-typography dark:text-typography"
-        >
-          {TYPE_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        {/* Response Type */}
+        <div className="space-y-2">
+          <SelectField
+            id={`response-type-${index}`}
+            name={`response-type-${index}`}
+            label="Tipo de resposta"
+            value={trigger.type || TypeEnum.TEXT}
+            onChange={handleTypeChange}
+            height={10}
+            isLoading={false}
+            options={TYPE_OPTIONS}
+            inDialog={true}
+          />
+        </div>
       </div>
     </div>
   );
@@ -122,45 +125,45 @@ const TemplateItem: React.FC<{
 }> = ({ template, onSelect }) => {
   return (
     <div
-      className="border border-offwhite2 dark:border-offwhite2 rounded-lg p-3 hover:bg-offwhite2 dark:hover:bg-offwhite2 transition-colors cursor-pointer"
+      className="border border-border rounded-lg p-4 hover:bg-accent/20 transition-all duration-200 cursor-pointer group shadow-sm hover:shadow-md shadow-[0_2px_8px_rgba(0,0,0,0.15)]"
       onClick={() => onSelect(template)}
       onKeyDown={(e) => e.key === 'Enter' && onSelect(template)}
       role="button"
       tabIndex={0}
     >
-      <div className="flex items-start justify-between mb-2">
-        <h4 className="font-medium text-sm">{template.interest_name}</h4>
-        <div className="flex items-center gap-1 text-xs text-typography dark:text-typography">
+      <div className="flex items-start justify-between mb-3">
+        <h4 className="font-medium text-sm text-typography">{template.interest_name}</h4>
+        <div className="flex items-center gap-1 text-xs text-muted-foreground">
           <Users size={12} />
           {template.usage_count || 0}
         </div>
       </div>
 
-      <div className="text-xs text-typography dark:text-typography mb-2">
+      <div className="text-xs text-muted-foreground mb-3">
         {template.triggers.length} pergunta
         {template.triggers.length !== 1 ? 's' : ''}
       </div>
 
-      <div className="flex flex-wrap gap-1 mb-2">
-        {template.triggers.slice(0, 2).map((trigger) => (
+      <div className="flex flex-wrap gap-2 mb-4">
+        {template.triggers.slice(0, 2).map((trigger, idx) => (
           <span
-            key={trigger.name}
-            className="bg-offwhite2 dark:bg-offwhite2 text-typography dark:text-typography px-2 py-1 rounded text-xs max-w-[200px] truncate"
+            key={idx}
+            className="bg-accent/10 text-typography px-2 py-1 rounded-md text-xs max-w-[200px] truncate border border-accent/20"
             title={trigger?.name || ''}
           >
             {trigger?.name || 'Pergunta sem nome'}
           </span>
         ))}
         {template.triggers.length > 2 && (
-          <span className="text-xs text-offwhite-500 dark:text-offwhite-400 px-2 py-1">
+          <span className="text-xs text-muted-foreground px-2 py-1">
             +{template.triggers.length - 2} mais
           </span>
         )}
       </div>
 
       <Button
-        size="sm"
-        className="bg-selection text-white text-xs px-2 py-1 h-auto flex items-center gap-1"
+        variant="ghost"
+        className="bg-primary text-primary-foreground text-xs px-3 py-2 rounded-lg flex items-center gap-2 hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-sm hover:shadow-md"
         onClick={(e) => {
           e.stopPropagation();
           onSelect(template);
@@ -399,37 +402,70 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogOverlay className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9998]" />
-      <DialogContent className=" text-[var(--typography)] z-[9999] w-[min(90vw,600px)] rounded-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className=" text-typography z-[9999] w-[min(90vw,600px)] rounded-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
             {initialData ? 'Editar interesse' : 'Novo interesse'}
           </DialogTitle>
-          <DialogDescription className="text-sm text-offwhite-500">
-            {initialData
-              ? 'Altere o nome ou as perguntas desta área de interesse.'
-              : 'Crie um novo interesse personalizado com suas próprias perguntas.'}
+          <DialogDescription className="text-sm text-muted-foreground leading-relaxed">
+            Monte um interesse do seu jeito, com perguntas que fazem sentido pra você.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-4 space-y-4">
-          {/* Template Selection */}
+        <div className="space-y-6 flex-1 min-h-0">
+          {/* Template Selection Card */}
           {!initialData && (
-            <div className="border-b border-offwhite-200 pb-4">
-              <Button
-                variant="outlineWhite"
-                onClick={() => setShowTemplates(!showTemplates)}
-                className="w-full flex items-center justify-center gap-2 text-sm"
-              >
-                <Users size={16} />
-                {showTemplates ? 'Ocultar exemplos' : 'Escolher de exemplos existentes'}
-              </Button>
+            <div className="space-y-4">
+              <div className="w-full">
+                <button
+                  onClick={() => setShowTemplates(!showTemplates)}
+                  className="w-full rounded-xl border border-primary/30 bg-gradient-to-r from-primary/5 to-primary/10 hover:from-primary/10 hover:to-primary/15 transition-all duration-300 p-4 flex items-center gap-3 text-left group shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.99]"
+                >
+                  <div className="w-10 h-10 bg-primary/15 rounded-xl flex items-center justify-center group-hover:bg-primary/25 transition-all duration-300 group-hover:rotate-3">
+                    <svg
+                      className="w-5 h-5 text-typography transition-transform duration-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 11H5m14-7l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-semibold text-typography text-base group-hover:text-typography transition-colors duration-300">
+                      {showTemplates ? 'Ocultar exemplos' : 'Escolher de exemplos existentes'}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Use modelos prontos como base para seu interesse
+                    </div>
+                  </div>
+                  <svg
+                    className={`w-5 h-5 text-primary transition-all duration-300 ${showTemplates ? 'rotate-180 scale-110' : 'group-hover:scale-110'}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+              </div>
 
               {showTemplates && (
                 <div className="mt-3 space-y-3">
                   <div className="relative">
                     <Search
                       size={16}
-                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-offwhite-400"
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
                     />
                     <TextField
                       id="template-search"
@@ -437,19 +473,19 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
                       placeholder="Buscar exemplos..."
                       value={templateSearch}
                       onChange={(e) => setTemplateSearch(e.target.value)}
-                      className="w-full pl-10 text-sm"
+                      className="pl-10"
                     />
                   </div>
 
-                  <div className="max-h-64 overflow-y-auto space-y-2 border border-offwhite-200 dark:border-offwhite-600 rounded-lg p-2">
+                  <div className="max-h-64 overflow-y-auto space-y-3 bg-muted/30 border border-border rounded-lg p-4">
                     {isLoading ? (
-                      <div className="text-center py-8 text-offwhite-500">
+                      <div className="text-center py-8 text-muted-foreground text-sm">
                         Carregando modelos...
                       </div>
                     ) : error ? (
-                      <div className="text-center py-8 text-red-500">{error}</div>
+                      <div className="text-center py-8 text-yellow text-sm">{error}</div>
                     ) : filteredTemplates.length === 0 ? (
-                      <div className="text-center py-8 text-offwhite-500">
+                      <div className="text-center py-8 text-muted-foreground text-sm">
                         Nenhum exemplo encontrado
                       </div>
                     ) : (
@@ -464,17 +500,6 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
                   </div>
                 </div>
               )}
-            </div>
-          )}
-
-          {/* Template Selection Indicator */}
-          {selectedTemplate && (
-            <div className="rounded-lg p-3">
-              <div className="flex items-center gap-2 text-sm">
-                <Copy size={14} />
-                <span className="font-medium">Baseado em modelo existente</span>
-              </div>
-              <p className="text-xs mt-1">Todas as informações podem ser editadas livremente.</p>
             </div>
           )}
 
@@ -496,11 +521,12 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
           {/* Questions Section */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <label className="block text-base font-semibold text-[var(--typography)]">
+              <label className="block text-base font-semibold text-typography">
                 Perguntas ({formData.triggers.length})
               </label>
               <Button
                 onClick={handleAddQuestion}
+                variant="gradientNew"
                 className="bg-selection text-white text-sm px-3 py-1 flex items-center gap-1"
               >
                 <Plus size={14} />
@@ -529,11 +555,12 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
         </div>
 
         <DialogFooter className="mt-6 flex justify-end gap-4">
-          <Button variant="outlineWhite" onClick={handleClose}>
+          <Button variant="outlineGray" onClick={handleClose}>
             Cancelar
           </Button>
           <Button
             className="bg-selection text-white"
+            variant="gradientNew"
             onClick={handleSubmit}
             disabled={!isFormValid}
           >

@@ -1,7 +1,8 @@
 import type React from 'react';
 import { useState } from 'react';
 import type { PersonCreate } from '@/api/models/PersonCreate';
-import { Button } from '@/components/forms/button';
+import ContinueButton from '@/components/ui/ContinueButton';
+import ErrorMessage from '@/components/ui/error-message';
 import { DateField } from '@/components/forms/date_input';
 import { SelectField } from '@/components/forms/select_input';
 import { TextField } from '@/components/forms/text_input';
@@ -169,85 +170,146 @@ export function UserInfoForm({
     onSubmit(formData);
   };
 
+  // Check if form is valid for enabling button
+  const isFormValid = () => {
+    return (
+      formData.gender_concept !== null &&
+      formData.race_concept !== null &&
+      formData.birth_datetime &&
+      Object.keys(errors).length === 0
+    );
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-      {conceptError && (
-        <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-3 mb-4">
-          <p>{conceptError}</p>
-        </div>
-      )}
-
-      <TextField
-        id="social_name"
-        name="social_name"
-        label="Nome social (opcional)"
-        value={formData.social_name || ''}
-        onChange={handleChange}
-        placeholder="Como prefere ser chamado(a)"
-        helperText="Apenas para caso de uso interno, não compartilharemos com terceiros"
-        error={errors.social_name}
-      />
-
-      <SelectField
-        id="gender_concept"
-        name="gender_concept"
-        label="Gênero"
-        value={formData.gender_concept !== null ? formData.gender_concept.toString() : ''}
-        onChange={handleChange}
-        options={genderOptions}
-        error={errors.gender_concept}
-        isLoading={isLoadingConcepts}
-      />
-
-      <div className="flex flex-row gap-4 max-[294px]:flex-wrap">
-        <TextField
-          id="weight"
-          name="weight"
-          type="number"
-          label="Peso (kg)"
-          value={formData.weight !== null ? formData.weight.toString() : ''}
-          onChange={handleChange}
-          error={errors.weight}
-        />
-
-        <TextField
-          id="height"
-          name="height"
-          type="number"
-          label="Altura (cm)"
-          value={formData.height !== null ? formData.height.toString() : ''}
-          onChange={handleChange}
-          error={errors.height}
-        />
+    <div className="w-full max-w-md mx-auto bg-card rounded-2xl p-6 shadow-button-soft border border-card-border">
+      {/* Header */}
+      <div className="mb-6 text-center">
+        <h2 className="text-titulo text-typography font-work-sans mb-2">Informações Pessoais</h2>
+        <p className="text-desc-titulo text-muted-foreground">Nos ajude a conhecer você melhor</p>
       </div>
 
-      <DateField
-        id="birth_datetime"
-        name="birth_datetime"
-        label="Data de nascimento"
-        value={formData.birth_datetime || ''}
-        onChange={handleDateChange}
-        error={errors.birth_datetime}
-      />
+      {/* Error message for concept loading */}
+      {conceptError && (
+        <ErrorMessage
+          message={conceptError}
+          variant="destructive"
+          closable={false}
+          retryable={false}
+          className="mb-4"
+        />
+      )}
 
-      <SelectField
-        id="race_concept"
-        name="race_concept"
-        label="Cor/Raça"
-        value={formData.race_concept !== null ? formData.race_concept.toString() : ''}
-        onChange={handleChange}
-        options={raceOptions}
-        error={errors.race_concept}
-        isLoading={isLoadingConcepts}
-      />
+      <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+        {/* Nome Social */}
+        <div className="space-y-1">
+          <TextField
+            id="social_name"
+            name="social_name"
+            label="Nome social (opcional)"
+            value={formData.social_name || ''}
+            onChange={handleChange}
+            placeholder="Como prefere ser chamado(a)"
+            helperText="Apenas para uso interno, não compartilharemos com terceiros"
+            error={errors.social_name}
+          />
+        </div>
 
-      <Button
-        type="submit"
-        variant="gradient"
-        className="w-full mt-4 font-['Inter'] font-bold mb-4"
-      >
-        CONTINUAR
-      </Button>
-    </form>
+        {/* Gênero */}
+        <div className="space-y-1">
+          <SelectField
+            id="gender_concept"
+            name="gender_concept"
+            label="Gênero *"
+            value={formData.gender_concept !== null ? formData.gender_concept.toString() : ''}
+            onChange={handleChange}
+            options={genderOptions}
+            error={errors.gender_concept}
+            isLoading={isLoadingConcepts}
+          />
+        </div>
+
+        {/* Peso e Altura */}
+        <div className="space-y-1">
+          <label className="block text-topicos text-typography font-work-sans mb-3">
+            Dados físicos (opcional)
+          </label>
+          <div className="grid grid-cols-2 gap-4">
+            <TextField
+              id="weight"
+              name="weight"
+              type="number"
+              label="Peso (kg)"
+              value={formData.weight !== null ? formData.weight.toString() : ''}
+              onChange={handleChange}
+              error={errors.weight}
+              placeholder="Ex: 70"
+            />
+            <TextField
+              id="height"
+              name="height"
+              type="number"
+              label="Altura (cm)"
+              value={formData.height !== null ? formData.height.toString() : ''}
+              onChange={handleChange}
+              error={errors.height}
+              placeholder="Ex: 175"
+            />
+          </div>
+        </div>
+
+        {/* Data de Nascimento */}
+        <div className="space-y-1">
+          <DateField
+            id="birth_datetime"
+            name="birth_datetime"
+            label="Data de nascimento *"
+            value={formData.birth_datetime || ''}
+            onChange={handleDateChange}
+            error={errors.birth_datetime}
+          />
+        </div>
+
+        {/* Cor/Raça */}
+        <div className="space-y-1">
+          <SelectField
+            id="race_concept"
+            name="race_concept"
+            label="Cor/Raça *"
+            value={formData.race_concept !== null ? formData.race_concept.toString() : ''}
+            onChange={handleChange}
+            options={raceOptions}
+            error={errors.race_concept}
+            isLoading={isLoadingConcepts}
+          />
+        </div>
+
+        {/* Progress indicator */}
+        <div className="bg-muted rounded-full p-1">
+          <div className="flex items-center justify-between text-xs text-muted-foreground px-3 py-2">
+            <span>Campos obrigatórios preenchidos</span>
+            <span
+              className={`font-medium ${isFormValid() ? 'text-success' : 'text-muted-foreground'}`}
+            >
+              {isFormValid() ? '✓ Completo' : 'Pendente'}
+            </span>
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div className="pt-4">
+          <ContinueButton
+            isEnabled={!!isFormValid()}
+            text="CONTINUAR"
+            isLoading={isLoadingConcepts}
+            loadingText="Carregando..."
+          />
+        </div>
+
+        {/* Helper text */}
+        <div className="text-center">
+          <p className="text-desc-campos text-muted-foreground">* Campos obrigatórios</p>
+        </div>
+      </form>
+    </div>
   );
 }

@@ -176,7 +176,7 @@ export default function EmergencyScreen() {
         <div className="flex-1 flex items-center justify-center px-4">
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="relative">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-selection" />
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray1 border-t-selection" />
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="text-lg">⚕️</span>
               </div>
@@ -309,30 +309,30 @@ export default function EmergencyScreen() {
             />
           )}
 
-          {/* Emergency Disclaimer - CORES TAILWIND PADRÃO (RED NAO EH COR TAILWIND)*/}
-          <div className="bg-red-50 dark:bg-red-950 border-2 border-red-200 dark:border-red-800 rounded-2xl p-5 shadow-sm">
+          {/* Emergency Disclaimer */}
+          <div className="bg-destructive border-2 border-destructive rounded-2xl p-5 shadow-sm">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-red-600 dark:text-red-400 text-xl font-bold">⚠️</span>
+              <div className="w-10 h-10 bg-destructive/50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="text-destructive/60 text-xl font-bold">⚠️</span>
               </div>
               <div className="flex-1">
-                <h4 className="text-red-900 dark:text-red-100 font-bold text-base mb-3">
+                <h4 className="text-destructive/80 font-bold text-base mb-3">
                   ATENÇÃO: Resposta não imediata
                 </h4>
-                <p className="text-red-800 dark:text-red-200 text-sm leading-relaxed mb-4 font-medium">
+                <p className="text-destructive/70 text-sm leading-relaxed mb-4 font-medium">
                   Este não é um serviço de emergência. Em situações urgentes, contate os serviços
                   oficiais:
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <a
                     href="tel:192"
-                    className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-md"
+                    className="inline-flex items-center gap-2 bg-destructive hover:bg-destructive/80 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-md"
                   >
                     📞 192 (SAMU)
                   </a>
                   <a
                     href="tel:188"
-                    className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-md"
+                    className="inline-flex items-center gap-2 bg-destructive hover:bg-destructive/80 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-md"
                   >
                     💬 188 (CVV)
                   </a>
@@ -383,9 +383,9 @@ export default function EmergencyScreen() {
               </div>
 
               {selectedProviders.length > 0 && (
-                <div className="mt-5 p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800/50 rounded-xl">
-                  <p className="text-green-800 dark:text-green-300 text-sm font-semibold flex items-center gap-2">
-                    <span className="text-green-600 dark:text-green-400">✓</span>
+                <div className="mt-5 p-4 bg-selected border border-selected rounded-xl">
+                  <p className="text-selected/80 text-sm font-semibold flex items-center gap-2">
+                    <span className="text-selected/60">✓</span>
                     {selectedProviders.length} profissional(is) selecionado(s)
                   </p>
                 </div>
@@ -418,9 +418,7 @@ export default function EmergencyScreen() {
               <div className="flex justify-between items-center text-xs">
                 <span className="text-muted-foreground">{freeText.length}/200 caracteres</span>
                 {freeText.length > 150 && (
-                  <span className="text-yellow-600 dark:text-yellow-400 font-medium">
-                    {200 - freeText.length} restantes
-                  </span>
+                  <span className="text-yellow font-medium">{200 - freeText.length} restantes</span>
                 )}
               </div>
             </div>
