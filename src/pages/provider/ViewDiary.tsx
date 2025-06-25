@@ -26,7 +26,7 @@ interface TriggerDetail {
 
 interface InterestAreaDetail {
   name: string;
-  shared: boolean;
+  shared_with_provider: boolean;
   triggers: TriggerDetail[];
   is_attention_point: boolean;
   provider_name?: string | null;
@@ -79,6 +79,7 @@ export default function ViewDiary() {
             }
           }
 
+          console.log('Diary Data:', diaryData);
           if (diaryData) {
             setDiary(diaryData);
           } else {
@@ -279,54 +280,57 @@ export default function ViewDiary() {
                       Áreas de Interesse
                     </h3>
                     <div className="space-y-4">
-                      {diary.interest_areas.map((interest) => {
-                        const interestId = interest.observation_id || 0;
-                        const isExpanded = expandedInterests.has(interest.name);
-                        const hasResponses = interest.triggers?.some(
-                          (t) => t.response && t.response.trim() !== '',
-                        );
-                        return (
-                          <div
-                            key={interest.name}
-                            className="bg-card border border-card-border rounded-xl shadow-sm"
-                          >
+                      {diary.interest_areas
+                        .filter((interest) => interest.shared_with_provider === true)
+                        .map((interest) => {
+                          // console.log('Interest:', interest);
+                          const interestId = interest.observation_id || 0;
+                          const isExpanded = expandedInterests.has(interest.name);
+                          const hasResponses = interest.triggers?.some(
+                            (t) => t.response && t.response.trim() !== '',
+                          );
+                          return (
                             <div
-                              className="p-5 cursor-pointer"
-                              onClick={() => toggleInterest(interest.name)}
+                              key={interest.name}
+                              className="bg-card border border-card-border rounded-xl shadow-sm"
                             >
-                              {' '}
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3 flex-1">
-                                  <span className="w-2 h-2 bg-gradient-interest-indicator rounded-full flex-shrink-0" />
-                                  <h4 className="font-bold text-lg text-card-foreground">
-                                    {interest.name}
-                                  </h4>
-                                  {interest.is_attention_point && (
-                                    <span className="text-destructive text-lg">⚠️</span>
-                                  )}
+                              <div
+                                className="p-5 cursor-pointer"
+                                onClick={() => toggleInterest(interest.name)}
+                              >
+                                {' '}
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-3 flex-1">
+                                    <span className="w-2 h-2 bg-gradient-interest-indicator rounded-full flex-shrink-0" />
+                                    <h4 className="font-bold text-lg text-card-foreground">
+                                      {interest.name}
+                                    </h4>
+                                    {interest.is_attention_point && (
+                                      <span className="text-destructive text-lg">⚠️</span>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-success text-sm font-medium">
+                                      ✓ Compartilhado
+                                    </span>
+                                    <span
+                                      className={`transform transition-transform duration-200 ${
+                                        isExpanded ? 'rotate-180' : ''
+                                      }`}
+                                    >
+                                      ▼
+                                    </span>
+                                  </div>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-success text-sm font-medium">
-                                    ✓ Compartilhado
-                                  </span>
-                                  <span
-                                    className={`transform transition-transform duration-200 ${
-                                      isExpanded ? 'rotate-180' : ''
-                                    }`}
-                                  >
-                                    ▼
-                                  </span>
-                                </div>
+                                {interest.is_attention_point && interest.marked_by && (
+                                  <div className="mt-2">
+                                    <span className="text-xs text-destructive italic">
+                                      Marcado como ponto de atenção por{' '}
+                                      {interest.marked_by.join(', ')}
+                                    </span>
+                                  </div>
+                                )}
                               </div>
-                              {interest.is_attention_point && interest.marked_by && (
-                                <div className="mt-2">
-                                  <span className="text-xs text-destructive italic">
-                                    Marcado como ponto de atenção por{' '}
-                                    {interest.marked_by.join(', ')}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
 
                             {isExpanded && (
                               <div className="px-5 pb-5">
@@ -361,43 +365,43 @@ export default function ViewDiary() {
                                     </div>
                                   )}
 
-                                  {/* Responses */}
-                                  {hasResponses ? (
-                                    <div className="space-y-3">
-                                      <h5 className="font-medium text-sm text-muted-foreground mb-2">
-                                        Respostas:
-                                      </h5>
-                                      {interest.triggers?.map(
-                                        (trigger, index) =>
-                                          trigger.response &&
-                                          trigger.response.trim() !== '' && (
-                                            <div
-                                              key={`${trigger.name}-${index}`}
-                                              className="bg-card-muted p-3 rounded-lg border-l-4 border-selection"
-                                            >
-                                              <div className="text-sm">
-                                                <span className="font-medium text-card-foreground">
-                                                  {trigger.name}:
-                                                </span>
-                                                <span className="ml-2 text-muted-foreground">
-                                                  {trigger.response}
-                                                </span>
+                                    {/* Responses */}
+                                    {hasResponses ? (
+                                      <div className="space-y-3">
+                                        <h5 className="font-medium text-sm text-muted-foreground mb-2">
+                                          Respostas:
+                                        </h5>
+                                        {interest.triggers?.map(
+                                          (trigger, index) =>
+                                            trigger.response &&
+                                            trigger.response.trim() !== '' && (
+                                              <div
+                                                key={`${trigger.name}-${index}`}
+                                                className="bg-card-muted p-3 rounded-lg border-l-4 border-selection"
+                                              >
+                                                <div className="text-sm">
+                                                  <span className="font-medium text-card-foreground">
+                                                    {trigger.name}:
+                                                  </span>
+                                                  <span className="ml-2 text-muted-foreground">
+                                                    {trigger.response}
+                                                  </span>
+                                                </div>
                                               </div>
-                                            </div>
-                                          ),
-                                      )}
-                                    </div>
-                                  ) : (
-                                    <p className="text-sm text-muted-foreground italic">
-                                      Nenhuma resposta registrada para esta área.
-                                    </p>
-                                  )}
+                                            ),
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <p className="text-sm text-muted-foreground italic">
+                                        Nenhuma resposta registrada para esta área.
+                                      </p>
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
+                              )}
+                            </div>
+                          );
+                        })}
                     </div>
                   </div>
                 )}
