@@ -29,6 +29,7 @@ import ViewDiary from './pages/provider/ViewDiary'; // Import ViewDiary
 import ManageProfessionals from './pages/patient/profile/ManageProfessionals';
 import TermsScreen from './pages/landing/Terms';
 import { NotFound } from './pages/NotFound';
+import { LandingThemeProvider } from './components/ui/LandingThemeProvider';
 
 // SWR configuration for data fetching
 <SWRConfig value={{ revalidateOnFocus: false }}>
@@ -167,7 +168,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/terms', // Terms and conditions page
-    element: <TermsScreen onNext={() => {}} currentStep={1} totalSteps={1} isViewOnly={true} />,
+    element: (
+      <LandingThemeProvider>
+        <TermsScreen onNext={() => {}} currentStep={1} totalSteps={1} isViewOnly={true} />
+      </LandingThemeProvider>
+    ),
   },
   {
     path: '*', // Catch-all route for 404 errors
