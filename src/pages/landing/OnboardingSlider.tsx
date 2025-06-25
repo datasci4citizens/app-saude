@@ -3,6 +3,7 @@ import LandingScreen from './Landing';
 import TermsScreen from './Terms';
 import EntryOptionsScreen from './EntryOption';
 import './landing.css';
+import { LandingThemeProvider } from '@/components/ui/LandingThemeProvider';
 
 // Componente de Indicador de Progresso
 const ProgressIndicator = ({
@@ -100,7 +101,8 @@ const OnboardingSlider = () => {
   };
 
   return (
-    <div className="onboarding-slider bg-homeblob2 relative overflow-hidden">
+    <LandingThemeProvider>
+      <div className="onboarding-slider bg-homeblob2 relative overflow-hidden">
       <div className="slider-background" />
 
       {/* Container principal dos slides */}
@@ -166,9 +168,9 @@ const OnboardingSlider = () => {
               {index + 1}
             </button>
           ))}
-        </div>
-      )}
-    </div>
+        </div>        )}
+      </div>
+    </LandingThemeProvider>
   );
 };
 
