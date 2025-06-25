@@ -66,9 +66,9 @@
 
 .onboarding-slider .illustration-container {
   position: absolute;
-  bottom: 27vh;
-  width: 100%;
-  max-width: 500px;
+  bottom: 35vh; /* Movido para cima de 27vh para 35vh */
+  width: 90%;
+  max-width: 500px; /* Reduzido de 500px para 320px */
   height: auto;
   display: flex;
   justify-content: center;
@@ -76,7 +76,8 @@
 }
 
 .onboarding-slider .landing-illustration {
-  width: 100%;
+  width: 90%; /* Reduzido de 100% para 75% */
+  max-width: 500px; /* Tamanho máximo definido */
   margin: 0 auto;
   display: block;
   position: relative;
