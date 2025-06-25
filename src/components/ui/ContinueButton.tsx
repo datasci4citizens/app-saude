@@ -44,7 +44,7 @@ const ContinueButton = ({
           w-full px-8 py-3 h-12 rounded-full font-bold
           font-inter tracking-wide flex items-center justify-center gap-3
           transition-all duration-300 ease-button-smooth
-          bg-offwhite text-typography border-2 border-accent1 shadow-button-soft
+          bg-card text-typography border-2 border-accent1 shadow-button-soft
           ${
             !isDisabled
               ? `hover:shadow-button-hover hover:bg-card/80 cursor-pointer
