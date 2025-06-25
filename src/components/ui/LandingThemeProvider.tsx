@@ -17,33 +17,33 @@ export function LandingThemeProvider({ children }: LandingThemeProviderProps) {
 
   const restoreOriginalTheme = useCallback(() => {
     if (isRestored.current) return;
-    
+
     const root = document.documentElement;
     root.removeAttribute('data-landing-theme');
-    
+
     console.log('LandingThemeProvider: Restaurando tema original');
-    
+
     // Restaura o tema original se era dark
     if (originalUseDarkMode.current === 'true' || originalTheme.current === 'dark') {
       root.classList.add('theme-dark');
     }
-    
+
     isRestored.current = true;
   }, []);
 
   useEffect(() => {
     const root = document.documentElement;
-    
+
     // Salva o tema atual antes de modificar
     originalTheme.current = localStorage.getItem('app-theme');
     originalUseDarkMode.current = localStorage.getItem('useDarkMode');
-    
+
     // Remove qualquer classe de tema dark e força o light theme
     root.classList.remove('theme-dark');
-    
+
     // Adiciona um marcador para identificar que estamos nas landing pages
     root.setAttribute('data-landing-theme', 'true');
-    
+
     console.log('LandingThemeProvider: Forçando tema claro');
 
     // Cleanup function para quando o componente for desmontado
@@ -70,7 +70,7 @@ export function LandingThemeProvider({ children }: LandingThemeProviderProps) {
 
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['class']
+      attributeFilter: ['class'],
     });
 
     return () => observer.disconnect();
@@ -79,11 +79,12 @@ export function LandingThemeProvider({ children }: LandingThemeProviderProps) {
   // Adiciona um listener para quando navegar para fora das landing pages
   useEffect(() => {
     const handleNavigation = () => {
-      const isStillOnLanding = window.location.pathname === '/' || 
-                              window.location.pathname === '/login' || 
-                              window.location.pathname === '/welcome' ||
-                              window.location.pathname.includes('/terms');
-      
+      const isStillOnLanding =
+        window.location.pathname === '/' ||
+        window.location.pathname === '/login' ||
+        window.location.pathname === '/welcome' ||
+        window.location.pathname.includes('/terms');
+
       if (!isStillOnLanding && !isRestored.current) {
         restoreOriginalTheme();
       }
@@ -91,16 +92,16 @@ export function LandingThemeProvider({ children }: LandingThemeProviderProps) {
 
     // Escuta mudanças na URL
     window.addEventListener('popstate', handleNavigation);
-    
+
     // Também escuta mudanças no histórico (para navegação programática)
     const originalPushState = history.pushState;
     const originalReplaceState = history.replaceState;
-    
+
     history.pushState = (...args) => {
       originalPushState.apply(history, args);
       setTimeout(handleNavigation, 0);
     };
-    
+
     history.replaceState = (...args) => {
       originalReplaceState.apply(history, args);
       setTimeout(handleNavigation, 0);
