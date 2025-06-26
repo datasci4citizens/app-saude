@@ -79,12 +79,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     setError(null);
 
     try {
-      await LogoutService.authLogoutCreate({ refresh });
+      localStorage.removeItem('accessToken');
       setSuccess('Logout realizado com sucesso!');
 
       setTimeout(() => {
-        localStorage.clear();
-        navigate('/welcome');
+        navigate('/');
       }, 1500);
     } catch (error: unknown) {
       const errorMessage =

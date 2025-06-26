@@ -23,13 +23,46 @@ import ProfilePage from './pages/patient/profile/ProfilePage';
 import AcsProfilePage from './pages/provider/profile/AcsProfilePage';
 import InterestPage from './pages/patient/interests/InterestsPage';
 import ViewSelectedInterests from './pages/patient/ViewSelectedInterests';
-import ViewPatient from './pages/provider/ViewPatient'; // Import ViewPatient
-import ViewHelp from './pages/provider/ViewHelp'; // Import ViewHelp
-import ViewDiary from './pages/provider/ViewDiary'; // Import ViewDiary
+import ViewPatient from './pages/provider/ViewPatient';
+import ViewHelp from './pages/provider/ViewHelp';
+import ViewDiary from './pages/provider/ViewDiary';
 import ManageProfessionals from './pages/patient/profile/ManageProfessionals';
 import TermsScreen from './pages/landing/Terms';
 import { NotFound } from './pages/NotFound';
 import { LandingThemeProvider } from './components/ui/LandingThemeProvider';
+import AccountManager from './pages/landing/AccountManager';
+import { useState } from 'react';
+import SplashScreen from './components/SplashScreen';
+
+// Componente que decide qual tela mostrar na rota "/"
+const HomePage = () => {
+  const [showSplash, setShowSplash] = useState(true);
+
+  // Função chamada quando splash termina
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+  };
+
+  // Se ainda está na splash, mostrar ela
+  if (showSplash) {
+    return <SplashScreen onComplete={handleSplashComplete} duration={3000} />;
+  }
+
+  // Após splash, verificar qual fluxo usar
+  const savedAccounts = localStorage.getItem('saved_accounts');
+  const hasAccounts = savedAccounts && JSON.parse(savedAccounts).length > 0;
+
+  // Verificar se já completou onboarding
+  const hasCompletedOnboarding = localStorage.getItem('onboarding_completed');
+
+  // Se nunca fez onboarding E não tem contas, mostrar onboarding original
+  if (!hasCompletedOnboarding && !hasAccounts) {
+    return <OnboardingSlider />;
+  }
+
+  // Se tem contas ou já fez onboarding, usar sistema de múltiplas contas
+  return <AccountManager />;
+};
 
 // SWR configuration for data fetching
 <SWRConfig value={{ revalidateOnFocus: false }}>
@@ -40,15 +73,23 @@ import { LandingThemeProvider } from './components/ui/LandingThemeProvider';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <OnboardingSlider />, // Landing page component
+    element: <HomePage />, // Componente que decide qual fluxo usar
+  },
+  {
+    path: '/onboarding',
+    element: <OnboardingSlider />, // Rota específica para onboarding completo
+  },
+  {
+    path: '/accounts',
+    element: <AccountManager />, // Rota específica para gerenciar contas
   },
   {
     path: '/login',
-    element: <OnboardingSlider />, // Login page component
+    element: <AccountManager />, // Alias para /accounts
   },
   {
     path: '/welcome',
-    element: <OnboardingSlider />, // Welcome page component
+    element: <AccountManager />, // Mantém compatibilidade
   },
   {
     path: '/components',

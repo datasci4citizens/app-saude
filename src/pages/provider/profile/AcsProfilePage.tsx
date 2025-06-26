@@ -79,12 +79,11 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
     setError(null);
 
     try {
-      await LogoutService.authLogoutCreate({ refresh });
+      localStorage.removeItem('accessToken');
       setSuccess('Logout realizado com sucesso!');
 
       setTimeout(() => {
-        localStorage.clear();
-        navigate('/welcome');
+        navigate('/');
       }, 1500);
     } catch (error) {
       const errorMessage =
