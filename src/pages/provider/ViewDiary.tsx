@@ -28,7 +28,6 @@ interface InterestAreaDetail {
   name: string;
   shared_with_provider: boolean;
   triggers: TriggerDetail[];
-  is_attention_point: boolean;
   provider_name?: string | null;
   observation_id?: number;
   marked_by?: string[];
@@ -70,14 +69,6 @@ export default function ViewDiary() {
             diaryId,
             Number(personId),
           );
-
-          for (const interest of diaryData.interest_areas) {
-            if (interest.marked_by && interest.marked_by.length > 0) {
-              interest.is_attention_point = true;
-            } else {
-              interest.is_attention_point = false;
-            }
-          }
 
           console.log('Diary Data:', diaryData);
           if (diaryData) {
@@ -165,6 +156,7 @@ export default function ViewDiary() {
           diaryId,
           Number(personId),
         );
+        console.log('Updated Diary Data:', diaryData);
         setDiary(diaryData);
       }
     } catch (error) {
@@ -305,7 +297,7 @@ export default function ViewDiary() {
                                     <h4 className="font-bold text-lg text-card-foreground">
                                       {interest.name}
                                     </h4>
-                                    {interest.is_attention_point && (
+                                    {Boolean(interest.marked_by?.length) && (
                                       <span className="text-destructive text-lg">⚠️</span>
                                     )}
                                   </div>
@@ -322,11 +314,11 @@ export default function ViewDiary() {
                                     </span>
                                   </div>
                                 </div>
-                                {interest.is_attention_point && interest.marked_by && (
+                                {Boolean(interest.marked_by?.length) && (
                                   <div className="mt-2">
                                     <span className="text-xs text-destructive italic">
                                       Marcado como ponto de atenção por{' '}
-                                      {interest.marked_by.join(', ')}
+                                      {interest.marked_by?.join(', ')}
                                     </span>
                                   </div>
                                 )}
@@ -343,17 +335,17 @@ export default function ViewDiary() {
                                             e.stopPropagation();
                                             handleAttentionToggle(
                                               interestId,
-                                              interest.is_attention_point,
+                                              Boolean(interest.marked_by?.length),
                                             );
                                           }}
                                           className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                                            interest.is_attention_point
-                                              ? 'bg-destructive text-white hover:bg-destructive/80'
+                                            Boolean(interest.marked_by?.length)
+                                              ? 'bg-success text-white hover:bg-success/80'
                                               : 'bg-accent1 text-white hover:bg-accent1/80'
                                           }`}
                                         >
-                                          {interest.is_attention_point
-                                            ? 'Remover atenção ⚠️'
+                                          {Boolean(interest.marked_by?.length)
+                                            ? 'Remover atenção ✅'
                                             : 'Marcar atenção ⚠️'}
                                         </button>
                                       </div>
