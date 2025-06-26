@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import LandingScreen from './Landing';
+import LandingScreen from './LoginScreen';
 import TermsScreen from './Terms';
 import EntryOptionsScreen from './EntryOption';
-import './landing.css';
+import './loginScreen.css';
 import { LandingThemeProvider } from '@/components/ui/LandingThemeProvider';
 
 // Componente de Indicador de Progresso
@@ -54,6 +54,7 @@ const ProgressIndicator = ({
 const OnboardingSlider = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [animating, setAnimating] = useState(false);
+  const [userAccountData, setUserAccountData] = useState<any>(null); // Dados da conta temporários
   const totalSteps = 3;
 
   const handleNext = () => {
@@ -76,8 +77,86 @@ const OnboardingSlider = () => {
     }
   };
 
+  // Callback para quando login é bem-sucedido
+  const handleLoginSuccess = (accountData: any) => {
+    // Se usuário já tem role definido, pula onboarding e vai direto
+    if (accountData.role && accountData.role !== 'none') {
+      // Salvar conta e ir direto para app
+      const newAccount = {
+        ...accountData,
+        id: Date.now().toString(),
+        lastLogin: new Date().toLocaleString('pt-BR'),
+      };
+
+      // Salvar no localStorage
+      const existingAccounts = JSON.parse(localStorage.getItem('saved_accounts') || '[]');
+      const updatedAccounts = [...existingAccounts, newAccount];
+      localStorage.setItem('saved_accounts', JSON.stringify(updatedAccounts));
+
+      // Definir tokens
+      localStorage.setItem('accessToken', accountData.accessToken);
+      localStorage.setItem('refreshToken', accountData.refreshToken);
+      localStorage.setItem('role', accountData.role);
+      localStorage.setItem('userId', accountData.userId);
+      localStorage.setItem('fullname', accountData.name);
+      localStorage.setItem('social_name', accountData.socialName || '');
+      localStorage.setItem('profileImage', accountData.profilePicture || '');
+      localStorage.setItem('useDarkMode', String(accountData.useDarkMode));
+      localStorage.setItem('onboarding_completed', 'true');
+
+      // Aplicar tema
+      document.documentElement.className = accountData.useDarkMode ? 'theme-dark' : '';
+
+      // Redirecionar
+      if (accountData.role === 'provider') {
+        window.location.href = '/acs-main-page';
+      } else {
+        window.location.href = '/user-main-page';
+      }
+      return;
+    }
+
+    // Se usuário não tem role, salvar dados temporariamente e continuar onboarding
+    setUserAccountData(accountData);
+    handleNext(); // Vai para termos
+  };
+
   const handleComplete = (userType: string) => {
     setAnimating(true);
+
+    // Se temos dados da conta, atualizar role
+    if (userAccountData) {
+      const finalAccountData = {
+        ...userAccountData,
+        role: userType === 'professional' ? 'provider' : 'person',
+      };
+
+      // Salvar conta completa
+      const newAccount = {
+        ...finalAccountData,
+        id: Date.now().toString(),
+        lastLogin: new Date().toLocaleString('pt-BR'),
+      };
+
+      // Salvar no localStorage
+      const existingAccounts = JSON.parse(localStorage.getItem('saved_accounts') || '[]');
+      const updatedAccounts = [...existingAccounts, newAccount];
+      localStorage.setItem('saved_accounts', JSON.stringify(updatedAccounts));
+
+      // Definir tokens
+      localStorage.setItem('accessToken', finalAccountData.accessToken);
+      localStorage.setItem('refreshToken', finalAccountData.refreshToken);
+      localStorage.setItem('role', finalAccountData.role);
+      localStorage.setItem('userId', finalAccountData.userId);
+      localStorage.setItem('fullname', finalAccountData.name);
+      localStorage.setItem('social_name', finalAccountData.socialName || '');
+      localStorage.setItem('profileImage', finalAccountData.profilePicture || '');
+      localStorage.setItem('useDarkMode', String(finalAccountData.useDarkMode));
+      localStorage.setItem('onboarding_completed', 'true');
+
+      // Aplicar tema
+      document.documentElement.className = finalAccountData.useDarkMode ? 'theme-dark' : '';
+    }
 
     // Adiciona um pequeno delay para feedback visual
     setTimeout(() => {
@@ -118,7 +197,14 @@ const OnboardingSlider = () => {
           }}
         >
           {/* Slide 1: Landing */}
-          <LandingScreen onNext={handleNext} currentStep={currentStep} totalSteps={totalSteps} />
+          <LandingScreen
+            onNext={handleNext}
+            currentStep={currentStep}
+            totalSteps={totalSteps}
+            onAccountAdded={handleLoginSuccess} // Callback para login
+            showBackButton={false} // Não mostrar botão voltar no onboarding
+            isAddingAccount={false} // Flag indicando que é onboarding
+          />
 
           {/* Slide 2: Terms */}
           <TermsScreen
