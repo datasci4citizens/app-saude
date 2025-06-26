@@ -28,6 +28,7 @@ export default function ViewHelp() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [confirmResolveOpen, setConfirmResolveOpen] = useState(false);
+  const [isResolving, setIsResolving] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -113,13 +114,17 @@ export default function ViewHelp() {
     }
 
     try {
+      setIsResolving(true);
       await HelpService.providerHelpResolveCreate(Number(helpId));
       setSuccess('Pedido marcado como resolvido!');
+      setConfirmResolveOpen(false);
       setTimeout(() => {
         navigate(`/provider/patient/${personId}`);
       }, 1500);
     } catch {
       setError('Erro ao marcar como resolvido. Tente novamente.');
+    } finally {
+      setIsResolving(false);
     }
   };
 
@@ -308,9 +313,15 @@ export default function ViewHelp() {
       <ConfirmDialog
         open={confirmResolveOpen}
         title="Marcar como Resolvido"
-        description={`Tem certeza que deseja marcar este pedido como resolvido?`}
+        description="Esta ação marcará o pedido como resolvido e não poderá ser desfeita. Deseja continuar?"
+        confirmText={isResolving ? 'Resolvendo...' : 'Sim, resolver'}
+        cancelText="Cancelar"
+        disabled={isResolving}
+        confirmVariant="default"
         onCancel={() => {
-          setConfirmResolveOpen(false);
+          if (!isResolving) {
+            setConfirmResolveOpen(false);
+          }
         }}
         onConfirm={handleMarkAsResolved}
       />

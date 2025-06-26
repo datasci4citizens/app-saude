@@ -5,7 +5,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '../forms/button';
 
@@ -36,39 +35,66 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 }) => {
   return (
     <Dialog open={open} onOpenChange={onCancel}>
-      <DialogContent className="bg-primary text-typography rounded-xl w-[min(90vw,500px)] p-6 shadow-xl border border-card-border">
-        <DialogHeader>
-          <DialogTitle className="text-lg font-semibold">{title}</DialogTitle>
-          {description && (
-            <DialogDescription className="text-sm text-muted-foreground mt-1">
-              {description}
-            </DialogDescription>
-          )}
-        </DialogHeader>
+      <DialogContent className="bg-card rounded-2xl shadow-xl border border-border w-[min(90vw,400px)] p-0 overflow-hidden">
+        {/* Header Section */}
+        <div className="space-y-4 p-6 pb-4">
+          <DialogHeader className="space-y-3 text-center">
+            <DialogTitle className="text-xl font-bold text-foreground leading-tight">
+              {title}
+            </DialogTitle>
+            {description && (
+              <DialogDescription className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
+                {description}
+              </DialogDescription>
+            )}
+          </DialogHeader>
 
-        {children && <div className="my-4">{children}</div>}
+          {/* Divider */}
+          {description && <div className="w-full h-px bg-border opacity-50" />}
+        </div>
 
-        <DialogFooter className="mt-6 flex justify-end gap-3">
-          <Button variant="outlineGray" onClick={onCancel} className="px-4 py-2 text-sm rounded-md">
-            {cancelText}
-          </Button>
+        {/* Content Area */}
+        {children && (
+          <div className="px-6 pb-4">
+            <div className="text-sm text-muted-foreground">{children}</div>
+          </div>
+        )}
+
+        {/* Footer with Buttons */}
+        <div className="p-6 pt-2 space-y-3">
           <Button
             onClick={onConfirm}
             disabled={disabled}
-            variant={
-              confirmVariant === 'destructive'
-                ? 'destructive'
-                : confirmVariant === 'warning'
-                  ? 'orange'
-                  : 'default'
-            }
-            className={`px-4 py-2 text-sm rounded-md font-semibold transition-all duration-200 ${
-              disabled ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            className={`
+              w-full h-11 font-semibold text-sm rounded-xl
+              transition-all duration-200 ease-in-out
+              ${
+                confirmVariant === 'destructive'
+                  ? 'bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-sm hover:shadow-md'
+                  : confirmVariant === 'warning'
+                    ? 'bg-yellow hover:bg-yellow/90 text-foreground shadow-sm hover:shadow-md'
+                    : 'bg-homeblob1 hover:bg-primary/90 text-primary-foreground shadow-sm hover:shadow-md'
+              }
+              ${disabled ? 'opacity-50 cursor-not-allowed hover:shadow-sm' : 'hover:scale-[1.02] active:scale-[0.98]'}
+            `}
           >
             {confirmText}
           </Button>
-        </DialogFooter>
+
+          <Button
+            onClick={onCancel}
+            className="
+              w-full h-11 font-medium text-sm rounded-xl
+              bg-muted hover:bg-muted/80 text-foreground
+              border border-border hover:border-border/60
+              transition-all duration-200 ease-in-out
+              hover:scale-[1.01] active:scale-[0.99]
+              shadow-sm hover:shadow-md
+            "
+          >
+            {cancelText}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );
