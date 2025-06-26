@@ -133,7 +133,7 @@ const TermsScreen = ({
               else handleBackClick();
             }}
             variant="transparent"
-            headerClassName="bg-transparent"
+            textClassName="!text-white"
             backButtonClassName="bg-transparent hover:bg-white/10"
             arrowClassName="text-white"
           />
