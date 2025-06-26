@@ -8,6 +8,7 @@ interface HeaderProps {
   subtitleClassName?: string;
   centered?: boolean;
   headerClassName?: string;
+  textClassName?: string;
   backButtonClassName?: string;
   arrowClassName?: string;
   showBackButton?: boolean; // New: Option to hide back button
@@ -23,6 +24,7 @@ const Header: React.FC<HeaderProps> = ({
   subtitleClassName,
   centered = false,
   headerClassName = '',
+  textClassName = '',
   backButtonClassName,
   arrowClassName,
   showBackButton = true,
@@ -47,25 +49,25 @@ const Header: React.FC<HeaderProps> = ({
   // Size styles
   const sizeStyles = {
     sm: {
-      container: 'py-2',
+      container: 'py-3',
       title: 'text-lg font-semibold',
       subtitle: 'text-xs',
-      button: 'w-8 h-8',
-      icon: 'w-5 h-5',
+      button: 'w-10 h-10',
+      icon: 'w-6 h-6 text-[1.53rem]',
     },
     md: {
-      container: 'py-3',
+      container: 'py-4',
       title: 'text-titulo font-bold',
       subtitle: 'text-desc-titulo',
-      button: 'w-10 h-10',
-      icon: 'w-6 h-6',
+      button: 'w-12 h-12',
+      icon: 'w-7 h-7 text-[1.6rem]',
     },
     lg: {
-      container: 'py-4',
+      container: 'py-5',
       title: 'text-2xl font-bold',
       subtitle: 'text-base',
-      button: 'w-12 h-12',
-      icon: 'w-7 h-7',
+      button: 'w-14 h-14',
+      icon: 'w-8 h-8 text-[1.67rem]',
     },
   };
 
@@ -101,7 +103,7 @@ const Header: React.FC<HeaderProps> = ({
 
   // Dynamic title styles
   const getTitleStyles = () => {
-    const baseStyles = `${sizeStyles[size].title} font-inter m-0`;
+    const baseStyles = `${sizeStyles[size].title} font-inter m-0 ${textClassName}`;
 
     switch (variant) {
       case 'transparent':
