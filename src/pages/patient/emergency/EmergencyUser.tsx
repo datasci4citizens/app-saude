@@ -310,29 +310,31 @@ export default function EmergencyScreen() {
           )}
 
           {/* Emergency Disclaimer */}
-          <div className="bg-destructive border-2 border-destructive rounded-2xl p-5 shadow-sm">
+          <div className="bg-card border border-card-border rounded-2xl p-5 shadow-button-soft">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-destructive/50 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-destructive/60 text-xl font-bold">⚠️</span>
+              <div className="w-10 h-10 bg-destructive/20 rounded-full flex items-center justify-center shadow-button-soft flex-shrink-0">
+                <span className="text-destructive text-base leading-none flex items-center justify-center">
+                  ⚠️
+                </span>
               </div>
               <div className="flex-1">
-                <h4 className="text-destructive/80 font-bold text-base mb-3">
-                  ATENÇÃO: Resposta não imediata
+                <h4 className="text-destructive font-semibold text-base mb-2 tracking-wide">
+                  Atenção: Resposta não imediata
                 </h4>
-                <p className="text-destructive/70 text-sm leading-relaxed mb-4 font-medium">
+                <p className="text-typography text-sm mb-4 leading-relaxed">
                   Este não é um serviço de emergência. Em situações urgentes, contate os serviços
                   oficiais:
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <a
                     href="tel:192"
-                    className="inline-flex items-center gap-2 bg-destructive hover:bg-destructive/80 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-md"
+                    className="inline-flex items-center gap-2 bg-destructive text-destructive-foreground hover:bg-destructive/90 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-button-hover transition-all duration-200 hover-lift"
                   >
                     📞 192 (SAMU)
                   </a>
                   <a
                     href="tel:188"
-                    className="inline-flex items-center gap-2 bg-destructive hover:bg-destructive/80 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-md"
+                    className="inline-flex items-center gap-2 bg-gray2 text-gray2-foreground hover:bg-accent1 hover:text-accent1-background px-4 py-2.5 rounded-xl text-sm font-semibold shadow-button-soft transition-all duration-200 hover-lift"
                   >
                     💬 188 (CVV)
                   </a>
