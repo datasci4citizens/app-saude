@@ -403,7 +403,7 @@ export default function ImprovedViewDiaryEntry() {
                   </div>
                 </div>
 
-                <div className="bg-card p-4 rounded-lg whitespace-pre-wrap min-h-[150px] border border-card-border">
+                <div className="bg-card p-4 rounded-lg whitespace-pre-wrap min-h-[150px] border border-card-border text-gray2">
                   {textEntry.text}
                 </div>
               </div>

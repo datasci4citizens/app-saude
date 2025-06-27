@@ -14,7 +14,6 @@ import Reminders from './pages/patient/reminders/Reminders';
 import NewReminder from './pages/patient/reminders/NewReminder';
 import { SWRConfig } from 'swr';
 import ModifyHabits from './pages/patient/diary/modify-habits';
-import { ThemeProvider } from './contexts/ThemeContext';
 import ViewDiaryEntry from './pages/patient/diary/ViewDiary';
 import ProfilePage from './pages/patient/profile/ProfilePage';
 import AcsProfilePage from './pages/provider/profile/AcsProfilePage';
@@ -29,6 +28,7 @@ import { NotFound } from './pages/NotFound';
 import AccountManager from './pages/landing/AccountManager';
 import { useState } from 'react';
 import SplashScreen from './components/SplashScreen';
+import { AppProvider } from './contexts/AppContext';
 
 // Componente que decide qual tela mostrar na rota "/"
 const HomePage = () => {
@@ -194,10 +194,8 @@ const router = createBrowserRouter([
  */
 export function App() {
   return (
-    <ThemeProvider>
-      <div className="min-h-screen bg-background text-typography">
-        <RouterProvider router={router} />
-      </div>
-    </ThemeProvider>
+    <AppProvider>
+      <RouterProvider router={router} />
+    </AppProvider>
   );
 }

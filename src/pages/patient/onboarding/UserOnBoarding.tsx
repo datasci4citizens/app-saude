@@ -10,7 +10,7 @@ import type { FullPersonCreate } from '@/api/models/FullPersonCreate';
 import type { AddressFormData } from '@/pages/patient/onboarding/UserInfoForm2';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { ErrorMessage } from '@/components/ui/error-message';
-import { getCurrentAccount } from '@/pages/landing/AccountManager';
+import { useApp } from '@/contexts/AppContext';
 
 // Define types for the incoming data from each form
 interface PersonData {
@@ -31,6 +31,7 @@ export default function UserOnboarding() {
   const [error, setError] = useState<string | null>(null);
   const [isMutating, setIsMutating] = useState(false);
   const [success, setSuccess] = useState<boolean>(false);
+  const { currentAccount } = useApp();
 
   const handleFirstFormSubmit = (data: PersonData) => {
     console.log('First form data submitted:', data);
@@ -43,7 +44,7 @@ export default function UserOnboarding() {
       gender_concept: data.gender_concept,
       ethnicity_concept: 3, // fill
       race_concept: data.race_concept,
-      profile_picture: getCurrentAccount()?.profilePicture || '',
+      profile_picture: currentAccount?.profilePicture || '',
     };
     setPerson(person);
     setStep(2);

@@ -492,7 +492,7 @@ export default function UserMainPage() {
                   <div className="mb-3 p-3 bg-destructive-100/90 border border-destructive-300 rounded-lg shadow-inner">
                     <div className="flex items-center gap-2">
                       <span className="text-destructive-700 text-xs">👤</span>
-                      <span className="text-xs font-medium text-destructive-800">
+                      <span className="text-xs font-medium text-yellow">
                         {String(interest.interest_area.marked_by?.join(', ') || 'Profissional')}
                       </span>
                       {interest.attention_point_date && (
@@ -547,7 +547,7 @@ export default function UserMainPage() {
                           className="flex items-center gap-2 p-2 rounded-lg border border-card-border hover:bg-accent1/30 transition-colors duration-200 shadow-sm"
                         >
                           <div
-                            className={`w-6 h-6 ${typeInfo.bg} rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm`}
+                            className={`w-6 h-6 text-typography rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm`}
                           >
                             <span className="text-xs">{typeInfo.icon}</span>
                           </div>
@@ -555,7 +555,7 @@ export default function UserMainPage() {
                             {String(trigger?.name || '')}
                           </span>
                           <span
-                            className={`text-xs font-medium px-2 py-0.5 rounded-full ${typeInfo.bg} ${typeInfo.color} shadow-sm flex-shrink-0`}
+                            className={`text-xs font-medium px-2 py-0.5 rounded-full text-gray2 shadow-sm flex-shrink-0`}
                           >
                             {typeInfo.label}
                           </span>
@@ -641,7 +641,7 @@ export default function UserMainPage() {
           <div className="w-full flex justify-center px-2">
             <Button
               onClick={() => setEditionMode(true)}
-              className="bg-gradient-button-edit hover:bg-gradient-button-edit-hover text-white w-full max-w-xs shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 py-2.5 rounded-xl font-semibold text-desc-titulo"
+              className="bg-gradient-button-edit hover:bg-gradient-button-edit-hover text-typography w-full max-w-xs shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 py-2.5 rounded-xl font-semibold"
               disabled={isSyncing}
             >
               ✏️ Editar Interesses

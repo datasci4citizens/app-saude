@@ -1,9 +1,10 @@
 import { Navigate } from 'react-router-dom';
 import { type ReactElement } from 'react';
-import { getCurrentAccount } from '../pages/landing/AccountManager';
+import { useAccount } from '@/contexts/AppContext';
 
 function getUserType() {
-  return getCurrentAccount()?.role || 'none';
+  const { currentAccount } = useAccount();
+  return currentAccount?.role || 'none';
 }
 
 interface ProtectedRouteProps {
