@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User, Plus, MoreVertical, LogOut, Moon, Sun } from 'lucide-react';
-import type { Account } from './AccountManager';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useApp, type Account } from '../../contexts/AppContext';
+import { useNavigate } from 'react-router-dom';
 
 interface AccountSelectionScreenProps {
   accounts: Account[];
@@ -25,7 +25,37 @@ const AccountSelectionScreen: React.FC<AccountSelectionScreenProps> = ({
   isLoading = false,
 }) => {
   const [showAccountOptions, setShowAccountOptions] = useState<string | null>(null);
-  const { theme, toggleTheme } = useTheme();
+  const [loadingAccount, setLoadingAccount] = useState<string | null>(null); // Estado para loading por conta
+  const { theme, toggleTheme } = useApp();
+  const navigate = useNavigate();
+
+  async function overwriteSelectAccount(account: Account) {
+    if (loadingAccount || isLoading) return; // Previne cliques múltiplos
+
+    console.log('Selecionando conta:', account.name);
+    setLoadingAccount(account.userId); // Mostra loading para esta conta
+
+    try {
+      // Aguarda selectAccount completar
+      await new Promise<void>((resolve) => {
+        selectAccount(account, false);
+        // Aguarda um pouco para o processo interno terminar
+        setTimeout(() => resolve(), 1000);
+      });
+
+      // Agora navega baseado na role da conta (não no currentAccount)
+      // todo: if account is in selection but not finished onbording, redirect to onboarding
+      if (account.role === 'provider') {
+        navigate('/acs-main-page');
+      } else {
+        navigate('/user-main-page');
+      }
+    } catch (error) {
+      console.error('Erro ao selecionar conta:', error);
+    } finally {
+      setLoadingAccount(null);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -53,110 +83,167 @@ const AccountSelectionScreen: React.FC<AccountSelectionScreenProps> = ({
 
       {/* Lista de Contas */}
       <div className="px-4 py-6 space-y-3">
-        {accounts.map((account) => (
-          <div
-            key={account.userId}
-            className="relative bg-card rounded-xl border border-card-border hover:border-selection/50 transition-all duration-200 overflow-hidden"
-          >
+        {accounts.map((account) => {
+          const isAccountLoading = loadingAccount === account.userId;
+
+          return (
             <div
-              onClick={() => !isLoading && selectAccount(account, false)}
-              className={`flex items-center p-4 cursor-pointer hover:bg-muted/50 transition-colors ${
-                isLoading ? 'opacity-50 cursor-not-allowed' : ''
+              key={account.userId}
+              className={`relative bg-card rounded-xl border border-card-border transition-all duration-200 overflow-hidden ${
+                isAccountLoading
+                  ? 'border-selection/50 shadow-lg scale-[0.98]'
+                  : 'hover:border-selection/50 hover:shadow-sm'
               }`}
             >
-              {/* Avatar */}
-              <div className="relative">
-                {account.profilePicture ? (
-                  <img
-                    src={account.profilePicture}
-                    alt={account.name}
-                    className="w-12 h-12 rounded-full object-cover border-2 border-card-border"
-                  />
-                ) : (
-                  <div className="w-12 h-12 rounded-full bg-accent1 flex items-center justify-center">
-                    <User className="w-6 h-6 text-white" />
-                  </div>
-                )}
-                {/* Indicador de role */}
-                <div
-                  className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-card ${
-                    account.role === 'provider' ? 'bg-accent1' : 'bg-selection'
-                  }`}
-                />
-              </div>
-
-              {/* Informações da conta */}
-              <div className="flex-1 ml-4">
-                <h3 className="text-topicos2 font-work-sans text-typography">{account.name}</h3>
-                <p className="text-campos-preenchimento2 text-gray2">{account.email}</p>
-                <p className="text-desc-campos text-gray2 mt-1">
-                  Último acesso: {account.lastLogin}
-                </p>
-              </div>
-
-              {/* Badge do tipo de conta */}
               <div
-                className={`px-3 py-1 rounded-full text-desc-campos font-medium mr-2 ${
-                  account.role === 'provider'
-                    ? 'bg-accent1/20 text-accent1'
-                    : 'bg-selection/20 text-selection'
+                onClick={() => !isLoading && !isAccountLoading && overwriteSelectAccount(account)}
+                className={`flex items-center p-4 cursor-pointer transition-all duration-200 ${
+                  isLoading || isAccountLoading
+                    ? 'opacity-70 cursor-not-allowed'
+                    : 'hover:bg-muted/50 active:scale-[0.99]'
                 }`}
               >
-                {account.role === 'provider' ? 'Profissional' : 'Paciente'}
-              </div>
-            </div>
+                {/* Avatar */}
+                <div className="relative">
+                  {account.profilePicture ? (
+                    <img
+                      src={account.profilePicture}
+                      alt={account.name}
+                      className={`w-12 h-12 rounded-full object-cover border-2 transition-all duration-200 border-card-border`}
+                    />
+                  ) : (
+                    <div
+                      className={`w-12 h-12 rounded-full bg-accent1 flex items-center justify-center transition-all duration-200 ${
+                        isAccountLoading ? 'animate-pulse' : ''
+                      }`}
+                    >
+                      <User className="w-6 h-6 text-white" />
+                    </div>
+                  )}
 
-            {/* Botão de opções - SEMPRE VISÍVEL */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowAccountOptions(
-                  showAccountOptions === account.userId ? null : account.userId,
-                );
-              }}
-              className="absolute top-4 right-4 p-2 rounded-lg hover:bg-muted/50 transition-colors"
-              title="Opções da conta"
-            >
-              <MoreVertical className="w-4 h-4 text-gray2" />
-            </button>
+                  {/* Indicador de role */}
+                  <div
+                    className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-card transition-all duration-200 ${
+                      account.role === 'provider' ? 'bg-accent1' : 'bg-selection'
+                    } ${isAccountLoading ? 'animate-pulse' : ''}`}
+                  />
+                </div>
 
-            {/* Menu de opções */}
-            {showAccountOptions === account.userId && (
-              <div className="absolute top-12 right-4 bg-card border border-card-border rounded-lg shadow-lg z-10 min-w-[140px]">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    confirmRemoveAccount(account);
-                    setShowAccountOptions(null);
-                  }}
-                  className="w-full flex items-center px-4 py-3 text-destructive hover:bg-destructive/10 transition-colors text-sm"
+                {/* Informações da conta */}
+                <div className="flex-1 ml-4">
+                  <h3
+                    className={`text-topicos2 font-work-sans text-typography transition-colors duration-200 ${
+                      isAccountLoading ? 'text-selection' : ''
+                    }`}
+                  >
+                    {account.name}
+                  </h3>
+                  <p className="text-campos-preenchimento2 text-gray2">{account.email}</p>
+                  <p className="text-desc-campos text-gray2 mt-1">
+                    {isAccountLoading ? 'Acessando...' : `Último acesso: ${account.lastLogin}`}
+                  </p>
+                </div>
+
+                {/* Badge do tipo de conta */}
+                <div
+                  className={`px-3 py-1 rounded-full text-desc-campos font-medium mr-2 transition-all duration-200 ${
+                    account.role === 'provider'
+                      ? 'bg-accent1/20 text-accent1'
+                      : 'bg-selection/20 text-selection'
+                  } ${isAccountLoading ? 'animate-pulse' : ''}`}
                 >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Remover conta
-                </button>
+                  {account.role === 'provider' ? 'Profissional' : 'Paciente'}
+                </div>
+
+                {/* Loading indicator */}
+                {isAccountLoading && (
+                  <div className="mr-2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-selection border-t-transparent" />
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        ))}
+
+              {/* Botão de opções - SEMPRE VISÍVEL */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!isAccountLoading) {
+                    setShowAccountOptions(
+                      showAccountOptions === account.userId ? null : account.userId,
+                    );
+                  }
+                }}
+                className={`absolute top-4 right-4 p-2 rounded-lg transition-all duration-200 ${
+                  isAccountLoading
+                    ? 'opacity-30 cursor-not-allowed'
+                    : 'hover:bg-muted/50 hover:scale-110'
+                }`}
+                title="Opções da conta"
+                disabled={isAccountLoading}
+              >
+                <MoreVertical className="w-4 h-4 text-gray2" />
+              </button>
+
+              {/* Menu de opções */}
+              {showAccountOptions === account.userId && !isAccountLoading && (
+                <div className="absolute top-12 right-4 bg-card border border-card-border rounded-lg shadow-lg z-10 min-w-[140px] animate-in slide-in-from-top-2 duration-200">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      confirmRemoveAccount(account);
+                      setShowAccountOptions(null);
+                    }}
+                    className="w-full flex items-center px-4 py-3 text-destructive hover:bg-destructive/10 transition-colors text-sm rounded-lg"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Remover conta
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })}
 
         {/* Botão Adicionar Nova Conta */}
         <button
           onClick={navigateToLogin}
-          disabled={isLoading}
-          className={`w-full bg-button-primary hover:bg-button-primary-hover active:bg-button-primary-active rounded-xl p-4 transition-all duration-200 button-press-effect group ${
-            isLoading ? 'opacity-50 cursor-not-allowed' : ''
+          disabled={isLoading || !!loadingAccount}
+          className={`w-full bg-button-primary hover:bg-button-primary-hover active:bg-button-primary-active rounded-xl p-4 transition-all duration-200 group ${
+            isLoading || !!loadingAccount
+              ? 'opacity-50 cursor-not-allowed'
+              : 'hover:scale-[1.02] active:scale-[0.98] hover:shadow-lg'
           }`}
         >
           <div className="flex items-center justify-center">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-3 group-hover:scale-110 transition-transform">
-              <Plus className="w-5 h-5 text-white" />
+            <div
+              className={`w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-3 transition-transform duration-200 ${
+                !(isLoading || !!loadingAccount)
+                  ? 'group-hover:scale-110 group-hover:rotate-90'
+                  : ''
+              }`}
+            >
+              <Plus className="w-5 h-5 text-white transition-transform duration-200" />
             </div>
             <span className="text-button-primary font-work-sans text-white">
-              {isLoading ? 'Aguarde...' : 'Adicionar nova conta'}
+              {isLoading || !!loadingAccount ? 'Aguarde...' : 'Adicionar nova conta'}
             </span>
           </div>
         </button>
       </div>
+
+      {/* Loading overlay global */}
+      {(isLoading || !!loadingAccount) && (
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 flex items-center justify-center">
+          <div className="bg-card rounded-lg p-6 shadow-lg animate-in zoom-in-50 duration-200">
+            <div className="flex items-center space-x-3">
+              <div className="animate-spin rounded-full h-6 w-6 border-2 border-selection border-t-transparent" />
+              <span className="text-typography font-work-sans">
+                {loadingAccount ? 'Acessando conta...' : 'Carregando...'}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Clique fora para fechar menu */}
       {showAccountOptions && (

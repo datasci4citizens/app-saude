@@ -9,7 +9,7 @@ import { useGoogleLogin } from '@react-oauth/google';
 import type { AuthTokenResponse } from '@/api';
 import type { Auth } from '@/api/models/Auth';
 import './loginScreen.css';
-import type { Account } from './AccountManager';
+import type { Account } from '../../contexts/AppContext';
 
 const isMobile = Capacitor.isNativePlatform();
 

@@ -1,4 +1,4 @@
-/* enhanced request function with 401 retry logic */
+/* enhanced request function with 401 retry logic - FIXED VERSION */
 import { ApiError } from './ApiError';
 import type { ApiRequestOptions } from './ApiRequestOptions';
 import type { ApiResult } from './ApiResult';
@@ -7,9 +7,9 @@ import type { OnCancel } from './CancelablePromise';
 import type { OpenAPIConfig } from './OpenAPI';
 import { AuthService } from '../services/AuthService';
 import type { TokenRefresh } from '../models/TokenRefresh';
-import { getCurrentAccount } from '@/pages/landing/AccountManager';
+import { getCurrentAccount } from '@/contexts/AppContext';
 
-// Your existing utility functions remain the same
+// ... (suas funções utilitárias permanecem iguais)
 export const isDefined = <T>(
   value: T | null | undefined,
 ): value is Exclude<T, null | undefined> => {
@@ -264,37 +264,107 @@ export const getResponseBody = async (response: Response): Promise<any> => {
   return undefined;
 };
 
-// Track if we're already refreshing to avoid multiple simultaneous refresh attempts
-let isRefreshing = false;
-let refreshPromise: Promise<string> | null = null;
+// VERSÃO CORRIGIDA DO CONTROLE DE REFRESH
+interface RefreshState {
+  isRefreshing: boolean;
+  promise: Promise<string> | null;
+  attempts: number;
+  lastAttemptTime: number;
+}
 
-export async function refreshToken(): Promise<string> {
+const refreshState: RefreshState = {
+  isRefreshing: false,
+  promise: null,
+  attempts: 0,
+  lastAttemptTime: 0,
+};
+
+const MAX_REFRESH_ATTEMPTS = 3;
+const REFRESH_COOLDOWN = 5000; // 5 segundos
+
+export async function refreshToken(config: OpenAPIConfig): Promise<string> {
   console.log('Iniciando refresh de token...');
-  const currentAccount = getCurrentAccount();
-  const refresh = currentAccount?.refreshToken;
 
-  if (!refresh) throw new Error('Refresh token não encontrado');
+  const now = Date.now();
 
-  const tokenRefresh: TokenRefresh = {
-    access: '',
-    refresh,
-  };
-
-  console.log('Token de refresh:', tokenRefresh);
-
-  currentAccount.accessToken = ''; // Clear current access token to force refresh
-
-  const response = await AuthService.authTokenRefreshCreate(tokenRefresh);
-  if (!response || !response.access || !response.refresh) {
-    throw new Error('Erro ao obter novos tokens');
+  // Reset attempts se passou do cooldown
+  if (now - refreshState.lastAttemptTime > REFRESH_COOLDOWN) {
+    refreshState.attempts = 0;
   }
 
-  currentAccount.accessToken = response.access;
-  currentAccount.refreshToken = response.refresh;
+  // Verifica se excedeu tentativas máximas
+  if (refreshState.attempts >= MAX_REFRESH_ATTEMPTS) {
+    console.error('Máximo de tentativas de refresh excedido');
+    throw new Error('Max refresh attempts exceeded');
+  }
+
+  refreshState.attempts++;
+  refreshState.lastAttemptTime = now;
+
+  const currentAccount = getCurrentAccount();
+
+  if (!currentAccount?.refreshToken) {
+    throw new Error('No refresh token available');
+  }
+
+  const refresh = await resolve({} as ApiRequestOptions, config.REFRESH_TOKEN);
+  const tokenRefresh: TokenRefresh = {
+    access: '',
+    refresh: isStringWithValue(refresh) ? refresh : currentAccount.refreshToken,
+  };
+
+  console.log('Fazendo refresh do token...');
+
+  const previousToken = config.TOKEN;
+  config.TOKEN = '';
+  const response = await AuthService.authTokenRefreshCreate(tokenRefresh);
+  config.TOKEN = previousToken; // Restaura o token original em caso de falha
+
+  if (!response.access) {
+    throw new Error('Failed to refresh token - no access token returned');
+  }
+
+  config.TOKEN = response.access;
+
+  // Atualiza localStorage
+  if (currentAccount) {
+    const savedAccounts = localStorage.getItem('saved_accounts');
+    if (savedAccounts) {
+      try {
+        const accounts = JSON.parse(savedAccounts);
+        const updatedAccounts = accounts.map((acc: any) =>
+          acc.userId === currentAccount.userId
+            ? { ...acc, accessToken: response.access, refreshToken: response.refresh }
+            : acc,
+        );
+        localStorage.setItem('saved_accounts', JSON.stringify(updatedAccounts));
+      } catch (error) {
+        console.error('Erro ao atualizar tokens no localStorage:', error);
+      }
+    }
+  }
+
+  console.log('Token refreshed successfully');
   return response.access;
 }
 
-// Enhanced error handling with retry logic
+async function handleTokenRefresh(config: OpenAPIConfig): Promise<string> {
+  // Se já está refreshing, aguarda o resultado
+  if (refreshState.isRefreshing && refreshState.promise) {
+    console.log('Refresh já em andamento, aguardando...');
+    return await refreshState.promise;
+  }
+
+  // Inicia novo refresh
+  refreshState.isRefreshing = true;
+  refreshState.promise = refreshToken(config).finally(() => {
+    refreshState.isRefreshing = false;
+    refreshState.promise = null;
+  });
+
+  return await refreshState.promise;
+}
+
 export const catchErrorCodes = async (
   options: ApiRequestOptions,
   result: ApiResult,
@@ -313,31 +383,32 @@ export const catchErrorCodes = async (
     ...options.errors,
   };
 
-  // Handle 401 with token refresh and retry
-  const refresh = getCurrentAccount()?.refreshToken;
-  if (result.status === 401 && !isRetry && refresh) {
+  const currentAccount = getCurrentAccount();
+
+  // CONDIÇÕES MAIS RIGOROSAS PARA RETRY
+  if (
+    result.status === 401 &&
+    !isRetry &&
+    currentAccount?.refreshToken &&
+    refreshState.attempts < MAX_REFRESH_ATTEMPTS
+  ) {
     console.log('401 detectado, tentando refresh do token...');
 
     try {
-      // Prevent multiple simultaneous refresh attempts
-      if (isRefreshing && refreshPromise) {
-        console.log('Refresh já em andamento, aguardando...');
-        await refreshPromise;
-      } else if (!isRefreshing) {
-        isRefreshing = true;
-        refreshPromise = refreshToken();
-        await refreshPromise;
-        isRefreshing = false;
-        refreshPromise = null;
+      const newToken = await handleTokenRefresh(config);
+
+      // Verifica se realmente conseguiu um novo token
+      if (!newToken || newToken === config.TOKEN) {
+        throw new Error('Failed to get new token');
       }
 
       console.log('Token refreshed, tentando requisição novamente...');
 
-      // Retry the original request with new token
+      // Retry da requisição original
       const url = getUrl(config, options);
       const formData = getFormData(options);
       const body = getRequestBody(options);
-      const headers = await getHeaders(config, options); // This will get the new token
+      const headers = await getHeaders(config, options);
 
       if (!onCancel.isCancelled) {
         const retryResponse = await sendRequest(
@@ -360,30 +431,27 @@ export const catchErrorCodes = async (
           body: retryResponseHeader ?? retryResponseBody,
         };
 
-        // Recursive call but with isRetry = true to prevent infinite loops
+        // Se ainda der 401 no retry, não tenta novamente
+        if (retryResult.status === 401) {
+          console.error('Token refresh aparentemente não funcionou, ainda recebendo 401');
+          throw new Error('Token refresh failed - still unauthorized');
+        }
+
+        // Recursive call com isRetry = true
         return await catchErrorCodes(options, retryResult, config, onCancel, true);
       }
     } catch (refreshError) {
       console.error('Erro no refresh do token:', refreshError);
-      isRefreshing = false;
-      refreshPromise = null;
 
-      // Clear tokens and potentially redirect to login
-      const currentAccount = getCurrentAccount();
-      if (currentAccount) {
-        currentAccount.accessToken = '';
-        currentAccount.refreshToken = '';
-      }
+      // Reset do estado em caso de erro
+      refreshState.isRefreshing = false;
+      refreshState.promise = null;
 
-      // You might want to trigger a redirect to login page here
-      window.location.href = '/welcome';
-
-      console.log(refreshError);
       throw new ApiError(options, result, 'Session expired - please login again');
     }
   }
 
-  // Handle other errors normally
+  // Handle outros erros normalmente
   const error = errors[result.status];
   if (error) {
     throw new ApiError(options, result, error);
@@ -441,7 +509,6 @@ export const request = <T>(
           body: responseHeader ?? responseBody,
         };
 
-        // Use enhanced error handling with retry logic
         const finalResult = await catchErrorCodes(options, result, config, onCancel);
         resolve(finalResult.body);
       }

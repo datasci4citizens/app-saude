@@ -1,6 +1,6 @@
 import React from 'react';
 import { LogOut, User } from 'lucide-react';
-import type { Account } from './AccountManager';
+import type { Account } from '../../contexts/AppContext';
 
 interface ConfirmLogoutScreenProps {
   accountToRemove: Account | null;

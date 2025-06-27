@@ -6,11 +6,11 @@ import BottomNavigationBar from '@/components/ui/navigator-bar';
 import { AccountService } from '@/api/services/AccountService';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { ErrorMessage } from '@/components/ui/error-message';
+import { ConfirmDialog } from '@/components/ui/confirmDialog';
+import { TextField } from '@/components/forms/text_input';
 import { ApiService } from '@/api/services/ApiService';
-import { useTheme } from '@/contexts/ThemeContext';
 import { Switch } from '@/components/ui/switch';
-import { getCurrentAccount } from '@/pages/landing/AccountManager';
-import { useAccount } from '@/contexts/AccountContext';
+import { useApp } from '@/contexts/AppContext';
 
 interface AcsProfileMenuItem {
   id: string;
@@ -36,23 +36,24 @@ interface AcsProfilePageProps {
   onEditProfile?: () => void;
 }
 
-const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
-  name = getCurrentAccount()?.name ?? 'ACS',
-  profileImage = getCurrentAccount()?.profilePicture ?? '',
-  onEditProfile,
-}) => {
+const AcsProfilePage: React.FC<AcsProfilePageProps> = ({ onEditProfile }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { removeAccount, currentAccount, logoutCurrentAccount } = useApp();
+
+  const name = currentAccount?.name ?? 'ACS';
+  const profileImage = currentAccount?.profilePicture ?? '';
 
   // Data states
   const [providerId, setProviderId] = useState<number | null>(null);
-  const { currentAccount, removeAccount } = useAccount();
 
   // UI states
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loadingItem, setLoadingItem] = useState<string | null>(null);
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useApp();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   useEffect(() => {
     const fetchProviderId = async () => {
@@ -71,22 +72,17 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
   const clearSuccess = () => setSuccess(null);
 
   const handleLogout = async () => {
-    const refresh = getCurrentAccount()?.refreshToken;
-    if (!refresh) {
-      setError('Token de autenticação não encontrado. Faça login novamente.');
-      return;
-    }
-
     setLoadingItem('logout');
     setError(null);
 
     try {
       setSuccess('Logout realizado com sucesso!');
 
-      setTimeout(() => {
+      setTimeout(async () => {
+        await logoutCurrentAccount();
         navigate('/');
       }, 1500);
-    } catch (error) {
+    } catch (error: unknown) {
       const errorMessage =
         error instanceof Error && error.message
           ? `Erro ao fazer logout: ${error.message}`
@@ -103,17 +99,16 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
       return;
     }
 
-    const confirmed = window.confirm(
-      '⚠️ ATENÇÃO: Esta ação irá excluir permanentemente sua conta e todos os dados associados.\n\nEsta ação NÃO PODE ser desfeita.\n\nTem certeza que deseja continuar?',
-    );
+    setShowDeleteDialog(true);
+  };
 
-    if (!confirmed) return;
+  const confirmDeleteAccount = async () => {
+    if (deleteConfirmText.toUpperCase() !== 'EXCLUIR') {
+      return; // O botão já está desabilitado, mas mantemos a verificação
+    }
 
-    // Segunda confirmação para ações críticas
-    const doubleConfirmed = window.confirm("Digite 'EXCLUIR' para confirmar a exclusão da conta:");
-
-    if (!doubleConfirmed) return;
-
+    setShowDeleteDialog(false);
+    setDeleteConfirmText('');
     setLoadingItem('delete');
     setError(null);
 
@@ -122,8 +117,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
       setSuccess('Conta excluída com sucesso!');
 
       setTimeout(() => {
-        removeAccount(currentAccount?.userId || '');
-        navigate('/welcome');
+        removeAccount(currentAccount!!.userId);
       }, 1500);
     } catch (error) {
       setError('Erro ao excluir conta. Tente novamente.');
@@ -131,6 +125,11 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
     } finally {
       setLoadingItem(null);
     }
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setShowDeleteDialog(false);
+    setDeleteConfirmText('');
   };
 
   const menuSections: AcsProfileMenuSection[] = [
@@ -399,6 +398,50 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
         forceActiveId={getActiveNavId()}
         onItemClick={handleNavigationClick}
       />
+
+      {/* Delete Account Confirmation Dialog */}
+      <ConfirmDialog
+        open={showDeleteDialog}
+        title="⚠️ Excluir Conta"
+        onConfirm={confirmDeleteAccount}
+        onCancel={handleCloseDeleteDialog}
+        confirmText="Excluir Conta"
+        cancelText="Cancelar"
+        confirmVariant="destructive"
+        disabled={deleteConfirmText.toUpperCase() !== 'EXCLUIR'}
+      >
+        <div className="space-y-4">
+          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 shadow-sm">
+            <p className="text-sm text-destructive font-medium mb-2">
+              ⚠️ ATENÇÃO: Esta ação é irreversível!
+            </p>
+            <p className="text-sm text-destructive-foreground">
+              Esta ação irá excluir permanentemente sua conta e todos os dados associados. Esta
+              operação <strong>NÃO PODE</strong> ser desfeita.
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-typography mb-2">
+              Para confirmar, digite <strong>EXCLUIR</strong> no campo abaixo:
+            </label>
+            <TextField
+              id="delete-confirm-text"
+              name="delete-confirm-text"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              placeholder="Digite EXCLUIR"
+              className="w-full shadow-sm"
+            />
+          </div>
+
+          {deleteConfirmText && deleteConfirmText.toUpperCase() !== 'EXCLUIR' && (
+            <p className="text-sm text-destructive">
+              Texto incorreto. Digite exatamente "EXCLUIR" para continuar.
+            </p>
+          )}
+        </div>
+      </ConfirmDialog>
     </div>
   );
 };

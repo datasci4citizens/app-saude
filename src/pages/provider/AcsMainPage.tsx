@@ -6,11 +6,12 @@ import { ErrorMessage } from '@/components/ui/error-message';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
 import { HelpService } from '@/api/services/HelpService';
 import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
-import { getCurrentAccount } from '../landing/AccountManager';
+import { useApp } from '@/contexts/AppContext';
 
 export default function AcsMainPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { currentAccount } = useApp();
 
   // Data states
   const [emergencyCount, setEmergencyCount] = useState<number>(0);
@@ -22,7 +23,7 @@ export default function AcsMainPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const userName = getCurrentAccount()?.name || 'ACS';
+  const userName = currentAccount?.name || 'ACS';
   const currentHour = new Date().getHours();
 
   const getGreeting = () => {

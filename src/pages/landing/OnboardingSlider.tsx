@@ -3,7 +3,8 @@ import LoginScreen from './LoginScreen';
 import TermsScreen from './Terms';
 import EntryOptionsScreen from './EntryOption';
 import './loginScreen.css';
-import type { Account } from './AccountManager';
+import type { Account } from '../../contexts/AppContext';
+import { useNavigate } from 'react-router-dom';
 
 interface OnboardingSliderProps {
   addAccount: (accountData: Account, isNew: boolean) => void;
@@ -14,6 +15,7 @@ const OnboardingSlider = (props: OnboardingSliderProps) => {
   const [animating, setAnimating] = useState(false);
   const [userAccountData, setUserAccountData] = useState<Account | null>(null); // Dados da conta temporários
   const totalSteps = 3;
+  const navigate = useNavigate();
 
   const handleNext = () => {
     if (currentStep < totalSteps - 1 && !animating) {
@@ -40,6 +42,11 @@ const OnboardingSlider = (props: OnboardingSliderProps) => {
     console.log('Login bem-sucedido:', accountData);
     if (accountData.role && accountData.role !== 'none') {
       props.addAccount(accountData, false);
+      if (accountData.role === 'provider') {
+        navigate('/acs-main-page');
+      } else {
+        navigate('/user-main-page');
+      }
       return;
     }
 
@@ -49,7 +56,7 @@ const OnboardingSlider = (props: OnboardingSliderProps) => {
     handleNext(); // Vai para termos
   };
 
-  const handleComplete = (userType: string) => {
+  const handleComplete = async (userType: string) => {
     setAnimating(true);
 
     // Se temos dados da conta, atualizar role
@@ -59,8 +66,24 @@ const OnboardingSlider = (props: OnboardingSliderProps) => {
         role: userType === 'professional' ? 'provider' : 'person',
         lastLogin: new Date().toLocaleString('pt-BR'),
       };
-      props.addAccount(finalAccountData, true);
+
+      // Aguarda o addAccount terminar
+      await new Promise<void>((resolve) => {
+        props.addAccount(finalAccountData, true);
+        setTimeout(() => resolve(), 1000);
+      });
+
+      // Só navega depois que o processo terminou
+      if (userType === 'professional') {
+        navigate('/forms-prof');
+      } else {
+        navigate('/forms-user');
+      }
+    } else {
+      console.error('Dados da conta não disponíveis para completar onboarding');
     }
+
+    setAnimating(false);
   };
 
   // Função para ir diretamente para um step (útil para desenvolvimento/debug)

@@ -487,7 +487,7 @@ export default function ImprovedDiaryListPage() {
                                       className={`flex items-center gap-2 text-sm p-2 rounded-lg ${
                                         area.is_attention_point
                                           ? 'bg-accent1/10 text-accent1 border border-accent1/20'
-                                          : 'border border-card-border'
+                                          : 'border border-card-border text-gray2'
                                       }`}
                                     >
                                       {area.is_attention_point && <AlertTriangle size={14} />}
@@ -533,7 +533,7 @@ export default function ImprovedDiaryListPage() {
                               {/* Summary text */}
                               <p
                                 className={`line-clamp-2 leading-relaxed ${
-                                  hasAttentionPoints ? 'text-accent1/80' : 'text-typography/80'
+                                  hasAttentionPoints ? 'text-accent1/80' : 'text-gray2'
                                 }`}
                               >
                                 {getDiarySummary(diary)}

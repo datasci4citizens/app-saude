@@ -14,6 +14,14 @@ const config: CapacitorConfig = {
             grantOfflineAccess: true,
             forceCodeForRefreshToken: true,
         },
+        SplashScreen: {
+            launchShowDuration: 3000,
+            autoHide: true,
+            backgroundColor: '#3b82f6',
+            spinnerColor: '#f59e0b',
+            splashFullScreen: true,
+            splashImmersive: true,
+        },
     },
 };
 

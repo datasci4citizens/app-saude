@@ -8,7 +8,7 @@ import { ApiService, type ProviderCreate } from '@/api';
 import { FullProviderService } from '@/api/services/FullProviderService';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { ErrorMessage } from '@/components/ui/error-message';
-import { getCurrentAccount } from '../landing/AccountManager';
+import { useApp } from '@/contexts/AppContext';
 
 // Define the provider data type with proper backend field naming (snake_case)
 interface ProviderData {
@@ -25,6 +25,7 @@ export default function ProfessionalOnboarding() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { currentAccount } = useApp();
 
   // Setup SWR mutation
   const { trigger, isMutating } = useSWRMutation(
@@ -80,7 +81,7 @@ export default function ProfessionalOnboarding() {
         professional_registration: data.professional_registration ?? undefined,
         specialty_concept: data.specialty_concept,
         care_site: null,
-        profile_picture: getCurrentAccount()?.profilePicture || '',
+        profile_picture: currentAccount?.profilePicture || '',
       };
 
       // Pass the data directly to trigger

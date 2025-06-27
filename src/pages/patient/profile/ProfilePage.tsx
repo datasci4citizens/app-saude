@@ -7,12 +7,10 @@ import { AccountService } from '@/api/services/AccountService';
 import { ApiService } from '@/api/services/ApiService';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { SuccessMessage } from '@/components/ui/success-message';
-import { useTheme } from '@/contexts/ThemeContext';
 import { ConfirmDialog } from '@/components/ui/confirmDialog';
 import { TextField } from '@/components/forms/text_input';
 import { Switch } from '@/components/ui/switch';
-import { getCurrentAccount } from '@/pages/landing/AccountManager';
-import { useAccount } from '@/contexts/AccountContext';
+import { useApp } from '@/contexts/AppContext';
 
 interface ProfileMenuItem {
   id: string;
@@ -38,13 +36,9 @@ interface ProfilePageProps {
   onEditProfile?: () => void;
 }
 
-const ProfilePage: React.FC<ProfilePageProps> = ({
-  name = getCurrentAccount()?.name ?? 'Usuário',
-  profileImage = getCurrentAccount()?.profilePicture ?? '',
-  onEditProfile,
-}) => {
+const ProfilePage: React.FC<ProfilePageProps> = ({ onEditProfile }) => {
   const navigate = useNavigate();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useApp();
   const [personId, setPersonId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -52,7 +46,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   const [loadingItem, setLoadingItem] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
-  const { removeAccount, currentAccount } = useAccount();
+  const { currentAccount, removeAccount, logoutCurrentAccount } = useApp();
+
+  const name = currentAccount?.name ?? 'Usuário';
+  const profileImage = currentAccount?.profilePicture ?? '';
 
   // Fetch person_id on mount
   useEffect(() => {
@@ -71,19 +68,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   const clearError = () => setError(null);
 
   const handleLogout = async () => {
-    const refresh = getCurrentAccount()?.refreshToken;
-    if (!refresh) {
-      setError('Token de autenticação não encontrado. Faça login novamente.');
-      return;
-    }
-
     setLoadingItem('logout');
     setError(null);
 
     try {
       setSuccess('Logout realizado com sucesso!');
 
-      setTimeout(() => {
+      setTimeout(async () => {
+        await logoutCurrentAccount();
         navigate('/');
       }, 1500);
     } catch (error: unknown) {
