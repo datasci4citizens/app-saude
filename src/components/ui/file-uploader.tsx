@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import type React from 'react';
+import { useState } from 'react';
 
 interface FileUploaderProps {
   onChange: (file: File | null) => void;
@@ -37,19 +38,10 @@ export function FileUploader({ onChange, error }: FileUploaderProps) {
           </svg>
           <span className="text-typography">Selecionar arquivo</span>
         </label>
-        <input
-          id="file-upload"
-          type="file"
-          className="hidden"
-          onChange={handleFileChange}
-        />
-        {fileName && (
-          <span className="ml-3 text-sm font-inter text-gray2">{fileName}</span>
-        )}
+        <input id="file-upload" type="file" className="hidden" onChange={handleFileChange} />
+        {fileName && <span className="ml-3 text-sm font-inter text-gray2">{fileName}</span>}
       </div>
-      {error && (
-        <p className="mt-1 text-sm font-inter text-destructive">{error}</p>
-      )}
+      {error && <p className="mt-1 text-sm font-inter text-destructive">{error}</p>}
     </div>
   );
 }

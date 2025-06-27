@@ -1,27 +1,21 @@
 // components/forms/CustomInterestForm.tsx
-import React, { useState } from "react";
-import { Button } from "@/components/forms/button";
-import { RadioCheckbox } from "@/components/forms/radio-checkbox";
-import { TextField } from "@/components/forms/text_input";
-import { useNavigate } from "react-router-dom";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
+import type React from 'react';
+import { useState } from 'react';
+import { Button } from '@/components/forms/button';
+import { RadioCheckbox } from '@/components/forms/radio-checkbox';
+import { TextField } from '@/components/forms/text_input';
+import { useNavigate } from 'react-router-dom';
+import BottomNavigationBar from '@/components/ui/navigator-bar';
 
 interface CustomInterestFormProps {
-  onSubmit: (interest: {
-    title: string;
-    category: string;
-    impact: string;
-  }) => void;
+  onSubmit: (interest: { title: string; category: string; impact: string }) => void;
   onCancel: () => void;
 }
 
-const CustomInterestForm: React.FC<CustomInterestFormProps> = ({
-  onSubmit,
-  onCancel,
-}) => {
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("health");
-  const [impact, setImpact] = useState("medium");
+const CustomInterestForm: React.FC<CustomInterestFormProps> = ({ onSubmit, onCancel }) => {
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('health');
+  const [impact, setImpact] = useState('medium');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,30 +31,30 @@ const CustomInterestForm: React.FC<CustomInterestFormProps> = ({
 
   const navigate = useNavigate();
   const getActiveNavId = () => {
-    if (location.pathname.startsWith("/user-main-page")) return "home";
-    if (location.pathname.startsWith("/reminders")) return "meds";
-    if (location.pathname.startsWith("/diary")) return "diary";
-    if (location.pathname.startsWith("/emergency-user")) return "emergency";
-    if (location.pathname.startsWith("/profile")) return "profile";
+    if (location.pathname.startsWith('/user-main-page')) return 'home';
+    if (location.pathname.startsWith('/reminders')) return 'meds';
+    if (location.pathname.startsWith('/diary')) return 'diary';
+    if (location.pathname.startsWith('/emergency-user')) return 'emergency';
+    if (location.pathname.startsWith('/profile')) return 'profile';
     return null;
   };
 
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
-      case "home":
-        navigate("/user-main-page");
+      case 'home':
+        navigate('/user-main-page');
         break;
-      case "meds":
-        navigate("/reminders");
+      case 'meds':
+        navigate('/reminders');
         break;
-      case "diary":
-        navigate("/diary");
+      case 'diary':
+        navigate('/diary');
         break;
-      case "emergency":
-        navigate("/emergency-user");
+      case 'emergency':
+        navigate('/emergency-user');
         break;
-      case "profile":
-        navigate("/profile");
+      case 'profile':
+        navigate('/profile');
         break;
     }
   };
@@ -87,33 +81,33 @@ const CustomInterestForm: React.FC<CustomInterestFormProps> = ({
           <RadioCheckbox
             id="category-health"
             label="Saúde"
-            checked={category === "health"}
+            checked={category === 'health'}
             onCheckedChange={(checked) => {
-              if (checked) setCategory("health");
+              if (checked) setCategory('health');
             }}
           />
           <RadioCheckbox
             id="category-mental"
             label="Mental"
-            checked={category === "mental"}
+            checked={category === 'mental'}
             onCheckedChange={(checked) => {
-              if (checked) setCategory("mental");
+              if (checked) setCategory('mental');
             }}
           />
           <RadioCheckbox
             id="category-productivity"
             label="Produtividade"
-            checked={category === "productivity"}
+            checked={category === 'productivity'}
             onCheckedChange={(checked) => {
-              if (checked) setCategory("productivity");
+              if (checked) setCategory('productivity');
             }}
           />
           <RadioCheckbox
             id="category-other"
             label="Outros"
-            checked={category === "other"}
+            checked={category === 'other'}
             onCheckedChange={(checked) => {
-              if (checked) setCategory("other");
+              if (checked) setCategory('other');
             }}
           />
         </div>
@@ -127,45 +121,35 @@ const CustomInterestForm: React.FC<CustomInterestFormProps> = ({
           <RadioCheckbox
             id="impact-low"
             label="Baixo - Me incomoda um pouco"
-            checked={impact === "low"}
+            checked={impact === 'low'}
             onCheckedChange={(checked) => {
-              if (checked) setImpact("low");
+              if (checked) setImpact('low');
             }}
           />
           <RadioCheckbox
             id="impact-medium"
             label="Médio - Afeta meu dia a dia"
-            checked={impact === "medium"}
+            checked={impact === 'medium'}
             onCheckedChange={(checked) => {
-              if (checked) setImpact("medium");
+              if (checked) setImpact('medium');
             }}
           />
           <RadioCheckbox
             id="impact-high"
             label="Alto - Está prejudicando seriamente minha vida"
-            checked={impact === "high"}
+            checked={impact === 'high'}
             onCheckedChange={(checked) => {
-              if (checked) setImpact("high");
+              if (checked) setImpact('high');
             }}
           />
         </div>
       </div>
 
       <div className="flex gap-3 pt-2">
-        <Button
-          type="button"
-          variant="white"
-          size="responsive"
-          onClick={onCancel}
-        >
+        <Button type="button" variant="white" size="responsive" onClick={onCancel}>
           Cancelar
         </Button>
-        <Button
-          type="submit"
-          variant="orange"
-          size="responsive"
-          disabled={!title.trim()}
-        >
+        <Button type="submit" variant="orange" size="responsive" disabled={!title.trim()}>
           Adicionar
         </Button>
       </div>

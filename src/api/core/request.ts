@@ -1,13 +1,15 @@
-/* enhanced request function with 401 retry logic */
-import { ApiError } from "./ApiError";
-import type { ApiRequestOptions } from "./ApiRequestOptions";
-import type { ApiResult } from "./ApiResult";
-import { CancelablePromise } from "./CancelablePromise";
-import type { OnCancel } from "./CancelablePromise";
-import type { OpenAPIConfig } from "./OpenAPI";
-import { AuthService } from "../services/AuthService";
+/* enhanced request function with 401 retry logic - FIXED VERSION */
+import { ApiError } from './ApiError';
+import type { ApiRequestOptions } from './ApiRequestOptions';
+import type { ApiResult } from './ApiResult';
+import { CancelablePromise } from './CancelablePromise';
+import type { OnCancel } from './CancelablePromise';
+import type { OpenAPIConfig } from './OpenAPI';
+import { AuthService } from '../services/AuthService';
+import type { TokenRefresh } from '../models/TokenRefresh';
+import { getCurrentAccount } from '@/contexts/AppContext';
 
-// Your existing utility functions remain the same
+// ... (suas funções utilitárias permanecem iguais)
 export const isDefined = <T>(
   value: T | null | undefined,
 ): value is Exclude<T, null | undefined> => {
@@ -15,21 +17,21 @@ export const isDefined = <T>(
 };
 
 export const isString = (value: any): value is string => {
-  return typeof value === "string";
+  return typeof value === 'string';
 };
 
 export const isStringWithValue = (value: any): value is string => {
-  return isString(value) && value !== "";
+  return isString(value) && value !== '';
 };
 
 export const isBlob = (value: any): value is Blob => {
   return (
-    typeof value === "object" &&
-    typeof value.type === "string" &&
-    typeof value.stream === "function" &&
-    typeof value.arrayBuffer === "function" &&
-    typeof value.constructor === "function" &&
-    typeof value.constructor.name === "string" &&
+    typeof value === 'object' &&
+    typeof value.type === 'string' &&
+    typeof value.stream === 'function' &&
+    typeof value.arrayBuffer === 'function' &&
+    typeof value.constructor === 'function' &&
+    typeof value.constructor.name === 'string' &&
     /^(Blob|File)$/.test(value.constructor.name) &&
     /^(Blob|File)$/.test(value[Symbol.toStringTag])
   );
@@ -44,7 +46,7 @@ export const base64 = (str: string): string => {
     return btoa(str);
   } catch (err) {
     // @ts-ignore
-    return Buffer.from(str).toString("base64");
+    return Buffer.from(str).toString('base64');
   }
 };
 
@@ -61,7 +63,7 @@ export const getQueryString = (params: Record<string, any>): string => {
         value.forEach((v) => {
           process(key, v);
         });
-      } else if (typeof value === "object") {
+      } else if (typeof value === 'object') {
         Object.entries(value).forEach(([k, v]) => {
           process(`${key}[${k}]`, v);
         });
@@ -76,17 +78,17 @@ export const getQueryString = (params: Record<string, any>): string => {
   });
 
   if (qs.length > 0) {
-    return `?${qs.join("&")}`;
+    return `?${qs.join('&')}`;
   }
 
-  return "";
+  return '';
 };
 
 const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
   const encoder = config.ENCODE_PATH || encodeURI;
 
   const path = options.url
-    .replace("{api-version}", config.VERSION)
+    .replace('{api-version}', config.VERSION)
     .replace(/{(.*?)}/g, (substring: string, group: string) => {
       if (options.path?.hasOwnProperty(group)) {
         return encoder(String(options.path[group]));
@@ -101,9 +103,7 @@ const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
   return url;
 };
 
-export const getFormData = (
-  options: ApiRequestOptions,
-): FormData | undefined => {
+export const getFormData = (options: ApiRequestOptions): FormData | undefined => {
   if (options.formData) {
     const formData = new FormData();
 
@@ -136,7 +136,7 @@ export const resolve = async <T>(
   options: ApiRequestOptions,
   resolver?: T | Resolver<T>,
 ): Promise<T | undefined> => {
-  if (typeof resolver === "function") {
+  if (typeof resolver === 'function') {
     return (resolver as Resolver<T>)(options);
   }
   return resolver;
@@ -154,7 +154,7 @@ export const getHeaders = async (
   ]);
 
   const headers = Object.entries({
-    Accept: "application/json",
+    Accept: 'application/json',
     ...additionalHeaders,
     ...options.headers,
   })
@@ -168,23 +168,23 @@ export const getHeaders = async (
     );
 
   if (isStringWithValue(token)) {
-    headers["Authorization"] = `Bearer ${token}`;
+    headers['Authorization'] = `Bearer ${token}`;
   }
 
   if (isStringWithValue(username) && isStringWithValue(password)) {
     const credentials = base64(`${username}:${password}`);
-    headers["Authorization"] = `Basic ${credentials}`;
+    headers['Authorization'] = `Basic ${credentials}`;
   }
 
   if (options.body !== undefined) {
     if (options.mediaType) {
-      headers["Content-Type"] = options.mediaType;
+      headers['Content-Type'] = options.mediaType;
     } else if (isBlob(options.body)) {
-      headers["Content-Type"] = options.body.type || "application/octet-stream";
+      headers['Content-Type'] = options.body.type || 'application/octet-stream';
     } else if (isString(options.body)) {
-      headers["Content-Type"] = "text/plain";
+      headers['Content-Type'] = 'text/plain';
     } else if (!isFormData(options.body)) {
-      headers["Content-Type"] = "application/json";
+      headers['Content-Type'] = 'application/json';
     }
   }
 
@@ -193,13 +193,9 @@ export const getHeaders = async (
 
 export const getRequestBody = (options: ApiRequestOptions): any => {
   if (options.body !== undefined) {
-    if (options.mediaType?.includes("/json")) {
+    if (options.mediaType?.includes('/json')) {
       return JSON.stringify(options.body);
-    } else if (
-      isString(options.body) ||
-      isBlob(options.body) ||
-      isFormData(options.body)
-    ) {
+    } else if (isString(options.body) || isBlob(options.body) || isFormData(options.body)) {
       return options.body;
     } else {
       return JSON.stringify(options.body);
@@ -251,12 +247,10 @@ export const getResponseHeader = (
 export const getResponseBody = async (response: Response): Promise<any> => {
   if (response.status !== 204) {
     try {
-      const contentType = response.headers.get("Content-Type");
+      const contentType = response.headers.get('Content-Type');
       if (contentType) {
-        const jsonTypes = ["application/json", "application/problem+json"];
-        const isJSON = jsonTypes.some((type) =>
-          contentType.toLowerCase().startsWith(type),
-        );
+        const jsonTypes = ['application/json', 'application/problem+json'];
+        const isJSON = jsonTypes.some((type) => contentType.toLowerCase().startsWith(type));
         if (isJSON) {
           return await response.json();
         } else {
@@ -270,40 +264,107 @@ export const getResponseBody = async (response: Response): Promise<any> => {
   return undefined;
 };
 
-// 🔄 TOKEN REFRESH LOGIC
-interface TokenRefresh {
-  access: string;
-  refresh: string;
+// VERSÃO CORRIGIDA DO CONTROLE DE REFRESH
+interface RefreshState {
+  isRefreshing: boolean;
+  promise: Promise<string> | null;
+  attempts: number;
+  lastAttemptTime: number;
 }
 
-// Track if we're already refreshing to avoid multiple simultaneous refresh attempts
-let isRefreshing = false;
-let refreshPromise: Promise<string> | null = null;
+const refreshState: RefreshState = {
+  isRefreshing: false,
+  promise: null,
+  attempts: 0,
+  lastAttemptTime: 0,
+};
 
-async function refreshToken(): Promise<string> {
-  console.log("Iniciando refresh de token...");
-  const refresh = localStorage.getItem("refreshToken");
+const MAX_REFRESH_ATTEMPTS = 3;
+const REFRESH_COOLDOWN = 5000; // 5 segundos
 
-  if (!refresh) throw new Error("Refresh token não encontrado");
+export async function refreshToken(config: OpenAPIConfig): Promise<string> {
+  console.log('Iniciando refresh de token...');
 
+  const now = Date.now();
+
+  // Reset attempts se passou do cooldown
+  if (now - refreshState.lastAttemptTime > REFRESH_COOLDOWN) {
+    refreshState.attempts = 0;
+  }
+
+  // Verifica se excedeu tentativas máximas
+  if (refreshState.attempts >= MAX_REFRESH_ATTEMPTS) {
+    console.error('Máximo de tentativas de refresh excedido');
+    throw new Error('Max refresh attempts exceeded');
+  }
+
+  refreshState.attempts++;
+  refreshState.lastAttemptTime = now;
+
+  const currentAccount = getCurrentAccount();
+
+  if (!currentAccount?.refreshToken) {
+    throw new Error('No refresh token available');
+  }
+
+  const refresh = await resolve({} as ApiRequestOptions, config.REFRESH_TOKEN);
   const tokenRefresh: TokenRefresh = {
-    access: localStorage.getItem("accessToken") || "",
-    refresh,
+    access: '',
+    refresh: isStringWithValue(refresh) ? refresh : currentAccount.refreshToken,
   };
 
-  console.log("Token de refresh:", tokenRefresh);
+  console.log('Fazendo refresh do token...');
 
-  localStorage.removeItem("accessToken");
-
+  const previousToken = config.TOKEN;
+  config.TOKEN = '';
   const response = await AuthService.authTokenRefreshCreate(tokenRefresh);
+  config.TOKEN = previousToken; // Restaura o token original em caso de falha
 
-  localStorage.setItem("accessToken", response.access);
-  localStorage.setItem("refreshToken", response.refresh);
+  if (!response.access) {
+    throw new Error('Failed to refresh token - no access token returned');
+  }
 
+  config.TOKEN = response.access;
+
+  // Atualiza localStorage
+  if (currentAccount) {
+    const savedAccounts = localStorage.getItem('saved_accounts');
+    if (savedAccounts) {
+      try {
+        const accounts = JSON.parse(savedAccounts);
+        const updatedAccounts = accounts.map((acc: any) =>
+          acc.userId === currentAccount.userId
+            ? { ...acc, accessToken: response.access, refreshToken: response.refresh }
+            : acc,
+        );
+        localStorage.setItem('saved_accounts', JSON.stringify(updatedAccounts));
+      } catch (error) {
+        console.error('Erro ao atualizar tokens no localStorage:', error);
+      }
+    }
+  }
+
+  console.log('Token refreshed successfully');
   return response.access;
 }
 
-// Enhanced error handling with retry logic
+async function handleTokenRefresh(config: OpenAPIConfig): Promise<string> {
+  // Se já está refreshing, aguarda o resultado
+  if (refreshState.isRefreshing && refreshState.promise) {
+    console.log('Refresh já em andamento, aguardando...');
+    return await refreshState.promise;
+  }
+
+  // Inicia novo refresh
+  refreshState.isRefreshing = true;
+  refreshState.promise = refreshToken(config).finally(() => {
+    refreshState.isRefreshing = false;
+    refreshState.promise = null;
+  });
+
+  return await refreshState.promise;
+}
+
 export const catchErrorCodes = async (
   options: ApiRequestOptions,
   result: ApiResult,
@@ -312,41 +373,42 @@ export const catchErrorCodes = async (
   isRetry: boolean = false,
 ): Promise<ApiResult> => {
   const errors: Record<number, string> = {
-    400: "Bad Request",
-    401: "Unauthorized",
-    403: "Forbidden",
-    404: "Not Found",
-    500: "Internal Server Error",
-    502: "Bad Gateway",
-    503: "Service Unavailable",
+    400: 'Bad Request',
+    401: 'Unauthorized',
+    403: 'Forbidden',
+    404: 'Not Found',
+    500: 'Internal Server Error',
+    502: 'Bad Gateway',
+    503: 'Service Unavailable',
     ...options.errors,
   };
 
-  // Handle 401 with token refresh and retry
-  const refresh = localStorage.getItem("refreshToken");
-  if (result.status === 401 && !isRetry && refresh) {
-    console.log("401 detectado, tentando refresh do token...");
+  const currentAccount = getCurrentAccount();
+
+  // CONDIÇÕES MAIS RIGOROSAS PARA RETRY
+  if (
+    result.status === 401 &&
+    !isRetry &&
+    currentAccount?.refreshToken &&
+    refreshState.attempts < MAX_REFRESH_ATTEMPTS
+  ) {
+    console.log('401 detectado, tentando refresh do token...');
 
     try {
-      // Prevent multiple simultaneous refresh attempts
-      if (isRefreshing && refreshPromise) {
-        console.log("Refresh já em andamento, aguardando...");
-        await refreshPromise;
-      } else if (!isRefreshing) {
-        isRefreshing = true;
-        refreshPromise = refreshToken();
-        await refreshPromise;
-        isRefreshing = false;
-        refreshPromise = null;
+      const newToken = await handleTokenRefresh(config);
+
+      // Verifica se realmente conseguiu um novo token
+      if (!newToken || newToken === config.TOKEN) {
+        throw new Error('Failed to get new token');
       }
 
-      console.log("Token refreshed, tentando requisição novamente...");
+      console.log('Token refreshed, tentando requisição novamente...');
 
-      // Retry the original request with new token
+      // Retry da requisição original
       const url = getUrl(config, options);
       const formData = getFormData(options);
       const body = getRequestBody(options);
-      const headers = await getHeaders(config, options); // This will get the new token
+      const headers = await getHeaders(config, options);
 
       if (!onCancel.isCancelled) {
         const retryResponse = await sendRequest(
@@ -359,10 +421,7 @@ export const catchErrorCodes = async (
           onCancel,
         );
         const retryResponseBody = await getResponseBody(retryResponse);
-        const retryResponseHeader = getResponseHeader(
-          retryResponse,
-          options.responseHeader,
-        );
+        const retryResponseHeader = getResponseHeader(retryResponse, options.responseHeader);
 
         const retryResult: ApiResult = {
           url,
@@ -372,45 +431,35 @@ export const catchErrorCodes = async (
           body: retryResponseHeader ?? retryResponseBody,
         };
 
-        // Recursive call but with isRetry = true to prevent infinite loops
-        return await catchErrorCodes(
-          options,
-          retryResult,
-          config,
-          onCancel,
-          true,
-        );
+        // Se ainda der 401 no retry, não tenta novamente
+        if (retryResult.status === 401) {
+          console.error('Token refresh aparentemente não funcionou, ainda recebendo 401');
+          throw new Error('Token refresh failed - still unauthorized');
+        }
+
+        // Recursive call com isRetry = true
+        return await catchErrorCodes(options, retryResult, config, onCancel, true);
       }
     } catch (refreshError) {
-      console.error("Erro no refresh do token:", refreshError);
-      isRefreshing = false;
-      refreshPromise = null;
+      console.error('Erro no refresh do token:', refreshError);
 
-      // Clear tokens and potentially redirect to login
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      // Reset do estado em caso de erro
+      refreshState.isRefreshing = false;
+      refreshState.promise = null;
 
-      // You might want to trigger a redirect to login page here
-      window.location.href = "/welcome";
-
-      console.log(refreshError);
-      throw new ApiError(
-        options,
-        result,
-        "Session expired - please login again",
-      );
+      throw new ApiError(options, result, 'Session expired - please login again');
     }
   }
 
-  // Handle other errors normally
+  // Handle outros erros normalmente
   const error = errors[result.status];
   if (error) {
     throw new ApiError(options, result, error);
   }
 
   if (!result.ok) {
-    const errorStatus = result.status ?? "unknown";
-    const errorStatusText = result.statusText ?? "unknown";
+    const errorStatus = result.status ?? 'unknown';
+    const errorStatusText = result.statusText ?? 'unknown';
     const errorBody = (() => {
       try {
         return JSON.stringify(result.body, null, 2);
@@ -448,20 +497,9 @@ export const request = <T>(
       const headers = await getHeaders(config, options);
 
       if (!onCancel.isCancelled) {
-        const response = await sendRequest(
-          config,
-          options,
-          url,
-          body,
-          formData,
-          headers,
-          onCancel,
-        );
+        const response = await sendRequest(config, options, url, body, formData, headers, onCancel);
         const responseBody = await getResponseBody(response);
-        const responseHeader = getResponseHeader(
-          response,
-          options.responseHeader,
-        );
+        const responseHeader = getResponseHeader(response, options.responseHeader);
 
         const result: ApiResult = {
           url,
@@ -471,13 +509,7 @@ export const request = <T>(
           body: responseHeader ?? responseBody,
         };
 
-        // Use enhanced error handling with retry logic
-        const finalResult = await catchErrorCodes(
-          options,
-          result,
-          config,
-          onCancel,
-        );
+        const finalResult = await catchErrorCodes(options, result, config, onCancel);
         resolve(finalResult.body);
       }
     } catch (error) {

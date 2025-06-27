@@ -1,5 +1,5 @@
-import React from "react";
-import { Lock } from "lucide-react";
+import type React from 'react';
+import { Lock } from 'lucide-react';
 
 interface HabitCardProps {
   title: string;
@@ -24,9 +24,9 @@ interface HabitCardProps {
  */
 const HabitCard: React.FC<HabitCardProps> = ({
   title,
-  className = "",
+  className = '',
   isAttentionPoint = false,
-  providerName = "",
+  providerName = '',
   isOpen,
   readOnly = false,
   children,
@@ -50,8 +50,8 @@ const HabitCard: React.FC<HabitCardProps> = ({
 
   // ✨ Ajuste de opacidade no modo read-only
   const colorClasses = isAttentionPoint
-    ? `bg-destructive border-2 border-yellow text-white ${readOnly ? "opacity-75" : ""}`
-    : `bg-selection text-white dark:bg-selection ${readOnly ? "opacity-75" : ""}`;
+    ? `bg-destructive border-2 border-yellow text-white ${readOnly ? 'opacity-75' : ''}`
+    : `bg-selection text-white ${readOnly ? 'opacity-75' : ''}`;
 
   return (
     <div className={`${baseClasses} ${colorClasses} ${className}`}>
@@ -86,18 +86,13 @@ const HabitCard: React.FC<HabitCardProps> = ({
           {isOpen !== undefined && (
             <svg
               className={`w-4 h-4 transition-transform ${
-                isOpen ? "rotate-90" : "rotate-0"
-              } ${readOnly ? "opacity-70" : ""}`}
+                isOpen ? 'rotate-90' : 'rotate-0'
+              } ${readOnly ? 'opacity-70' : ''}`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9 5l7 7-7 7"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
             </svg>
           )}
         </div>

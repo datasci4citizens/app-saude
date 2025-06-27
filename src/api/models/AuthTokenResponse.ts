@@ -14,7 +14,16 @@ export type AuthTokenResponse = {
    */
   full_name: string;
   /**
+   * Email address of the user.
+   */
+  email: string;
+  social_name: string;
+  /**
    * URL of the user's profile picture.
    */
   profile_picture: string | null;
+  /**
+   * Indicates if the user prefers dark mode.
+   */
+  use_dark_mode?: boolean;
 };

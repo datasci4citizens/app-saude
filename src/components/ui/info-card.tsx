@@ -1,8 +1,8 @@
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/forms/button";
+import type React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/forms/button';
 
-type InfoCardVariant = "emergency" | "appointment" | "consultations";
+type InfoCardVariant = 'emergency' | 'appointment' | 'consultations';
 
 // Interface para itens de consulta
 interface ConsultationItem {
@@ -14,7 +14,6 @@ interface InfoCardProps {
   variant: InfoCardVariant;
   title?: string;
   name?: string;
-  subtitle?: string;
   count?: number;
   date?: string;
   time?: string;
@@ -25,16 +24,15 @@ interface InfoCardProps {
 const InfoCard: React.FC<InfoCardProps> = ({
   variant,
   name,
-  title = "Próxima consulta",
-  subtitle,
+  title = 'Próxima consulta',
   count,
   date,
   time,
   consultations = [],
   onClick,
 }) => {
-  const isEmergency = variant === "emergency";
-  const isConsultations = variant === "consultations";
+  const isEmergency = variant === 'emergency';
+  const isConsultations = variant === 'consultations';
 
   return (
     <Card
@@ -43,7 +41,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
         rounded-xl 
         h-[250px] 
         overflow-hidden
-        ${isEmergency ? "bg-accent1  " : "bg-offwhite"}
+        ${isEmergency ? 'bg-accent1  ' : 'bg-offwhite'}
       `}
     >
       <CardContent className="p-0 h-full">
@@ -57,17 +55,13 @@ const InfoCard: React.FC<InfoCardProps> = ({
                 <span
                   role="img"
                   className="mgc_alert_diamond_line text-[60px] w-[60px] h-[60px] inline-block text-selection" // Kept text-[60px]
-                ></span>
+                />
               </div>
               {/* Número de pedidos de ajuda */}
-              <div className="text-titulo text-typography mb-1">
-                {count}
-              </div>{" "}
+              <div className="text-titulo text-typography mb-1">{count}</div>{' '}
               {/* Changed from text-4xl font-bold */}
               {/* Texto fixo de pedidos de ajuda */}
-              <div className="text-topicos mb-4 text-typography">
-                PEDIDOS DE AJUDA
-              </div>{" "}
+              <div className="text-topicos mb-4 text-typography">PEDIDOS DE AJUDA</div>{' '}
               {/* Changed from text-xs font-bold */}
             </div>
 
@@ -87,22 +81,22 @@ const InfoCard: React.FC<InfoCardProps> = ({
             {/* Cabeçalho */}
             <div className="p-4 pb-2">
               <h3 className="text-titulowindow text-typography mb-1">
-                {" "}
+                {' '}
                 {/* Changed from text-lg font-bold font-inter */}
                 {title}
               </h3>
 
               {/* Lista de consultas */}
               <div className="mt-3">
-                {consultations.map((consultation, index) => (
-                  <div key={index} className="mb-2">
+                {consultations.map((consultation) => (
+                  <div key={`${consultation.doctor}-${consultation.time}`} className="mb-2">
                     <div className="text-campos-preenchimento2 text-typography mb-0.5">
-                      {" "}
+                      {' '}
                       {/* Changed from text-xs font-inter */}
                       {consultation.doctor}
                     </div>
                     <div className="text-campos-preenchimento2 text-black font-inter mb-3">
-                      {" "}
+                      {' '}
                       {/* Changed from text-xs */}
                       {consultation.time}
                     </div>
@@ -127,17 +121,17 @@ const InfoCard: React.FC<InfoCardProps> = ({
             {/* Cabeçalho */}
             <div className="flex flex-col items-center pt-4 flex-grow">
               <h3 className="text-titulowindow text-typography mb-1">
-                {" "}
+                {' '}
                 {/* Changed from text-lg font-bold font-inter */}
                 {title}:
               </h3>
               <p className="text-titulowindow leading-tight text-typography">
-                {" "}
+                {' '}
                 {/* Changed from font-bold text-lg font-inter */}
                 {name}
               </p>
               <div className="text-campos-preenchimento2 text-gray2">
-                {" "}
+                {' '}
                 {/* Changed from text-xs font-medium font-inter */}
                 {date} - {time}
               </div>

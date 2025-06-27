@@ -1,6 +1,6 @@
-import React from "react";
-import { Button } from "@/components/forms/button";
-import { useNavigate } from "react-router-dom";
+import type React from 'react';
+import { Button } from '@/components/forms/button';
+import { useNavigate } from 'react-router-dom';
 
 interface BackArrowProps {
   className?: string;
@@ -21,7 +21,7 @@ const BackArrow: React.FC<BackArrowProps> = ({ className }) => {
           role="img"
           aria-label="arrow"
           className="mgc_arrow_left_line text-3xl text-typography"
-        ></span>
+        />
       </div>
     </Button>
   );

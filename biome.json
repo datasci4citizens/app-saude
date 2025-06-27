@@ -1,31 +1,58 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"all": true,
-			"style": {
-				"noParameterProperties": "off",
-				"noImplicitBoolean": "off",
-				"noDefaultExport": "off",
-				"noNamespaceImport": "off"
-			},
-			"nursery": {
-				"useSortedClasses": "error"
-			}
-		}
-	},
-	"javascript": {
-		"formatter": {
-			"quoteStyle": "single"
-		}
-	},
-	"organizeImports": {
-		"enabled": true
-	},
-	"vcs": {
-		"enabled": true,
-		"clientKind": "git",
-		"useIgnoreFile": true
-	}
+    "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+    "organizeImports": {
+        "enabled": true
+    },
+    "vcs": {
+        "enabled": true,
+        "clientKind": "git",
+        "useIgnoreFile": true
+    },
+    "formatter": {
+        "enabled": false,
+        "formatWithErrors": false,
+        "indentStyle": "space",
+        "indentWidth": 2,
+        "lineWidth": 80,
+        "lineEnding": "lf"
+    },
+    "linter": {
+        "enabled": false,
+        "rules": {
+            "recommended": true,
+            "correctness": {
+                "noUnusedVariables": "error"
+            },
+            "style": {
+                "noDefaultExport": "off"
+            }
+        }
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "single",
+            "jsxQuoteStyle": "double",
+            "quoteProperties": "asNeeded",
+            "trailingCommas": "all",
+            "semicolons": "always"
+        },
+        "parser": {
+            "unsafeParameterDecoratorsEnabled": true
+        },
+        "globals": ["React"]
+    },
+    "overrides": [
+        {
+            "include": ["src/**/*"],
+            "ignore": ["src/api/**/*"],
+            "linter": {
+                "enabled": true,
+                "rules": {
+                    "a11y": {
+                        "all": false
+                    }
+                }
+            }
+        }
+    ]
 }

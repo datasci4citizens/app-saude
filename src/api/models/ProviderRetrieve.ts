@@ -13,6 +13,7 @@ export type ProviderRetrieve = {
   social_name?: string | null;
   birth_datetime?: string | null;
   profile_picture?: string | null;
+  use_dark_mode?: boolean;
   professional_registration?: number;
   user: number;
   specialty_concept?: number | null;

@@ -1,5 +1,5 @@
-import React from "react";
-import header from "@/lib/images/header.png";
+import type React from 'react';
+import header from '@/lib/images/header.png';
 
 interface HomeBannerProps {
   title?: string;
@@ -9,8 +9,8 @@ interface HomeBannerProps {
 }
 
 const HomeBanner: React.FC<HomeBannerProps> = ({
-  title = "Registro diário",
-  subtitle = "Registre agora",
+  title = 'Registro diário',
+  subtitle = 'Registre agora',
   onClick,
   onIconClick,
 }) => {
@@ -30,9 +30,7 @@ const HomeBanner: React.FC<HomeBannerProps> = ({
       <div className="relative flex justify-between items-start h-full z-10">
         <div>
           <h2 className="text-[28px] font-bold m-0 mb-1 font-inter">{title}</h2>
-          <p className="text-xs m-0 opacity-90 tracking-wider font-inter font-medium">
-            {subtitle}
-          </p>
+          <p className="text-xs m-0 opacity-90 tracking-wider font-inter font-medium">{subtitle}</p>
         </div>
 
         {/* Ícone de editar com evento de clique próprio */}
@@ -43,7 +41,7 @@ const HomeBanner: React.FC<HomeBannerProps> = ({
             if (onIconClick) onIconClick();
           }}
         >
-          <span className="mgc_pencil_line text-2xl text-success"></span>
+          <span className="mgc_pencil_line text-2xl text-success" />
         </div>
       </div>
     </div>

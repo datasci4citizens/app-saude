@@ -2,13 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { PatchedPersonUpdate } from "../models/PatchedPersonUpdate";
-import type { PersonCreate } from "../models/PersonCreate";
-import type { PersonRetrieve } from "../models/PersonRetrieve";
-import type { PersonUpdate } from "../models/PersonUpdate";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { PatchedPersonUpdate } from '../models/PatchedPersonUpdate';
+import type { PersonCreate } from '../models/PersonCreate';
+import type { PersonRetrieve } from '../models/PersonRetrieve';
+import type { PersonUpdate } from '../models/PersonUpdate';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class PersonService {
   /**
    * @param birthDatetime
@@ -22,6 +22,7 @@ export class PersonService {
    * @param search A search term.
    * @param socialName
    * @param updatedAt
+   * @param useDarkMode
    * @param user
    * @param yearOfBirth
    * @returns PersonRetrieve
@@ -39,12 +40,13 @@ export class PersonService {
     search?: string,
     socialName?: string,
     updatedAt?: string,
+    useDarkMode?: boolean,
     user?: number,
     yearOfBirth?: number,
   ): CancelablePromise<Array<PersonRetrieve>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/person/",
+      method: 'GET',
+      url: '/api/person/',
       query: {
         birth_datetime: birthDatetime,
         created_at: createdAt,
@@ -57,6 +59,7 @@ export class PersonService {
         search: search,
         social_name: socialName,
         updated_at: updatedAt,
+        use_dark_mode: useDarkMode,
         user: user,
         year_of_birth: yearOfBirth,
       },
@@ -67,14 +70,12 @@ export class PersonService {
    * @returns PersonRetrieve
    * @throws ApiError
    */
-  public static apiPersonCreate(
-    requestBody?: PersonCreate,
-  ): CancelablePromise<PersonRetrieve> {
+  public static apiPersonCreate(requestBody?: PersonCreate): CancelablePromise<PersonRetrieve> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/person/",
+      method: 'POST',
+      url: '/api/person/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -82,12 +83,10 @@ export class PersonService {
    * @returns PersonRetrieve
    * @throws ApiError
    */
-  public static apiPersonRetrieve(
-    personId: number,
-  ): CancelablePromise<PersonRetrieve> {
+  public static apiPersonRetrieve(personId: number): CancelablePromise<PersonRetrieve> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/person/{person_id}/",
+      method: 'GET',
+      url: '/api/person/{person_id}/',
       path: {
         person_id: personId,
       },
@@ -104,13 +103,13 @@ export class PersonService {
     requestBody?: PersonUpdate,
   ): CancelablePromise<PersonUpdate> {
     return __request(OpenAPI, {
-      method: "PUT",
-      url: "/api/person/{person_id}/",
+      method: 'PUT',
+      url: '/api/person/{person_id}/',
       path: {
         person_id: personId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -124,13 +123,13 @@ export class PersonService {
     requestBody?: PatchedPersonUpdate,
   ): CancelablePromise<PersonUpdate> {
     return __request(OpenAPI, {
-      method: "PATCH",
-      url: "/api/person/{person_id}/",
+      method: 'PATCH',
+      url: '/api/person/{person_id}/',
       path: {
         person_id: personId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -140,8 +139,8 @@ export class PersonService {
    */
   public static apiPersonDestroy(personId: number): CancelablePromise<void> {
     return __request(OpenAPI, {
-      method: "DELETE",
-      url: "/api/person/{person_id}/",
+      method: 'DELETE',
+      url: '/api/person/{person_id}/',
       path: {
         person_id: personId,
       },

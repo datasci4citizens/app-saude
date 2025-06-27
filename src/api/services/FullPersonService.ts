@@ -2,11 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { FullPersonCreate } from "../models/FullPersonCreate";
-import type { FullPersonRetrieve } from "../models/FullPersonRetrieve";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { FullPersonCreate } from '../models/FullPersonCreate';
+import type { FullPersonRetrieve } from '../models/FullPersonRetrieve';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class FullPersonService {
   /**
    * @param requestBody
@@ -17,10 +17,10 @@ export class FullPersonService {
     requestBody: FullPersonCreate,
   ): CancelablePromise<FullPersonRetrieve> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/full-person/",
+      method: 'POST',
+      url: '/api/full-person/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
 }

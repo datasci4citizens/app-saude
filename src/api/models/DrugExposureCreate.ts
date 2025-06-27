@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { RecurrenceRuleCreate } from "./RecurrenceRuleCreate";
+import type { RecurrenceRuleCreate } from './RecurrenceRuleCreate';
 export type DrugExposureCreate = {
   recurrence_rule?: RecurrenceRuleCreate;
   stop_reason?: string | null;

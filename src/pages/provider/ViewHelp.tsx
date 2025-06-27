@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import Header from "@/components/ui/header";
-import { Button } from "@/components/forms/button";
-import { PersonService } from "@/api/services/PersonService";
-import { HelpService } from "@/api/services/HelpService";
-import { SuccessMessage } from "@/components/ui/success-message";
-import { ErrorMessage } from "@/components/ui/error-message";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
-import type { PersonRetrieve } from "@/api/models/PersonRetrieve";
-import type { ObservationRetrieve } from "@/api/models/ObservationRetrieve";
+import { useEffect, useState } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import Header from '@/components/ui/header';
+import { Button } from '@/components/forms/button';
+import { PersonService } from '@/api/services/PersonService';
+import { HelpService } from '@/api/services/HelpService';
+import { SuccessMessage } from '@/components/ui/success-message';
+import { ErrorMessage } from '@/components/ui/error-message';
+import BottomNavigationBar from '@/components/ui/navigator-bar';
+import type { PersonRetrieve } from '@/api/models/PersonRetrieve';
+import type { ObservationRetrieve } from '@/api/models/ObservationRetrieve';
+import { ConfirmDialog } from '@/components/ui/confirmDialog';
 
 export default function ViewHelp() {
   const { personId, helpId } = useParams<{
@@ -20,23 +21,23 @@ export default function ViewHelp() {
 
   // Data states
   const [patient, setPatient] = useState<PersonRetrieve | null>(null);
-  const [helpRequest, setHelpRequest] = useState<ObservationRetrieve | null>(
-    null,
-  );
+  const [helpRequest, setHelpRequest] = useState<ObservationRetrieve | null>(null);
 
   // UI states
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [isResponding, setIsResponding] = useState(false);
+  const [confirmResolveOpen, setConfirmResolveOpen] = useState(false);
+  const [isResolving, setIsResolving] = useState(false);
 
   useEffect(() => {
     fetchData();
-  }, [personId, helpId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchData = async () => {
     if (!personId || !helpId) {
-      setError("IDs do paciente ou pedido de ajuda não encontrados.");
+      setError('IDs do paciente ou pedido de ajuda não encontrados.');
       setLoading(false);
       return;
     }
@@ -46,9 +47,7 @@ export default function ViewHelp() {
       setError(null);
 
       // Buscar dados do paciente
-      const patientData = await PersonService.apiPersonRetrieve(
-        Number(personId),
-      );
+      const patientData = await PersonService.apiPersonRetrieve(Number(personId));
       setPatient(patientData);
 
       // Buscar todos os pedidos de ajuda do provider
@@ -57,19 +56,18 @@ export default function ViewHelp() {
       // Encontrar o pedido específico
       const specificHelpRequest = allHelpRequests.find(
         (help: ObservationRetrieve) =>
-          help.observation_id === Number(helpId) &&
-          help.person === Number(personId),
+          help.observation_id === Number(helpId) && help.person === Number(personId),
       );
 
       if (!specificHelpRequest) {
-        setError("Pedido de ajuda não encontrado.");
+        setError('Pedido de ajuda não encontrado.');
         return;
       }
 
       setHelpRequest(specificHelpRequest);
     } catch (err) {
-      console.error("Error fetching data:", err);
-      setError("Não foi possível carregar os dados.");
+      console.error('Error fetching data:', err);
+      setError('Não foi possível carregar os dados.');
     } finally {
       setLoading(false);
     }
@@ -78,15 +76,15 @@ export default function ViewHelp() {
   const formatDateTime = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return date.toLocaleString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
+      return date.toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
       });
-    } catch (e) {
-      return "Data inválida";
+    } catch {
+      return 'Data inválida';
     }
   };
 
@@ -94,137 +92,64 @@ export default function ViewHelp() {
     try {
       const date = new Date(dateString);
       const now = new Date();
-      const diffInMinutes = Math.floor(
-        (now.getTime() - date.getTime()) / (1000 * 60),
-      );
+      const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
       const diffInHours = Math.floor(diffInMinutes / 60);
       const diffInDays = Math.floor(diffInHours / 24);
 
-      if (diffInMinutes < 5) return "Agora há pouco";
+      if (diffInMinutes < 5) return 'Agora há pouco';
       if (diffInMinutes < 60) return `Há ${diffInMinutes} minutos`;
       if (diffInHours < 24) return `Há ${diffInHours}h`;
-      if (diffInDays === 1) return "Ontem";
+      if (diffInDays === 1) return 'Ontem';
       if (diffInDays < 7) return `Há ${diffInDays} dias`;
       return formatDateTime(dateString);
-    } catch (e) {
-      return "Data inválida";
-    }
-  };
-
-  const getUrgencyLevel = (dateString: string) => {
-    try {
-      const date = new Date(dateString);
-      const now = new Date();
-      const diffInHours = Math.floor(
-        (now.getTime() - date.getTime()) / (1000 * 60 * 60),
-      );
-
-      if (diffInHours < 1) return "critical"; // Menos de 1 hora
-      if (diffInHours < 24) return "high"; // Menos de 24 horas
-      if (diffInHours < 72) return "medium"; // Menos de 72 horas
-      return "low"; // Mais de 72 horas
-    } catch (e) {
-      return "low";
-    }
-  };
-
-  const getUrgencyConfig = (level: string) => {
-    switch (level) {
-      case "critical":
-        return {
-          color: "bg-destructive",
-          textColor: "text-destructive",
-          bgColor: "bg-destructive/10",
-          borderColor: "border-destructive/30",
-          label: "🚨 Crítico",
-          description: "Requer ação imediata",
-        };
-      case "high":
-        return {
-          color: "bg-yellow",
-          textColor: "text-yellow-600",
-          bgColor: "bg-yellow/10",
-          borderColor: "border-yellow/30",
-          label: "⚠️ Alto",
-          description: "Requer atenção urgente",
-        };
-      case "medium":
-        return {
-          color: "bg-accent1",
-          textColor: "text-accent1",
-          bgColor: "bg-accent1/10",
-          borderColor: "border-accent1/30",
-          label: "🟡 Médio",
-          description: "Requer atenção",
-        };
-      default:
-        return {
-          color: "bg-gray2",
-          textColor: "text-gray2",
-          bgColor: "bg-gray2/10",
-          borderColor: "border-gray2/30",
-          label: "ℹ️ Baixo",
-          description: "Sem urgência",
-        };
-    }
-  };
-
-  const handleRespond = async () => {
-    // Placeholder para funcionalidade de resposta
-    setIsResponding(true);
-    try {
-      // Aqui você implementaria a lógica de resposta
-      // await respondToHelpRequest(helpId);
-
-      setSuccess("Resposta enviada com sucesso!");
-      setTimeout(() => {
-        navigate(`/provider/patient/${personId}`);
-      }, 1500);
-    } catch (err) {
-      setError("Erro ao enviar resposta. Tente novamente.");
-    } finally {
-      setIsResponding(false);
+    } catch {
+      return 'Data inválida';
     }
   };
 
   const handleMarkAsResolved = async () => {
-    // Placeholder para marcar como resolvido
-    const confirmed = window.confirm("Marcar este pedido como resolvido?");
-    if (!confirmed) return;
+    if (!helpId) {
+      setError('ID do pedido de ajuda não encontrado.');
+      return;
+    }
 
     try {
-      // await markHelpRequestAsResolved(helpId);
-      setSuccess("Pedido marcado como resolvido!");
+      setIsResolving(true);
+      await HelpService.providerHelpResolveCreate(Number(helpId));
+      setSuccess('Pedido marcado como resolvido!');
+      setConfirmResolveOpen(false);
       setTimeout(() => {
         navigate(`/provider/patient/${personId}`);
       }, 1500);
-    } catch (err) {
-      setError("Erro ao marcar como resolvido. Tente novamente.");
+    } catch {
+      setError('Erro ao marcar como resolvido. Tente novamente.');
+    } finally {
+      setIsResolving(false);
     }
   };
 
   const getActiveNavId = () => {
-    if (location.pathname.startsWith("/acs-main-page")) return "home";
-    if (location.pathname.startsWith("/appointments")) return "consults";
-    if (location.pathname.startsWith("/patients")) return "patients";
-    if (location.pathname.startsWith("/emergencies")) return "emergency";
-    if (location.pathname.startsWith("/acs-profile")) return "profile";
+    if (location.pathname.startsWith('/acs-main-page')) return 'home';
+    if (location.pathname.startsWith('/appointments')) return 'consults';
+    if (location.pathname.startsWith('/patients')) return 'patients';
+    if (location.pathname.startsWith('/emergencies')) return 'emergency';
+    if (location.pathname.startsWith('/acs-profile')) return 'profile';
     return null;
   };
 
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
-      case "home":
-        navigate("/acs-main-page");
+      case 'home':
+        navigate('/acs-main-page');
         break;
-      case "patients":
-        navigate("/patients");
+      case 'patients':
+        navigate('/patients');
         break;
-      case "emergency":
-        navigate("/emergencies");
+      case 'emergency':
+        navigate('/emergencies');
         break;
-      case "profile":
-        navigate("/acs-profile");
+      case 'profile':
+        navigate('/acs-profile');
         break;
     }
   };
@@ -234,23 +159,14 @@ export default function ViewHelp() {
 
   const patientName =
     patient?.social_name ||
-    `${patient?.first_name || ""} ${patient?.last_name || ""}`.trim() ||
-    "Paciente";
-
-  const urgencyLevel = helpRequest
-    ? getUrgencyLevel(helpRequest.created_at)
-    : "low";
-  const urgencyConfig = getUrgencyConfig(urgencyLevel);
+    `${patient?.first_name || ''} ${patient?.last_name || ''}`.trim() ||
+    'Paciente';
 
   return (
     <div className="flex flex-col min-h-screen bg-homebg">
       <Header
         title="Pedido de Ajuda"
-        subtitle={
-          patient
-            ? `${patientName} • ID: ${patient.person_id}`
-            : "Carregando..."
-        }
+        subtitle={patient ? `${patientName} • ID: ${patient.person_id}` : 'Carregando...'}
       />
 
       <div className="flex-1 px-4 py-6 bg-background rounded-t-3xl mt-4 relative z-10 pb-24">
@@ -278,7 +194,7 @@ export default function ViewHelp() {
         {/* Loading State */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-destructive/20 border-t-destructive mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-destructive/20 border-t-destructive mb-4" />
             <p className="text-gray2 text-sm">Carregando pedido de ajuda...</p>
           </div>
         )}
@@ -295,9 +211,7 @@ export default function ViewHelp() {
                   </span>
                 </div>
                 <div>
-                  <h2 className="text-card-foreground font-semibold text-base">
-                    {patientName}
-                  </h2>
+                  <h2 className="text-card-foreground font-semibold text-base">{patientName}</h2>
                   <p className="text-gray2 text-sm">ID: {patient.person_id}</p>
                 </div>
               </div>
@@ -320,12 +234,8 @@ export default function ViewHelp() {
                   <span className="text-destructive text-lg">🚨</span>
                 </div>
                 <div>
-                  <h3 className="text-card-foreground font-semibold text-base">
-                    Pedido de Ajuda
-                  </h3>
-                  <p className="text-gray2 text-sm">
-                    {formatDateTime(helpRequest.created_at)}
-                  </p>
+                  <h3 className="text-card-foreground font-semibold text-base">Pedido de Ajuda</h3>
+                  <p className="text-gray2 text-sm">{formatDateTime(helpRequest.created_at)}</p>
                 </div>
               </div>
 
@@ -380,7 +290,7 @@ export default function ViewHelp() {
                 <Button
                   variant="success"
                   className="flex-1 h-11"
-                  onClick={handleMarkAsResolved}
+                  onClick={() => setConfirmResolveOpen(true)}
                 >
                   <span className="mr-2">✅</span>
                   Marcar como resolvido
@@ -399,6 +309,22 @@ export default function ViewHelp() {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        open={confirmResolveOpen}
+        title="Marcar como Resolvido"
+        description="Esta ação marcará o pedido como resolvido e não poderá ser desfeita. Deseja continuar?"
+        confirmText={isResolving ? 'Resolvendo...' : 'Sim, resolver'}
+        cancelText="Cancelar"
+        disabled={isResolving}
+        confirmVariant="default"
+        onCancel={() => {
+          if (!isResolving) {
+            setConfirmResolveOpen(false);
+          }
+        }}
+        onConfirm={handleMarkAsResolved}
+      />
 
       <BottomNavigationBar
         variant="acs"

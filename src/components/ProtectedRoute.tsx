@@ -1,10 +1,18 @@
-import { Navigate } from "react-router-dom";
+import { Navigate } from 'react-router-dom';
+import { type ReactElement } from 'react';
+import { useAccount } from '@/contexts/AppContext';
 
 function getUserType() {
-  return localStorage.getItem("role");
+  const { currentAccount } = useAccount();
+  return currentAccount?.role || 'none';
 }
 
-export default function ProtectedRoute({ element, allowedTypes }) {
+interface ProtectedRouteProps {
+  element: ReactElement;
+  allowedTypes: string[];
+}
+
+export default function ProtectedRoute({ element, allowedTypes }: ProtectedRouteProps) {
   const userType = getUserType();
 
   if (!allowedTypes.includes(userType)) {

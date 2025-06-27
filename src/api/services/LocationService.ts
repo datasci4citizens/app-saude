@@ -2,13 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { LocationCreate } from "../models/LocationCreate";
-import type { LocationRetrieve } from "../models/LocationRetrieve";
-import type { LocationUpdate } from "../models/LocationUpdate";
-import type { PatchedLocationUpdate } from "../models/PatchedLocationUpdate";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { LocationCreate } from '../models/LocationCreate';
+import type { LocationRetrieve } from '../models/LocationRetrieve';
+import type { LocationUpdate } from '../models/LocationUpdate';
+import type { PatchedLocationUpdate } from '../models/PatchedLocationUpdate';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class LocationService {
   /**
    * @returns LocationRetrieve
@@ -16,8 +16,8 @@ export class LocationService {
    */
   public static apiLocationList(): CancelablePromise<Array<LocationRetrieve>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/location/",
+      method: 'GET',
+      url: '/api/location/',
     });
   }
   /**
@@ -25,14 +25,12 @@ export class LocationService {
    * @returns LocationCreate
    * @throws ApiError
    */
-  public static apiLocationCreate(
-    requestBody?: LocationCreate,
-  ): CancelablePromise<LocationCreate> {
+  public static apiLocationCreate(requestBody?: LocationCreate): CancelablePromise<LocationCreate> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/location/",
+      method: 'POST',
+      url: '/api/location/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -40,12 +38,10 @@ export class LocationService {
    * @returns LocationRetrieve
    * @throws ApiError
    */
-  public static apiLocationRetrieve(
-    locationId: number,
-  ): CancelablePromise<LocationRetrieve> {
+  public static apiLocationRetrieve(locationId: number): CancelablePromise<LocationRetrieve> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/location/{location_id}/",
+      method: 'GET',
+      url: '/api/location/{location_id}/',
       path: {
         location_id: locationId,
       },
@@ -62,13 +58,13 @@ export class LocationService {
     requestBody?: LocationUpdate,
   ): CancelablePromise<LocationUpdate> {
     return __request(OpenAPI, {
-      method: "PUT",
-      url: "/api/location/{location_id}/",
+      method: 'PUT',
+      url: '/api/location/{location_id}/',
       path: {
         location_id: locationId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -82,13 +78,13 @@ export class LocationService {
     requestBody?: PatchedLocationUpdate,
   ): CancelablePromise<LocationUpdate> {
     return __request(OpenAPI, {
-      method: "PATCH",
-      url: "/api/location/{location_id}/",
+      method: 'PATCH',
+      url: '/api/location/{location_id}/',
       path: {
         location_id: locationId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -96,12 +92,10 @@ export class LocationService {
    * @returns void
    * @throws ApiError
    */
-  public static apiLocationDestroy(
-    locationId: number,
-  ): CancelablePromise<void> {
+  public static apiLocationDestroy(locationId: number): CancelablePromise<void> {
     return __request(OpenAPI, {
-      method: "DELETE",
-      url: "/api/location/{location_id}/",
+      method: 'DELETE',
+      url: '/api/location/{location_id}/',
       path: {
         location_id: locationId,
       },

@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import type React from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { cn } from '@/lib/utils';
 
 interface WheelPickerProps {
   data: string[];
@@ -33,16 +34,15 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
       setSelectedIndex(index);
       scrollToIndex(index, false);
     }
-  }, [selected, data]);
+  }, [selected, data, selectedIndex]);
 
   useEffect(() => {
     scrollToIndex(selectedIndex, false);
-  }, []);
+  }, [selectedIndex]);
 
   useEffect(() => {
     return () => {
-      if (scrollTimeoutRef.current)
-        window.clearTimeout(scrollTimeoutRef.current);
+      if (scrollTimeoutRef.current) window.clearTimeout(scrollTimeoutRef.current);
     };
   }, []);
 
@@ -51,7 +51,7 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
       const scrollPosition = index * itemHeight;
       containerRef.current.scrollTo({
         top: scrollPosition,
-        behavior: smooth ? "smooth" : "auto",
+        behavior: smooth ? 'smooth' : 'auto',
       });
     }
   };
@@ -67,7 +67,8 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
     if (scrollTimeoutRef.current) window.clearTimeout(scrollTimeoutRef.current);
 
     scrollTimeoutRef.current = window.setTimeout(() => {
-      const scrollTop = containerRef.current!.scrollTop;
+      const scrollTop = containerRef.current?.scrollTop;
+      if (scrollTop === undefined) return;
       const index = Math.round(scrollTop / itemHeight);
       const validIndex = Math.max(0, Math.min(index, data.length - 1));
 
@@ -115,23 +116,24 @@ export const WheelPicker: React.FC<WheelPickerProps> = ({
             paddingBottom: `${middlePosition}px`,
           }}
         >
-          {data.map((item, index) => {
-            const distance = Math.abs(index - selectedIndex);
+          {data.map((item) => {
+            const distance = Math.abs(data.indexOf(item) - selectedIndex);
             const opacity = calculateOpacity(distance);
 
             return (
               <div
-                key={index}
+                key={item}
                 onClick={() => {
+                  const index = data.indexOf(item);
                   setSelectedIndex(index);
-                  onChange(data[index] as string);
+                  onChange(item);
                   scrollToIndex(index);
                 }}
                 className={cn(
-                  "text-center text-base cursor-pointer transition-opacity duration-200",
-                  index === selectedIndex
-                    ? "font-bold text-typography"
-                    : "font-normal text-gray2-foreground",
+                  'text-center text-base cursor-pointer transition-opacity duration-200',
+                  data.indexOf(item) === selectedIndex
+                    ? 'font-bold text-typography'
+                    : 'font-normal text-gray2-foreground',
                 )}
                 style={{
                   height: `${itemHeight}px`,

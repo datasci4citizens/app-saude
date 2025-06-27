@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Button } from "@/components/forms/button";
-import { TextField } from "@/components/forms/text_input";
-import { SelectField } from "@/components/forms/select_input";
-import { useLocationConcepts } from "@/utils/conceptLoader";
+import type React from 'react';
+import { useState } from 'react';
+import ContinueButton from '@/components/ui/ContinueButton';
+import ErrorMessage from '@/components/ui/error-message';
+import { TextField } from '@/components/forms/text_input';
+import { SelectField } from '@/components/forms/select_input';
+import { useLocationConcepts } from '@/utils/conceptLoader';
 
 // Define form data type that extends Location with form-specific fields
 export interface AddressFormData extends Partial<Location> {
@@ -32,29 +34,24 @@ export function UserInfoForm2({
 }: {
   onSubmit: (data: AddressFormData) => void;
 }): JSX.Element {
-  const {
-    stateOptions,
-    isLoading,
-    error: conceptError,
-  } = useLocationConcepts();
+  const { stateOptions, isLoading, error: conceptError } = useLocationConcepts();
 
   const [formData, setFormData] = useState<AddressFormData>({
-    zip: "",
-    state: "",
-    street: "", // Changed from address_1 to street
-    city: "",
-    number: "",
-    complement: "",
-    // country_concept: 44508529, // Default concept ID for Brazil
+    zip: '',
+    state: '',
+    street: '',
+    city: '',
+    number: '',
+    complement: '',
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
 
   // Handle input change
   const handleChange: React.ChangeEventHandler<
-    HTMLInputElement | HTMLSelectElement
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
   > = (e) => {
-    const { name, value } = e.target as HTMLInputElement | HTMLSelectElement;
+    const { name, value } = e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
     setFormData({ ...formData, [name]: value || null });
 
     // Clear error when user starts typing
@@ -67,15 +64,15 @@ export function UserInfoForm2({
     const newErrors: FormErrors = {};
 
     // Required fields
-    if (!formData.zip) newErrors.zip = "CEP é obrigatório";
-    if (!formData.state) newErrors.state = "Estado é obrigatório";
-    if (!formData.street) newErrors.street = "Rua é obrigatória"; // Changed to street
-    if (!formData.city) newErrors.city = "Cidade é obrigatória";
-    if (!formData.number) newErrors.number = "Número é obrigatório";
+    if (!formData.zip) newErrors.zip = 'CEP é obrigatório';
+    if (!formData.state) newErrors.state = 'Estado é obrigatório';
+    if (!formData.street) newErrors.street = 'Rua é obrigatória';
+    if (!formData.city) newErrors.city = 'Cidade é obrigatória';
+    if (!formData.number) newErrors.number = 'Número é obrigatório';
 
     // Validate CEP format (00000-000)
     if (formData.zip && !/^\d{5}-?\d{3}$/.test(formData.zip)) {
-      newErrors.zip = "Formato de CEP inválido";
+      newErrors.zip = 'Formato de CEP inválido';
     }
 
     return newErrors;
@@ -95,9 +92,9 @@ export function UserInfoForm2({
 
     // Format all address parts into address_1 using a format that's easy to parse
     // Format: "street, number, complement"
-    const street = formData.street || "";
-    const number = formData.number || "";
-    const complement = formData.complement ? `, ${formData.complement}` : "";
+    const street = formData.street || '';
+    const number = formData.number || '';
+    const complement = formData.complement ? `, ${formData.complement}` : '';
 
     // Combine into a single string with consistent delimiter for backend parsing
     const address_1 = `${street}, ${number}${complement}`;
@@ -119,85 +116,145 @@ export function UserInfoForm2({
     onSubmit(finalData);
   };
 
-  // Define the SelectOption type
-  interface SelectOption {
-    value: string | number;
-    label: string;
-  }
+  // Check if form is valid for enabling button
+  const isFormValid = () => {
+    return (
+      formData.zip &&
+      formData.state &&
+      formData.street &&
+      formData.city &&
+      formData.number &&
+      Object.keys(errors).length === 0
+    );
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
-      <div className="flex flex-row gap-4 max-[311px]:flex-wrap">
-        <TextField
-          id="zip"
-          name="zip"
-          label="CEP"
-          value={formData.zip || ""}
-          onChange={handleChange}
-          placeholder="00000-000"
-          error={errors.zip}
-        />
-
-        <SelectField
-          id="state"
-          name="state"
-          label="Estado"
-          value={formData.state || ""}
-          onChange={handleChange}
-          options={stateOptions}
-          error={errors.state}
-          isLoading={false} // Placeholder for loading state
-        />
+    <div className="w-full max-w-md mx-auto bg-card rounded-2xl p-6 shadow-button-soft border border-card-border">
+      {/* Header */}
+      <div className="mb-6 text-center">
+        <h2 className="text-titulo text-typography font-work-sans mb-2">Endereço</h2>
+        <p className="text-desc-titulo text-muted-foreground">Informe seu endereço completo</p>
       </div>
 
-      <TextField
-        id="street"
-        name="street"
-        label="Rua"
-        value={formData.street || ""}
-        onChange={handleChange}
-        placeholder="Rua Porta da Madelena"
-        error={errors.street}
-      />
-
-      <TextField
-        id="city"
-        name="city"
-        label="Cidade"
-        value={formData.city || ""}
-        onChange={handleChange}
-        placeholder="Sua cidade"
-        error={errors.city}
-      />
-
-      <div className="flex flex-row gap-4 max-[311px]:flex-wrap">
-        <TextField
-          id="number"
-          name="number"
-          label="Número"
-          value={formData.number || ""}
-          onChange={handleChange}
-          placeholder="123"
-          error={errors.number}
+      {/* Error message for concept loading */}
+      {conceptError && (
+        <ErrorMessage
+          message="Erro ao carregar os estados. Tente novamente."
+          variant="destructive"
+          closable={false}
+          retryable={false}
+          className="mb-4"
         />
+      )}
 
-        <TextField
-          id="complement"
-          name="complement"
-          label="Complemento"
-          value={formData.complement || ""}
-          onChange={handleChange}
-          placeholder="Apto 101"
-        />
-      </div>
+      <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+        {/* CEP e Estado */}
+        <div className="space-y-1">
+          <label className="block text-topicos text-typography font-work-sans mb-3">
+            Localização
+          </label>
+          <div className="grid grid-cols-2 gap-4">
+            <TextField
+              id="zip"
+              name="zip"
+              label="CEP *"
+              value={formData.zip || ''}
+              onChange={handleChange}
+              placeholder="00000-000"
+              error={errors.zip}
+            />
+            <SelectField
+              id="state"
+              name="state"
+              label="Estado *"
+              value={formData.state || ''}
+              onChange={handleChange}
+              options={stateOptions}
+              error={errors.state}
+              isLoading={isLoading}
+            />
+          </div>
+        </div>
 
-      <Button
-        type="submit"
-        variant="white"
-        className="w-full mt-4 font-['Inter'] font-bold mb-4"
-      >
-        CONTINUAR
-      </Button>
-    </form>
+        {/* Rua */}
+        <div className="space-y-1">
+          <TextField
+            id="street"
+            name="street"
+            label="Rua *"
+            value={formData.street || ''}
+            onChange={handleChange}
+            placeholder="Ex: Rua das Flores"
+            error={errors.street}
+          />
+        </div>
+
+        {/* Cidade */}
+        <div className="space-y-1">
+          <TextField
+            id="city"
+            name="city"
+            label="Cidade *"
+            value={formData.city || ''}
+            onChange={handleChange}
+            placeholder="Ex: São Paulo"
+            error={errors.city}
+          />
+        </div>
+
+        {/* Número e Complemento */}
+        <div className="space-y-1">
+          <label className="block text-topicos text-typography font-work-sans mb-3">
+            Detalhes do endereço
+          </label>
+          <div className="grid grid-cols-2 gap-4">
+            <TextField
+              id="number"
+              name="number"
+              label="Número *"
+              value={formData.number || ''}
+              onChange={handleChange}
+              placeholder="Ex: 123"
+              error={errors.number}
+            />
+            <TextField
+              id="complement"
+              name="complement"
+              label="Complemento"
+              value={formData.complement || ''}
+              onChange={handleChange}
+              placeholder="Ex: Apto 101"
+            />
+          </div>
+        </div>
+
+        {/* Progress indicator */}
+        <div className="bg-muted rounded-full p-1">
+          <div className="flex items-center justify-between text-xs text-muted-foreground px-3 py-2">
+            <span>Campos obrigatórios preenchidos</span>
+            <span
+              className={`font-medium ${isFormValid() ? 'text-success' : 'text-muted-foreground'}`}
+            >
+              {isFormValid() ? '✓ Completo' : 'Pendente'}
+            </span>
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div className="pt-4">
+          <ContinueButton
+            isEnabled={!!isFormValid()}
+            text="CONTINUAR"
+            isLoading={isLoading}
+            loadingText="Carregando..."
+          />
+        </div>
+
+        {/* Helper text */}
+        <div className="text-center">
+          <p className="text-desc-campos text-muted-foreground">* Campos obrigatórios</p>
+        </div>
+      </form>
+    </div>
   );
 }

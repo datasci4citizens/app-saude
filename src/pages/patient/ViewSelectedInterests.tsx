@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Header from "@/components/ui/header";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
-import { InterestAreasService } from "@/api/services/InterestAreasService";
-import { Button } from "@/components/forms/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { InterestAreaTriggerCreate } from "@/api/models/InterestAreaTriggerCreate";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Header from '@/components/ui/header';
+import BottomNavigationBar from '@/components/ui/navigator-bar';
+import { InterestAreasService } from '@/api/services/InterestAreasService';
+import { Button } from '@/components/forms/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { InterestAreaTrigger } from '@/api/models/InterestAreaTrigger';
+import { AccountService } from '@/api';
 
 // Extended interface for API response that includes the ID
 interface InterestAreaResponse {
@@ -13,14 +14,12 @@ interface InterestAreaResponse {
   observation_concept_id?: number | null;
   interest_name?: string | null;
   value_as_string?: string | null;
-  triggers?: InterestAreaTriggerCreate[];
+  triggers?: InterestAreaTrigger[];
 }
 
 export default function ViewSelectedInterests() {
   const navigate = useNavigate();
-  const [userInterests, setUserInterests] = useState<InterestAreaResponse[]>(
-    [],
-  );
+  const [userInterests, setUserInterests] = useState<InterestAreaResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,14 +30,15 @@ export default function ViewSelectedInterests() {
       setError(null);
 
       try {
-        const interests = (await InterestAreasService.personInterestAreasList(
-          false,
+        const userEntity = await AccountService.accountsRetrieve();
+        const interests = (await InterestAreasService.apiInterestAreaList(
+          userEntity.person_id,
         )) as InterestAreaResponse[];
-        console.log("Loaded interests:", interests);
+        console.log('Loaded interests:', interests);
         setUserInterests(interests);
       } catch (err) {
-        console.error("Error loading interests:", err);
-        setError("Failed to load your interests. Please try again later.");
+        console.error('Error loading interests:', err);
+        setError('Failed to load your interests. Please try again later.');
       } finally {
         setIsLoading(false);
       }
@@ -48,13 +48,11 @@ export default function ViewSelectedInterests() {
   }, []);
 
   // Handle unlinking/deleting an interest
-  const handleUnlinkInterest = async (
-    interestId: number,
-    isCustom: boolean,
-  ) => {
+  const handleUnlinkInterest = async (interestId: number) => {
     try {
       // For both custom and default interests, we call the same delete endpoint
-      await InterestAreasService.personInterestAreasDestroy(interestId);
+      const userEntity = await AccountService.accountsRetrieve();
+      await InterestAreasService.apiInterestAreaDestroy(String(interestId), userEntity.person_id);
 
       // Remove from local state after successful delete
       setUserInterests((prev) =>
@@ -64,42 +62,42 @@ export default function ViewSelectedInterests() {
       // No need for different handling between custom/default at the UI level
       // The server takes care of either deleting custom interests or just unlinking default ones
     } catch (err) {
-      console.error("Error removing interest:", err);
-      setError("Failed to remove interest. Please try again.");
+      console.error('Error removing interest:', err);
+      setError('Failed to remove interest. Please try again.');
     }
   };
 
   // Handle back navigation
   const handleBack = () => {
-    navigate("/user-main-page");
+    navigate('/user-main-page');
   };
 
   const getActiveNavId = () => {
-    if (location.pathname.startsWith("/user-main-page")) return "home";
-    if (location.pathname.startsWith("/reminders")) return "meds";
-    if (location.pathname.startsWith("/diary")) return "diary";
-    if (location.pathname.startsWith("/emergency-user")) return "emergency";
-    if (location.pathname.startsWith("/profile")) return "profile";
+    if (location.pathname.startsWith('/user-main-page')) return 'home';
+    if (location.pathname.startsWith('/reminders')) return 'meds';
+    if (location.pathname.startsWith('/diary')) return 'diary';
+    if (location.pathname.startsWith('/emergency-user')) return 'emergency';
+    if (location.pathname.startsWith('/profile')) return 'profile';
     return null;
   };
 
   // Handle main navigation
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
-      case "home":
-        navigate("/user-main-page");
+      case 'home':
+        navigate('/user-main-page');
         break;
-      case "meds":
-        navigate("/reminders");
+      case 'meds':
+        navigate('/reminders');
         break;
-      case "diary":
-        navigate("/diary");
+      case 'diary':
+        navigate('/diary');
         break;
-      case "emergency":
-        navigate("/emergency-user");
+      case 'emergency':
+        navigate('/emergency-user');
         break;
-      case "profile":
-        navigate("/profile");
+      case 'profile':
+        navigate('/profile');
         break;
     }
   };
@@ -135,18 +133,14 @@ export default function ViewSelectedInterests() {
           <div className="flex flex-col gap-4">
             {userInterests.length === 0 ? (
               <div className="flex justify-center py-8">
-                <p className="text-typography">
-                  Você ainda não tem interesses cadastrados.
-                </p>
+                <p className="text-typography">Você ainda não tem interesses cadastrados.</p>
               </div>
             ) : (
               userInterests.map((interest) => (
                 <div
                   key={interest.interest_area_id}
                   className="cursor-pointer"
-                  onClick={() =>
-                    navigate(`/user-edit-interest/${interest.interest_area_id}`)
-                  }
+                  onClick={() => navigate(`/user-edit-interest/${interest.interest_area_id}`)}
                 >
                   <Card className="bg-offwhite border-none text-typography">
                     <CardHeader className="pb-2">
@@ -154,9 +148,7 @@ export default function ViewSelectedInterests() {
                         <span>
                           {interest.interest_name}
                           <span className="text-sm font-normal">
-                            {isCustomInterest(interest)
-                              ? " (Padrão)"
-                              : " (Personalizado)"}
+                            {isCustomInterest(interest) ? ' (Padrão)' : ' (Personalizado)'}
                           </span>
                         </span>
 
@@ -166,10 +158,7 @@ export default function ViewSelectedInterests() {
                           className="bg-transparent hover:bg-destructive p-1 h-8 w-8 rounded-full"
                           onClick={(e) => {
                             e.stopPropagation(); // This prevents the click from bubbling up to the parent div
-                            handleUnlinkInterest(
-                              interest.interest_area_id,
-                              isCustomInterest(interest),
-                            );
+                            handleUnlinkInterest(interest.interest_area_id);
                           }}
                         >
                           <svg
@@ -183,8 +172,8 @@ export default function ViewSelectedInterests() {
                             strokeLinecap="round"
                             strokeLinejoin="round"
                           >
-                            <path d="M18 6L6 18"></path>
-                            <path d="M6 6l12 12"></path>
+                            <path d="M18 6L6 18" />
+                            <path d="M6 6l12 12" />
                           </svg>
                         </Button>
                       </CardTitle>
@@ -194,11 +183,9 @@ export default function ViewSelectedInterests() {
                       {interest.triggers && interest.triggers.length > 0 ? (
                         <ul className="text-sm pl-1 space-y-1">
                           {interest.triggers.map((trigger, index) => (
-                            <li key={index} className="flex items-start">
+                            <li key={`${trigger.name}-${index}`} className="flex items-start">
                               <span className="mr-2">•</span>
-                              <span>
-                                {trigger.trigger_name || "Sem descrição"}
-                              </span>
+                              <span>{trigger.name || 'Sem descrição'}</span>
                             </li>
                           ))}
                         </ul>

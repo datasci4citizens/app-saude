@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { User, Stethoscope, Check, ArrowLeft } from "lucide-react";
-import SelectableOption from "@/components/ui/selectable-button";
-import ContinueButton from "@/components/ui/ContinueButton";
+import { useState } from 'react';
+import { User, Stethoscope, Check, ArrowLeft } from 'lucide-react';
+import SelectableOption from '@/components/ui/selectable-button';
+import ContinueButton from '@/components/ui/ContinueButton';
 
 interface EntryOptionsScreenProps {
   onComplete: (userType: string) => void;
@@ -16,7 +16,7 @@ const EntryOptionsScreen: React.FC<EntryOptionsScreenProps> = ({
   currentStep,
   totalSteps,
 }) => {
-  const [userType, setUserType] = useState("");
+  const [userType, setUserType] = useState('');
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const handleContinue = () => {
@@ -34,16 +34,16 @@ const EntryOptionsScreen: React.FC<EntryOptionsScreenProps> = ({
 
   const userOptions = [
     {
-      id: "patient",
-      label: "Paciente",
-      description: "Busco apoio para minha saúde mental e bem-estar",
+      id: 'patient',
+      label: 'Paciente',
+      description: 'Busco apoio para minha saúde mental e bem-estar',
       icon: User,
       delay: 0,
     },
     {
-      id: "professional",
-      label: "Profissional de saúde",
-      description: "Trabalho na área da saúde ou sou ACS",
+      id: 'professional',
+      label: 'Profissional de saúde',
+      description: 'Trabalho na área da saúde ou sou ACS',
       icon: Stethoscope,
       delay: 100,
     },
@@ -86,9 +86,7 @@ const EntryOptionsScreen: React.FC<EntryOptionsScreenProps> = ({
                 <ArrowLeft className="h-5 w-5 text-white" />
               </button>
             )}
-            <h1 className="text-titulowindow font-work-sans text-white">
-              Escolha seu perfil
-            </h1>
+            <h1 className="text-titulowindow font-work-sans text-white">Escolha seu perfil</h1>
           </div>
 
           {/* Progresso no header */}
@@ -108,7 +106,7 @@ const EntryOptionsScreen: React.FC<EntryOptionsScreenProps> = ({
                 key={option.id}
                 label={option.label}
                 description={option.description}
-                icon={option.icon}
+                Icon={option.icon}
                 selected={userType === option.id}
                 onClick={() => setUserType(option.id)}
                 delay={option.delay}
@@ -130,8 +128,8 @@ const EntryOptionsScreen: React.FC<EntryOptionsScreenProps> = ({
             <div className="text-center mb-6">
               <p className="text-white/80 text-desc-titulo font-inter">
                 {isLastStep
-                  ? `Perfeito! Você será direcionado para ${userType === "patient" ? "a área do paciente" : "a área profissional"}`
-                  : "Ótima escolha! Vamos continuar"}
+                  ? `Perfeito! Você será direcionado para ${userType === 'patient' ? 'a área do paciente' : 'a área profissional'}`
+                  : 'Ótima escolha! Vamos continuar'}
               </p>
             </div>
           )}
@@ -142,9 +140,9 @@ const EntryOptionsScreen: React.FC<EntryOptionsScreenProps> = ({
               <div className="flex items-center justify-center space-x-2">
                 <Check className="h-5 w-5" />
                 <span className="font-inter font-medium text-desc-titulo">
-                  {userType === "patient"
-                    ? "Redirecionando para área do paciente!"
-                    : "Redirecionando para área profissional!"}
+                  {userType === 'patient'
+                    ? 'Redirecionando para área do paciente!'
+                    : 'Redirecionando para área profissional!'}
                 </span>
               </div>
             </div>
@@ -154,16 +152,15 @@ const EntryOptionsScreen: React.FC<EntryOptionsScreenProps> = ({
 
       {/* Área fixa do botão com espaçamento adequado */}
       <div className="flex-shrink-0 px-6 pb-28">
-        {" "}
+        {' '}
         {/* pb-28 para mais espaço para a progress bar */}
         <div className="w-full max-w-xs mx-auto">
-          {" "}
+          {' '}
           {/* max-w-xs para botão menor */}
           <ContinueButton
-            isEnabled={userType !== ""}
+            isEnabled={userType !== ''}
             onClick={handleContinue}
-            text={isLastStep ? "FINALIZAR" : "CONTINUAR"}
-            successText="PERFEITO!"
+            text={isLastStep ? 'FINALIZAR' : 'CONTINUAR'}
           />
         </div>
       </div>

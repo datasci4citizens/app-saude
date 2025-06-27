@@ -2,14 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { DiaryRetrieve } from "../models/DiaryRetrieve";
-import type { PatchedProviderUpdate } from "../models/PatchedProviderUpdate";
-import type { ProviderCreate } from "../models/ProviderCreate";
-import type { ProviderRetrieve } from "../models/ProviderRetrieve";
-import type { ProviderUpdate } from "../models/ProviderUpdate";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { DiaryRetrieve } from '../models/DiaryRetrieve';
+import type { PatchedProviderUpdate } from '../models/PatchedProviderUpdate';
+import type { ProviderCreate } from '../models/ProviderCreate';
+import type { ProviderRetrieve } from '../models/ProviderRetrieve';
+import type { ProviderUpdate } from '../models/ProviderUpdate';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class ProviderService {
   /**
    * @param birthDatetime
@@ -22,6 +22,7 @@ export class ProviderService {
    * @param socialName
    * @param specialtyConcept
    * @param updatedAt
+   * @param useDarkMode
    * @param user
    * @returns ProviderRetrieve
    * @throws ApiError
@@ -37,11 +38,12 @@ export class ProviderService {
     socialName?: string,
     specialtyConcept?: number,
     updatedAt?: string,
+    useDarkMode?: boolean,
     user?: number,
   ): CancelablePromise<Array<ProviderRetrieve>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/provider/",
+      method: 'GET',
+      url: '/api/provider/',
       query: {
         birth_datetime: birthDatetime,
         care_site: careSite,
@@ -53,6 +55,7 @@ export class ProviderService {
         social_name: socialName,
         specialty_concept: specialtyConcept,
         updated_at: updatedAt,
+        use_dark_mode: useDarkMode,
         user: user,
       },
     });
@@ -66,10 +69,10 @@ export class ProviderService {
     requestBody?: ProviderCreate,
   ): CancelablePromise<ProviderRetrieve> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/provider/",
+      method: 'POST',
+      url: '/api/provider/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -77,12 +80,10 @@ export class ProviderService {
    * @returns ProviderRetrieve
    * @throws ApiError
    */
-  public static apiProviderRetrieve(
-    providerId: number,
-  ): CancelablePromise<ProviderRetrieve> {
+  public static apiProviderRetrieve(providerId: number): CancelablePromise<ProviderRetrieve> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/provider/{provider_id}/",
+      method: 'GET',
+      url: '/api/provider/{provider_id}/',
       path: {
         provider_id: providerId,
       },
@@ -99,13 +100,13 @@ export class ProviderService {
     requestBody?: ProviderUpdate,
   ): CancelablePromise<ProviderUpdate> {
     return __request(OpenAPI, {
-      method: "PUT",
-      url: "/api/provider/{provider_id}/",
+      method: 'PUT',
+      url: '/api/provider/{provider_id}/',
       path: {
         provider_id: providerId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -119,13 +120,13 @@ export class ProviderService {
     requestBody?: PatchedProviderUpdate,
   ): CancelablePromise<ProviderUpdate> {
     return __request(OpenAPI, {
-      method: "PATCH",
-      url: "/api/provider/{provider_id}/",
+      method: 'PATCH',
+      url: '/api/provider/{provider_id}/',
       path: {
         provider_id: providerId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -133,12 +134,10 @@ export class ProviderService {
    * @returns void
    * @throws ApiError
    */
-  public static apiProviderDestroy(
-    providerId: number,
-  ): CancelablePromise<void> {
+  public static apiProviderDestroy(providerId: number): CancelablePromise<void> {
     return __request(OpenAPI, {
-      method: "DELETE",
-      url: "/api/provider/{provider_id}/",
+      method: 'DELETE',
+      url: '/api/provider/{provider_id}/',
       path: {
         provider_id: providerId,
       },
@@ -153,8 +152,8 @@ export class ProviderService {
     personId: number,
   ): CancelablePromise<Array<DiaryRetrieve>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/provider/patients/{person_id}/diaries/",
+      method: 'GET',
+      url: '/provider/patients/{person_id}/diaries/',
       path: {
         person_id: personId,
       },
@@ -171,8 +170,8 @@ export class ProviderService {
     personId: number,
   ): CancelablePromise<any> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/provider/patients/{person_id}/diaries/{diary_id}/",
+      method: 'GET',
+      url: '/provider/patients/{person_id}/diaries/{diary_id}/',
       path: {
         diary_id: diaryId,
         person_id: personId,

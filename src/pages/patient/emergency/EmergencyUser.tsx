@@ -1,40 +1,40 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import useSWR from "swr";
-import { RadioCheckbox } from "@/components/forms/radio-checkbox";
-import { Button } from "@/components/forms/button";
-import { TextField } from "@/components/forms/text_input";
-import { LinkPersonProviderService } from "@/api/services/LinkPersonProviderService";
-import { ApiService } from "@/api/services/ApiService";
-import type { ProviderRetrieve } from "@/api/models/ProviderRetrieve";
-import { HelpService } from "@/api/services/HelpService";
-import Header from "@/components/ui/header";
-import type { ObservationCreate } from "@/api/models/ObservationCreate";
-import { SuccessMessage } from "@/components/ui/success-message";
-import { ErrorMessage } from "@/components/ui/error-message";
-import BottomNavigationBar from "@/components/ui/navigator-bar";
+import type { ObservationCreate } from '@/api/models/ObservationCreate';
+import type { ProviderRetrieve } from '@/api/models/ProviderRetrieve';
+import { ApiService } from '@/api/services/ApiService';
+import { HelpService } from '@/api/services/HelpService';
+import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
+import { Button } from '@/components/forms/button';
+import { RadioCheckbox } from '@/components/forms/radio-checkbox';
+import { TextField } from '@/components/forms/text_input';
+import { ErrorMessage } from '@/components/ui/error-message';
+import Header from '@/components/ui/header';
+import BottomNavigationBar from '@/components/ui/navigator-bar';
+import { SuccessMessage } from '@/components/ui/success-message';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import useSWR from 'swr';
 
 // Fetcher function for SWR
 const fetcher = async (url: string) => {
-  if (url === "providers") {
+  if (url === 'providers') {
     return await LinkPersonProviderService.personProvidersList();
   }
-  if (url === "user") {
+  if (url === 'user') {
     return await ApiService.apiUserEntityRetrieve();
   }
-  throw new Error("Unknown fetcher URL");
+  throw new Error('Unknown fetcher URL');
 };
 
 export default function EmergencyScreen() {
   const navigate = useNavigate();
   const [selectedProviders, setSelectedProviders] = useState<number[]>([]);
-  const [freeText, setFreeText] = useState("");
+  const [freeText, setFreeText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   // Fetch user data
-  const { data: user, isLoading: isUserLoading } = useSWR("user", fetcher, {
+  const { data: user, isLoading: isUserLoading } = useSWR('user', fetcher, {
     revalidateOnFocus: false,
   });
 
@@ -43,7 +43,7 @@ export default function EmergencyScreen() {
     data: providers,
     error: providersError,
     isLoading: isProvidersLoading,
-  } = useSWR(user ? "providers" : null, fetcher, {
+  } = useSWR(user ? 'providers' : null, fetcher, {
     revalidateOnFocus: false,
     dedupingInterval: 60000,
   });
@@ -55,14 +55,12 @@ export default function EmergencyScreen() {
     e.preventDefault();
 
     if (!user?.person_id) {
-      setError("ID do usuário não encontrado. Tente recarregar a página.");
+      setError('ID do usuário não encontrado. Tente recarregar a página.');
       return;
     }
 
     if (selectedProviders.length === 0) {
-      setError(
-        "Selecione pelo menos um profissional para enviar o pedido de ajuda.",
-      );
+      setError('Selecione pelo menos um profissional para enviar o pedido de ajuda.');
       return;
     }
 
@@ -71,48 +69,60 @@ export default function EmergencyScreen() {
     setSuccess(null);
 
     try {
-      const emergencyRequests: ObservationCreate[] = selectedProviders.map(
-        (providerId) => ({
-          person: user.person_id,
-          provider: providerId,
-          value_as_string: freeText || "Pedido de Ajuda",
-          observation_date: new Date().toISOString(),
-          shared_with_provider: true,
-        }),
-      );
+      const emergencyRequests: ObservationCreate[] = selectedProviders.map((providerId) => ({
+        person: user.person_id,
+        provider: providerId,
+        value_as_string: freeText || 'Pedido de Ajuda',
+        observation_date: new Date().toISOString(),
+        shared_with_provider: true,
+      }));
 
       await HelpService.helpSendCreate(emergencyRequests);
 
       const providerCount = selectedProviders.length;
-      const providerText =
-        providerCount === 1 ? "profissional" : "profissionais";
-      setSuccess(
-        `Pedido de ajuda enviado com sucesso para ${providerCount} ${providerText}!`,
-      );
+      const providerText = providerCount === 1 ? 'profissional' : 'profissionais';
+      setSuccess(`Pedido de ajuda enviado com sucesso para ${providerCount} ${providerText}!`);
 
       setSelectedProviders([]);
-      setFreeText("");
+      setFreeText('');
 
       setTimeout(() => {
-        navigate("/user-main-page");
+        navigate('/user-main-page');
       }, 2000);
-    } catch (error: any) {
-      console.error("Erro ao enviar pedido de ajuda:", error);
+    } catch (error: unknown) {
+      console.error('Erro ao enviar pedido de ajuda:', error);
 
-      if (error?.response?.status === 400) {
-        setError(
-          "Dados inválidos. Verifique as informações e tente novamente.",
-        );
-      } else if (error?.response?.status === 404) {
-        setError("Profissional não encontrado. Tente atualizar a página.");
-      } else if (error?.response?.status >= 500) {
-        setError("Erro no servidor. Tente novamente em alguns minutos.");
-      } else if (error?.message) {
-        setError(`Erro ao enviar pedido de ajuda: ${error.message}`);
+      // Best effort to get a status code
+      const status =
+        error &&
+        typeof error === 'object' &&
+        'response' in error &&
+        error.response &&
+        typeof error.response === 'object' &&
+        'status' in error.response &&
+        typeof error.response.status === 'number'
+          ? error.response.status
+          : null;
+
+      // Best effort to get a message
+      const message =
+        error &&
+        typeof error === 'object' &&
+        'message' in error &&
+        typeof error.message === 'string'
+          ? error.message
+          : null;
+
+      if (status === 400) {
+        setError('Dados inválidos. Verifique as informações e tente novamente.');
+      } else if (status === 404) {
+        setError('Profissional não encontrado. Tente atualizar a página.');
+      } else if (status && status >= 500) {
+        setError('Erro no servidor. Tente novamente em alguns minutos.');
+      } else if (message) {
+        setError(`Erro ao enviar pedido de ajuda: ${message}`);
       } else {
-        setError(
-          "Erro ao enviar pedido de ajuda. Verifique sua conexão e tente novamente.",
-        );
+        setError('Erro ao enviar pedido de ajuda. Verifique sua conexão e tente novamente.');
       }
     } finally {
       setIsSubmitting(false);
@@ -120,30 +130,30 @@ export default function EmergencyScreen() {
   };
 
   const getActiveNavId = () => {
-    if (location.pathname.startsWith("/user-main-page")) return "home";
-    if (location.pathname.startsWith("/reminders")) return "meds";
-    if (location.pathname.startsWith("/diary")) return "diary";
-    if (location.pathname.startsWith("/emergency-user")) return "emergency";
-    if (location.pathname.startsWith("/profile")) return "profile";
+    if (location.pathname.startsWith('/user-main-page')) return 'home';
+    if (location.pathname.startsWith('/reminders')) return 'meds';
+    if (location.pathname.startsWith('/diary')) return 'diary';
+    if (location.pathname.startsWith('/emergency-user')) return 'emergency';
+    if (location.pathname.startsWith('/profile')) return 'profile';
     return null;
   };
 
   const handleNavigationClick = (itemId: string) => {
     switch (itemId) {
-      case "home":
-        navigate("/user-main-page");
+      case 'home':
+        navigate('/user-main-page');
         break;
-      case "meds":
-        navigate("/reminders");
+      case 'meds':
+        navigate('/reminders');
         break;
-      case "diary":
-        navigate("/diary");
+      case 'diary':
+        navigate('/diary');
         break;
-      case "emergency":
-        navigate("/emergency-user");
+      case 'emergency':
+        navigate('/emergency-user');
         break;
-      case "profile":
-        navigate("/profile");
+      case 'profile':
+        navigate('/profile');
         break;
     }
   };
@@ -153,9 +163,8 @@ export default function EmergencyScreen() {
     setSelectedProviders((prev) => {
       if (prev.includes(providerId)) {
         return prev.filter((id) => id !== providerId);
-      } else {
-        return [...prev, providerId];
       }
+      return [...prev, providerId];
     });
   }, []);
 
@@ -163,19 +172,17 @@ export default function EmergencyScreen() {
   if (isUserLoading || isProvidersLoading) {
     return (
       <div className="flex flex-col h-screen bg-background">
-        <Header title="Pedido de Ajuda" />
+        <Header title="Pedido de Ajuda" variant="transparent" />
         <div className="flex-1 flex items-center justify-center px-4">
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="relative">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-selection"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray1 border-t-selection" />
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="text-lg">⚕️</span>
               </div>
             </div>
             <div>
-              <p className="text-typography font-medium">
-                Carregando profissionais...
-              </p>
+              <p className="text-typography font-medium">Carregando profissionais...</p>
               <p className="text-gray2 text-sm mt-1">Aguarde um momento</p>
             </div>
           </div>
@@ -199,26 +206,16 @@ export default function EmergencyScreen() {
             <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mb-4 mx-auto">
               <span className="text-2xl">⚠️</span>
             </div>
-            <h3 className="text-typography font-semibold text-lg mb-2">
-              Erro ao carregar
-            </h3>
+            <h3 className="text-typography font-semibold text-lg mb-2">Erro ao carregar</h3>
             <p className="text-gray2 text-sm mb-4">
               Não foi possível carregar seus profissionais vinculados.
             </p>
           </div>
           <div className="space-y-3 w-full max-w-sm">
-            <Button
-              variant="orange"
-              className="w-full"
-              onClick={() => window.location.reload()}
-            >
+            <Button variant="orange" className="w-full" onClick={() => window.location.reload()}>
               Tentar novamente
             </Button>
-            <Button
-              variant="ghost"
-              className="w-full"
-              onClick={() => navigate("/user-main-page")}
-            >
+            <Button variant="ghost" className="w-full" onClick={() => navigate('/user-main-page')}>
               Voltar ao início
             </Button>
           </div>
@@ -251,8 +248,8 @@ export default function EmergencyScreen() {
 
             {/* Descrição mais clara e legível */}
             <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-              Para enviar pedidos de ajuda, você precisa primeiro adicionar um
-              profissional de saúde ao seu perfil.
+              Para enviar pedidos de ajuda, você precisa primeiro adicionar um profissional de saúde
+              ao seu perfil.
             </p>
 
             {/* Botões com melhor espaçamento */}
@@ -261,7 +258,7 @@ export default function EmergencyScreen() {
                 variant="orange"
                 size="full"
                 className="h-12 font-semibold shadow-md"
-                onClick={() => navigate("/manage-professionals")}
+                onClick={() => navigate('/manage-professionals')}
               >
                 <span className="mr-2">➕</span>
                 Adicionar profissional
@@ -270,7 +267,7 @@ export default function EmergencyScreen() {
                 variant="ghost"
                 size="full"
                 className="h-11"
-                onClick={() => navigate("/user-main-page")}
+                onClick={() => navigate('/user-main-page')}
               >
                 Voltar ao início
               </Button>
@@ -288,7 +285,7 @@ export default function EmergencyScreen() {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <Header title="Pedido de Ajuda" />
+      <Header title="Pedido de Ajuda" variant="transparent" />
 
       <div className="flex-1 overflow-y-auto pb-24">
         <div className="px-4 py-6 space-y-6">
@@ -312,32 +309,32 @@ export default function EmergencyScreen() {
             />
           )}
 
-          {/* Emergency Disclaimer - CORES TAILWIND PADRÃO */}
-          <div className="bg-red-50 dark:bg-red-950 border-2 border-red-200 dark:border-red-800 rounded-2xl p-5 shadow-sm">
+          {/* Emergency Disclaimer */}
+          <div className="bg-card border border-card-border rounded-2xl p-5 shadow-button-soft">
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="text-red-600 dark:text-red-400 text-xl font-bold">
+              <div className="w-10 h-10 bg-destructive/20 rounded-full flex items-center justify-center shadow-button-soft flex-shrink-0">
+                <span className="text-destructive text-base leading-none flex items-center justify-center">
                   ⚠️
                 </span>
               </div>
               <div className="flex-1">
-                <h4 className="text-red-900 dark:text-red-100 font-bold text-base mb-3">
-                  ATENÇÃO: Resposta não imediata
+                <h4 className="text-destructive font-semibold text-base mb-2 tracking-wide">
+                  Atenção: Resposta não imediata
                 </h4>
-                <p className="text-red-800 dark:text-red-200 text-sm leading-relaxed mb-4 font-medium">
-                  Este não é um serviço de emergência. Em situações urgentes,
-                  contate os serviços oficiais:
+                <p className="text-typography text-sm mb-4 leading-relaxed">
+                  Este não é um serviço de emergência. Em situações urgentes, contate os serviços
+                  oficiais:
                 </p>
                 <div className="flex flex-wrap gap-3">
                   <a
                     href="tel:192"
-                    className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-md"
+                    className="inline-flex items-center gap-2 bg-destructive text-destructive-foreground hover:bg-destructive/90 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-button-hover transition-all duration-200 hover-lift"
                   >
                     📞 192 (SAMU)
                   </a>
                   <a
                     href="tel:188"
-                    className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-md"
+                    className="inline-flex items-center gap-2 bg-gray2 text-gray2-foreground hover:bg-accent1 hover:text-accent1-background px-4 py-2.5 rounded-xl text-sm font-semibold shadow-button-soft transition-all duration-200 hover-lift"
                   >
                     💬 188 (CVV)
                   </a>
@@ -367,8 +364,8 @@ export default function EmergencyScreen() {
                       p-4 rounded-xl border-2 transition-all duration-200 hover:shadow-sm
                       ${
                         selectedProviders.includes(provider.provider_id)
-                          ? "border-selection bg-selection/5 shadow-md"
-                          : "border-border hover:border-selection/30 hover:bg-accent/50"
+                          ? 'border-selection bg-selection/5 shadow-md'
+                          : 'border-border hover:border-selection/30 hover:bg-accent/50'
                       }
                     `}
                   >
@@ -378,23 +375,19 @@ export default function EmergencyScreen() {
                       label={
                         provider.social_name ||
                         `${provider.first_name} ${provider.last_name}` ||
-                        "Profissional sem nome"
+                        'Profissional sem nome'
                       }
                       checked={selectedProviders.includes(provider.provider_id)}
-                      onCheckedChange={() =>
-                        handleProviderSelect(provider.provider_id)
-                      }
+                      onCheckedChange={() => handleProviderSelect(provider.provider_id)}
                     />
                   </div>
                 ))}
               </div>
 
               {selectedProviders.length > 0 && (
-                <div className="mt-5 p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800/50 rounded-xl">
-                  <p className="text-green-800 dark:text-green-300 text-sm font-semibold flex items-center gap-2">
-                    <span className="text-green-600 dark:text-green-400">
-                      ✓
-                    </span>
+                <div className="mt-5 p-4 bg-selected border border-selected rounded-xl">
+                  <p className="text-selected/80 text-sm font-semibold flex items-center gap-2">
+                    <span className="text-selected/60">✓</span>
                     {selectedProviders.length} profissional(is) selecionado(s)
                   </p>
                 </div>
@@ -425,13 +418,9 @@ export default function EmergencyScreen() {
               />
 
               <div className="flex justify-between items-center text-xs">
-                <span className="text-muted-foreground">
-                  {freeText.length}/200 caracteres
-                </span>
+                <span className="text-muted-foreground">{freeText.length}/200 caracteres</span>
                 {freeText.length > 150 && (
-                  <span className="text-yellow-600 dark:text-yellow-400 font-medium">
-                    {200 - freeText.length} restantes
-                  </span>
+                  <span className="text-yellow font-medium">{200 - freeText.length} restantes</span>
                 )}
               </div>
             </div>
@@ -440,7 +429,7 @@ export default function EmergencyScreen() {
             {isSubmitting && (
               <div className="bg-card rounded-2xl p-6 border border-card-border shadow-sm">
                 <div className="flex items-center justify-center gap-3">
-                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-selection/20 border-t-selection"></div>
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-selection/20 border-t-selection" />
                   <span className="text-typography text-base font-medium">
                     Enviando seu pedido de ajuda...
                   </span>
@@ -459,7 +448,7 @@ export default function EmergencyScreen() {
               >
                 {isSubmitting ? (
                   <div className="flex items-center gap-3">
-                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/20 border-t-white"></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/20 border-t-white" />
                     <span>Enviando pedido...</span>
                   </div>
                 ) : (

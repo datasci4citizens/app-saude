@@ -2,24 +2,22 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { MeasurementCreate } from "../models/MeasurementCreate";
-import type { MeasurementRetrieve } from "../models/MeasurementRetrieve";
-import type { MeasurementUpdate } from "../models/MeasurementUpdate";
-import type { PatchedMeasurementUpdate } from "../models/PatchedMeasurementUpdate";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+import type { MeasurementCreate } from '../models/MeasurementCreate';
+import type { MeasurementRetrieve } from '../models/MeasurementRetrieve';
+import type { MeasurementUpdate } from '../models/MeasurementUpdate';
+import type { PatchedMeasurementUpdate } from '../models/PatchedMeasurementUpdate';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class MeasurementService {
   /**
    * @returns MeasurementRetrieve
    * @throws ApiError
    */
-  public static apiMeasurementList(): CancelablePromise<
-    Array<MeasurementRetrieve>
-  > {
+  public static apiMeasurementList(): CancelablePromise<Array<MeasurementRetrieve>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/measurement/",
+      method: 'GET',
+      url: '/api/measurement/',
     });
   }
   /**
@@ -31,10 +29,10 @@ export class MeasurementService {
     requestBody?: MeasurementCreate,
   ): CancelablePromise<MeasurementCreate> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/measurement/",
+      method: 'POST',
+      url: '/api/measurement/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -46,8 +44,8 @@ export class MeasurementService {
     measurementId: number,
   ): CancelablePromise<MeasurementRetrieve> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/measurement/{measurement_id}/",
+      method: 'GET',
+      url: '/api/measurement/{measurement_id}/',
       path: {
         measurement_id: measurementId,
       },
@@ -64,13 +62,13 @@ export class MeasurementService {
     requestBody?: MeasurementUpdate,
   ): CancelablePromise<MeasurementUpdate> {
     return __request(OpenAPI, {
-      method: "PUT",
-      url: "/api/measurement/{measurement_id}/",
+      method: 'PUT',
+      url: '/api/measurement/{measurement_id}/',
       path: {
         measurement_id: measurementId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -84,13 +82,13 @@ export class MeasurementService {
     requestBody?: PatchedMeasurementUpdate,
   ): CancelablePromise<MeasurementUpdate> {
     return __request(OpenAPI, {
-      method: "PATCH",
-      url: "/api/measurement/{measurement_id}/",
+      method: 'PATCH',
+      url: '/api/measurement/{measurement_id}/',
       path: {
         measurement_id: measurementId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
     });
   }
   /**
@@ -98,12 +96,10 @@ export class MeasurementService {
    * @returns void
    * @throws ApiError
    */
-  public static apiMeasurementDestroy(
-    measurementId: number,
-  ): CancelablePromise<void> {
+  public static apiMeasurementDestroy(measurementId: number): CancelablePromise<void> {
     return __request(OpenAPI, {
-      method: "DELETE",
-      url: "/api/measurement/{measurement_id}/",
+      method: 'DELETE',
+      url: '/api/measurement/{measurement_id}/',
       path: {
         measurement_id: measurementId,
       },
