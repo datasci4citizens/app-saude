@@ -219,7 +219,7 @@ export function useDemographicConcepts(): DemographicConceptsResult {
 
       try {
         // Fetch gender and race concepts
-        const concepts = await ConceptService.apiConceptList('Gender,Race', undefined, 'pt');
+        const concepts = await ConceptService.apiConceptList('Gender,Race', undefined, '297504001');
 
         // Process gender options
         setGenderOptions(
