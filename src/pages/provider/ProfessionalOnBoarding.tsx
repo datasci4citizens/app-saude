@@ -8,6 +8,7 @@ import { ApiService, type ProviderCreate } from '@/api';
 import { FullProviderService } from '@/api/services/FullProviderService';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { ErrorMessage } from '@/components/ui/error-message';
+import { getCurrentAccount } from '../landing/AccountManager';
 
 // Define the provider data type with proper backend field naming (snake_case)
 interface ProviderData {
@@ -79,7 +80,7 @@ export default function ProfessionalOnboarding() {
         professional_registration: data.professional_registration ?? undefined,
         specialty_concept: data.specialty_concept,
         care_site: null,
-        profile_picture: localStorage.getItem('profileImage') || '',
+        profile_picture: getCurrentAccount()?.profilePicture || '',
       };
 
       // Pass the data directly to trigger

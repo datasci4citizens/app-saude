@@ -2,8 +2,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ComponentCatalog from './pages/ComponentCatalog';
 import UserOnboarding from './pages/patient/onboarding/UserOnBoarding';
 import ProfessionalOnboarding from './pages/provider/ProfessionalOnBoarding';
-import CompleteProfile from './pages/patient/profile/CompleteProfile';
-import ProtectedRoute from './components/ProtectedRoute';
 import AcsMainPage from './pages/provider/AcsMainPage';
 import UsermainPage from './pages/patient/UserMainPage';
 import EmergencyPage from './pages/provider/EmergencyPage';
@@ -14,7 +12,6 @@ import DiaryPage from './pages/patient/diary/Diary';
 import DiaryListPage from './pages/patient/diary/DiaryListPage';
 import Reminders from './pages/patient/reminders/Reminders';
 import NewReminder from './pages/patient/reminders/NewReminder';
-import OnboardingSlider from './pages/landing/OnboardingSlider';
 import { SWRConfig } from 'swr';
 import ModifyHabits from './pages/patient/diary/modify-habits';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -29,7 +26,6 @@ import ViewDiary from './pages/provider/ViewDiary';
 import ManageProfessionals from './pages/patient/profile/ManageProfessionals';
 import TermsScreen from './pages/landing/Terms';
 import { NotFound } from './pages/NotFound';
-import { LandingThemeProvider } from './components/ui/LandingThemeProvider';
 import AccountManager from './pages/landing/AccountManager';
 import { useState } from 'react';
 import SplashScreen from './components/SplashScreen';
@@ -122,15 +118,6 @@ const router = createBrowserRouter([
     element: <ProfessionalOnboarding />, // Professional onboarding page
   },
   {
-    path: '/complete-profile',
-    element: (
-      <ProtectedRoute // Protected route for completing user profile
-        element={<CompleteProfile />}
-        allowedTypes={['none']}
-      />
-    ),
-  },
-  {
     path: '/acs-main-page',
     element: <AcsMainPage />, // ACS main page for providers
   },
@@ -192,11 +179,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/terms', // Terms and conditions page
-    element: (
-      <LandingThemeProvider>
-        <TermsScreen onNext={() => {}} currentStep={1} totalSteps={1} isViewOnly={true} />
-      </LandingThemeProvider>
-    ),
+    element: <TermsScreen onNext={() => {}} currentStep={1} totalSteps={1} isViewOnly={true} />,
   },
   {
     path: '*', // Catch-all route for 404 errors

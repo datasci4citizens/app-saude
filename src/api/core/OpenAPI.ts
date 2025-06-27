@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { ApiRequestOptions } from './ApiRequestOptions';
 import { Capacitor } from '@capacitor/core';
+import { getCurrentAccount } from '@/pages/landing/AccountManager';
 
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 type Headers = Record<string, string>;
@@ -39,7 +40,7 @@ export const OpenAPI: OpenAPIConfig = {
   WITH_CREDENTIALS: true,
   CREDENTIALS: 'include',
   TOKEN: async () => {
-    const token = localStorage.getItem('accessToken');
+    const token = getCurrentAccount()?.accessToken;
     return `${token || ''}`;
   },
   USERNAME: undefined,

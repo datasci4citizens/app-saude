@@ -7,6 +7,7 @@ import { LogoutService, type Logout } from '@/api';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { useTheme } from '@/contexts/ThemeContext';
 import OnboardingSlider from './OnboardingSlider';
+import { AccountContext } from '@/contexts/AccountContext';
 
 export interface Account {
   userId: string;
@@ -21,9 +22,21 @@ export interface Account {
   socialName?: string;
 }
 
-type ScreenType = 'account-selection' | 'confirm-logout' | 'onboarding';
-
+const CURRENT_USER_ID_KEY = 'current_user_id';
 const ACCOUNTS_STORAGE_KEY = 'saved_accounts';
+
+export function getCurrentAccount(): Account | null {
+  const userId = localStorage.getItem(CURRENT_USER_ID_KEY);
+  if (!userId) return null;
+
+  const accountsJson = localStorage.getItem(ACCOUNTS_STORAGE_KEY);
+  if (!accountsJson) return null;
+
+  const accounts: Account[] = JSON.parse(accountsJson);
+  return accounts.find((acc) => acc.userId === userId) || null;
+}
+
+type ScreenType = 'account-selection' | 'confirm-logout' | 'onboarding';
 
 const AccountManager: React.FC = () => {
   const navigate = useNavigate();
@@ -59,6 +72,7 @@ const AccountManager: React.FC = () => {
 
   // Salvar contas no localStorage sempre que mudar
   useEffect(() => {
+    console.log('Contas atualizadas:', accounts);
     if (accounts.length > 0) {
       localStorage.setItem(ACCOUNTS_STORAGE_KEY, JSON.stringify(accounts));
     } else {
@@ -81,34 +95,18 @@ const AccountManager: React.FC = () => {
       const updatedAccounts = [...accounts];
       updatedAccounts[existingAccountIndex] = newAccount;
       setAccounts(updatedAccounts);
-      localStorage.setItem('saved_accounts', JSON.stringify(updatedAccounts));
     } else {
       // Adiciona nova conta
       setAccounts((prev) => [...prev, newAccount]);
-      localStorage.setItem(ACCOUNTS_STORAGE_KEY, JSON.stringify([...accounts, newAccount]));
     }
 
-    if (isNew) {
-      // Adiciona um pequeno delay para feedback visual
-      setTimeout(() => {
-        if (newAccount.role === 'provider') {
-          window.location.href = '/forms-prof';
-        } else if (newAccount.role === 'person') {
-          window.location.href = '/forms-user';
-        } else {
-          // Se não tem role, vai para onboarding
-          console.log('Usuário sem role, indo para onboarding');
-          setCurrentScreen('onboarding');
-        }
-      }, 800);
-    } else {
-      selectAccount(newAccount); // Seleciona a nova conta automaticamente
-    }
+    selectAccount(newAccount, isNew);
   };
 
   // Função para selecionar conta existente
-  const selectAccount = async (account: Account) => {
+  const selectAccount = async (account: Account, isNew: boolean) => {
     try {
+      console.log('Selecionando conta:', account);
       const response = await AuthService.authTokenRefreshCreate({
         access: '',
         refresh: account.refreshToken,
@@ -121,42 +119,50 @@ const AccountManager: React.FC = () => {
         lastLogin: new Date().toLocaleString('pt-BR'),
       };
 
-      const updatedAccounts = accounts.map((acc) =>
-        acc.userId === account.userId ? updatedAccount : acc,
-      );
-      setAccounts(updatedAccounts);
+      console.log('Conta atualizada:', updatedAccount);
+
+      setAccounts((prevAccounts) => {
+        const updatedAccounts = prevAccounts.map((acc) =>
+          acc.userId === account.userId ? updatedAccount : acc,
+        );
+        console.log('Contas atualizadas após seleção:', updatedAccounts);
+        return updatedAccounts;
+      });
 
       // Aplicar tema da conta
       setTheme(updatedAccount.useDarkMode ? 'dark' : 'light');
 
-      // Definir tokens no localStorage
-      localStorage.setItem('accessToken', updatedAccount.accessToken);
-      localStorage.setItem('refreshToken', updatedAccount.refreshToken);
-      localStorage.setItem('role', updatedAccount.role);
-      localStorage.setItem('userId', updatedAccount.userId);
-      localStorage.setItem('fullname', updatedAccount.name);
-      localStorage.setItem('social_name', updatedAccount.socialName || '');
-      localStorage.setItem('profileImage', updatedAccount.profilePicture || '');
-      localStorage.setItem('useDarkMode', String(updatedAccount.useDarkMode));
-      localStorage.setItem('onboarding_completed', 'true');
-
+      // Definir tokens
+      localStorage.setItem(CURRENT_USER_ID_KEY, updatedAccount.userId);
       setIsLoading(true);
 
-      // Navegar para a página principal do app baseado no role
-      if (updatedAccount.role === 'provider') {
-        navigate('/acs-main-page');
-      } else if (updatedAccount.role === 'person') {
-        navigate('/user-main-page');
-      } else {
-        // Role is none, redirect to onboarding
-        setCurrentScreen('onboarding');
-      }
+      // Adiciona um pequeno delay para feedback visual
+      setTimeout(() => {
+        if (isNew) {
+          if (updatedAccount.role === 'provider') {
+            navigate('/forms-prof');
+          } else if (updatedAccount.role === 'person') {
+            navigate('/forms-user');
+          } else {
+            setCurrentScreen('onboarding');
+          }
+        } else {
+          if (updatedAccount.role === 'provider') {
+            navigate('/acs-main-page');
+          } else if (updatedAccount.role === 'person') {
+            navigate('/user-main-page');
+          } else {
+            setCurrentScreen('onboarding');
+          }
+        }
+      }, 800);
     } catch (error) {
+      console.log('Erro ao atualizar token da conta:', error);
       // Refresh token inválido, expirado ou erro de rede
       setError({
         show: true,
         message: 'Erro ao atualizar token da conta.',
-        retryFunction: () => selectAccount(account),
+        retryFunction: () => selectAccount(account, false),
       });
       console.error('Erro ao atualizar token da conta:', error);
 
@@ -178,8 +184,10 @@ const AccountManager: React.FC = () => {
   const removeAccount = async (accountId: string) => {
     const account = accounts.find((acc) => acc.userId === accountId);
     const refreshToken = account?.refreshToken || '';
-    localStorage.setItem('refreshToken', refreshToken);
-    localStorage.setItem('accessToken', account?.accessToken || '');
+    if (account) {
+      account.refreshToken = refreshToken;
+    }
+
     const logoutBody: Logout = {
       refresh: refreshToken,
     };
@@ -247,32 +255,42 @@ const AccountManager: React.FC = () => {
   };
 
   return (
-    <div className="font-work-sans">
-      {error.show && (
-        <div className="fixed top-4 left-4 right-4 z-50">
-          <ErrorMessage
-            message={error.message}
-            onClose={() => setError({ show: false, message: '', retryFunction: undefined })}
-            onRetry={error.retryFunction}
-            variant="destructive"
-            retryable={!!error.retryFunction}
-          />
-        </div>
-      )}
+    <AccountContext.Provider
+      value={{
+        accounts,
+        removeAccount,
+        addAccount,
+        selectAccount,
+        currentAccount: getCurrentAccount(),
+      }}
+    >
+      <div className="font-work-sans">
+        {error.show && (
+          <div className="fixed top-4 left-4 right-4 z-50">
+            <ErrorMessage
+              message={error.message}
+              onClose={() => setError({ show: false, message: '', retryFunction: undefined })}
+              onRetry={error.retryFunction}
+              variant="destructive"
+              retryable={!!error.retryFunction}
+            />
+          </div>
+        )}
 
-      {/* Loading overlay */}
-      {isLoading && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 flex items-center justify-center">
-          <div className="bg-card rounded-lg p-6 shadow-lg">
-            <div className="flex items-center space-x-3">
-              <div className="animate-spin rounded-full h-6 w-6 border-2 border-selection border-t-transparent" />
-              <span className="text-typography font-work-sans">Acessando conta...</span>
+        {/* Loading overlay */}
+        {isLoading && (
+          <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 flex items-center justify-center">
+            <div className="bg-card rounded-lg p-6 shadow-lg">
+              <div className="flex items-center space-x-3">
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-selection border-t-transparent" />
+                <span className="text-typography font-work-sans">Acessando conta...</span>
+              </div>
             </div>
           </div>
-        </div>
-      )}
-      {renderCurrentScreen()}
-    </div>
+        )}
+        {renderCurrentScreen()}
+      </div>
+    </AccountContext.Provider>
   );
 };
 

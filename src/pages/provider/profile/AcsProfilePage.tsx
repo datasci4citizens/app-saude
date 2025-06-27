@@ -9,6 +9,8 @@ import { ErrorMessage } from '@/components/ui/error-message';
 import { ApiService } from '@/api/services/ApiService';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Switch } from '@/components/ui/switch';
+import { getCurrentAccount } from '@/pages/landing/AccountManager';
+import { useAccount } from '@/contexts/AccountContext';
 
 interface AcsProfileMenuItem {
   id: string;
@@ -35,8 +37,8 @@ interface AcsProfilePageProps {
 }
 
 const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
-  name = localStorage.getItem('fullname') ?? 'ACS',
-  profileImage = localStorage.getItem('profileImage') ?? '',
+  name = getCurrentAccount()?.name ?? 'ACS',
+  profileImage = getCurrentAccount()?.profilePicture ?? '',
   onEditProfile,
 }) => {
   const navigate = useNavigate();
@@ -44,6 +46,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
 
   // Data states
   const [providerId, setProviderId] = useState<number | null>(null);
+  const { currentAccount, removeAccount } = useAccount();
 
   // UI states
   const [error, setError] = useState<string | null>(null);
@@ -68,7 +71,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
   const clearSuccess = () => setSuccess(null);
 
   const handleLogout = async () => {
-    const refresh = localStorage.getItem('refreshToken');
+    const refresh = getCurrentAccount()?.refreshToken;
     if (!refresh) {
       setError('Token de autenticação não encontrado. Faça login novamente.');
       return;
@@ -78,7 +81,6 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
     setError(null);
 
     try {
-      localStorage.removeItem('accessToken');
       setSuccess('Logout realizado com sucesso!');
 
       setTimeout(() => {
@@ -120,8 +122,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({
       setSuccess('Conta excluída com sucesso!');
 
       setTimeout(() => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+        removeAccount(currentAccount?.userId || '');
         navigate('/welcome');
       }, 1500);
     } catch (error) {

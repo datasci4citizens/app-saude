@@ -10,6 +10,7 @@ import type { FullPersonCreate } from '@/api/models/FullPersonCreate';
 import type { AddressFormData } from '@/pages/patient/onboarding/UserInfoForm2';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { ErrorMessage } from '@/components/ui/error-message';
+import { getCurrentAccount } from '@/pages/landing/AccountManager';
 
 // Define types for the incoming data from each form
 interface PersonData {
@@ -42,7 +43,7 @@ export default function UserOnboarding() {
       gender_concept: data.gender_concept,
       ethnicity_concept: 3, // fill
       race_concept: data.race_concept,
-      profile_picture: localStorage.getItem('profileImage') || '',
+      profile_picture: getCurrentAccount()?.profilePicture || '',
     };
     setPerson(person);
     setStep(2);
