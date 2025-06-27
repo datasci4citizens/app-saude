@@ -5,7 +5,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 
 interface AccountSelectionScreenProps {
   accounts: Account[];
-  selectAccount: (account: Account) => void;
+  selectAccount: (account: Account, isNew: boolean) => void;
   confirmRemoveAccount: (account: Account) => void;
   navigateToLogin: () => void;
   isLoading?: boolean;
@@ -59,7 +59,7 @@ const AccountSelectionScreen: React.FC<AccountSelectionScreenProps> = ({
             className="relative bg-card rounded-xl border border-card-border hover:border-selection/50 transition-all duration-200 overflow-hidden"
           >
             <div
-              onClick={() => !isLoading && selectAccount(account)}
+              onClick={() => !isLoading && selectAccount(account, false)}
               className={`flex items-center p-4 cursor-pointer hover:bg-muted/50 transition-colors ${
                 isLoading ? 'opacity-50 cursor-not-allowed' : ''
               }`}

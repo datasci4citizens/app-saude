@@ -5,13 +5,14 @@ import ProfileBanner from '@/components/ui/profile-banner';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
 import { AccountService } from '@/api/services/AccountService';
 import { ApiService } from '@/api/services/ApiService';
-import { LogoutService } from '@/api/services/LogoutService';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { useTheme } from '@/contexts/ThemeContext';
 import { ConfirmDialog } from '@/components/ui/confirmDialog';
 import { TextField } from '@/components/forms/text_input';
 import { Switch } from '@/components/ui/switch';
+import { getCurrentAccount } from '@/pages/landing/AccountManager';
+import { useAccount } from '@/contexts/AccountContext';
 
 interface ProfileMenuItem {
   id: string;
@@ -38,8 +39,8 @@ interface ProfilePageProps {
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({
-  name = localStorage.getItem('fullname') ?? 'Usuário',
-  profileImage = localStorage.getItem('profileImage') ?? '',
+  name = getCurrentAccount()?.name ?? 'Usuário',
+  profileImage = getCurrentAccount()?.profilePicture ?? '',
   onEditProfile,
 }) => {
   const navigate = useNavigate();
@@ -51,6 +52,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   const [loadingItem, setLoadingItem] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const { removeAccount, currentAccount } = useAccount();
 
   // Fetch person_id on mount
   useEffect(() => {
@@ -69,7 +71,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
   const clearError = () => setError(null);
 
   const handleLogout = async () => {
-    const refresh = localStorage.getItem('refreshToken');
+    const refresh = getCurrentAccount()?.refreshToken;
     if (!refresh) {
       setError('Token de autenticação não encontrado. Faça login novamente.');
       return;
@@ -79,7 +81,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
     setError(null);
 
     try {
-      localStorage.removeItem('accessToken');
       setSuccess('Logout realizado com sucesso!');
 
       setTimeout(() => {
@@ -120,9 +121,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({
       setSuccess('Conta excluída com sucesso!');
 
       setTimeout(() => {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        navigate('/welcome');
+        removeAccount(currentAccount!!.userId);
       }, 1500);
     } catch (error) {
       setError('Erro ao excluir conta. Tente novamente.');

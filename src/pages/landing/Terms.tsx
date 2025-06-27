@@ -40,8 +40,7 @@ const TermsScreen = ({
       document.referrer.includes('/acs-profile') ||
       document.referrer.includes('/user-profile') ||
       isViewOnly ||
-      window.history.state?.from === 'profile' ||
-      localStorage.getItem('navigatedFromProfile') === 'true';
+      window.history.state?.from === 'profile';
 
     console.log('Terms Screen Debug:', {
       fromQuery,
@@ -53,10 +52,6 @@ const TermsScreen = ({
     });
 
     setIsFromProfile(fromProfile);
-
-    if (localStorage.getItem('navigatedFromProfile')) {
-      localStorage.removeItem('navigatedFromProfile');
-    }
   }, [location, isViewOnly]);
 
   interface ScrollEventTarget extends EventTarget {

@@ -3,13 +3,9 @@ import LoginScreen from './LoginScreen';
 import TermsScreen from './Terms';
 import EntryOptionsScreen from './EntryOption';
 import './loginScreen.css';
-import { LandingThemeProvider } from '@/components/ui/LandingThemeProvider';
 import type { Account } from './AccountManager';
 
 interface OnboardingSliderProps {
-  accounts: Account[];
-  selectAccount: (account: Account) => void;
-  confirmRemoveAccount: (account: Account) => void;
   addAccount: (accountData: Account, isNew: boolean) => void;
 }
 
@@ -79,58 +75,57 @@ const OnboardingSlider = (props: OnboardingSliderProps) => {
   };
 
   return (
-    <LandingThemeProvider>
-      <div className="onboarding-slider bg-homeblob2 relative overflow-hidden">
-        <div className="slider-background" />
+    <div className="onboarding-slider bg-homeblob2 relative overflow-hidden">
+      <div className="slider-background" />
 
-        {/* Container principal dos slides */}
-        <div
-          className={`
+      {/* Container principal dos slides */}
+      <div
+        className={`
           slider-container transition-transform duration-500 ease-in-out
           ${animating ? 'pointer-events-none' : ''}
         `}
-          style={{
-            transform: `translateY(-${currentStep * (100 / totalSteps)}%)`,
-            // Adiciona um leve blur durante a transição para suavizar
-            filter: animating ? 'blur(1px)' : 'blur(0px)',
-          }}
-        >
-          {/* Slide 1: Landing */}
-          <LoginScreen
-            onAccountAdded={handleLoginSuccess} // Callback para login
-            isAddingAccount={false} // Flag indicando que é onboarding
-          />
+        style={{
+          transform: `translateY(-${currentStep * (100 / totalSteps)}%)`,
+          // Adiciona um leve blur durante a transição para suavizar
+          filter: animating ? 'blur(1px)' : 'blur(0px)',
+        }}
+      >
+        {/* Slide 1: Landing */}
+        <LoginScreen
+          onAccountAdded={handleLoginSuccess} // Callback para login
+          isAddingAccount={false} // Flag indicando que é onboarding
+        />
 
-          {/* Slide 2: Terms */}
-          <TermsScreen
-            onNext={handleNext}
-            onPrevious={handlePrevious}
-            currentStep={currentStep}
-            totalSteps={totalSteps}
-          />
+        {/* Slide 2: Terms */}
+        <TermsScreen
+          onNext={handleNext}
+          onPrevious={handlePrevious}
+          currentStep={currentStep}
+          totalSteps={totalSteps}
+        />
 
-          {/* Slide 3: Entry Options */}
-          <EntryOptionsScreen
-            onComplete={handleComplete}
-            onPrevious={handlePrevious}
-            currentStep={currentStep}
-            totalSteps={totalSteps}
-          />
-        </div>
+        {/* Slide 3: Entry Options */}
+        <EntryOptionsScreen
+          onComplete={handleComplete}
+          onPrevious={handlePrevious}
+          currentStep={currentStep}
+          totalSteps={totalSteps}
+        />
+      </div>
 
-        {/* Overlay de carregamento durante animações */}
-        {animating && (
-          <div className="fixed inset-0 bg-black/10 z-40 pointer-events-none transition-opacity duration-300" />
-        )}
+      {/* Overlay de carregamento durante animações */}
+      {animating && (
+        <div className="fixed inset-0 bg-black/10 z-40 pointer-events-none transition-opacity duration-300" />
+      )}
 
-        {/* Debug controls (remover em produção) */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="fixed top-4 right-4 z-50 bg-black/50 rounded-lg p-2 space-x-2">
-            {Array.from({ length: totalSteps }, (_, index) => (
-              <button
-                key={`debug-btn-${index}-${totalSteps}`}
-                onClick={() => goToStep(index)}
-                className={`
+      {/* Debug controls (remover em produção) */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-4 right-4 z-50 bg-black/50 rounded-lg p-2 space-x-2">
+          {Array.from({ length: totalSteps }, (_, index) => (
+            <button
+              key={`debug-btn-${index}-${totalSteps}`}
+              onClick={() => goToStep(index)}
+              className={`
                 px-2 py-1 rounded text-xs font-medium transition-colors
                 ${
                   currentStep === index
@@ -138,14 +133,13 @@ const OnboardingSlider = (props: OnboardingSliderProps) => {
                     : 'bg-white/20 text-white hover:bg-white/40'
                 }
               `}
-              >
-                {index + 1}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-    </LandingThemeProvider>
+            >
+              {index + 1}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 

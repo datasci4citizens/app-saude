@@ -6,6 +6,7 @@ import { ErrorMessage } from '@/components/ui/error-message';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
 import { HelpService } from '@/api/services/HelpService';
 import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
+import { getCurrentAccount } from '../landing/AccountManager';
 
 export default function AcsMainPage() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ export default function AcsMainPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const userName = localStorage.getItem('fullname') || 'ACS';
+  const userName = getCurrentAccount()?.name || 'ACS';
   const currentHour = new Date().getHours();
 
   const getGreeting = () => {

@@ -1,6 +1,7 @@
 import type React from 'react';
 import { createContext, useContext, useState, useEffect } from 'react';
 import { AccountService } from '@/api/services/AccountService';
+import { getCurrentAccount } from '@/pages/landing/AccountManager';
 
 // Define the possible theme types
 type Theme = 'light' | 'dark';
@@ -22,25 +23,19 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
  * @returns {JSX.Element} The ThemeProvider wrapping its children with context.
  */
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // State to hold the current theme, with initial value from localStorage or default to "light"
+  // State to hold the current theme
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== 'undefined') {
-      const useDarkMode = localStorage.getItem('useDarkMode');
-      // Convert string to boolean and then to theme
-      if (useDarkMode === 'true') {
+      const useDarkMode = getCurrentAccount()?.useDarkMode ?? false;
+      if (useDarkMode) {
         return 'dark';
-      }
-      if (useDarkMode === 'false') {
+      } else {
         return 'light';
       }
-      // Fallback to old key for compatibility
-      const savedTheme = localStorage.getItem('app-theme');
-      return (savedTheme as Theme) || 'light';
     }
     return 'light'; // Default value for server-side rendering
   });
 
-  // Effect to apply the theme class to the document and update localStorage
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'dark') {
@@ -49,9 +44,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       root.classList.remove('theme-dark'); // Remover sua classe customizada
     }
 
-    // Update both localStorage keys
-    localStorage.setItem('useDarkMode', String(theme === 'dark'));
-    localStorage.setItem('app-theme', theme); // Keep for compatibility
+    // Update keys
+    const currentAccount = getCurrentAccount();
+    if (currentAccount) {
+      currentAccount.useDarkMode = theme === 'dark';
+    }
   }, [theme]); // Trigger effect when theme changes
 
   /**
@@ -61,8 +58,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
 
-    // Update localStorage immediately
-    localStorage.setItem('useDarkMode', String(newTheme === 'dark'));
+    // Update immediately
+    const currentAccount = getCurrentAccount();
+    if (currentAccount) {
+      currentAccount.useDarkMode = newTheme === 'dark';
+    }
 
     // Call API to sync with backend
     try {

@@ -7,6 +7,7 @@ import type { OnCancel } from './CancelablePromise';
 import type { OpenAPIConfig } from './OpenAPI';
 import { AuthService } from '../services/AuthService';
 import type { TokenRefresh } from '../models/TokenRefresh';
+import { getCurrentAccount } from '@/pages/landing/AccountManager';
 
 // Your existing utility functions remain the same
 export const isDefined = <T>(
@@ -269,7 +270,8 @@ let refreshPromise: Promise<string> | null = null;
 
 export async function refreshToken(): Promise<string> {
   console.log('Iniciando refresh de token...');
-  const refresh = localStorage.getItem('refreshToken');
+  const currentAccount = getCurrentAccount();
+  const refresh = currentAccount?.refreshToken;
 
   if (!refresh) throw new Error('Refresh token não encontrado');
 
@@ -280,16 +282,15 @@ export async function refreshToken(): Promise<string> {
 
   console.log('Token de refresh:', tokenRefresh);
 
-  localStorage.removeItem('accessToken');
+  currentAccount.accessToken = ''; // Clear current access token to force refresh
 
   const response = await AuthService.authTokenRefreshCreate(tokenRefresh);
   if (!response || !response.access || !response.refresh) {
     throw new Error('Erro ao obter novos tokens');
   }
 
-  localStorage.setItem('accessToken', response.access);
-  localStorage.setItem('refreshToken', response.refresh);
-
+  currentAccount.accessToken = response.access;
+  currentAccount.refreshToken = response.refresh;
   return response.access;
 }
 
@@ -313,7 +314,7 @@ export const catchErrorCodes = async (
   };
 
   // Handle 401 with token refresh and retry
-  const refresh = localStorage.getItem('refreshToken');
+  const refresh = getCurrentAccount()?.refreshToken;
   if (result.status === 401 && !isRetry && refresh) {
     console.log('401 detectado, tentando refresh do token...');
 
@@ -368,8 +369,11 @@ export const catchErrorCodes = async (
       refreshPromise = null;
 
       // Clear tokens and potentially redirect to login
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+      const currentAccount = getCurrentAccount();
+      if (currentAccount) {
+        currentAccount.accessToken = '';
+        currentAccount.refreshToken = '';
+      }
 
       // You might want to trigger a redirect to login page here
       window.location.href = '/welcome';
