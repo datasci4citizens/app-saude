@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User, Plus, MoreVertical, LogOut, Moon, Sun } from 'lucide-react';
 import type { Account } from './AccountManager';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface AccountSelectionScreenProps {
   accounts: Account[];
@@ -24,14 +25,7 @@ const AccountSelectionScreen: React.FC<AccountSelectionScreenProps> = ({
   isLoading = false,
 }) => {
   const [showAccountOptions, setShowAccountOptions] = useState<string | null>(null);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  // Toggle tema geral (não afeta contas individuais)
-  const toggleTheme = () => {
-    const newTheme = !isDarkMode;
-    setIsDarkMode(newTheme);
-    document.documentElement.className = newTheme ? 'theme-dark' : '';
-  };
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,7 +42,7 @@ const AccountSelectionScreen: React.FC<AccountSelectionScreenProps> = ({
             onClick={toggleTheme}
             className="p-2 rounded-lg bg-gray2/20 hover:bg-gray2/30 transition-colors"
           >
-            {isDarkMode ? (
+            {theme == 'light' ? (
               <Sun className="w-5 h-5 text-typography" />
             ) : (
               <Moon className="w-5 h-5 text-typography" />
@@ -61,7 +55,7 @@ const AccountSelectionScreen: React.FC<AccountSelectionScreenProps> = ({
       <div className="px-4 py-6 space-y-3">
         {accounts.map((account) => (
           <div
-            key={account.id}
+            key={account.userId}
             className="relative bg-card rounded-xl border border-card-border hover:border-selection/50 transition-all duration-200 overflow-hidden"
           >
             <div
@@ -116,7 +110,9 @@ const AccountSelectionScreen: React.FC<AccountSelectionScreenProps> = ({
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setShowAccountOptions(showAccountOptions === account.id ? null : account.id);
+                setShowAccountOptions(
+                  showAccountOptions === account.userId ? null : account.userId,
+                );
               }}
               className="absolute top-4 right-4 p-2 rounded-lg hover:bg-muted/50 transition-colors"
               title="Opções da conta"
@@ -125,7 +121,7 @@ const AccountSelectionScreen: React.FC<AccountSelectionScreenProps> = ({
             </button>
 
             {/* Menu de opções */}
-            {showAccountOptions === account.id && (
+            {showAccountOptions === account.userId && (
               <div className="absolute top-12 right-4 bg-card border border-card-border rounded-lg shadow-lg z-10 min-w-[140px]">
                 <button
                   onClick={(e) => {

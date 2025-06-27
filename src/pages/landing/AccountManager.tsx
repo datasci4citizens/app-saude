@@ -2,36 +2,36 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AccountSelectionScreen from './AccountSelectionScreen';
 import ConfirmLogoutScreen from './ConfirmLogoutScreen';
-import LoginScreen from './LoginScreen';
-import { LandingThemeProvider } from '@/components/ui/LandingThemeProvider';
 import { AuthService } from '@/api/services/AuthService';
 import { LogoutService, type Logout } from '@/api';
 import { ErrorMessage } from '@/components/ui/error-message';
+import { useTheme } from '@/contexts/ThemeContext';
+import OnboardingSlider from './OnboardingSlider';
 
 export interface Account {
-  id: string;
+  userId: string;
   name: string;
   email: string;
   profilePicture?: string;
   lastLogin: string;
   refreshToken: string;
   accessToken: string;
-  role: 'provider' | 'person';
+  role: 'provider' | 'person' | 'none';
   useDarkMode: boolean;
-  userId: string;
   socialName?: string;
 }
 
-type ScreenType = 'account-selection' | 'login' | 'confirm-logout';
+type ScreenType = 'account-selection' | 'confirm-logout' | 'onboarding';
 
 const ACCOUNTS_STORAGE_KEY = 'saved_accounts';
 
 const AccountManager: React.FC = () => {
   const navigate = useNavigate();
-  const [currentScreen, setCurrentScreen] = useState<ScreenType>('login');
+  const [currentScreen, setCurrentScreen] = useState<ScreenType>('onboarding');
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [accountToRemove, setAccountToRemove] = useState<Account | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { setTheme } = useTheme();
   const [error, setError] = useState<{
     show: boolean;
     message: string;
@@ -49,9 +49,10 @@ const AccountManager: React.FC = () => {
       const parsedAccounts: Account[] = JSON.parse(savedAccounts);
       setAccounts(parsedAccounts);
 
-      // Se tem contas salvas, vai para seleção
       if (parsedAccounts.length > 0) {
         setCurrentScreen('account-selection');
+      } else {
+        setCurrentScreen('onboarding');
       }
     }
   }, []);
@@ -66,10 +67,9 @@ const AccountManager: React.FC = () => {
   }, [accounts]);
 
   // Função para adicionar nova conta (chamada pelo LoginScreen)
-  const addAccount = (accountData: Omit<Account, 'id' | 'lastLogin'>) => {
+  const addAccount = (accountData: Omit<Account, 'lastLogin'>, isNew: boolean) => {
     const newAccount: Account = {
       ...accountData,
-      id: Date.now().toString(),
       lastLogin: new Date().toLocaleString('pt-BR'),
     };
 
@@ -81,32 +81,28 @@ const AccountManager: React.FC = () => {
       const updatedAccounts = [...accounts];
       updatedAccounts[existingAccountIndex] = newAccount;
       setAccounts(updatedAccounts);
+      localStorage.setItem('saved_accounts', JSON.stringify(updatedAccounts));
     } else {
       // Adiciona nova conta
       setAccounts((prev) => [...prev, newAccount]);
+      localStorage.setItem(ACCOUNTS_STORAGE_KEY, JSON.stringify([...accounts, newAccount]));
     }
 
-    // Aplicar tema da conta
-    document.documentElement.className = newAccount.useDarkMode ? 'theme-dark' : '';
-
-    // Definir tokens no localStorage para compatibilidade
-    localStorage.setItem('accessToken', newAccount.accessToken);
-    localStorage.setItem('refreshToken', newAccount.refreshToken);
-    localStorage.setItem('role', newAccount.role);
-    localStorage.setItem('userId', newAccount.userId);
-    localStorage.setItem('fullname', newAccount.name);
-    localStorage.setItem('social_name', newAccount.socialName || '');
-    localStorage.setItem('profileImage', newAccount.profilePicture || '');
-    localStorage.setItem('useDarkMode', String(newAccount.useDarkMode));
-
-    // Marcar onboarding como completo
-    localStorage.setItem('onboarding_completed', 'true');
-
-    // Navegar para a página principal do app baseado no role
-    if (newAccount.role === 'provider') {
-      navigate('/acs-main-page');
+    if (isNew) {
+      // Adiciona um pequeno delay para feedback visual
+      setTimeout(() => {
+        if (newAccount.role === 'provider') {
+          window.location.href = '/forms-prof';
+        } else if (newAccount.role === 'person') {
+          window.location.href = '/forms-user';
+        } else {
+          // Se não tem role, vai para onboarding
+          console.log('Usuário sem role, indo para onboarding');
+          setCurrentScreen('onboarding');
+        }
+      }, 800);
     } else {
-      navigate('/user-main-page');
+      selectAccount(newAccount); // Seleciona a nova conta automaticamente
     }
   };
 
@@ -118,8 +114,6 @@ const AccountManager: React.FC = () => {
         refresh: account.refreshToken,
       });
 
-      localStorage.setItem('accessToken', response.access);
-
       // Atualiza último login
       const updatedAccount = {
         ...account,
@@ -127,12 +121,13 @@ const AccountManager: React.FC = () => {
         lastLogin: new Date().toLocaleString('pt-BR'),
       };
 
-      const updatedAccounts = accounts.map((acc) => (acc.id === account.id ? updatedAccount : acc));
-
+      const updatedAccounts = accounts.map((acc) =>
+        acc.userId === account.userId ? updatedAccount : acc,
+      );
       setAccounts(updatedAccounts);
 
       // Aplicar tema da conta
-      document.documentElement.className = updatedAccount.useDarkMode ? 'theme-dark' : '';
+      setTheme(updatedAccount.useDarkMode ? 'dark' : 'light');
 
       // Definir tokens no localStorage
       localStorage.setItem('accessToken', updatedAccount.accessToken);
@@ -143,19 +138,30 @@ const AccountManager: React.FC = () => {
       localStorage.setItem('social_name', updatedAccount.socialName || '');
       localStorage.setItem('profileImage', updatedAccount.profilePicture || '');
       localStorage.setItem('useDarkMode', String(updatedAccount.useDarkMode));
+      localStorage.setItem('onboarding_completed', 'true');
+
+      setIsLoading(true);
 
       // Navegar para a página principal do app baseado no role
       if (updatedAccount.role === 'provider') {
         navigate('/acs-main-page');
-      } else {
+      } else if (updatedAccount.role === 'person') {
         navigate('/user-main-page');
+      } else {
+        // Role is none, redirect to onboarding
+        setCurrentScreen('onboarding');
       }
     } catch (error) {
       // Refresh token inválido, expirado ou erro de rede
+      setError({
+        show: true,
+        message: 'Erro ao atualizar token da conta.',
+        retryFunction: () => selectAccount(account),
+      });
       console.error('Erro ao atualizar token da conta:', error);
 
       // Remover conta com refresh token inválido das contas salvas
-      const updatedAccounts = accounts.filter((acc) => acc.id !== account.id);
+      const updatedAccounts = accounts.filter((acc) => acc.userId !== account.userId);
       setAccounts(updatedAccounts);
 
       // Informar usuário sobre o problema
@@ -163,34 +169,46 @@ const AccountManager: React.FC = () => {
         `A sessão da conta "${account.name}" expirou ou é inválida. A conta foi removida da lista. Você precisará fazer login novamente.`,
       );
 
-      removeAccount(account.id);
-      setCurrentScreen('login');
+      removeAccount(account.userId);
+      setCurrentScreen('onboarding');
     }
   };
 
   // Função para remover conta
   const removeAccount = async (accountId: string) => {
+    const account = accounts.find((acc) => acc.userId === accountId);
+    const refreshToken = account?.refreshToken || '';
+    localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('accessToken', account?.accessToken || '');
     const logoutBody: Logout = {
-      refresh: accounts.find((acc) => acc.id === accountId)?.refreshToken || '',
+      refresh: refreshToken,
     };
-    await LogoutService.authLogoutCreate(logoutBody);
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    setAccounts((prev) => prev.filter((acc) => acc.id !== accountId));
+
+    setIsLoading(true);
+    try {
+      await LogoutService.authLogoutCreate(logoutBody);
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    } finally {
+      setIsLoading(false);
+    }
+
+    setAccounts((prev) => prev.filter((acc) => acc.userId !== accountId));
     setAccountToRemove(null);
 
     // Se não sobrou nenhuma conta, vai para login
-    const remainingAccounts = accounts.filter((acc) => acc.id !== accountId);
+    const remainingAccounts = accounts.filter((acc) => acc.userId !== accountId);
+    sharedProps.accounts = remainingAccounts; // Atualiza contas compartilhadas
+    console.log('Contas restantes:', remainingAccounts);
     if (remainingAccounts.length === 0) {
-      setCurrentScreen('login');
-      localStorage.clear();
+      setCurrentScreen('onboarding');
     } else {
       setCurrentScreen('account-selection');
     }
   };
 
   // Navegação
-  const navigateToLogin = () => setCurrentScreen('login');
+  const navigateToLogin = () => setCurrentScreen('onboarding');
   const navigateToAccountSelection = () => setCurrentScreen('account-selection');
 
   const confirmRemoveAccount = (account: Account) => {
@@ -201,6 +219,7 @@ const AccountManager: React.FC = () => {
   // Props compartilhadas
   const sharedProps = {
     accounts,
+    addAccount,
     selectAccount,
     removeAccount,
     confirmRemoveAccount,
@@ -211,27 +230,13 @@ const AccountManager: React.FC = () => {
 
   // Render da tela atual
   const renderCurrentScreen = () => {
+    console.log('Tela atual:', currentScreen);
     switch (currentScreen) {
       case 'account-selection':
         return <AccountSelectionScreen {...sharedProps} />;
 
-      case 'login':
-        return (
-          <LandingThemeProvider>
-            <div className="onboarding-slider bg-homeblob2 relative overflow-hidden">
-              <div className="slider-background" />
-              <LoginScreen
-                onNext={() => {}} // Não usado neste contexto
-                currentStep={0}
-                totalSteps={1}
-                onAccountAdded={addAccount} // Callback para adicionar conta
-                showBackButton={accounts.length > 0} // Mostrar botão voltar se tem contas
-                onBack={navigateToAccountSelection} // Voltar para seleção
-                isAddingAccount={accounts.length > 0} // Flag indicando que está adicionando conta
-              />
-            </div>
-          </LandingThemeProvider>
-        );
+      case 'onboarding':
+        return <OnboardingSlider {...sharedProps} />;
 
       case 'confirm-logout':
         return <ConfirmLogoutScreen {...sharedProps} />;

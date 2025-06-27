@@ -4,7 +4,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import ProfileBanner from '@/components/ui/profile-banner';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
 import { AccountService } from '@/api/services/AccountService';
-import { LogoutService } from '@/api/services/LogoutService';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { ApiService } from '@/api/services/ApiService';

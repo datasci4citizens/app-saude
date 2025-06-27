@@ -267,7 +267,7 @@ export const getResponseBody = async (response: Response): Promise<any> => {
 let isRefreshing = false;
 let refreshPromise: Promise<string> | null = null;
 
-async function refreshToken(): Promise<string> {
+export async function refreshToken(): Promise<string> {
   console.log('Iniciando refresh de token...');
   const refresh = localStorage.getItem('refreshToken');
 
