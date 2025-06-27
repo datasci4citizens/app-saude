@@ -45,7 +45,7 @@ const HomePage = () => {
 
   // Se ainda está na splash, mostrar ela
   if (showSplash) {
-    return <SplashScreen onComplete={handleSplashComplete} duration={3000} />;
+    return <SplashScreen onComplete={handleSplashComplete} duration={3500} />;
   }
 
   return <AccountManager />;
