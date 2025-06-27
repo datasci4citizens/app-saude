@@ -56,9 +56,7 @@ export default function ProfessionalOnboarding() {
         const result = await ApiService.apiUserEntityRetrieve();
         console.log('User entity result:', result);
 
-        if (result.person_id) {
-          setSuccess(`Cadastro realizado com sucesso! Seu Person ID é: ${result.person_id}`);
-        } else if (result.provider_id) {
+        if (result.provider_id) {
           setSuccess(`Cadastro realizado com sucesso! Seu Provider ID é: ${result.provider_id}`);
         } else {
           setSuccess('Cadastro realizado com sucesso!');

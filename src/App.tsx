@@ -48,19 +48,6 @@ const HomePage = () => {
     return <SplashScreen onComplete={handleSplashComplete} duration={3000} />;
   }
 
-  // Após splash, verificar qual fluxo usar
-  const savedAccounts = localStorage.getItem('saved_accounts');
-  const hasAccounts = savedAccounts && JSON.parse(savedAccounts).length > 0;
-
-  // Verificar se já completou onboarding
-  const hasCompletedOnboarding = localStorage.getItem('onboarding_completed');
-
-  // Se nunca fez onboarding E não tem contas, mostrar onboarding original
-  if (!hasCompletedOnboarding && !hasAccounts) {
-    return <OnboardingSlider />;
-  }
-
-  // Se tem contas ou já fez onboarding, usar sistema de múltiplas contas
   return <AccountManager />;
 };
 
@@ -74,10 +61,6 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <HomePage />, // Componente que decide qual fluxo usar
-  },
-  {
-    path: '/onboarding',
-    element: <OnboardingSlider />, // Rota específica para onboarding completo
   },
   {
     path: '/accounts',

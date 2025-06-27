@@ -1,6 +1,5 @@
 import type React from 'react';
 import { useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
 import GoogleSignin from '@/components/ui/google-signin';
 import landingImage from '@/lib/images/landing.png';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
@@ -10,26 +9,17 @@ import { useGoogleLogin } from '@react-oauth/google';
 import type { AuthTokenResponse } from '@/api';
 import type { Auth } from '@/api/models/Auth';
 import './loginScreen.css';
+import type { Account } from './AccountManager';
 
 const isMobile = Capacitor.isNativePlatform();
 
-interface LandingScreenProps {
-  onNext: () => void;
-  currentStep: number;
-  totalSteps: number;
-  onAccountAdded?: (accountData: any) => void;
-  showBackButton?: boolean;
-  onBack?: () => void;
+interface LoginScreenProps {
+  onAccountAdded: (accountData: Account) => void;
   isAddingAccount?: boolean;
 }
 
-export const LandingScreen: React.FC<LandingScreenProps> = ({
-  onNext,
-  currentStep,
-  totalSteps,
+export const LoginScreen: React.FC<LoginScreenProps> = ({
   onAccountAdded,
-  showBackButton = false,
-  onBack,
   isAddingAccount = false,
 }) => {
   const [error, setError] = useState<string | null>(null);
@@ -94,73 +84,24 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
 
   const handleLoginSuccess = async (loginResponse: AuthTokenResponse) => {
     // Se está sendo usado pelo sistema de múltiplas contas
-    const accountData = {
+    const accountData: Account = {
+      userId: String(loginResponse.user_id),
+      lastLogin: new Date().toISOString(),
       name: loginResponse.full_name || loginResponse.social_name || 'Usuário',
       email: loginResponse.email || `user${loginResponse.user_id}@app.com`,
       profilePicture: loginResponse.profile_picture || '',
       refreshToken: loginResponse.refresh,
       accessToken: loginResponse.access,
-      role: loginResponse.role,
-      useDarkMode: loginResponse.use_dark_mode,
-      userId: String(loginResponse.user_id),
+      role:
+        loginResponse.role === 'provider' || loginResponse.role === 'person'
+          ? loginResponse.role
+          : 'none',
+      useDarkMode: loginResponse.use_dark_mode ?? false,
       socialName: loginResponse.social_name || '',
     };
 
-    localStorage.setItem('accessToken', loginResponse.access);
-    localStorage.setItem('refreshToken', loginResponse.refresh);
-    localStorage.setItem('role', loginResponse.role);
-    localStorage.setItem('userId', String(loginResponse.user_id));
-    localStorage.setItem('fullname', loginResponse.full_name || '');
-    localStorage.setItem('social_name', loginResponse.social_name || '');
-    localStorage.setItem('profileImage', loginResponse.profile_picture || '');
-    localStorage.setItem('useDarkMode', String(loginResponse.use_dark_mode));
-
-    // Update saved_accounts with new accountData
-    const savedAccounts = JSON.parse(localStorage.getItem('saved_accounts') || '[]');
-    const existingAccountIndex = savedAccounts.findIndex(
-      (acc: any) => acc.userId === accountData.userId,
-    );
-    if (existingAccountIndex >= 0) {
-      // Update existing account
-      savedAccounts[existingAccountIndex] = {
-        ...savedAccounts[existingAccountIndex],
-        ...accountData,
-        lastLogin: new Date().toLocaleString('pt-BR'),
-      };
-    } else {
-      // Add new account
-      savedAccounts.push({
-        ...accountData,
-        id: Date.now().toString(),
-        lastLogin: new Date().toLocaleString('pt-BR'),
-      });
-    }
-    localStorage.setItem('saved_accounts', JSON.stringify(savedAccounts));
-
-    if (onAccountAdded) {
-      onAccountAdded(accountData);
-      return;
-    }
-
-    // Se usuário já tem role definido, redireciona direto (para múltiplas contas)
-    if (isAddingAccount && loginResponse.role) {
-      if (loginResponse.role === 'provider') {
-        window.location.href = '/acs-main-page';
-      } else if (loginResponse.role === 'person') {
-        window.location.href = '/user-main-page';
-      }
-      return;
-    }
-
-    // Fluxo normal do onboarding: continua para próxima tela
-    if (loginResponse.role === 'provider') {
-      window.location.href = '/acs-main-page';
-    } else if (loginResponse.role === 'person') {
-      window.location.href = '/user-main-page';
-    } else {
-      // Se o usuário não tem role definido, continua no onboarding
-      onNext();
-    }
+    onAccountAdded(accountData);
+    return;
   };
 
   const clearError = () => {
@@ -169,16 +110,6 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
 
   return (
     <div className="onboarding-screen landing-screen relative">
-      {/* NOVO: Botão Voltar - só aparece quando está adicionando conta */}
-      {showBackButton && onBack && (
-        <button
-          onClick={onBack}
-          className="absolute top-12 left-6 z-10 p-2 rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5 text-white" />
-        </button>
-      )}
-
       <div className="content">
         <h1>{isAddingAccount ? 'ADICIONAR CONTA' : 'SAÚDE'}</h1>
         <p className="subtitle">
@@ -283,4 +214,4 @@ export const LandingScreen: React.FC<LandingScreenProps> = ({
   );
 };
 
-export default LandingScreen;
+export default LoginScreen;

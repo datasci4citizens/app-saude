@@ -26,7 +26,8 @@ const ConfirmLogoutScreen: React.FC<ConfirmLogoutScreenProps> = ({
   }
 
   const handleConfirmRemoval = () => {
-    removeAccount(accountToRemove.id);
+    console.log('Removendo conta:', accountToRemove.userId);
+    removeAccount(accountToRemove.userId);
   };
 
   const handleCancel = () => {
