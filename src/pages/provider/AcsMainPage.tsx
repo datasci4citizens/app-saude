@@ -85,16 +85,16 @@ export default function AcsMainPage() {
       textColor: 'text-white',
       onClick: () => navigate('/patients'),
     },
-    {
-      id: 'emergencies',
-      title: 'Pedidos de Ajuda',
-      subtitle: 'Verificar solicitações',
-      icon: '🚨',
-      color: 'bg-yellow',
-      textColor: 'text-white',
-      onClick: () => navigate('/emergencies'),
-      badge: emergencyCount > 0 ? emergencyCount : undefined,
-    },
+    //{
+    //  id: 'emergencies',
+    //  title: 'Pedidos de Ajuda',
+    //  subtitle: 'Verificar solicitações',
+    //  icon: '🚨',
+    //  color: 'bg-yellow',
+    //  textColor: 'text-white',
+    //  onClick: () => navigate('/emergencies'),
+    //  badge: emergencyCount > 0 ? emergencyCount : undefined,
+    //},
     // {
     //   id: "appointments",
     //   title: "Agenda",
@@ -184,7 +184,7 @@ export default function AcsMainPage() {
         <div className="mb-8">
           <h2 className="text-typography font-semibold text-lg mb-4">Ações Rápidas</h2>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             {quickActions.map((action) => (
               <div
                 key={action.id}
