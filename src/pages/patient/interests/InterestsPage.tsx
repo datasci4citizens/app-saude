@@ -29,25 +29,6 @@ export default function InterestPage() {
     return null;
   };
 
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case 'home':
-        navigate('/user-main-page');
-        break;
-      case 'meds':
-        navigate('/reminders');
-        break;
-      case 'diary':
-        navigate('/diary');
-        break;
-      case 'emergency':
-        navigate('/emergency-user');
-        break;
-      case 'profile':
-        navigate('/profile');
-        break;
-    }
-  };
   const [selectedInterests, setSelectedInterests] = useState<(string | number)[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [itemsList, setItemsList] = useState(defaultItemsList);
@@ -131,7 +112,6 @@ export default function InterestPage() {
       <BottomNavigationBar
         variant="user"
         forceActiveId={getActiveNavId()} // Controlled active state
-        onItemClick={handleNavigationClick}
       />
     </div>
   );

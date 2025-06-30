@@ -204,23 +204,6 @@ export default function ViewPatient() {
     return null;
   };
 
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case 'home':
-        navigate('/acs-main-page');
-        break;
-      case 'patients':
-        navigate('/patients');
-        break;
-      case 'emergency':
-        navigate('/emergencies');
-        break;
-      case 'profile':
-        navigate('/acs-profile');
-        break;
-    }
-  };
-
   // Filter data based on search
   const filteredDiaries = diaries.filter(
     (diary) =>
@@ -553,11 +536,7 @@ export default function ViewPatient() {
         )}
       </div>
 
-      <BottomNavigationBar
-        variant="acs"
-        forceActiveId={getActiveNavId()}
-        onItemClick={handleNavigationClick}
-      />
+      <BottomNavigationBar variant="acs" forceActiveId={getActiveNavId()} />
     </div>
   );
 }
