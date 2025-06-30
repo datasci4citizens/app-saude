@@ -29,12 +29,12 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
         icon: <span role="img" aria-label="home" className="mgc_home_4_line" />,
         path: '/user-main-page',
       },
-      {
-        id: 'meds',
-        label: 'Lembretes',
-        icon: <span role="img" aria-label="calendar" className="mgc_calendar_line" />,
-        path: '/reminders',
-      },
+//      {
+//        id: 'meds',
+//        label: 'Lembretes',
+//        icon: <span role="img" aria-label="calendar" className="mgc_calendar_line" />,
+//        path: '/reminders',
+//      },
       {
         id: 'diary',
         label: 'Diário',
