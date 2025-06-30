@@ -18,8 +18,11 @@ const EntryOptionsScreen: React.FC<EntryOptionsScreenProps> = ({
 }) => {
   const [userType, setUserType] = useState('');
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
 
   const handleContinue = () => {
+    setButtonClicked(true);
+
     setShowSuccessMessage(true);
     setTimeout(() => {
       onComplete(userType);
@@ -158,7 +161,7 @@ const EntryOptionsScreen: React.FC<EntryOptionsScreenProps> = ({
           {' '}
           {/* max-w-xs para botão menor */}
           <ContinueButton
-            isEnabled={userType !== ''}
+            isEnabled={userType !== '' && !buttonClicked}
             onClick={handleContinue}
             text={isLastStep ? 'FINALIZAR' : 'CONTINUAR'}
           />

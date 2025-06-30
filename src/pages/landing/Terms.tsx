@@ -27,6 +27,7 @@ const TermsScreen = ({
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isFromProfile, setIsFromProfile] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -71,6 +72,8 @@ const TermsScreen = ({
   };
 
   const handleContinue = () => {
+    setButtonClicked(true);
+
     if (isFromProfile) {
       navigate(-1);
       return;
@@ -171,7 +174,7 @@ const TermsScreen = ({
               ) : (
                 // Botão de aceitar termos para fluxo de cadastro
                 <ContinueButton
-                  isEnabled={isScrolledToBottom}
+                  isEnabled={isScrolledToBottom && !buttonClicked}
                   onClick={handleContinue}
                   text={getButtonText()}
                 />
