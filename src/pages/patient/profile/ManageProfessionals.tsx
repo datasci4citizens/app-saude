@@ -548,7 +548,7 @@ export default function ManageProfessionalsPage() {
                         <h4 className="text-accent1 font-medium text-sm mb-1">
                           Como obter o código?
                         </h4>
-                        <p className="text-accent1/80 text-xs leading-relaxed">
+                        <p className="text-typography text-xs leading-relaxed">
                           Solicite ao profissional de saúde que compartilhe o código de vinculação
                           de 6 dígitos.
                         </p>
