@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { Slot } from '@radix-ui/react-slot';
 import { type VariantProps, cva } from 'class-variance-authority';
 import { type ButtonHTMLAttributes, forwardRef } from 'react';
+import { useState } from 'react';
 
 const buttonVariants = cva(
   'inline-flex items-center justify-center whitespace-nowrap rounded-[38px] font-inter text-desc-titulo font-semibold ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
@@ -101,6 +102,8 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   position?: 'default' | 'bottom';
+  autoDisable?: boolean;
+  disableDuration?: number;
 }
 
 const gradientMap = {
@@ -111,18 +114,49 @@ const gradientMap = {
 } as const;
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, position, asChild = false, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      position,
+      asChild = false,
+      autoDisable = false,
+      disableDuration = 0,
+      onClick,
+      disabled,
+      ...props
+    },
+    ref,
+  ) => {
     const Comp = asChild ? Slot : 'button';
+    const [selfDisabled, setSelfDisabled] = useState(false);
 
     const style = gradientMap[variant as keyof typeof gradientMap]
       ? { background: `var(${gradientMap[variant as keyof typeof gradientMap]})` }
       : undefined;
+
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (autoDisable && !selfDisabled && !disabled) {
+        setSelfDisabled(true);
+
+        // Re-enable after duration (if specified)
+        if (disableDuration > 0) {
+          setTimeout(() => setSelfDisabled(false), disableDuration);
+        }
+      }
+
+      // Call the original onClick handler
+      onClick?.(e);
+    };
 
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, position, className }))}
         style={style}
         ref={ref}
+        onClick={handleClick}
+        disabled={disabled || selfDisabled}
         {...props}
       />
     );

@@ -627,26 +627,15 @@ export default function DiaryInfoForm() {
 
     try {
       const formattedInterestAreas = userInterests
-        .filter((interest) => {
-          const triggerResponses = interest.triggerResponses || {};
-          return Object.values(triggerResponses).some(
-            (response) => response && response.trim() !== '',
-          );
-        })
         .map((interest) => {
           const triggerResponses = interest.triggerResponses || {};
 
           const triggersWithResponses =
-            interest.interest_area.triggers
-              ?.filter(
-                (trigger) =>
-                  triggerResponses[trigger.name] && triggerResponses[trigger.name]?.trim() !== '',
-              )
-              .map((trigger) => ({
-                name: trigger.name,
-                type: trigger.type || TypeEnum.TEXT,
-                response: triggerResponses[trigger.name] || '',
-              })) || [];
+            interest.interest_area.triggers?.map((trigger) => ({
+              name: trigger.name,
+              type: trigger.type || TypeEnum.TEXT,
+              response: triggerResponses[trigger.name] || '',
+            })) || [];
 
           return {
             name: interest.interest_area.name,
@@ -852,7 +841,7 @@ export default function DiaryInfoForm() {
             variant="orange"
             size="xl"
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || submitSuccess}
             className="w-full max-w-md mx-auto hover:shadow-2xl transform hover:scale-105 transition-all duration-200"
           >
             {isSubmitting ? (
@@ -860,6 +849,8 @@ export default function DiaryInfoForm() {
                 <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 Salvando...
               </span>
+            ) : submitSuccess ? (
+              <span className="flex items-center justify-center gap-2">✅ DIÁRIO SALVO</span>
             ) : (
               <span className="flex items-center justify-center gap-2">💾 SALVAR DIÁRIO</span>
             )}
