@@ -81,24 +81,7 @@ export default function ViewSelectedInterests() {
     return null;
   };
 
-  // Handle main navigation
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case 'home':
-        navigate('/user-main-page');
-        break;
-      case 'meds':
-        navigate('/reminders');
-        break;
-      case 'diary':
-        navigate('/diary');
-        break;
-      case 'emergency':
-        navigate('/emergency-user');
-        break;
-      case 'profile':
-        navigate('/profile');
-        break;
+
     }
   };
 

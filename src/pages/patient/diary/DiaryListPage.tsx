@@ -295,26 +295,6 @@ export default function ImprovedDiaryListPage() {
     return null;
   };
 
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case 'home':
-        navigate('/user-main-page');
-        break;
-      case 'meds':
-        navigate('/reminders');
-        break;
-      case 'diary':
-        navigate('/diary');
-        break;
-      case 'emergency':
-        navigate('/emergency-user');
-        break;
-      case 'profile':
-        navigate('/profile');
-        break;
-    }
-  };
-
   const hasDiaries = Object.keys(groupedDiaries).length > 0;
 
   if (error) {
@@ -554,7 +534,6 @@ export default function ImprovedDiaryListPage() {
         <BottomNavigationBar
           variant="user"
           forceActiveId={getActiveNavId()}
-          onItemClick={handleNavigationClick}
         />
       </div>
     </div>

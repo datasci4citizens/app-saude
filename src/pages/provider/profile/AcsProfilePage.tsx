@@ -260,23 +260,6 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({ onEditProfile }) => {
     return null;
   };
 
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case 'home':
-        navigate('/acs-main-page');
-        break;
-      case 'patients':
-        navigate('/patients');
-        break;
-      case 'emergency':
-        navigate('/emergencies');
-        break;
-      case 'profile':
-        navigate('/acs-profile');
-        break;
-    }
-  };
-
   const getItemStyles = (item: AcsProfileMenuItem) => {
     const baseStyles = 'p-4 rounded-xl transition-all duration-200 cursor-pointer border';
 
@@ -396,7 +379,6 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({ onEditProfile }) => {
       <BottomNavigationBar
         variant="acs"
         forceActiveId={getActiveNavId()}
-        onItemClick={handleNavigationClick}
       />
 
       {/* Delete Account Confirmation Dialog */}
