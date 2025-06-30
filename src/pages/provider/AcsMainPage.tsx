@@ -284,7 +284,7 @@ export default function AcsMainPage() {
             </div>
             <div>
               <h3 className="text-accent1 font-medium text-sm mb-1">Dica do Dia</h3>
-              <p className="text-accent1/80 text-xs leading-relaxed">
+              <p className="text-typography text-xs leading-relaxed">
                 Mantenha contato regular com seus pacientes. Um acompanhamento proativo pode
                 prevenir situações de emergência.
               </p>
