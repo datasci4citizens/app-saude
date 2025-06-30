@@ -39,26 +39,6 @@ const CustomInterestForm: React.FC<CustomInterestFormProps> = ({ onSubmit, onCan
     return null;
   };
 
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case 'home':
-        navigate('/user-main-page');
-        break;
-      case 'meds':
-        navigate('/reminders');
-        break;
-      case 'diary':
-        navigate('/diary');
-        break;
-      case 'emergency':
-        navigate('/emergency-user');
-        break;
-      case 'profile':
-        navigate('/profile');
-        break;
-    }
-  };
-
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-7 p-4 pt-2">
       <div className="flex flex-col gap-2">
