@@ -414,8 +414,8 @@ export default function ManageProfessionalsPage() {
 
       {/* Add Professional Dialog */}
       {showAddDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-background rounded-3xl w-full max-w-md h-full max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 overflow-y-auto p-4 pb-20">
+          <div className="my-8 bg-background rounded-3xl w-full max-w-lg h-full max-h-[90vh] flex flex-col">
             {/* Dialog Header - FIXO */}
             <div className="flex-shrink-0 bg-background rounded-t-3xl border-b border-card-border p-6 pb-4">
               <div className="flex items-center justify-between">
