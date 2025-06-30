@@ -405,10 +405,7 @@ export default function ImprovedViewDiaryEntry() {
 
       {/* Fixed bottom navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50">
-        <BottomNavigationBar
-          variant="user"
-          forceActiveId={getActiveNavId()}
-        />
+        <BottomNavigationBar variant="user" forceActiveId={getActiveNavId()} />
       </div>
     </div>
   );

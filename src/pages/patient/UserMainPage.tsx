@@ -632,10 +632,7 @@ export default function UserMainPage() {
 
       {/* NAVEGAÇÃO INFERIOR */}
       <div className="fixed bottom-0 left-0 right-0 z-30">
-        <BottomNavigationBar
-          variant="user"
-          forceActiveId={getActiveNavId()}
-        />
+        <BottomNavigationBar variant="user" forceActiveId={getActiveNavId()} />
       </div>
 
       {/* DIALOGS */}

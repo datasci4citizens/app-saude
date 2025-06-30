@@ -345,10 +345,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onEditProfile }) => {
         </div>
       </div>
 
-      <BottomNavigationBar
-        variant="user"
-        forceActiveId={getActiveNavId()}
-      />
+      <BottomNavigationBar variant="user" forceActiveId={getActiveNavId()} />
 
       {/* Delete Account Confirmation Dialog */}
       <ConfirmDialog

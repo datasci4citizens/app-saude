@@ -376,10 +376,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({ onEditProfile }) => {
         </div>
       </div>
 
-      <BottomNavigationBar
-        variant="acs"
-        forceActiveId={getActiveNavId()}
-      />
+      <BottomNavigationBar variant="acs" forceActiveId={getActiveNavId()} />
 
       {/* Delete Account Confirmation Dialog */}
       <ConfirmDialog

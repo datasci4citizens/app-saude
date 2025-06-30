@@ -536,10 +536,7 @@ export default function ViewPatient() {
         )}
       </div>
 
-      <BottomNavigationBar
-        variant="acs"
-        forceActiveId={getActiveNavId()}
-      />
+      <BottomNavigationBar variant="acs" forceActiveId={getActiveNavId()} />
     </div>
   );
 }

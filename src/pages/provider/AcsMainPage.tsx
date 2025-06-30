@@ -293,10 +293,7 @@ export default function AcsMainPage() {
         </div>
       </div>
 
-      <BottomNavigationBar
-        variant="acs"
-        forceActiveId={getActiveNavId()}
-      />
+      <BottomNavigationBar variant="acs" forceActiveId={getActiveNavId()} />
     </div>
   );
 }

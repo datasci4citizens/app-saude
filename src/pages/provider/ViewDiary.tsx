@@ -419,10 +419,7 @@ export default function ViewDiary() {
 
       {/* Fixed bottom navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50">
-        <BottomNavigationBar
-          variant="acs"
-          forceActiveId={getActiveNavId()}
-        />
+        <BottomNavigationBar variant="acs" forceActiveId={getActiveNavId()} />
       </div>
     </div>
   );

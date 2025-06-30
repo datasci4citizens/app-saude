@@ -201,8 +201,6 @@ export default function PatientsPage() {
     return null;
   };
 
-
-
   const clearError = () => setError(null);
   const clearSuccess = () => setSuccess(null);
 
@@ -500,10 +498,7 @@ export default function PatientsPage() {
           </div>
         </div>
 
-        <BottomNavigationBar
-          variant="acs"
-          forceActiveId={getActiveNavId()}
-        />
+        <BottomNavigationBar variant="acs" forceActiveId={getActiveNavId()} />
       </div>
     </div>
   );

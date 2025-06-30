@@ -690,10 +690,7 @@ export default function ManageProfessionalsPage() {
         </div>
       )}
 
-      <BottomNavigationBar
-        variant="user"
-        forceActiveId={getActiveNavId()}
-      />
+      <BottomNavigationBar variant="user" forceActiveId={getActiveNavId()} />
     </div>
   );
 }
