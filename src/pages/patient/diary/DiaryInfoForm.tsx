@@ -627,26 +627,15 @@ export default function DiaryInfoForm() {
 
     try {
       const formattedInterestAreas = userInterests
-        .filter((interest) => {
-          const triggerResponses = interest.triggerResponses || {};
-          return Object.values(triggerResponses).some(
-            (response) => response && response.trim() !== '',
-          );
-        })
         .map((interest) => {
           const triggerResponses = interest.triggerResponses || {};
 
           const triggersWithResponses =
-            interest.interest_area.triggers
-              ?.filter(
-                (trigger) =>
-                  triggerResponses[trigger.name] && triggerResponses[trigger.name]?.trim() !== '',
-              )
-              .map((trigger) => ({
-                name: trigger.name,
-                type: trigger.type || TypeEnum.TEXT,
-                response: triggerResponses[trigger.name] || '',
-              })) || [];
+            interest.interest_area.triggers?.map((trigger) => ({
+              name: trigger.name,
+              type: trigger.type || TypeEnum.TEXT,
+              response: triggerResponses[trigger.name] || '',
+            })) || [];
 
           return {
             name: interest.interest_area.name,

@@ -347,9 +347,9 @@ export default function ImprovedDiaryListPage() {
                   onClick={handleCreateDiary}
                   variant="gradientNew"
                   size="lg"
-                  className="flex items-center gap-2 text-typography"
+                  className="flex items-center gap-2 text-offwhite"
                 >
-                  <PlusCircle size={18} className="text-typography" />
+                  <PlusCircle size={18} className="text-offwhite" />
                   Novo Diário
                 </Button>
               </div>
@@ -492,13 +492,6 @@ export default function ImprovedDiaryListPage() {
                                     >
                                       {area.is_attention_point && <AlertTriangle size={14} />}
                                       <span className="font-medium">{area.name}</span>
-                                      <span className="text-xs">
-                                        (
-                                        {area.triggers?.filter(
-                                          (t) => t.response && t.response.trim() !== '',
-                                        ).length || 0}
-                                        /{area.triggers?.length || 0} respondidas)
-                                      </span>
                                     </div>
                                   ))}
                                 </div>
