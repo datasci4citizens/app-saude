@@ -16,11 +16,26 @@ interface DiaryEntryItem {
   answer: string;
 }
 
+interface DiaryTrigger {
+  name: string;
+  type: string;
+  response: string;
+}
+
+interface DiaryInterestArea {
+  name: string;
+  shared_with_provider: boolean;
+  observation_id: number;
+  triggers: DiaryTrigger[];
+  marked_by: any[];
+}
+
 interface DiaryEntry {
   diary_id: number;
   date: string;
   scope: string;
   entries: DiaryEntryItem[];
+  interest_areas?: DiaryInterestArea[];
 }
 
 interface HelpRequest {
@@ -87,6 +102,7 @@ export default function ViewPatient() {
     try {
       setDiariesLoading(true);
       const diariesData = await ProviderService.providerPatientsDiariesList(personId);
+      console.log('Diaries Data:', diariesData);
 
       const sortedDiaries = diariesData
         .map((d) => ({
@@ -94,6 +110,7 @@ export default function ViewPatient() {
           date: d.date,
           scope: d.scope,
           entries: typeof d.entries === 'string' ? JSON.parse(d.entries) : (d.entries ?? []),
+          interest_areas: d.interest_areas || [],
         }))
         .sort((a, b) => {
           const dateA = new Date(a.date).getTime();
@@ -415,7 +432,28 @@ export default function ViewPatient() {
                 {!diariesLoading &&
                   filteredDiaries.length > 0 &&
                   filteredDiaries.map((diary) => {
-                    const entriesCount = diary.entries?.length || 0;
+                    const interestAreas = diary.interest_areas || [];
+
+                    // Count total triggers and answered triggers across all interest areas
+                    let totalTriggers = 0;
+                    let answeredTriggers = 0;
+
+                    interestAreas.forEach((area) => {
+                      const triggers = area.triggers || [];
+                      totalTriggers += triggers.length;
+
+                      answeredTriggers += triggers.filter(
+                        (trigger) => trigger.response && trigger.response.trim() !== '',
+                      ).length;
+                    });
+
+                    const progressPercentage =
+                      totalTriggers > 0 ? (answeredTriggers / totalTriggers) * 100 : 0;
+
+                    const hasAttentionPoints =
+                      interestAreas.some((area) => area.name?.toLowerCase().includes('atenção')) ||
+                      diary.scope?.toLowerCase().includes('atenção') ||
+                      false;
 
                     return (
                       <div
@@ -423,31 +461,52 @@ export default function ViewPatient() {
                         className="bg-card rounded-2xl p-4 border border-card-border hover:border-selection/20 transition-all duration-200 cursor-pointer hover:shadow-sm"
                         onClick={() => navigate(`/provider/patient/${id}/diary/${diary.diary_id}`)}
                       >
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-selection/10 rounded-full flex items-center justify-center">
-                              <span className="text-selection text-lg">📖</span>
-                            </div>
-                            <div>
-                              <h4 className="text-card-foreground font-medium text-sm">
-                                Diário - {formatDate(diary.date)}
-                              </h4>
-                              <p className="text-gray2 text-xs">{getRelativeTime(diary.date)}</p>
-                            </div>
+                        <div className="flex items-center gap-3 mb-4">
+                          <div className="w-8 h-8 bg-selection/10 rounded-full flex items-center justify-center">
+                            <span className="text-selection text-lg">📖</span>
                           </div>
-                          <span className="text-gray2 text-lg">
-                            <span className="mgc_right_line" />
-                          </span>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className="bg-selection/10 text-selection text-xs px-2 py-1 rounded-full font-medium">
-                              {diary.scope || 'Geral'}
+                          <div>
+                            <h4 className="text-card-foreground font-medium text-sm">
+                              Diário - {formatDate(diary.date)}
+                            </h4>
+                            <p className="text-gray2 text-xs">{getRelativeTime(diary.date)}</p>
+                          </div>
+                          <div className="ml-auto">
+                            <span className="text-gray2">
+                              <span className="mgc_right_line" />
                             </span>
                           </div>
+                        </div>
+
+                        <div className="mb-4">
+                          <div className="flex justify-between items-center mb-2">
+                            <span className="text-sm text-gray2">Progresso dos interesses</span>
+                            <span className="text-sm font-medium text-typography">
+                              {Math.round(progressPercentage)}%
+                            </span>
+                          </div>
+                          <div className="w-full bg-card-muted rounded-full h-2 border border-card-border">
+                            <div
+                              className={`h-2 rounded-full transition-all duration-500 ${
+                                hasAttentionPoints
+                                  ? 'bg-gradient-to-r from-accent1 to-destructive'
+                                  : 'bg-gradient-to-r from-selection to-homebg'
+                              }`}
+                              style={{
+                                width: `${progressPercentage}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Category and entry count - bottom line */}
+                        <div className="flex items-center justify-between">
+                          <span className="bg-selection/10 text-selection text-xs px-2 py-1 rounded-full font-medium">
+                            {diary.scope || 'Geral'}
+                          </span>
                           <p className="text-gray2 text-xs">
-                            {entriesCount} {entriesCount === 1 ? 'entrada' : 'entradas'}
+                            {diary.entries?.length || 0}{' '}
+                            {diary.entries?.length === 1 ? 'entrada' : 'entradas'}
                           </p>
                         </div>
                       </div>
