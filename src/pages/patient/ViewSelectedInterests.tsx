@@ -81,10 +81,6 @@ export default function ViewSelectedInterests() {
     return null;
   };
 
-
-    }
-  };
-
   // Check if an interest is custom or default
   const isCustomInterest = (interest: InterestAreaResponse) => {
     //console.log("Checking if interest is custom:", interest);
@@ -188,7 +184,6 @@ export default function ViewSelectedInterests() {
       <BottomNavigationBar
         variant="user"
         forceActiveId={getActiveNavId()} // Controlled active state
-        onItemClick={handleNavigationClick}
       />
     </div>
   );
