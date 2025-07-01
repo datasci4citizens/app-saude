@@ -67,12 +67,7 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
         icon: <span role="img" aria-label="patients" className="mgc_group_3_line" />,
         path: '/patients',
       },
-      {
-        id: 'emergency',
-        label: 'Emergências',
-        icon: <span role="img" aria-label="warning" className="mgc_alert_line" />,
-        path: '/emergencies',
-      },
+
       {
         id: 'profile',
         label: 'Eu',
