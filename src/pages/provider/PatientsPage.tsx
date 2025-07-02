@@ -1,4 +1,4 @@
-import {ProviderService} from '@/api/services/ProviderService';
+import { ProviderService } from '@/api/services/ProviderService';
 import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
 import { Button } from '@/components/forms/button';
 import { TextField } from '@/components/forms/text_input';
@@ -77,57 +77,57 @@ export default function PatientsPage() {
   }, []);
 
   const fetchPatients = async () => {
-  try {
-    setLoading(true);
-    setError(null);
-    const apiPatients = await LinkPersonProviderService.providerPersonsList();
+    try {
+      setLoading(true);
+      setError(null);
+      const apiPatients = await LinkPersonProviderService.providerPersonsList();
 
-    interface ApiPatient {
-      person_id: number;
-      name: string;
-      age: number | null;
-      last_visit_date: string | null;
-      last_help_date: string | null;
-      email?: string;
-      phone?: string;
-    }
+      interface ApiPatient {
+        person_id: number;
+        name: string;
+        age: number | null;
+        last_visit_date: string | null;
+        last_help_date: string | null;
+        email?: string;
+        phone?: string;
+      }
 
-    // Fetch diary data for all patients in parallel
-    const formattedPatients: Patient[] = await Promise.all(
-      apiPatients.map(async (patient: ApiPatient) => {
-        // Check if last_help_date is valid
-        let isUrgent = false;
-        if (patient.last_help_date) {
-          const helpDate = new Date(patient.last_help_date);
-          if (!Number.isNaN(helpDate.getTime())) {
-            isUrgent = getDaysAgo(patient.last_help_date) <= 3;
+      // Fetch diary data for all patients in parallel
+      const formattedPatients: Patient[] = await Promise.all(
+        apiPatients.map(async (patient: ApiPatient) => {
+          // Check if last_help_date is valid
+          let isUrgent = false;
+          if (patient.last_help_date) {
+            const helpDate = new Date(patient.last_help_date);
+            if (!Number.isNaN(helpDate.getTime())) {
+              isUrgent = getDaysAgo(patient.last_help_date) <= 3;
+            }
           }
-        }
 
-        // Get last diary date
-        const lastDiaryDate = await getLastDiaryDate(patient.person_id);
+          // Get last diary date
+          const lastDiaryDate = await getLastDiaryDate(patient.person_id);
 
-        return {
-          id: patient.person_id,
-          name: patient.name,
-          age: patient.age || 0,
-          lastDiary: formatDisplayDate(lastDiaryDate),
-          lastHelp: formatDisplayDate(patient.last_help_date),
-          email: patient.email,
-          phone: patient.phone,
-          urgent: isUrgent,
-        };
-      })
-    );
+          return {
+            id: patient.person_id,
+            name: patient.name,
+            age: patient.age || 0,
+            lastDiary: formatDisplayDate(lastDiaryDate),
+            lastHelp: formatDisplayDate(patient.last_help_date),
+            email: patient.email,
+            phone: patient.phone,
+            urgent: isUrgent,
+          };
+        }),
+      );
 
-    setPatients(formattedPatients);
-  } catch (_) {
-    console.error('Erro ao buscar pacientes:', _);
-    setError('Não foi possível carregar a lista de pacientes.');
-  } finally {
-    setLoading(false);
-  }
-};
+      setPatients(formattedPatients);
+    } catch (_) {
+      console.error('Erro ao buscar pacientes:', _);
+      setError('Não foi possível carregar a lista de pacientes.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const generateLinkCode = async () => {
     setIsGeneratingCode(true);
@@ -213,7 +213,7 @@ export default function PatientsPage() {
 
   const urgentCount = patients.filter((p) => p.urgent).length;
 
-    const getLastDiaryDate = async (patientId: number): Promise<string | null> => {
+  const getLastDiaryDate = async (patientId: number): Promise<string | null> => {
     try {
       const diaries = await ProviderService.providerPatientsDiariesList(patientId);
       if (diaries && diaries.length > 0) {
