@@ -7,6 +7,7 @@ import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderServ
 import { ApiService } from '@/api/services/ApiService';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { ErrorMessage } from '@/components/ui/error-message';
+import { ConfirmDialog } from '@/components/ui/confirmDialog';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
 import type { PersonLinkProviderRequest } from '@/api/models/PersonLinkProviderRequest';
 import type { ProviderRetrieve } from '@/api/models/ProviderRetrieve';
@@ -45,6 +46,10 @@ export default function ManageProfessionalsPage() {
   const [foundProvider, setFoundProvider] = useState<ProviderRetrieve | null>(null);
   const [addError, setAddError] = useState<string | null>(null);
   const [dialogStep, setDialogStep] = useState<'input' | 'confirm' | 'success'>('input');
+
+  // Unlink Confirmation Dialog states
+  const [showUnlinkDialog, setShowUnlinkDialog] = useState(false);
+  const [providerToUnlink, setProviderToUnlink] = useState<Provider | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -154,33 +159,46 @@ export default function ManageProfessionalsPage() {
     setDialogStep('input');
   };
 
-  const handleUnlink = async (provider: Provider) => {
+  // Updated unlink functions
+  const handleUnlink = (provider: Provider) => {
     if (!personId) {
       setError('ID do usuário não encontrado. Tente recarregar a página.');
       return;
     }
 
-    const providerName = getProviderName(provider);
-    const confirmed = window.confirm(
-      `⚠️ Desvincular profissional?\n\n${providerName}\n\nEsta ação irá:\n• Remover acesso aos seus dados\n• Cancelar notificações deste profissional\n• Interromper compartilhamento do diário\n\nTem certeza que deseja continuar?`,
-    );
+    setProviderToUnlink(provider);
+    setShowUnlinkDialog(true);
+  };
 
-    if (!confirmed) return;
+  const confirmUnlink = async () => {
+    if (!providerToUnlink || !personId) return;
 
-    setUnlinkingId(provider.provider_id);
+    setUnlinkingId(providerToUnlink.provider_id);
     setError(null);
+    setShowUnlinkDialog(false);
+
+    const providerName = getProviderName(providerToUnlink);
 
     try {
-      await LinkPersonProviderService.personProviderUnlinkCreate(personId, provider.provider_id);
+      await LinkPersonProviderService.personProviderUnlinkCreate(
+        personId,
+        providerToUnlink.provider_id,
+      );
 
-      setProviders((prev) => prev.filter((p) => p.provider_id !== provider.provider_id));
+      setProviders((prev) => prev.filter((p) => p.provider_id !== providerToUnlink.provider_id));
       setSuccess(`${providerName} foi desvinculado com sucesso.`);
     } catch (err) {
       console.error('Error unlinking provider:', err);
       setError(`Erro ao desvincular ${providerName}. Tente novamente.`);
     } finally {
       setUnlinkingId(null);
+      setProviderToUnlink(null);
     }
+  };
+
+  const cancelUnlink = () => {
+    setShowUnlinkDialog(false);
+    setProviderToUnlink(null);
   };
 
   const getProviderName = (provider: Provider): string => {
@@ -400,7 +418,7 @@ export default function ManageProfessionalsPage() {
                 <span className="text-lg">💡</span>
                 <div>
                   <h4 className="text-accent1 font-medium text-sm mb-1">Sobre a vinculação</h4>
-                  <p className="text-accent1/80 text-xs leading-relaxed">
+                  <p className="text-typography text-xs leading-relaxed">
                     Profissionais vinculados podem acessar seus dados do diário, receber pedidos de
                     ajuda e enviar orientações personalizadas. Você pode desvincular a qualquer
                     momento.
@@ -689,6 +707,47 @@ export default function ManageProfessionalsPage() {
           </div>
         </div>
       )}
+
+      {/* Unlink Confirmation Dialog */}
+      <ConfirmDialog
+        open={showUnlinkDialog}
+        title="⚠️ Desvincular profissional?"
+        description={
+          providerToUnlink
+            ? `Esta ação irá desvincular ${getProviderName(providerToUnlink)} permanentemente.`
+            : ''
+        }
+        confirmText="Desvincular"
+        cancelText="Cancelar"
+        confirmVariant="destructive"
+        onConfirm={confirmUnlink}
+        onCancel={cancelUnlink}
+        disabled={unlinkingId !== null}
+      >
+        {providerToUnlink && (
+          <div className="space-y-4">
+            <div className="bg-gray2/5 rounded-lg p-3">
+              <h4 className="font-medium text-foreground mb-2">
+                {getProviderName(providerToUnlink)}
+              </h4>
+              <div className="space-y-1 text-xs text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <span>•</span>
+                  <span>Removerá acesso aos seus dados</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span>•</span>
+                  <span>Cancelará notificações deste profissional</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span>•</span>
+                  <span>Interromperá compartilhamento do diário</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </ConfirmDialog>
 
       <BottomNavigationBar variant="user" forceActiveId={getActiveNavId()} />
     </div>

@@ -39,7 +39,7 @@ interface AcsProfilePageProps {
 const AcsProfilePage: React.FC<AcsProfilePageProps> = ({ onEditProfile }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { removeAccount, currentAccount, logoutCurrentAccount } = useApp();
+  const { removeAccountAfterDelete, currentAccount, logoutCurrentAccount } = useApp();
 
   const name = currentAccount?.name ?? 'ACS';
   const profileImage = currentAccount?.profilePicture ?? '';
@@ -116,9 +116,8 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({ onEditProfile }) => {
       await AccountService.accountsDestroy();
       setSuccess('Conta excluída com sucesso!');
 
-      setTimeout(() => {
-        removeAccount(currentAccount!!.userId);
-      }, 1500);
+      await removeAccountAfterDelete(currentAccount!!.userId);
+      navigate('/');
     } catch (error) {
       setError('Erro ao excluir conta. Tente novamente.');
       console.error(error);
