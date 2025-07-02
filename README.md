@@ -3,118 +3,203 @@
 ![Status](https://img.shields.io/badge/status-beta-yellow)
 ![License](https://img.shields.io/badge/license-MIT-brightgreen)
 
-# 🧠 SAÚDE! — Sistema de Apoio à Saúde Mental no SUS
+# 🧠 SAÚDE! — Mental Health Support Platform
 
-> Um app mobile e sistema web pensados para facilitar o acompanhamento de pessoas com sofrimento psíquico, integrando pacientes, ACS, psicólogos e psiquiatras de forma humanizada e extensível.
+> A modern hybrid application designed to support mental health care in Brazil’s public health system (SUS), integrating patients, community health agents, psychologists, and psychiatrists in a human-centered, extensible way.
+
+
+## 🚀 Overview
+
+**SAÚDE!** is a hybrid web and mobile application built to:
+
+- Register patient symptoms, feelings, and daily habits
+- Enable personalized monitoring and care plans
+- Allow patients to choose when and what data to share with healthcare professionals
+- Implement the [OMOP Common Data Model](https://www.ohdsi.org/data-standardization/the-common-data-model/) for extensibility and interoperability
+- Align with the **RAPS (Rede de Atenção Psicossocial)** model of mental health services in Brazil
+
+[👉 Full Documentation on Notion](https://www.notion.so/Guia-de-Continuidade-do-Projeto-SA-DE-2233d3fd29de80a1823acf44acaeb9f2?source=copy_link)
 
 ---
 
-## 🚀 Visão Geral
+## ⚙️ Tech Stack
 
-O SAÚDE! é um sistema em constante evolução que:
-
-- Registra hábitos, sintomas e sentimentos de pacientes
-- Permite a personalização do acompanhamento
-- Compartilha dados com profissionais apenas quando o paciente autoriza
-- Usa o modelo de dados [OMOP](https://www.ohdsi.org/data-standardization/the-common-data-model/) para garantir extensibilidade e interoperabilidade
-- Está sendo desenvolvido com foco na **RAPS (Rede de Atenção Psicossocial)**
+- Frontend:
+  - React + TypeScript
+  - Vite
+  - Tailwind CSS
+  - Capacitor (Android/iOS builds)
+- Backend:
+  - Django + Django Allauth
+  - PostgreSQL
+  - Docker
+- OAuth:
+  - Google OAuth integration for web and mobile login
+- Infrastructure:
+  - GitHub Actions (CI/CD)
+  - Husky (Git hooks)
+  - Docker Compose for local dev environment
+  - Coolify for deployment in production and staging
 
 ---
 
-## 📦 Instalação do frontend
+## 📦 Frontend Setup
+
+Clone the repo:
 
 ```bash
 git clone git@github.com:datasci4citizens/app-saude.git
 cd app_saude
+````
+
+Copy the environment file template:
+
+```bash
 cp .env.model .env
+```
+
+Fill in the required environment variables, like:
+
+```
+VITE_GOOGLE_CLIENT_ID=<your_client_id>
+VITE_GOOGLE_CLIENT_SECRET=<your_client_secret>
+```
+
+Install dependencies:
+
+```bash
 npm install
+```
+
+Run the development server:
+
+```bash
 npm run dev
 ```
 
-## Como rodar o backend
-
-Este projeto depende de um backend Django (autenticação, banco de dados etc).  
-Você **não precisa clonar o repositório do backend** nem fazer build — ele já está disponível como uma imagem no Docker Hub.
-
 ---
 
-### Como subir o backend localmente
+## 🐳 Backend Setup (Docker)
 
-#### 1. Copie o arquivo de modelo de variáveis de ambiente
+The backend is distributed as a pre-built Docker image — **you don’t need to clone a separate backend repo.**
 
-Crie um arquivo `.env` com base no `.env.model` que já está neste projeto:
+### 1. Configure Environment Variables
+
+Copy the template:
 
 ```bash
 cp .env.model .env
 ```
 
-Depois, preencha os campos obrigatórios, como:
+And edit required values for OAuth.
 
-```bash
-VITE_GOOGLE_CLIENT_ID=cole_aqui_o_seu_client_id
-VITE_GOOGLE_CLIENT_SECRET=cole_aqui_o_seu_client_secret
-```
+---
 
-#### 2. Rode o backend com Docker Compose
+### 2. Start Backend + Database
 
-Use o comando abaixo no diretório onde está o docker-compose.yml:
+Run:
 
 ```bash
 docker compose up -d
 ```
 
-Esse comando vai:
+This will:
 
-- Subir o banco PostgreSQL
-- Subir o backend com Django
-- Criar o superusuário automaticamente
-- Criar a integração com Google OAuth
+* Spin up PostgreSQL
+* Start the Django backend
+* Automatically create a superuser
+* Configure Google OAuth integration
 
-A API estará disponível em:
-👉 http://localhost:8000
-
-### 3. Atualizando a api para comunicação com o back end (rodar sempre que houver alteração na API do server)
-
-Rodar ./generate-api.sh
-
-## Capacitor
-
-1. Gerar nova build
+Backend API available at:
 
 ```
+http://localhost:8000
+```
+
+---
+
+### 3. Update Frontend API Types (if backend changes)
+
+If the backend API changes, regenerate the frontend API clients:
+
+```bash
+./generate-api.sh
+```
+
+---
+
+## 📱 Capacitor (Mobile)
+
+Build the app:
+
+```bash
 npm run build
 ```
 
-2. Copiar para o android
+Sync the build to the Android platform:
 
-```
+```bash
 npx cap sync android
 ```
 
-3. Abrir no Andoid Studio
+Open the Android Studio project:
 
-```
+```bash
 npx cap open android
 ```
 
-4. Testar no Android Studio
+Run the app:
 
-- Clique no botão verde
-- Escolha um dispositivo (real - conecte seu celular com USB e ative o modo de desenvolvedor ou emulador)
-- Aguarde instalar e abrir
+* Click the green “Run” button in Android Studio
+* Choose a real device or emulator
+* Wait for install and launch
 
-5. (Opcional) Gerar o bundle para a Play Store
+**Optional: Generate a bundle for Play Store:**
 
-- Build > Generate Signed Bundle / APK > Android App Bundle (.aab)
+```
+Build > Generate Signed Bundle / APK > Android App Bundle (.aab)
+```
 
-## Google Apps
+---
 
-![alt text](image.png)
+## 🔑 Google OAuth Configuration
 
-Precisamos de 2 Google Apps criados sobre um mesmo projeto (SAUDE) para OAuth. O primeiro, Google Android, deve ser criado do tipo android
-apenas para inserirmos o SHA-1 do app nele. Isso é necessário, pois login via mobile precisa de geração de token ao invés de code.
-O clientId e secret desse app **NÃO SÃO USADOS**, ele serve literalmente só para cadastro do SHA-1 no projeto.
+To enable Google OAuth login, create **two Google apps under the same Google Cloud project**:
 
-O segundo deve ser do tipo Web App, mas vai ser usado tanto para login WEB quanto login Mobile. Precisamos cadastrar as redirect urls para o caso
-de login WEB, onde o server chama o client na web (no nosso caso, somente localhost). O clientId e secret devem ser usados como variáveis de ambiente
-nesse projeto e no server. O clientSecret só é necessário no server para o login web.
+### 1. Google Android App
+
+* Type: **Android**
+* Used only to register the app’s SHA-1 fingerprint
+* **Client ID and Secret are NOT used** for authentication flows
+* Required for enabling token-based mobile login instead of code-based
+
+---
+
+### 2. Google Web App
+
+* Type: **Web Application**
+* Used for both web and mobile OAuth flows
+* Must include redirect URIs for web login (currently localhost)
+* Client ID and Secret used:
+
+  * **Frontend:** Client ID only
+  * **Backend:** Client ID and Client Secret
+* Client Secret is required only for web login on the backend
+
+---
+
+## 📜 License
+
+MIT License
+
+---
+
+## 📚 Documentation
+
+Full technical documentation, architecture decisions, and project onboarding are available on Notion:
+
+👉 [Read the Documentation on Notion](https://www.notion.so/Guia-de-Continuidade-do-Projeto-SA-DE-2233d3fd29de80a1823acf44acaeb9f2?source=copy_link)
+
+---
+
+**SAÚDE! — improving mental health care, one connection at a time.**
