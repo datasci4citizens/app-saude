@@ -36,12 +36,7 @@ const TermsScreen = ({
     const fromProfile =
       fromQuery === 'profile' ||
       location.state?.from === 'profile' ||
-      location.pathname.includes('/profile/terms') ||
-      document.referrer.includes('/profile') ||
-      document.referrer.includes('/acs-profile') ||
-      document.referrer.includes('/user-profile') ||
-      isViewOnly ||
-      window.history.state?.from === 'profile';
+      location.pathname.includes('/profile/terms');
 
     console.log('Terms Screen Debug:', {
       fromQuery,

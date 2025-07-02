@@ -9,7 +9,6 @@ import { AuthService } from '../services/AuthService';
 import type { TokenRefresh } from '../models/TokenRefresh';
 import { getCurrentAccount } from '@/contexts/AppContext';
 
-// ... (suas funções utilitárias permanecem iguais)
 export const isDefined = <T>(
   value: T | null | undefined,
 ): value is Exclude<T, null | undefined> => {

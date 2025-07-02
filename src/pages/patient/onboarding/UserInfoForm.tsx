@@ -82,9 +82,11 @@ export function UserInfoForm({
       setFormData({ ...formData, [name]: value });
     }
 
-    // Clear error when user starts typing
+    // Remover a chave do objeto ao invés de definir como undefined
     if (errors[name]) {
-      setErrors({ ...errors, [name]: undefined });
+      const newErrors = { ...errors };
+      delete newErrors[name];
+      setErrors(newErrors);
     }
   };
 
@@ -107,9 +109,11 @@ export function UserInfoForm({
       setFormData({ ...formData, birth_datetime: value });
     }
 
-    // Clear error when user starts typing
+    // Remover a chave do objeto ao invés de definir como undefined
     if (errors.birth_datetime) {
-      setErrors({ ...errors, birth_datetime: undefined });
+      const newErrors = { ...errors };
+      delete newErrors.birth_datetime;
+      setErrors(newErrors);
     }
   };
 
@@ -174,14 +178,18 @@ export function UserInfoForm({
     onSubmit(formData);
   };
 
-  // Check if form is valid for enabling button
+  // Revalidar os dados atuais para garantir que estão válidos
   const isFormValid = () => {
-    return (
-      formData.gender_concept !== null &&
-      formData.race_concept !== null &&
-      formData.birth_datetime &&
-      Object.keys(errors).length === 0
-    );
+    // Check required fields
+    if (formData.gender_concept === null) return false;
+    if (formData.race_concept === null) return false;
+    if (!formData.birth_datetime) return false;
+
+    // Run current validation to check if data is actually valid
+    const currentErrors = validateForm();
+    const hasErrors = Object.keys(currentErrors).length > 0;
+
+    return !hasErrors;
   };
 
   return (

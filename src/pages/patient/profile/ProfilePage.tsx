@@ -46,7 +46,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onEditProfile }) => {
   const [loadingItem, setLoadingItem] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
-  const { currentAccount, removeAccount, logoutCurrentAccount } = useApp();
+  const { currentAccount, removeAccountAfterDelete, logoutCurrentAccount } = useApp();
 
   const name = currentAccount?.name ?? 'Usuário';
   const profileImage = currentAccount?.profilePicture ?? '';
@@ -112,9 +112,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onEditProfile }) => {
       await AccountService.accountsDestroy();
       setSuccess('Conta excluída com sucesso!');
 
-      setTimeout(() => {
-        removeAccount(currentAccount!!.userId);
-      }, 1500);
+      await removeAccountAfterDelete(currentAccount!!.userId);
+      navigate('/');
     } catch (error) {
       setError('Erro ao excluir conta. Tente novamente.');
       console.error(error);
