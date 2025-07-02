@@ -1,0 +1,89 @@
+{
+    "Collection 1": {
+        "name": "Collection 1",
+        "_white": {
+            "name": "_white",
+            "description": "",
+            "value": "#ffffff",
+            "type": "color"
+        },
+        "_homeblue": {
+            "name": "_homeblue",
+            "description": "",
+            "value": "#5a96fa",
+            "type": "color"
+        },
+        "_selected": {
+            "name": "_selected",
+            "description": "",
+            "value": "#cefa5a",
+            "type": "color"
+        },
+        "_typography": {
+            "name": "_typography",
+            "description": "",
+            "value": "#141b36",
+            "type": "color"
+        },
+        "_black": {
+            "name": "_black",
+            "description": "",
+            "value": "#000000",
+            "type": "color"
+        },
+        "_offwhite": {
+            "name": "_offwhite",
+            "description": "",
+            "value": "#f9f9ff",
+            "type": "color"
+        },
+        "_gray1": {
+            "name": "_gray1",
+            "description": "",
+            "value": "#e6e6e6",
+            "type": "color"
+        },
+        "_gray2": {
+            "name": "_gray2",
+            "description": "",
+            "value": "#a0a3b1",
+            "type": "color"
+        },
+        "_selection": {
+            "name": "_selection",
+            "description": "",
+            "value": "#fa6e5a",
+            "type": "color"
+        },
+        "_accent1": {
+            "name": "_accent1",
+            "description": "",
+            "value": "#ffc97e",
+            "type": "color"
+        },
+        "_accent2": {
+            "name": "_accent2",
+            "description": "",
+            "value": "#464646",
+            "type": "color"
+        },
+        "_homeblob1": {
+            "name": "_homeblob1",
+            "description": "",
+            "value": "#4288fe",
+            "type": "color"
+        },
+        "_homeblob2": {
+            "name": "_homeblob2",
+            "description": "",
+            "value": "#2c78f9",
+            "type": "color"
+        },
+        "_accent3": {
+            "name": "_accent3",
+            "description": "",
+            "value": "#e8e8e8",
+            "type": "color"
+        }
+    }
+}

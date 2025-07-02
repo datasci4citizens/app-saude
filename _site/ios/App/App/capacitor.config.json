@@ -1,0 +1,14 @@
+{
+    "appId": "br.unicamp.ic.saude",
+    "appName": "saude",
+    "webDir": "dist",
+    "plugins": {
+        "GoogleAuth": {
+            "scopes": ["profile", "email"],
+            "clientId": "959274700214-s5cclfaaceh03i832vn11r8p3vig513m.apps.googleusercontent.com",
+            "grantOfflineAccess": true,
+            "forceCodeForRefreshToken": true
+        }
+    },
+    "packageClassList": ["GoogleAuth"]
+}
