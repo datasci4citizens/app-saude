@@ -5,7 +5,7 @@ title: Bem-vindo
 
 # Bem-vindo ao SAÚDE!
 
-{% include_relative README.md %}
+{% include_relative ../README.md %}
 
 ---
 
