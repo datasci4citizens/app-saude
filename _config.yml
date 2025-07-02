@@ -1,0 +1,7 @@
+title: Meu Projeto Incrível
+description: Documentação e políticas do projeto.
+theme: minima
+markdown: kramdown
+
+plugins:
+  - jekyll-relative-links

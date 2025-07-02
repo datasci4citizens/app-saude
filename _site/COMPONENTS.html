@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Documentação dos Componentes | Meu Projeto Incrível</title>
+<meta name="generator" content="Jekyll v3.10.0" />
+<meta property="og:title" content="Documentação dos Componentes" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Documentação e políticas do projeto." />
+<meta property="og:description" content="Documentação e políticas do projeto." />
+<link rel="canonical" href="http://localhost:4000/COMPONENTS.html" />
+<meta property="og:url" content="http://localhost:4000/COMPONENTS.html" />
+<meta property="og:site_name" content="Meu Projeto Incrível" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Documentação dos Componentes" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"Documentação e políticas do projeto.","headline":"Documentação dos Componentes","url":"http://localhost:4000/COMPONENTS.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Meu Projeto Incrível" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Meu Projeto Incrível</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/account-deletion.html">Exclusão de Conta</a><a class="page-link" href="/">Teste Local</a><a class="page-link" href="/privacy-policy.html">Política de Privacidade</a><a class="page-link" href="/COMPONENTS.html">Documentação dos Componentes</a><a class="page-link" href="/TAILWIND.html">Tailwind CSS Configuration</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Documentação dos Componentes</h1>
+  </header>
+
+  <div class="post-content">
+    <h1 id="documentação-dos-componentes">Documentação dos Componentes</h1>
+
+<h2 id="diretório-srccomponents">Diretório <code class="language-plaintext highlighter-rouge">/src/components</code></h2>
+
+<h3 id="componentes-na-raiz">Componentes na raiz</h3>
+
+<h4 id="protectedroutejsx">ProtectedRoute.jsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente para proteger rotas, garantindo que apenas usuários autenticados possam acessá-las.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">children</code>: Elementos React que serão renderizados se o usuário estiver autenticado.</li>
+      <li><code class="language-plaintext highlighter-rouge">redirectTo</code>: (Opcional) URL para redirecionar caso o usuário não esteja autenticado.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-jsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">ProtectedRoute</span> <span class="na">redirectTo</span><span class="p">=</span><span class="s">"/login"</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nc">Dashboard</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;/</span><span class="nc">ProtectedRoute</span><span class="p">&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="protectedroutetsx">ProtectedRoute.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Versão TypeScript do <code class="language-plaintext highlighter-rouge">ProtectedRoute.jsx</code> com tipagem para as props.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">children</code>: React.ReactNode.</li>
+      <li><code class="language-plaintext highlighter-rouge">redirectTo</code>: string (opcional).</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">ProtectedRoute</span> <span class="na">redirectTo</span><span class="p">=</span><span class="s">"/login"</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nc">Dashboard</span> <span class="p">/&gt;</span>
+  <span class="p">&lt;/</span><span class="nc">ProtectedRoute</span><span class="p">&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="diretório-forms">Diretório <code class="language-plaintext highlighter-rouge">forms/</code></h3>
+
+<h4 id="autocomplete_inputtsx">autocomplete_input.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Campo de entrada com preenchimento automático.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">options</code>: Array de strings ou objetos para sugerir valores.</li>
+      <li><code class="language-plaintext highlighter-rouge">onSelect</code>: Função chamada quando um item é selecionado.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">AutocompleteInput</span> <span class="na">options</span><span class="p">=</span><span class="si">{</span><span class="p">[</span><span class="dl">'</span><span class="s1">Opção 1</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">Opção 2</span><span class="dl">'</span><span class="p">]</span><span class="si">}</span> <span class="na">onSelect</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span><span class="si">}</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="buttontsx">button.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Botão reutilizável.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">onClick</code>: Função chamada ao clicar no botão.</li>
+      <li><code class="language-plaintext highlighter-rouge">disabled</code>: Booleano para desativar o botão.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Button</span> <span class="na">onClick</span><span class="p">=</span><span class="si">{</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">alert</span><span class="p">(</span><span class="dl">'</span><span class="s1">Clicado!</span><span class="dl">'</span><span class="p">)</span><span class="si">}</span> <span class="na">disabled</span><span class="p">=</span><span class="si">{</span><span class="kc">false</span><span class="si">}</span><span class="p">&gt;</span>
+      Clique aqui
+  <span class="p">&lt;/</span><span class="nc">Button</span><span class="p">&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="checkboxtsx">checkbox.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Caixa de seleção.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">checked</code>: Estado atual do checkbox.</li>
+      <li><code class="language-plaintext highlighter-rouge">onChange</code>: Função chamada ao alterar o estado.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Checkbox</span> <span class="na">checked</span><span class="p">=</span><span class="si">{</span><span class="kc">true</span><span class="si">}</span> <span class="na">onChange</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">checked</span><span class="p">)</span><span class="si">}</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="date_inputtsx">date_input.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Campo de entrada para datas.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">value</code>: Data atual no formato ISO.</li>
+      <li><code class="language-plaintext highlighter-rouge">onChange</code>: Função chamada ao alterar a data.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">DateInput</span> <span class="na">value</span><span class="p">=</span><span class="s">"2025-05-08"</span> <span class="na">onChange</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">date</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">date</span><span class="p">)</span><span class="si">}</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="dropdown-menutsx">dropdown-menu.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Menu suspenso para seleção de opções.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">items</code>: Array de objetos com <code class="language-plaintext highlighter-rouge">label</code> e <code class="language-plaintext highlighter-rouge">value</code>.</li>
+      <li><code class="language-plaintext highlighter-rouge">onSelect</code>: Função chamada ao selecionar um item.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">DropdownMenu</span>
+      <span class="na">items</span><span class="p">=</span><span class="si">{</span><span class="p">[</span>
+          <span class="p">{</span> <span class="na">label</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Opção 1</span><span class="dl">'</span><span class="p">,</span> <span class="na">value</span><span class="p">:</span> <span class="mi">1</span> <span class="p">},</span>
+          <span class="p">{</span> <span class="na">label</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Opção 2</span><span class="dl">'</span><span class="p">,</span> <span class="na">value</span><span class="p">:</span> <span class="mi">2</span> <span class="p">},</span>
+      <span class="p">]</span><span class="si">}</span>
+      <span class="na">onSelect</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span><span class="si">}</span>
+  <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="formtsx">form.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de formulário genérico.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">onSubmit</code>: Função chamada ao enviar o formulário.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Form</span> <span class="na">onSubmit</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span><span class="si">}</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nc">Input</span> <span class="na">name</span><span class="p">=</span><span class="s">"nome"</span> <span class="p">/&gt;</span>
+      <span class="p">&lt;</span><span class="nc">Button</span> <span class="na">type</span><span class="p">=</span><span class="s">"submit"</span><span class="p">&gt;</span>Enviar<span class="p">&lt;/</span><span class="nc">Button</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nc">Form</span><span class="p">&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="diretório-ui">Diretório <code class="language-plaintext highlighter-rouge">ui/</code></h3>
+
+<h4 id="accordiontsx">accordion.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de acordeão para exibir e ocultar conteúdo.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">title</code>: Título do acordeão.</li>
+      <li><code class="language-plaintext highlighter-rouge">isOpen</code>: (Opcional) Define se o acordeão está aberto por padrão.</li>
+      <li><code class="language-plaintext highlighter-rouge">onToggle</code>: (Opcional) Função chamada ao abrir ou fechar o acordeão.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Accordion</span> <span class="na">title</span><span class="p">=</span><span class="s">"Detalhes"</span> <span class="na">isOpen</span><span class="p">=</span><span class="si">{</span><span class="kc">false</span><span class="si">}</span> <span class="na">onToggle</span><span class="p">=</span><span class="si">{</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Toggled!</span><span class="dl">'</span><span class="p">)</span><span class="si">}</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Conteúdo do acordeão<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nc">Accordion</span><span class="p">&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="alert-dialogtsx">alert-dialog.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de diálogo de alerta para exibir mensagens importantes.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">isOpen</code>: Define se o diálogo está visível.</li>
+      <li><code class="language-plaintext highlighter-rouge">onClose</code>: Função chamada ao fechar o diálogo.</li>
+      <li><code class="language-plaintext highlighter-rouge">title</code>: Título do diálogo.</li>
+      <li><code class="language-plaintext highlighter-rouge">message</code>: Mensagem exibida no corpo do diálogo.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">AlertDialog</span>
+      <span class="na">isOpen</span><span class="p">=</span><span class="si">{</span><span class="kc">true</span><span class="si">}</span>
+      <span class="na">onClose</span><span class="p">=</span><span class="si">{</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Fechado</span><span class="dl">'</span><span class="p">)</span><span class="si">}</span>
+      <span class="na">title</span><span class="p">=</span><span class="s">"Atenção"</span>
+      <span class="na">message</span><span class="p">=</span><span class="s">"Esta é uma mensagem importante."</span>
+  <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="alerttsx">alert.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de alerta para exibir mensagens rápidas.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">type</code>: Tipo do alerta (<code class="language-plaintext highlighter-rouge">success</code>, <code class="language-plaintext highlighter-rouge">error</code>, <code class="language-plaintext highlighter-rouge">warning</code>, <code class="language-plaintext highlighter-rouge">info</code>).</li>
+      <li><code class="language-plaintext highlighter-rouge">message</code>: Mensagem exibida no alerta.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Alert</span> <span class="na">type</span><span class="p">=</span><span class="s">"success"</span> <span class="na">message</span><span class="p">=</span><span class="s">"Operação realizada com sucesso!"</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="aux_iconstsx">aux_icons.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Conjunto de ícones auxiliares para uso em outros componentes.</li>
+  <li><strong>Props</strong>: Depende do ícone específico utilizado.</li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">AuxIcon</span> <span class="na">name</span><span class="p">=</span><span class="s">"check"</span> <span class="na">size</span><span class="p">=</span><span class="si">{</span><span class="mi">24</span><span class="si">}</span> <span class="na">color</span><span class="p">=</span><span class="s">"green"</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="avatartsx">avatar.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente para exibir avatares de usuários.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">src</code>: URL da imagem do avatar.</li>
+      <li><code class="language-plaintext highlighter-rouge">alt</code>: Texto alternativo para a imagem.</li>
+      <li><code class="language-plaintext highlighter-rouge">size</code>: Tamanho do avatar (pequeno, médio, grande).</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Avatar</span> <span class="na">src</span><span class="p">=</span><span class="s">"/path/to/image.jpg"</span> <span class="na">alt</span><span class="p">=</span><span class="s">"Avatar do usuário"</span> <span class="na">size</span><span class="p">=</span><span class="s">"médio"</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="back_arrowtsx">back_arrow.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de seta para voltar, geralmente usado em navegação.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">onClick</code>: Função chamada ao clicar na seta.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">BackArrow</span> <span class="na">onClick</span><span class="p">=</span><span class="si">{</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Voltar</span><span class="dl">'</span><span class="p">)</span><span class="si">}</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="badgetsx">badge.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de badge para exibir contadores ou status.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">content</code>: Texto ou número exibido no badge.</li>
+      <li><code class="language-plaintext highlighter-rouge">color</code>: Cor do badge.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Badge</span> <span class="na">content</span><span class="p">=</span><span class="s">"Novo"</span> <span class="na">color</span><span class="p">=</span><span class="s">"red"</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="calendartsx">calendar.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de calendário para seleção de datas.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">selectedDate</code>: Data atualmente selecionada.</li>
+      <li><code class="language-plaintext highlighter-rouge">onDateChange</code>: Função chamada ao alterar a data.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Calendar</span> <span class="na">selectedDate</span><span class="p">=</span><span class="s">"2025-05-08"</span> <span class="na">onDateChange</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">date</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">date</span><span class="p">)</span><span class="si">}</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="cardtsx">card.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de cartão para agrupar informações.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">title</code>: Título do cartão.</li>
+      <li><code class="language-plaintext highlighter-rouge">content</code>: Conteúdo exibido no cartão.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Card</span> <span class="na">title</span><span class="p">=</span><span class="s">"Informações"</span> <span class="na">content</span><span class="p">=</span><span class="si">{</span><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Detalhes importantes<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span><span class="si">}</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="carouseltsx">carousel.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de carrossel para exibir itens em rotação.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">items</code>: Array de itens a serem exibidos.</li>
+      <li><code class="language-plaintext highlighter-rouge">onItemChange</code>: Função chamada ao mudar o item visível.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Carousel</span> <span class="na">items</span><span class="p">=</span><span class="si">{</span><span class="p">[</span><span class="dl">'</span><span class="s1">Item 1</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">Item 2</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">Item 3</span><span class="dl">'</span><span class="p">]</span><span class="si">}</span> <span class="na">onItemChange</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">item</span><span class="p">)</span><span class="si">}</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="dialogtsx">dialog.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de diálogo genérico para exibir conteúdo modal.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">isOpen</code>: Define se o diálogo está visível.</li>
+      <li><code class="language-plaintext highlighter-rouge">onClose</code>: Função chamada ao fechar o diálogo.</li>
+      <li><code class="language-plaintext highlighter-rouge">title</code>: (Opcional) Título do diálogo.</li>
+      <li><code class="language-plaintext highlighter-rouge">children</code>: Conteúdo exibido dentro do diálogo.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Dialog</span> <span class="na">isOpen</span><span class="p">=</span><span class="si">{</span><span class="kc">true</span><span class="si">}</span> <span class="na">onClose</span><span class="p">=</span><span class="si">{</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Fechado</span><span class="dl">'</span><span class="p">)</span><span class="si">}</span> <span class="na">title</span><span class="p">=</span><span class="s">"Título do Diálogo"</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Conteúdo do diálogo<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nc">Dialog</span><span class="p">&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="drawertsx">drawer.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de gaveta para exibir menus ou informações adicionais.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">isOpen</code>: Define se a gaveta está visível.</li>
+      <li><code class="language-plaintext highlighter-rouge">onClose</code>: Função chamada ao fechar a gaveta.</li>
+      <li><code class="language-plaintext highlighter-rouge">position</code>: (Opcional) Posição da gaveta (<code class="language-plaintext highlighter-rouge">left</code>, <code class="language-plaintext highlighter-rouge">right</code>, <code class="language-plaintext highlighter-rouge">top</code>, <code class="language-plaintext highlighter-rouge">bottom</code>).</li>
+      <li><code class="language-plaintext highlighter-rouge">children</code>: Conteúdo exibido dentro da gaveta.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Drawer</span> <span class="na">isOpen</span><span class="p">=</span><span class="si">{</span><span class="kc">true</span><span class="si">}</span> <span class="na">onClose</span><span class="p">=</span><span class="si">{</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Fechado</span><span class="dl">'</span><span class="p">)</span><span class="si">}</span> <span class="na">position</span><span class="p">=</span><span class="s">"right"</span><span class="p">&gt;</span>
+      <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Conteúdo da gaveta<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nc">Drawer</span><span class="p">&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="file-uploadertsx">file-uploader.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente para upload de arquivos.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">onUpload</code>: Função chamada ao fazer upload de um arquivo.</li>
+      <li><code class="language-plaintext highlighter-rouge">accept</code>: (Opcional) Tipos de arquivos aceitos (ex.: <code class="language-plaintext highlighter-rouge">image/*</code>, <code class="language-plaintext highlighter-rouge">.pdf</code>).</li>
+      <li><code class="language-plaintext highlighter-rouge">multiple</code>: (Opcional) Permite seleção de múltiplos arquivos.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">FileUploader</span> <span class="na">onUpload</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">files</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">files</span><span class="p">)</span><span class="si">}</span> <span class="na">accept</span><span class="p">=</span><span class="s">"image/*"</span> <span class="na">multiple</span><span class="p">=</span><span class="si">{</span><span class="kc">true</span><span class="si">}</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="google-signintsx">google-signin.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Botão para autenticação com Google.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">onSuccess</code>: Função chamada ao autenticar com sucesso.</li>
+      <li><code class="language-plaintext highlighter-rouge">onFailure</code>: Função chamada ao falhar na autenticação.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">GoogleSignIn</span>
+      <span class="na">onSuccess</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Autenticado</span><span class="dl">'</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span><span class="si">}</span>
+      <span class="na">onFailure</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="dl">'</span><span class="s1">Erro</span><span class="dl">'</span><span class="p">,</span> <span class="nx">error</span><span class="p">)</span><span class="si">}</span>
+  <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="habit-cardtsx">habit-card.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente para exibir informações sobre hábitos.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">habitName</code>: Nome do hábito.</li>
+      <li><code class="language-plaintext highlighter-rouge">progress</code>: Progresso do hábito (0 a 100).</li>
+      <li><code class="language-plaintext highlighter-rouge">onClick</code>: (Opcional) Função chamada ao clicar no cartão.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">HabitCard</span> <span class="na">habitName</span><span class="p">=</span><span class="s">"Exercício"</span> <span class="na">progress</span><span class="p">=</span><span class="si">{</span><span class="mi">75</span><span class="si">}</span> <span class="na">onClick</span><span class="p">=</span><span class="si">{</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Hábito clicado</span><span class="dl">'</span><span class="p">)</span><span class="si">}</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="headertsx">header.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Cabeçalho para páginas ou seções.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">title</code>: Título exibido no cabeçalho.</li>
+      <li><code class="language-plaintext highlighter-rouge">subtitle</code>: (Opcional) Subtítulo exibido abaixo do título.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Header</span> <span class="na">title</span><span class="p">=</span><span class="s">"Bem-vindo"</span> <span class="na">subtitle</span><span class="p">=</span><span class="s">"Subtítulo opcional"</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="home-bannertsx">home-banner.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Banner para a página inicial.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">imageSrc</code>: URL da imagem exibida no banner.</li>
+      <li><code class="language-plaintext highlighter-rouge">title</code>: Título exibido no banner.</li>
+      <li><code class="language-plaintext highlighter-rouge">description</code>: (Opcional) Descrição exibida abaixo do título.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">HomeBanner</span> <span class="na">imageSrc</span><span class="p">=</span><span class="s">"/path/to/image.jpg"</span> <span class="na">title</span><span class="p">=</span><span class="s">"Bem-vindo"</span> <span class="na">description</span><span class="p">=</span><span class="s">"Descrição opcional"</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="info-cardtsx">info-card.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Cartão para exibir informações resumidas.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">title</code>: Título do cartão.</li>
+      <li><code class="language-plaintext highlighter-rouge">content</code>: Conteúdo exibido no cartão.</li>
+      <li><code class="language-plaintext highlighter-rouge">onClick</code>: (Opcional) Função chamada ao clicar no cartão.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">InfoCard</span>
+      <span class="na">title</span><span class="p">=</span><span class="s">"Informações"</span>
+      <span class="na">content</span><span class="p">=</span><span class="si">{</span><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Detalhes importantes<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span><span class="si">}</span>
+      <span class="na">onClick</span><span class="p">=</span><span class="si">{</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Clicado</span><span class="dl">'</span><span class="p">)</span><span class="si">}</span>
+  <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="labeltsx">label.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente para exibir rótulos de texto.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">text</code>: Texto exibido no rótulo.</li>
+      <li><code class="language-plaintext highlighter-rouge">htmlFor</code>: (Opcional) ID do elemento associado ao rótulo.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Label</span> <span class="na">text</span><span class="p">=</span><span class="s">"Nome"</span> <span class="na">htmlFor</span><span class="p">=</span><span class="s">"nome"</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="labeled-switchtsx">labeled-switch.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de interruptor com rótulo.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">label</code>: Texto exibido ao lado do interruptor.</li>
+      <li><code class="language-plaintext highlighter-rouge">checked</code>: Estado atual do interruptor.</li>
+      <li><code class="language-plaintext highlighter-rouge">onChange</code>: Função chamada ao alterar o estado.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">LabeledSwitch</span>
+      <span class="na">label</span><span class="p">=</span><span class="s">"Ativar notificações"</span>
+      <span class="na">checked</span><span class="p">=</span><span class="si">{</span><span class="kc">true</span><span class="si">}</span>
+      <span class="na">onChange</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">checked</span><span class="p">)</span><span class="si">}</span>
+  <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="navigator-bartsx">navigator-bar.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Barra de navegação para a aplicação.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">items</code>: Array de objetos representando os itens de navegação, com <code class="language-plaintext highlighter-rouge">label</code> e <code class="language-plaintext highlighter-rouge">onClick</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">NavigatorBar</span>
+      <span class="na">items</span><span class="p">=</span><span class="si">{</span><span class="p">[</span>
+          <span class="p">{</span> <span class="na">label</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Home</span><span class="dl">'</span><span class="p">,</span> <span class="na">onClick</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Home</span><span class="dl">'</span><span class="p">)</span> <span class="p">},</span>
+          <span class="p">{</span> <span class="na">label</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Perfil</span><span class="dl">'</span><span class="p">,</span> <span class="na">onClick</span><span class="p">:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Perfil</span><span class="dl">'</span><span class="p">)</span> <span class="p">},</span>
+      <span class="p">]</span><span class="si">}</span>
+  <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="patient-buttontsx">patient-button.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Botão estilizado para ações relacionadas a pacientes.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">label</code>: Texto exibido no botão.</li>
+      <li><code class="language-plaintext highlighter-rouge">onClick</code>: Função chamada ao clicar no botão.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">PatientButton</span> <span class="na">label</span><span class="p">=</span><span class="s">"Ver Paciente"</span> <span class="na">onClick</span><span class="p">=</span><span class="si">{</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Paciente clicado</span><span class="dl">'</span><span class="p">)</span><span class="si">}</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="popovertsx">popover.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente para exibir informações adicionais em um popover.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">content</code>: Conteúdo exibido no popover.</li>
+      <li><code class="language-plaintext highlighter-rouge">trigger</code>: Elemento que ativa o popover ao ser clicado.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Popover</span> <span class="na">content</span><span class="p">=</span><span class="si">{</span><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Informações adicionais<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span><span class="si">}</span> <span class="na">trigger</span><span class="p">=</span><span class="si">{</span><span class="p">&lt;</span><span class="nt">button</span><span class="p">&gt;</span>Mais informações<span class="p">&lt;/</span><span class="nt">button</span><span class="p">&gt;</span><span class="si">}</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="reminder-cardtsx">reminder-card.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Cartão para exibir lembretes.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">title</code>: Título do lembrete.</li>
+      <li><code class="language-plaintext highlighter-rouge">description</code>: Descrição do lembrete.</li>
+      <li><code class="language-plaintext highlighter-rouge">onClick</code>: (Opcional) Função chamada ao clicar no cartão.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">ReminderCard</span>
+      <span class="na">title</span><span class="p">=</span><span class="s">"Consulta Médica"</span>
+      <span class="na">description</span><span class="p">=</span><span class="s">"Dia 10 de maio às 14h"</span>
+      <span class="na">onClick</span><span class="p">=</span><span class="si">{</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Lembrete clicado</span><span class="dl">'</span><span class="p">)</span><span class="si">}</span>
+  <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="selecttsx">select.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de seleção de opções.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">options</code>: Array de objetos com <code class="language-plaintext highlighter-rouge">label</code> e <code class="language-plaintext highlighter-rouge">value</code> representando as opções.</li>
+      <li><code class="language-plaintext highlighter-rouge">onChange</code>: Função chamada ao selecionar uma opção.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Select</span>
+      <span class="na">options</span><span class="p">=</span><span class="si">{</span><span class="p">[</span>
+          <span class="p">{</span> <span class="na">label</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Opção 1</span><span class="dl">'</span><span class="p">,</span> <span class="na">value</span><span class="p">:</span> <span class="mi">1</span> <span class="p">},</span>
+          <span class="p">{</span> <span class="na">label</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Opção 2</span><span class="dl">'</span><span class="p">,</span> <span class="na">value</span><span class="p">:</span> <span class="mi">2</span> <span class="p">},</span>
+      <span class="p">]</span><span class="si">}</span>
+      <span class="na">onChange</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span><span class="si">}</span>
+  <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="select_habittsx">select_habit.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente para selecionar hábitos.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">habits</code>: Array de hábitos disponíveis.</li>
+      <li><code class="language-plaintext highlighter-rouge">onSelect</code>: Função chamada ao selecionar um hábito.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">SelectHabit</span> <span class="na">habits</span><span class="p">=</span><span class="si">{</span><span class="p">[</span><span class="dl">'</span><span class="s1">Correr</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">Ler</span><span class="dl">'</span><span class="p">]</span><span class="si">}</span> <span class="na">onSelect</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">habit</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">habit</span><span class="p">)</span><span class="si">}</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="selectable-buttontsx">selectable-button.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Botão que pode ser selecionado.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">label</code>: Texto exibido no botão.</li>
+      <li><code class="language-plaintext highlighter-rouge">selected</code>: Define se o botão está selecionado.</li>
+      <li><code class="language-plaintext highlighter-rouge">onClick</code>: Função chamada ao clicar no botão.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">SelectableButton</span>
+      <span class="na">label</span><span class="p">=</span><span class="s">"Selecionar"</span>
+      <span class="na">selected</span><span class="p">=</span><span class="si">{</span><span class="kc">true</span><span class="si">}</span>
+      <span class="na">onClick</span><span class="p">=</span><span class="si">{</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Botão clicado</span><span class="dl">'</span><span class="p">)</span><span class="si">}</span>
+  <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="skeletontsx">skeleton.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de esqueleto para indicar carregamento.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">width</code>: Largura do esqueleto.</li>
+      <li><code class="language-plaintext highlighter-rouge">height</code>: Altura do esqueleto.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Skeleton</span> <span class="na">width</span><span class="p">=</span><span class="s">"100px"</span> <span class="na">height</span><span class="p">=</span><span class="s">"20px"</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="slidertsx">slider.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Controle deslizante para selecionar valores.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">min</code>: Valor mínimo.</li>
+      <li><code class="language-plaintext highlighter-rouge">max</code>: Valor máximo.</li>
+      <li><code class="language-plaintext highlighter-rouge">value</code>: Valor atual.</li>
+      <li><code class="language-plaintext highlighter-rouge">onChange</code>: Função chamada ao alterar o valor.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Slider</span> <span class="na">min</span><span class="p">=</span><span class="si">{</span><span class="mi">0</span><span class="si">}</span> <span class="na">max</span><span class="p">=</span><span class="si">{</span><span class="mi">100</span><span class="si">}</span> <span class="na">value</span><span class="p">=</span><span class="si">{</span><span class="mi">50</span><span class="si">}</span> <span class="na">onChange</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span><span class="si">}</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="switchtsx">switch.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de interruptor.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">checked</code>: Estado atual do interruptor.</li>
+      <li><code class="language-plaintext highlighter-rouge">onChange</code>: Função chamada ao alterar o estado.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Switch</span> <span class="na">checked</span><span class="p">=</span><span class="si">{</span><span class="kc">true</span><span class="si">}</span> <span class="na">onChange</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">checked</span><span class="p">)</span><span class="si">}</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="tabstsx">tabs.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de abas para navegação.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">tabs</code>: Array de objetos com <code class="language-plaintext highlighter-rouge">label</code> e <code class="language-plaintext highlighter-rouge">content</code> representando as abas.</li>
+      <li><code class="language-plaintext highlighter-rouge">activeTab</code>: Aba atualmente ativa.</li>
+      <li><code class="language-plaintext highlighter-rouge">onTabChange</code>: Função chamada ao mudar de aba.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Tabs</span>
+      <span class="na">tabs</span><span class="p">=</span><span class="si">{</span><span class="p">[</span>
+          <span class="p">{</span> <span class="na">label</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Aba 1</span><span class="dl">'</span><span class="p">,</span> <span class="na">content</span><span class="p">:</span> <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Conteúdo 1<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span> <span class="p">},</span>
+          <span class="p">{</span> <span class="na">label</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Aba 2</span><span class="dl">'</span><span class="p">,</span> <span class="na">content</span><span class="p">:</span> <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Conteúdo 2<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span> <span class="p">},</span>
+      <span class="p">]</span><span class="si">}</span>
+      <span class="na">activeTab</span><span class="p">=</span><span class="si">{</span><span class="mi">0</span><span class="si">}</span>
+      <span class="na">onTabChange</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">index</span><span class="p">)</span><span class="si">}</span>
+  <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="task-bartsx">task-bar.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Barra de tarefas para exibir progresso ou ações.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">tasks</code>: Array de objetos representando as tarefas, com <code class="language-plaintext highlighter-rouge">label</code> e <code class="language-plaintext highlighter-rouge">completed</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">TaskBar</span>
+      <span class="na">tasks</span><span class="p">=</span><span class="si">{</span><span class="p">[</span>
+          <span class="p">{</span> <span class="na">label</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Tarefa 1</span><span class="dl">'</span><span class="p">,</span> <span class="na">completed</span><span class="p">:</span> <span class="kc">true</span> <span class="p">},</span>
+          <span class="p">{</span> <span class="na">label</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Tarefa 2</span><span class="dl">'</span><span class="p">,</span> <span class="na">completed</span><span class="p">:</span> <span class="kc">false</span> <span class="p">},</span>
+      <span class="p">]</span><span class="si">}</span>
+  <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="text_input_diarytsx">text_input_diary.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Campo de entrada de texto para diários.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">value</code>: Texto atual.</li>
+      <li><code class="language-plaintext highlighter-rouge">onChange</code>: Função chamada ao alterar o texto.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">TextInputDiary</span> <span class="na">value</span><span class="p">=</span><span class="s">"Hoje foi um bom dia"</span> <span class="na">onChange</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span><span class="si">}</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="textareatsx">textarea.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Área de texto para entradas maiores.</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">value</code>: Texto atual.</li>
+      <li><code class="language-plaintext highlighter-rouge">onChange</code>: Função chamada ao alterar o texto.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Textarea</span> <span class="na">value</span><span class="p">=</span><span class="s">"Texto longo"</span> <span class="na">onChange</span><span class="p">=</span><span class="si">{</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span><span class="si">}</span> <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="toasttsx">toast.tsx</h4>
+
+<ul>
+  <li><strong>Uso</strong>: Componente de notificação (toast).</li>
+  <li><strong>Props</strong>:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">message</code>: Mensagem exibida no toast.</li>
+      <li><code class="language-plaintext highlighter-rouge">type</code>: Tipo do toast (<code class="language-plaintext highlighter-rouge">success</code>, <code class="language-plaintext highlighter-rouge">error</code>, <code class="language-plaintext highlighter-rouge">info</code>, <code class="language-plaintext highlighter-rouge">warning</code>).</li>
+      <li><code class="language-plaintext highlighter-rouge">onClose</code>: Função chamada ao fechar o toast.</li>
+    </ul>
+  </li>
+  <li><strong>Exemplo</strong>:
+    <div class="language-tsx highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">&lt;</span><span class="nc">Toast</span>
+      <span class="na">message</span><span class="p">=</span><span class="s">"Operação realizada com sucesso!"</span>
+      <span class="na">type</span><span class="p">=</span><span class="s">"success"</span>
+      <span class="na">onClose</span><span class="p">=</span><span class="si">{</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">Toast fechado</span><span class="dl">'</span><span class="p">)</span><span class="si">}</span>
+  <span class="p">/&gt;</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Meu Projeto Incrível</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Meu Projeto Incrível</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Documentação e políticas do projeto.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
