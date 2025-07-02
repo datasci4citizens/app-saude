@@ -356,7 +356,7 @@ export default function ImprovedDiaryListPage() {
                   onClick={handleCreateDiary}
                   variant="gradient"
                   size="xl"
-                  className="flex items-center gap-2 text-typography"
+                  className="flex items-center gap-2 text-offwhite"
                 >
                   <PlusCircle size={20} />
                   Criar Primeiro Diário
