@@ -35,6 +35,7 @@ export function ProfessionalInfoForm({
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
+  const [displayDate, setDisplayDate] = useState<string>('');
 
   // Validate CNES format (7 digits)
   const validateCNES = (cnes: string): boolean => {
@@ -81,6 +82,8 @@ export function ProfessionalInfoForm({
   // Handle date change
   const handleDateChange = (value: string) => {
     // Convert from DD/MM/YYYY to YYYY-MM-DD
+    setDisplayDate(value);
+
     const datePattern = /^(\d{2})\/(\d{2})\/(\d{4})$/;
     const match = value.match(datePattern);
 
@@ -165,7 +168,7 @@ export function ProfessionalInfoForm({
         id="birth_datetime"
         name="birth_datetime"
         label="Data de nascimento"
-        value={formData.birth_datetime || ''}
+        value={displayDate}
         onChange={handleDateChange}
         error={errors.birth_datetime}
       />

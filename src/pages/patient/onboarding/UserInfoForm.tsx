@@ -62,6 +62,7 @@ export function UserInfoForm({
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
+  const [displayDate, setDisplayDate] = useState<string>('');
 
   // Handle input change
   const handleChange: React.ChangeEventHandler<
@@ -89,6 +90,9 @@ export function UserInfoForm({
 
   // Handle date change - convert DD/MM/YYYY to ISO format for backend
   const handleDateChange = (value: string) => {
+    // Salvar o valor de exibição
+    setDisplayDate(value);
+
     // Check if the input is in DD/MM/YYYY format
     const datePattern = /^(\d{2})\/(\d{2})\/(\d{4})$/;
     const match = value.match(datePattern);
@@ -263,7 +267,7 @@ export function UserInfoForm({
             id="birth_datetime"
             name="birth_datetime"
             label="Data de nascimento *"
-            value={formData.birth_datetime || ''}
+            value={displayDate}
             onChange={handleDateChange}
             error={errors.birth_datetime}
           />
