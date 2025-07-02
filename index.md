@@ -5,14 +5,14 @@ title: Bem-vindo
 
 # Bem-vindo ao SAÚDE!
 
-{% include_relative ../README.md %}
+{% include_relative README.md %}
 
 ---
 
 ## Outras páginas
 
-- [Política de Privacidade](privacy-policy.html)
-- [Exclusão de Conta](account-deletion.html)
+- [Política de Privacidade](docs/privacy-policy.html)
+- [Exclusão de Conta](docs/account-deletion.html)
 
 ---
 
