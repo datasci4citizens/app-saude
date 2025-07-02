@@ -29,6 +29,9 @@ jobs:
             - name: Format code with Prettier
               run: npx prettier --write "src/**/*.{ts,tsx,js,jsx,json,css,scss}"
 
+            - name: Copy README for GitHub Pages
+              run: cp README.md docs/README.md
+
             - name: Commit and push formatted code
               run: |
                   git config --local user.email "action@github.com"

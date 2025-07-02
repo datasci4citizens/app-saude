@@ -12,7 +12,8 @@
         "generate-api": "node generate-api.js",
         "prepare": "husky install",
         "format": "npx prettier --write 'src/**/*.{ts,tsx,js,jsx,json,css,scss}'",
-        "lint": "biome check"
+        "lint": "biome check",
+        "copy-readme": "cp README.md docs/README.md"
     },
     "dependencies": {
         "@capacitor/android": "^6.1.2",
