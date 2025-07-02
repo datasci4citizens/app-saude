@@ -173,26 +173,6 @@ export default function ImprovedViewDiaryEntry() {
     return null;
   };
 
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case 'home':
-        navigate('/user-main-page');
-        break;
-      case 'meds':
-        navigate('/reminders');
-        break;
-      case 'diary':
-        navigate('/diary');
-        break;
-      case 'emergency':
-        navigate('/emergency-user');
-        break;
-      case 'profile':
-        navigate('/profile');
-        break;
-    }
-  };
-
   const clearError = () => setError(null);
 
   if (isLoading) {
@@ -425,11 +405,7 @@ export default function ImprovedViewDiaryEntry() {
 
       {/* Fixed bottom navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50">
-        <BottomNavigationBar
-          variant="user"
-          forceActiveId={getActiveNavId()}
-          onItemClick={handleNavigationClick}
-        />
+        <BottomNavigationBar variant="user" forceActiveId={getActiveNavId()} />
       </div>
     </div>
   );

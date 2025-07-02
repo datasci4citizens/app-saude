@@ -227,25 +227,6 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onEditProfile }) => {
     return null;
   };
 
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case 'home':
-        navigate('/user-main-page');
-        break;
-      case 'meds':
-        navigate('/reminders');
-        break;
-      case 'diary':
-        navigate('/diary');
-        break;
-      case 'emergency':
-        navigate('/emergency-user');
-        break;
-      case 'profile':
-        break;
-    }
-  };
-
   const getItemStyles = (item: ProfileMenuItem) => {
     const baseStyles =
       'p-4 rounded-xl transition-all duration-200 cursor-pointer border shadow-sm hover:shadow-md';
@@ -364,11 +345,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onEditProfile }) => {
         </div>
       </div>
 
-      <BottomNavigationBar
-        variant="user"
-        forceActiveId={getActiveNavId()}
-        onItemClick={handleNavigationClick}
-      />
+      <BottomNavigationBar variant="user" forceActiveId={getActiveNavId()} />
 
       {/* Delete Account Confirmation Dialog */}
       <ConfirmDialog

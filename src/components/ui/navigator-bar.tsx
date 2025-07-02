@@ -1,4 +1,5 @@
 import type React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface BottomNavigationBarProps {
   variant?: 'user' | 'acs';
@@ -6,32 +7,51 @@ interface BottomNavigationBarProps {
   onItemClick?: (itemId: string) => void;
 }
 
+interface NavItem {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  path: string;
+}
+
 const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
   variant = 'user',
   forceActiveId = null,
   onItemClick,
 }) => {
-  const navItemVariants = {
+  const navigate = useNavigate();
+
+  const navItemVariants: Record<'user' | 'acs', NavItem[]> = {
     user: [
       {
         id: 'home',
         label: 'Casa',
         icon: <span role="img" aria-label="home" className="mgc_home_4_line" />,
+        path: '/user-main-page',
       },
+      //      {
+      //        id: 'meds',
+      //        label: 'Lembretes',
+      //        icon: <span role="img" aria-label="calendar" className="mgc_calendar_line" />,
+      //        path: '/reminders',
+      //      },
       {
         id: 'diary',
         label: 'Diário',
         icon: <span role="img" aria-label="book" className="mgc_book_6_line" />,
+        path: '/diary',
       },
       {
         id: 'emergency',
         label: 'Ajuda',
         icon: <span role="img" aria-label="warning" className="mgc_alert_line" />,
+        path: '/emergency-user',
       },
       {
         id: 'profile',
         label: 'Eu',
         icon: <span role="img" aria-label="user" className="mgc_user_3_line" />,
+        path: '/profile',
       },
     ],
     acs: [
@@ -39,21 +59,35 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
         id: 'home',
         label: 'Casa',
         icon: <span role="img" aria-label="home" className="mgc_home_4_line" />,
+        path: '/acs-main-page',
       },
       {
         id: 'patients',
         label: 'Pacientes',
         icon: <span role="img" aria-label="patients" className="mgc_group_3_line" />,
+        path: '/patients',
       },
+
       {
         id: 'profile',
         label: 'Eu',
         icon: <span role="img" aria-label="user" className="mgc_user_3_line" />,
+        path: '/acs-profile',
       },
     ],
   };
 
   const navItems = navItemVariants[variant];
+
+  const handleItemClick = (item: NavItem) => {
+    // If onItemClick is provided, call it with the item id
+    if (onItemClick) {
+      onItemClick(item.id);
+    } else {
+      // Default behavior: navigate to the path
+      navigate(item.path);
+    }
+  };
 
   return (
     <div className="flex justify-around items-center py-3 bg-bottom-nav w-full fixed bottom-0 left-0 shadow-[0_-2px_10px_rgba(0,0,0,0.1)] border-t border-bottom-nav-border z-50 backdrop-blur-sm">
@@ -70,7 +104,7 @@ const BottomNavigationBar: React.FC<BottomNavigationBarProps> = ({
               transition-all duration-200 ease-in-out
               hover:scale-105 active:scale-95
             `}
-            onClick={() => onItemClick?.(item.id)}
+            onClick={() => handleItemClick(item)}
             aria-current={isActive ? 'page' : undefined}
           >
             {/* Container do ícone com melhor feedback visual */}

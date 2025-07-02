@@ -81,27 +81,6 @@ export default function ViewSelectedInterests() {
     return null;
   };
 
-  // Handle main navigation
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case 'home':
-        navigate('/user-main-page');
-        break;
-      case 'meds':
-        navigate('/reminders');
-        break;
-      case 'diary':
-        navigate('/diary');
-        break;
-      case 'emergency':
-        navigate('/emergency-user');
-        break;
-      case 'profile':
-        navigate('/profile');
-        break;
-    }
-  };
-
   // Check if an interest is custom or default
   const isCustomInterest = (interest: InterestAreaResponse) => {
     //console.log("Checking if interest is custom:", interest);
@@ -205,7 +184,6 @@ export default function ViewSelectedInterests() {
       <BottomNavigationBar
         variant="user"
         forceActiveId={getActiveNavId()} // Controlled active state
-        onItemClick={handleNavigationClick}
       />
     </div>
   );

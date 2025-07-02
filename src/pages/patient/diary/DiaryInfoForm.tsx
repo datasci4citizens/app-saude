@@ -124,7 +124,7 @@ const ScaleTrigger = ({
 
       <div className="text-center">
         <div
-          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${getScaleColor(numValue)} text-white font-semibold shadow-lg`}
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${getScaleColor(numValue)} text-muted-foreground font-semibold shadow-lg`}
         >
           <span className="text-2xl">{numValue}</span>
           <span className="text-sm">{getScaleLabel(numValue)}</span>
@@ -157,7 +157,6 @@ const IntegerTrigger = ({
       >
         <Minus size={20} className="mx-auto" />
       </button>
-
       <div className="flex flex-col items-center gap-2">
         <input
           type="text"
@@ -169,10 +168,12 @@ const IntegerTrigger = ({
             }
           }}
           className="w-20 h-16 text-3xl font-bold text-center border-2 border-input-border 
-                     bg-input text-input-foreground rounded-xl focus:border-ring focus:outline-none shadow-inner"
+               bg-input text-input-foreground rounded-xl focus:border-ring focus:outline-none shadow-inner"
           placeholder="0"
         />
-        <span className="text-xs text-muted-foreground font-medium">Quantidade</span>
+        <span className="text-xs text-muted-foreground font-medium whitespace-nowrap">
+          Quantidade
+        </span>
       </div>
 
       <button
@@ -298,47 +299,54 @@ const EnhancedInterestCard = ({
       {/* Header */}
       <div
         className="relative p-6 cursor-pointer transition-all duration-300 
-                   hover:bg-gradient-to-r hover:from-accent/50 hover:to-muted/50"
+             hover:bg-gradient-to-r hover:from-accent/50 hover:to-muted/50"
         onClick={() => {
           console.log('Card toggle clicked'); // Debug
           onToggle();
         }}
       >
+        <span
+          className={`absolute top-4 right-4 px-3 py-1 text-xs font-medium rounded-full shadow-sm z-10 ${status.className}`}
+        >
+          {status.text}
+        </span>
+
         {/* Overlay sutil */}
-        <div
+        {/* <div
           className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
             interest.interest_area.marked_by && interest.interest_area.marked_by.length > 0
               ? 'bg-gradient-to-r from-destructive to-accent1'
               : 'bg-gradient-to-r from-homebg/5 to-selection/5'
           }`}
-        />
-
-        <div className="relative flex items-center justify-between">
+        /> */}
+        <div className="relative flex flex-col gap-3">
           <div className="flex-1">
-            {/* Título e indicadores */}
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex flex-col space-y-3">
               {/* Indicator dot */}
-              <div
-                className={`relative w-3 h-3 rounded-full transition-all duration-300 shadow-lg ${
-                  interest.interest_area.marked_by && interest.interest_area.marked_by.length > 0
-                    ? 'bg-gradient-to-r from-destructive to-accent1 shadow-accent1/30'
-                    : 'bg-[var(--gradient-interest-indicator)] shadow-homebg/30'
-                }`}
-              >
-                {progressPercentage === 100 && (
-                  <div className="absolute inset-0 rounded-full bg-success animate-pulse">
-                    <Sparkles
-                      size={12}
-                      className="absolute inset-0 m-auto text-success-foreground"
-                    />
-                  </div>
-                )}
+              <div className="flex items-center">
+                <div
+                  className={`relative w-4 h-4 rounded-full transition-all duration-300 shadow-md ${
+                    interest.interest_area.marked_by && interest.interest_area.marked_by.length > 0
+                      ? 'bg-gradient-to-r from-destructive to-accent1 shadow-accent1/30'
+                      : progressPercentage === 100
+                        ? 'bg-success shadow-success/30'
+                        : 'bg-[var(--gradient-interest-indicator)] shadow-homebg/30'
+                  }`}
+                >
+                  {/* {progressPercentage === 100 && (
+                    <div className="absolute inset-0 rounded-full bg-success animate-pulse">
+                      <Sparkles
+                        size={12}
+                        className="absolute inset-0 m-auto text-success-foreground"
+                      />
+                    </div>
+                  )} */}
+                </div>
               </div>
 
-              {/* Nome */}
               <h4
                 className="font-bold text-lg text-typography transition-colors duration-200 
-                             group-hover:text-selection"
+               group-hover:text-selection"
               >
                 {interest.interest_area.name}
               </h4>
@@ -347,26 +355,19 @@ const EnhancedInterestCard = ({
               {interest.interest_area.marked_by && interest.interest_area.marked_by.length > 0 && (
                 <div
                   className="flex items-center gap-1 px-3 py-1 
-                              bg-gradient-to-r from-accent1/100 to-destructive/100
-                              text-accent1 text-xs font-medium rounded-full border border-accent1/200 
-                              shadow-sm"
+                bg-gradient-to-r from-accent1/100 to-destructive/100
+                text-accent1 text-xs font-medium rounded-full border border-accent1/200 
+                shadow-sm self-start"
                 >
                   <AlertTriangle size={12} />
                   <span>Atenção</span>
                 </div>
               )}
-
-              {/* Badge de status */}
-              <span
-                className={`px-3 py-1 text-xs font-medium rounded-full shadow-sm ${status.className}`}
-              >
-                {status.text}
-              </span>
             </div>
 
             {/* Progress Bar */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
+            <div className="space-y-3 mt-4">
+              <div className="flex flex-wrap justify-between items-center gap-2">
                 <span className="text-sm font-medium text-muted-foreground">
                   {answeredTriggers}/{totalTriggers} perguntas respondidas
                 </span>
@@ -416,7 +417,7 @@ const EnhancedInterestCard = ({
           </div>
 
           {/* Controles direita */}
-          <div className="flex items-center gap-4 ml-6">
+          <div className="flex items-center justify-between sm:justify-end gap-4 mt-3 sm:mt-0 sm:ml-6">
             {/* Sharing Toggle */}
             <div className="flex items-center gap-2">
               <Share2
@@ -428,7 +429,6 @@ const EnhancedInterestCard = ({
               <Switch
                 checked={interest.shared || false}
                 onCheckedChange={(checked) => {
-                  console.log('Switch changed:', checked); // Debug
                   onSharingToggle(checked);
                 }}
                 onClick={handleSharingClick}
@@ -438,7 +438,7 @@ const EnhancedInterestCard = ({
             {/* Expand Icon */}
             <div
               className={`transition-all duration-300 text-muted-foreground 
-                             group-hover:text-typography ${isOpen ? 'rotate-180' : 'rotate-0'}`}
+                     group-hover:text-typography ${isOpen ? 'rotate-180' : 'rotate-0'}`}
             >
               <ChevronDown size={24} />
             </div>
@@ -448,8 +448,8 @@ const EnhancedInterestCard = ({
 
       {/* Expanded Content */}
       <div
-        className={`transition-all duration-300 overflow-hidden ${
-          isOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
+        className={`transition-all duration-500 overflow-hidden ${
+          isOpen ? 'h-full opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
         <div className="border-t border-card-border bg-card-muted">
@@ -461,7 +461,7 @@ const EnhancedInterestCard = ({
                   <label className="font-semibold text-base text-typography">{trigger.name}</label>
                   <span
                     className="text-xs font-medium px-3 py-1 rounded-full 
-                                 bg-muted text-muted-foreground"
+               bg-muted text-muted-foreground whitespace-nowrap"
                   >
                     {trigger.type === TypeEnum.BOOLEAN && '✓ Sim/Não'}
                     {trigger.type === TypeEnum.SCALE && '📊 Escala 0-10'}
@@ -472,7 +472,7 @@ const EnhancedInterestCard = ({
 
                 {/* Input container */}
                 <div
-                  className={`rounded-xl p-4 border transition-all duration-200 ${
+                  className={`rounded-xl p-6 border transition-all duration-200 min-h-[120px] ${
                     interest.triggerResponses?.[trigger.name]
                       ? 'bg-card border-ring/30 shadow-inner'
                       : 'bg-card border-card-border hover:border-ring/20'
@@ -627,26 +627,15 @@ export default function DiaryInfoForm() {
 
     try {
       const formattedInterestAreas = userInterests
-        .filter((interest) => {
-          const triggerResponses = interest.triggerResponses || {};
-          return Object.values(triggerResponses).some(
-            (response) => response && response.trim() !== '',
-          );
-        })
         .map((interest) => {
           const triggerResponses = interest.triggerResponses || {};
 
           const triggersWithResponses =
-            interest.interest_area.triggers
-              ?.filter(
-                (trigger) =>
-                  triggerResponses[trigger.name] && triggerResponses[trigger.name]?.trim() !== '',
-              )
-              .map((trigger) => ({
-                name: trigger.name,
-                type: trigger.type || TypeEnum.TEXT,
-                response: triggerResponses[trigger.name] || '',
-              })) || [];
+            interest.interest_area.triggers?.map((trigger) => ({
+              name: trigger.name,
+              type: trigger.type || TypeEnum.TEXT,
+              response: triggerResponses[trigger.name] || '',
+            })) || [];
 
           return {
             name: interest.interest_area.name,
@@ -699,7 +688,7 @@ export default function DiaryInfoForm() {
   }).length;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 space-y-8 pb-8">
+    <div className="max-w-4xl mx-auto px-4 space-y-8 pb-20 md:pb-8">
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Mensagens de status */}
         {submitSuccess && <SuccessMessage message="Diário salvo com sucesso! Redirecionando..." />}
@@ -749,10 +738,12 @@ export default function DiaryInfoForm() {
         {/* Seção de Interesses do Usuário */}
         <section className="space-y-6">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-2xl text-typography">🎯 Seus Interesses</h3>
+            <h3 className="font-bold text-xl sm:text-xl text-typography whitespace-nowrap">
+              🎯 Seus Interesses
+            </h3>
             {totalInterests > 0 && (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground bg-gradient-to-r from-homebg/10 to-selection/10 px-3 py-2 rounded-full font-medium border border-card-border">
+                <span className="text-sm text-muted-foreground bg-gradient-to-r from-homebg/10 to-selection/10 px-2 py-2 rounded-full font-medium border border-card-border whitespace-nowrap">
                   {answeredInterests}/{totalInterests} respondidos
                 </span>
               </div>
@@ -805,18 +796,15 @@ export default function DiaryInfoForm() {
         </section>
 
         <section className="bg-card rounded-2xl shadow-lg p-6 border border-card-border">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6 mb-6 pr-10">
             <h3 className="font-bold text-xl text-typography">💭 Observações Gerais</h3>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Share2
-                size={18}
+                size={16}
                 className={`transition-colors duration-200 ${
                   shareText ? 'text-selection' : 'text-muted-foreground'
                 }`}
               />
-              <span className="text-sm text-muted-foreground font-medium">
-                Compartilhar com profissionais
-              </span>
               <Switch checked={shareText} onCheckedChange={setShareText} />
             </div>
           </div>
@@ -831,7 +819,7 @@ export default function DiaryInfoForm() {
               multiline={true}
               rows={4}
             />
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
               <div className="text-sm text-muted-foreground">
                 💡{' '}
                 <span className="italic">
@@ -845,14 +833,13 @@ export default function DiaryInfoForm() {
             </div>
           </div>
         </section>
-
         {/* Botão de Submissão */}
         <div className="pt-8 text-center">
           <Button
             variant="orange"
             size="xl"
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || submitSuccess}
             className="w-full max-w-md mx-auto hover:shadow-2xl transform hover:scale-105 transition-all duration-200"
           >
             {isSubmitting ? (
@@ -860,6 +847,8 @@ export default function DiaryInfoForm() {
                 <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 Salvando...
               </span>
+            ) : submitSuccess ? (
+              <span className="flex items-center justify-center gap-2">✅ DIÁRIO SALVO</span>
             ) : (
               <span className="flex items-center justify-center gap-2">💾 SALVAR DIÁRIO</span>
             )}

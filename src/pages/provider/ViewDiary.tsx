@@ -174,23 +174,6 @@ export default function ViewDiary() {
     return null;
   };
 
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case 'home':
-        navigate('/acs-main-page');
-        break;
-      case 'patients':
-        navigate('/patients');
-        break;
-      case 'emergency':
-        navigate('/emergencies');
-        break;
-      case 'profile':
-        navigate('/acs-profile');
-        break;
-    }
-  };
-
   return (
     <div className="flex flex-col h-screen bg-homebg">
       <Header
@@ -436,11 +419,7 @@ export default function ViewDiary() {
 
       {/* Fixed bottom navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50">
-        <BottomNavigationBar
-          variant="acs"
-          forceActiveId={getActiveNavId()}
-          onItemClick={handleNavigationClick}
-        />
+        <BottomNavigationBar variant="acs" forceActiveId={getActiveNavId()} />
       </div>
     </div>
   );

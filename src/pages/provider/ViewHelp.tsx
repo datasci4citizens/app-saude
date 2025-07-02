@@ -137,23 +137,6 @@ export default function ViewHelp() {
     return null;
   };
 
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case 'home':
-        navigate('/acs-main-page');
-        break;
-      case 'patients':
-        navigate('/patients');
-        break;
-      case 'emergency':
-        navigate('/emergencies');
-        break;
-      case 'profile':
-        navigate('/acs-profile');
-        break;
-    }
-  };
-
   const clearError = () => setError(null);
   const clearSuccess = () => setSuccess(null);
 
@@ -326,11 +309,7 @@ export default function ViewHelp() {
         onConfirm={handleMarkAsResolved}
       />
 
-      <BottomNavigationBar
-        variant="acs"
-        forceActiveId={getActiveNavId()}
-        onItemClick={handleNavigationClick}
-      />
+      <BottomNavigationBar variant="acs" forceActiveId={getActiveNavId()} />
     </div>
   );
 }

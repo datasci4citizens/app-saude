@@ -225,26 +225,6 @@ export default function ManageProfessionalsPage() {
     return null;
   };
 
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case 'home':
-        navigate('/user-main-page');
-        break;
-      case 'meds':
-        navigate('/reminders');
-        break;
-      case 'diary':
-        navigate('/diary');
-        break;
-      case 'emergency':
-        navigate('/emergency-user');
-        break;
-      case 'profile':
-        navigate('/profile');
-        break;
-    }
-  };
-
   const clearError = () => setError(null);
   const clearSuccess = () => setSuccess(null);
 
@@ -434,8 +414,8 @@ export default function ManageProfessionalsPage() {
 
       {/* Add Professional Dialog */}
       {showAddDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-background rounded-3xl w-full max-w-md h-full max-h-[90vh] flex flex-col">
+        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 overflow-y-auto p-4 pb-20">
+          <div className="my-8 bg-background rounded-3xl w-full max-w-lg h-full max-h-[90vh] flex flex-col">
             {/* Dialog Header - FIXO */}
             <div className="flex-shrink-0 bg-background rounded-t-3xl border-b border-card-border p-6 pb-4">
               <div className="flex items-center justify-between">
@@ -548,7 +528,7 @@ export default function ManageProfessionalsPage() {
                         <h4 className="text-accent1 font-medium text-sm mb-1">
                           Como obter o código?
                         </h4>
-                        <p className="text-accent1/80 text-xs leading-relaxed">
+                        <p className="text-typography text-xs leading-relaxed">
                           Solicite ao profissional de saúde que compartilhe o código de vinculação
                           de 6 dígitos.
                         </p>
@@ -710,11 +690,7 @@ export default function ManageProfessionalsPage() {
         </div>
       )}
 
-      <BottomNavigationBar
-        variant="user"
-        forceActiveId={getActiveNavId()}
-        onItemClick={handleNavigationClick}
-      />
+      <BottomNavigationBar variant="user" forceActiveId={getActiveNavId()} />
     </div>
   );
 }

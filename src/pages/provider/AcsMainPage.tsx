@@ -72,23 +72,6 @@ export default function AcsMainPage() {
     return null;
   };
 
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case 'home':
-        navigate('/acs-main-page');
-        break;
-      case 'patients':
-        navigate('/patients');
-        break;
-      case 'emergency':
-        navigate('/emergencies');
-        break;
-      case 'profile':
-        navigate('/acs-profile');
-        break;
-    }
-  };
-
   const clearError = () => setError(null);
   const clearSuccess = () => setSuccess(null);
 
@@ -102,16 +85,16 @@ export default function AcsMainPage() {
       textColor: 'text-white',
       onClick: () => navigate('/patients'),
     },
-    {
-      id: 'emergencies',
-      title: 'Pedidos de Ajuda',
-      subtitle: 'Verificar solicitações',
-      icon: '🚨',
-      color: 'bg-yellow',
-      textColor: 'text-white',
-      onClick: () => navigate('/emergencies'),
-      badge: emergencyCount > 0 ? emergencyCount : undefined,
-    },
+    //{
+    //  id: 'emergencies',
+    //  title: 'Pedidos de Ajuda',
+    //  subtitle: 'Verificar solicitações',
+    //  icon: '🚨',
+    //  color: 'bg-yellow',
+    //  textColor: 'text-white',
+    //  onClick: () => navigate('/emergencies'),
+    //  badge: emergencyCount > 0 ? emergencyCount : undefined,
+    //},
     // {
     //   id: "appointments",
     //   title: "Agenda",
@@ -201,7 +184,7 @@ export default function AcsMainPage() {
         <div className="mb-8">
           <h2 className="text-typography font-semibold text-lg mb-4">Ações Rápidas</h2>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             {quickActions.map((action) => (
               <div
                 key={action.id}
@@ -301,7 +284,7 @@ export default function AcsMainPage() {
             </div>
             <div>
               <h3 className="text-accent1 font-medium text-sm mb-1">Dica do Dia</h3>
-              <p className="text-accent1/80 text-xs leading-relaxed">
+              <p className="text-typography text-xs leading-relaxed">
                 Mantenha contato regular com seus pacientes. Um acompanhamento proativo pode
                 prevenir situações de emergência.
               </p>
@@ -310,11 +293,7 @@ export default function AcsMainPage() {
         </div>
       </div>
 
-      <BottomNavigationBar
-        variant="acs"
-        forceActiveId={getActiveNavId()}
-        onItemClick={handleNavigationClick}
-      />
+      <BottomNavigationBar variant="acs" forceActiveId={getActiveNavId()} />
     </div>
   );
 }

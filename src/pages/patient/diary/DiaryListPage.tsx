@@ -295,26 +295,6 @@ export default function ImprovedDiaryListPage() {
     return null;
   };
 
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case 'home':
-        navigate('/user-main-page');
-        break;
-      case 'meds':
-        navigate('/reminders');
-        break;
-      case 'diary':
-        navigate('/diary');
-        break;
-      case 'emergency':
-        navigate('/emergency-user');
-        break;
-      case 'profile':
-        navigate('/profile');
-        break;
-    }
-  };
-
   const hasDiaries = Object.keys(groupedDiaries).length > 0;
 
   if (error) {
@@ -347,9 +327,9 @@ export default function ImprovedDiaryListPage() {
                   onClick={handleCreateDiary}
                   variant="gradientNew"
                   size="lg"
-                  className="flex items-center gap-2 text-typography"
+                  className="flex items-center gap-2 text-offwhite"
                 >
-                  <PlusCircle size={18} className="text-typography" />
+                  <PlusCircle size={18} className="text-offwhite" />
                   Novo Diário
                 </Button>
               </div>
@@ -376,7 +356,7 @@ export default function ImprovedDiaryListPage() {
                   onClick={handleCreateDiary}
                   variant="gradient"
                   size="xl"
-                  className="flex items-center gap-2 text-typography"
+                  className="flex items-center gap-2 text-offwhite"
                 >
                   <PlusCircle size={20} />
                   Criar Primeiro Diário
@@ -492,13 +472,6 @@ export default function ImprovedDiaryListPage() {
                                     >
                                       {area.is_attention_point && <AlertTriangle size={14} />}
                                       <span className="font-medium">{area.name}</span>
-                                      <span className="text-xs">
-                                        (
-                                        {area.triggers?.filter(
-                                          (t) => t.response && t.response.trim() !== '',
-                                        ).length || 0}
-                                        /{area.triggers?.length || 0} respondidas)
-                                      </span>
                                     </div>
                                   ))}
                                 </div>
@@ -551,11 +524,7 @@ export default function ImprovedDiaryListPage() {
 
       {/* Fixed bottom navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50">
-        <BottomNavigationBar
-          variant="user"
-          forceActiveId={getActiveNavId()}
-          onItemClick={handleNavigationClick}
-        />
+        <BottomNavigationBar variant="user" forceActiveId={getActiveNavId()} />
       </div>
     </div>
   );

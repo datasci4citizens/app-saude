@@ -11,26 +11,6 @@ export default function DiaryPage() {
     navigate(-1); // This goes back one page in history
   };
 
-  const handleNavigationClick = (itemId: string) => {
-    switch (itemId) {
-      case 'home':
-        navigate('/user-main-page');
-        break;
-      case 'meds':
-        navigate('/reminders');
-        break;
-      case 'diary':
-        navigate('/diary');
-        break;
-      case 'emergency':
-        navigate('/emergency-user');
-        break;
-      case 'profile':
-        navigate('/profile');
-        break;
-    }
-  };
-
   // Determine active navigation item based on current route
   const getActiveNavId = () => {
     if (location.pathname.startsWith('/user-main-page')) return 'home';
@@ -56,7 +36,6 @@ export default function DiaryPage() {
         <BottomNavigationBar
           variant="user"
           forceActiveId={getActiveNavId()} // Controlled active state
-          onItemClick={handleNavigationClick}
         />
       </div>
     </>
