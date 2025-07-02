@@ -25,6 +25,7 @@ export interface AppContextType {
   addAccount: (account: Omit<Account, 'lastLogin'>, isNew: boolean) => void;
   selectAccount: (account: Account, isNew: boolean) => Promise<void>;
   removeAccount: (userId: string) => Promise<void>;
+  removeAccountAfterDelete: (userId: string) => void;
   confirmRemoveAccount: (account: Account) => void;
   accountToRemove: Account | null;
   navigateToLogin: () => void;
@@ -116,6 +117,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [theme, setThemeState] = useState<'light' | 'dark'>('light');
   const [logoutTrigger, setLogoutTrigger] = useState(0);
+
+  // Estado para controlar se já carregou os dados iniciais
+  const [hasLoadedInitialData, setHasLoadedInitialData] = useState(false);
+
   const [error, setError] = useState<{
     show: boolean;
     message: string;
@@ -135,7 +140,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
   };
 
-  // ✅ Função para atualizar tema no localStorage de todas as contas
+  // Função para atualizar tema no localStorage de todas as contas
   const updateAccountThemeInStorage = (userId: string, useDarkMode: boolean) => {
     const savedAccounts = localStorage.getItem(ACCOUNTS_STORAGE_KEY);
     if (savedAccounts) {
@@ -183,11 +188,13 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setTheme(newTheme);
   };
 
-  // useEffect para gerenciar navegação automaticamente baseado no número de contas
   useEffect(() => {
+    // SÓ EXECUTA APÓS CARREGAR OS DADOS INICIAIS
+    if (!hasLoadedInitialData) return;
+
     const currentUserId = localStorage.getItem(CURRENT_USER_ID_KEY);
 
-    console.log('Verificando estado:');
+    console.log('Verificando estado APÓS carregamento:');
     console.log('- Accounts:', accounts.length);
     console.log('- Current User ID:', !!currentUserId);
     console.log('- Current Screen:', currentScreen);
@@ -201,7 +208,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       console.log('Contas disponíveis mas nenhuma logada -> account-selection');
       setCurrentScreen('account-selection');
     }
-  }, [accounts.length, logoutTrigger]);
+  }, [accounts.length, logoutTrigger, hasLoadedInitialData]);
 
   // Carregar dados iniciais
   useEffect(() => {
@@ -236,17 +243,22 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
     setThemeState(themeToApply);
     applyThemeToDOM(themeToApply);
+
+    setHasLoadedInitialData(true);
   }, []);
 
   // Salvar contas
   useEffect(() => {
+    // SÓ SALVA APÓS O CARREGAMENTO INICIAL
+    if (!hasLoadedInitialData) return;
+
     if (accounts.length > 0) {
       localStorage.setItem(ACCOUNTS_STORAGE_KEY, JSON.stringify(accounts));
       console.log('Contas salvas no localStorage:', accounts.length);
     } else {
       localStorage.removeItem(ACCOUNTS_STORAGE_KEY);
     }
-  }, [accounts]);
+  }, [accounts, hasLoadedInitialData]);
 
   useEffect(() => {
     console.log('Tema atual:', theme);
@@ -378,21 +390,40 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       const account = accounts.find((acc) => acc.userId === accountId);
-      const refreshToken = account?.refreshToken || '';
-      const logoutBody: Logout = {
-        refresh: refreshToken,
-      };
+      if (account) {
+        const refreshToken = account?.refreshToken || '';
+        const logoutBody: Logout = {
+          refresh: refreshToken,
+        };
 
-      await Promise.race([
-        LogoutService.authLogoutCreate(logoutBody),
-        new Promise((_, reject) => setTimeout(() => reject('timeout'), 8000)),
-      ]);
+        await LogoutService.authLogoutCreate(logoutBody);
+        console.log('Logout realizado com sucesso para a conta:', account.name);
+      }
     } catch (error) {
       console.log('Erro no logout:', error);
     } finally {
       clearTimeout(safetyTimeout);
       immediateCleanup();
     }
+  };
+
+  const removeAccountAfterDelete = (accountId: string) => {
+    console.log('Removendo conta após delete (sem logout):', accountId);
+    setIsLoading(false);
+
+    const currentUserId = localStorage.getItem(CURRENT_USER_ID_KEY);
+    if (currentUserId === accountId) {
+      localStorage.removeItem(CURRENT_USER_ID_KEY);
+    }
+
+    setAccounts((prev) => {
+      const newAccounts = prev.filter((acc) => acc.userId !== accountId);
+      console.log('Accounts:', prev.length, '->', newAccounts.length);
+      return newAccounts;
+    });
+
+    setAccountToRemove(null);
+    console.log('Cleanup após delete concluído');
   };
 
   const navigateToLogin = () => setCurrentScreen('onboarding');
@@ -416,6 +447,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     addAccount,
     selectAccount,
     removeAccount,
+    removeAccountAfterDelete,
     confirmRemoveAccount,
     accountToRemove,
     navigateToLogin,

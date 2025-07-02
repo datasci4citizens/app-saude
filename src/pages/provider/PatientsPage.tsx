@@ -1,18 +1,21 @@
+import { ProviderService } from '@/api/services/ProviderService';
 import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
 import { Button } from '@/components/forms/button';
 import { TextField } from '@/components/forms/text_input';
 import { ErrorMessage } from '@/components/ui/error-message';
+import { ConfirmDialog } from '@/components/ui/confirmDialog';
 import Header from '@/components/ui/header';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { ApiService } from '@/api/services/ApiService';
 
 interface Patient {
   id: string | number;
   name: string;
   age: number;
-  lastVisit?: string;
+  lastDiary?: string;
   lastHelp?: string;
   urgent?: boolean;
   email?: string;
@@ -53,6 +56,9 @@ export default function PatientsPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Current provider ID
+  const [provider_id, setProviderId] = useState<number | null>(null);
+
   // Search and filter states
   const [searchValue, setSearchValue] = useState('');
   const [activeTab, setActiveTab] = useState('todos');
@@ -71,8 +77,17 @@ export default function PatientsPage() {
   const [success, setSuccess] = useState<string | null>(null);
   const [unlinkingPatient, setUnlinkingPatient] = useState<string | number | null>(null);
 
+  // Unlink Confirmation Dialog states
+  const [showUnlinkDialog, setShowUnlinkDialog] = useState(false);
+  const [patientToUnlink, setPatientToUnlink] = useState<Patient | null>(null);
+
   useEffect(() => {
-    fetchPatients();
+    const fetchData = async () => {
+      const userEntity = await ApiService.apiUserEntityRetrieve();
+      setProviderId(userEntity.provider_id);
+      fetchPatients();
+    };
+    fetchData();
   }, []);
 
   const fetchPatients = async () => {
@@ -91,27 +106,33 @@ export default function PatientsPage() {
         phone?: string;
       }
 
-      const formattedPatients: Patient[] = apiPatients.map((patient: ApiPatient) => {
-        // Check if last_help_date is valid
-        let isUrgent = false;
-        if (patient.last_help_date) {
-          const helpDate = new Date(patient.last_help_date);
-          if (!Number.isNaN(helpDate.getTime())) {
-            isUrgent = getDaysAgo(patient.last_help_date) <= 3;
+      // Fetch diary data for all patients in parallel
+      const formattedPatients: Patient[] = await Promise.all(
+        apiPatients.map(async (patient: ApiPatient) => {
+          // Check if last_help_date is valid
+          let isUrgent = false;
+          if (patient.last_help_date) {
+            const helpDate = new Date(patient.last_help_date);
+            if (!Number.isNaN(helpDate.getTime())) {
+              isUrgent = getDaysAgo(patient.last_help_date) <= 3;
+            }
           }
-        }
 
-        return {
-          id: patient.person_id,
-          name: patient.name,
-          age: patient.age || 0,
-          lastVisit: formatDisplayDate(patient.last_visit_date),
-          lastHelp: formatDisplayDate(patient.last_help_date),
-          email: patient.email,
-          phone: patient.phone,
-          urgent: isUrgent,
-        };
-      });
+          // Get last diary date
+          const lastDiaryDate = await getLastDiaryDate(patient.person_id);
+
+          return {
+            id: patient.person_id,
+            name: patient.name,
+            age: patient.age || 0,
+            lastDiary: formatDisplayDate(lastDiaryDate),
+            lastHelp: formatDisplayDate(patient.last_help_date),
+            email: patient.email,
+            phone: patient.phone,
+            urgent: isUrgent,
+          };
+        }),
+      );
 
       setPatients(formattedPatients);
     } catch (_) {
@@ -149,29 +170,38 @@ export default function PatientsPage() {
     }
   };
 
-  const handleUnlinkPatient = async (patient: Patient) => {
-    const confirmed = window.confirm(
-      `⚠️ Desvincular paciente?\n\n${patient.name}\n\nEsta ação irá:\n• Remover acesso aos dados do paciente\n• Cancelar notificações\n• Interromper compartilhamento\n\nTem certeza que deseja continuar?`,
-    );
+  // Updated unlink functions
+  const handleUnlinkPatient = (patient: Patient) => {
+    setPatientToUnlink(patient);
+    setShowUnlinkDialog(true);
+  };
 
-    if (!confirmed) return;
+  const confirmUnlink = async () => {
+    if (!patientToUnlink) return;
 
-    setUnlinkingPatient(patient.id);
+    setUnlinkingPatient(patientToUnlink.id);
     setError(null);
+    setShowUnlinkDialog(false);
 
     try {
-      // Assumindo que existe uma API para desvincular
-      // await LinkPersonProviderService.unlinkPatient(patient.id);
-
-      // Temporariamente removendo da lista local
-      setPatients((prev) => prev.filter((p) => p.id !== patient.id));
-      setSuccess(`${patient.name} foi desvinculado com sucesso.`);
+      await LinkPersonProviderService.personProviderUnlinkCreate(
+        patientToUnlink.id as number,
+        provider_id as number,
+      );
+      setPatients((prev) => prev.filter((p) => p.id !== patientToUnlink.id));
+      setSuccess(`${patientToUnlink.name} foi desvinculado com sucesso.`);
     } catch (err) {
       console.error('Erro ao desvincular paciente:', err);
-      setError(`Erro ao desvincular ${patient.name}. Tente novamente.`);
+      setError(`Erro ao desvincular ${patientToUnlink.name}. Tente novamente.`);
     } finally {
       setUnlinkingPatient(null);
+      setPatientToUnlink(null);
     }
+  };
+
+  const cancelUnlink = () => {
+    setShowUnlinkDialog(false);
+    setPatientToUnlink(null);
   };
 
   // Filtros avançados
@@ -205,6 +235,25 @@ export default function PatientsPage() {
   const clearSuccess = () => setSuccess(null);
 
   const urgentCount = patients.filter((p) => p.urgent).length;
+
+  const getLastDiaryDate = async (patientId: number): Promise<string | null> => {
+    try {
+      const diaries = await ProviderService.providerPatientsDiariesList(patientId);
+      if (diaries && diaries.length > 0) {
+        // Sort diaries by date and get the most recent one
+        const sortedDiaries = diaries.sort((a, b) => {
+          const dateA = new Date(a.date || 0);
+          const dateB = new Date(b.date || 0);
+          return dateB.getTime() - dateA.getTime();
+        });
+        return sortedDiaries[0]?.date || null;
+      }
+      return null;
+    } catch (error) {
+      console.error(`Error fetching diaries for patient ${patientId}:`, error);
+      return null;
+    }
+  };
 
   return (
     <div className="flex flex-col h-screen bg-homebg">
@@ -449,9 +498,9 @@ export default function PatientsPage() {
 
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div>
-                        <p className="text-gray2 text-xs mb-1">Última consulta</p>
+                        <p className="text-gray2 text-xs mb-1">Último diário</p>
                         <p className="text-card-foreground text-sm font-medium">
-                          {patient.lastVisit || 'Sem consultas'}
+                          {patient.lastDiary || 'Nenhum diário'}
                         </p>
                       </div>
                       <div>
@@ -497,6 +546,45 @@ export default function PatientsPage() {
             )}
           </div>
         </div>
+
+        {/* Unlink Confirmation Dialog */}
+        <ConfirmDialog
+          open={showUnlinkDialog}
+          title="⚠️ Desvincular paciente?"
+          description={
+            patientToUnlink
+              ? `Esta ação irá desvincular ${patientToUnlink.name} permanentemente.`
+              : ''
+          }
+          confirmText="Desvincular"
+          cancelText="Cancelar"
+          confirmVariant="destructive"
+          onConfirm={confirmUnlink}
+          onCancel={cancelUnlink}
+          disabled={unlinkingPatient !== null}
+        >
+          {patientToUnlink && (
+            <div className="space-y-4">
+              <div className="bg-gray2/5 rounded-lg p-3">
+                <h4 className="font-medium text-foreground mb-2">{patientToUnlink.name}</h4>
+                <div className="space-y-1 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <span>•</span>
+                    <span>Removerá acesso aos dados do paciente</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span>•</span>
+                    <span>Cancelará todas as notificações</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span>•</span>
+                    <span>Interromperá compartilhamento do diário</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </ConfirmDialog>
 
         <BottomNavigationBar variant="acs" forceActiveId={getActiveNavId()} />
       </div>
