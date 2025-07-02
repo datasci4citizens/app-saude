@@ -1,3 +1,4 @@
+import { ProviderService } from '@/api/services/ProviderService';
 import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
 import { Button } from '@/components/forms/button';
 import { TextField } from '@/components/forms/text_input';
@@ -12,7 +13,7 @@ interface Patient {
   id: string | number;
   name: string;
   age: number;
-  lastVisit?: string;
+  lastDiary?: string;
   lastHelp?: string;
   urgent?: boolean;
   email?: string;
@@ -91,27 +92,33 @@ export default function PatientsPage() {
         phone?: string;
       }
 
-      const formattedPatients: Patient[] = apiPatients.map((patient: ApiPatient) => {
-        // Check if last_help_date is valid
-        let isUrgent = false;
-        if (patient.last_help_date) {
-          const helpDate = new Date(patient.last_help_date);
-          if (!Number.isNaN(helpDate.getTime())) {
-            isUrgent = getDaysAgo(patient.last_help_date) <= 3;
+      // Fetch diary data for all patients in parallel
+      const formattedPatients: Patient[] = await Promise.all(
+        apiPatients.map(async (patient: ApiPatient) => {
+          // Check if last_help_date is valid
+          let isUrgent = false;
+          if (patient.last_help_date) {
+            const helpDate = new Date(patient.last_help_date);
+            if (!Number.isNaN(helpDate.getTime())) {
+              isUrgent = getDaysAgo(patient.last_help_date) <= 3;
+            }
           }
-        }
 
-        return {
-          id: patient.person_id,
-          name: patient.name,
-          age: patient.age || 0,
-          lastVisit: formatDisplayDate(patient.last_visit_date),
-          lastHelp: formatDisplayDate(patient.last_help_date),
-          email: patient.email,
-          phone: patient.phone,
-          urgent: isUrgent,
-        };
-      });
+          // Get last diary date
+          const lastDiaryDate = await getLastDiaryDate(patient.person_id);
+
+          return {
+            id: patient.person_id,
+            name: patient.name,
+            age: patient.age || 0,
+            lastDiary: formatDisplayDate(lastDiaryDate),
+            lastHelp: formatDisplayDate(patient.last_help_date),
+            email: patient.email,
+            phone: patient.phone,
+            urgent: isUrgent,
+          };
+        }),
+      );
 
       setPatients(formattedPatients);
     } catch (_) {
@@ -205,6 +212,25 @@ export default function PatientsPage() {
   const clearSuccess = () => setSuccess(null);
 
   const urgentCount = patients.filter((p) => p.urgent).length;
+
+  const getLastDiaryDate = async (patientId: number): Promise<string | null> => {
+    try {
+      const diaries = await ProviderService.providerPatientsDiariesList(patientId);
+      if (diaries && diaries.length > 0) {
+        // Sort diaries by date and get the most recent one
+        const sortedDiaries = diaries.sort((a, b) => {
+          const dateA = new Date(a.date || 0);
+          const dateB = new Date(b.date || 0);
+          return dateB.getTime() - dateA.getTime();
+        });
+        return sortedDiaries[0].date || null;
+      }
+      return null;
+    } catch (error) {
+      console.error(`Error fetching diaries for patient ${patientId}:`, error);
+      return null;
+    }
+  };
 
   return (
     <div className="flex flex-col h-screen bg-homebg">
@@ -449,9 +475,9 @@ export default function PatientsPage() {
 
                     <div className="grid grid-cols-2 gap-4 mb-4">
                       <div>
-                        <p className="text-gray2 text-xs mb-1">Última consulta</p>
+                        <p className="text-gray2 text-xs mb-1">Último diário</p>
                         <p className="text-card-foreground text-sm font-medium">
-                          {patient.lastVisit || 'Sem consultas'}
+                          {patient.lastDiary || 'Nenhum diário'}
                         </p>
                       </div>
                       <div>
