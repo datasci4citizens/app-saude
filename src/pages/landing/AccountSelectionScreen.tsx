@@ -131,7 +131,6 @@ const AccountSelectionScreen: React.FC<AccountSelectionScreenProps> = ({
                 {/* Informações da conta */}
                 <div className="flex-1 ml-4 min-w-0">
                   {' '}
-                  {/* min-w-0 é crucial para permitir truncamento */}
                   <div className="flex items-center flex-wrap gap-2 mb-1">
                     <h3
                       className={`text-topicos2 font-work-sans text-typography transition-colors duration-200 ${
