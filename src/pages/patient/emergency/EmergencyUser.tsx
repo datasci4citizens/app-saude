@@ -172,7 +172,7 @@ export default function EmergencyScreen() {
   if (isUserLoading || isProvidersLoading) {
     return (
       <div className="flex flex-col h-screen bg-background">
-        <Header title="Pedido de Ajuda" variant="transparent" />
+        <Header title="Pedido de Ajuda" />
         <div className="flex-1 flex items-center justify-center px-4">
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="relative">
@@ -285,7 +285,7 @@ export default function EmergencyScreen() {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <Header title="Pedido de Ajuda" variant="transparent" />
+      <Header title="Pedido de Ajuda" />
 
       <div className="flex-1 overflow-y-auto pb-24">
         <div className="px-4 py-6 space-y-6">
