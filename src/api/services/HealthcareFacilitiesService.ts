@@ -9,8 +9,12 @@ import type { PatchedCareSiteUpdate } from '../models/PatchedCareSiteUpdate';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class CareSiteService {
+export class HealthcareFacilitiesService {
   /**
+   * Care Site Management
+   *
+   * Manages healthcare facilities and service locations where care is provided.
+   * Links providers to specific locations and facilities.
    * @returns CareSiteRetrieve
    * @throws ApiError
    */
@@ -21,6 +25,10 @@ export class CareSiteService {
     });
   }
   /**
+   * Care Site Management
+   *
+   * Manages healthcare facilities and service locations where care is provided.
+   * Links providers to specific locations and facilities.
    * @param requestBody
    * @returns CareSiteCreate
    * @throws ApiError
@@ -34,6 +42,10 @@ export class CareSiteService {
     });
   }
   /**
+   * Care Site Management
+   *
+   * Manages healthcare facilities and service locations where care is provided.
+   * Links providers to specific locations and facilities.
    * @param careSiteId A unique integer value identifying this care site.
    * @returns CareSiteRetrieve
    * @throws ApiError
@@ -48,6 +60,10 @@ export class CareSiteService {
     });
   }
   /**
+   * Care Site Management
+   *
+   * Manages healthcare facilities and service locations where care is provided.
+   * Links providers to specific locations and facilities.
    * @param careSiteId A unique integer value identifying this care site.
    * @param requestBody
    * @returns CareSiteUpdate
@@ -68,6 +84,10 @@ export class CareSiteService {
     });
   }
   /**
+   * Care Site Management
+   *
+   * Manages healthcare facilities and service locations where care is provided.
+   * Links providers to specific locations and facilities.
    * @param careSiteId A unique integer value identifying this care site.
    * @param requestBody
    * @returns CareSiteUpdate
@@ -88,6 +108,10 @@ export class CareSiteService {
     });
   }
   /**
+   * Care Site Management
+   *
+   * Manages healthcare facilities and service locations where care is provided.
+   * Links providers to specific locations and facilities.
    * @param careSiteId A unique integer value identifying this care site.
    * @returns void
    * @throws ApiError

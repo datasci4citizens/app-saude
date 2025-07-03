@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { AuthenticationService } from '@/api/services/AuthenticationService';
 import { AuthService } from '@/api/services/AuthService';
-import { LogoutService, type Logout } from '@/api';
+import { type Logout } from '@/api';
 
 export interface Account {
   userId: string;
@@ -396,7 +397,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
           refresh: refreshToken,
         };
 
-        await LogoutService.authLogoutCreate(logoutBody);
+        await AuthenticationService.authLogoutCreate(logoutBody);
         console.log('Logout realizado com sucesso para a conta:', account.name);
       }
     } catch (error) {

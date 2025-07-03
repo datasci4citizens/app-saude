@@ -4,8 +4,8 @@ import { Button } from '@/components/forms/button';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { ErrorMessage } from '@/components/ui/error-message';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
-import { HelpService } from '@/api/services/HelpService';
-import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
+import { HelpSystemService } from '@/api/services/HelpSystemService';
+import { PersonProviderRelationshipsService } from '@/api/services/PersonProviderRelationshipsService';
 import { useApp } from '@/contexts/AppContext';
 
 export default function AcsMainPage() {
@@ -42,12 +42,12 @@ export default function AcsMainPage() {
       setError(null);
 
       // Buscar contagem de pedidos de ajuda
-      const helpResponse = await HelpService.providerHelpCountRetrieve();
+      const helpResponse = await HelpSystemService.providerHelpCountRetrieve();
       setEmergencyCount(helpResponse.help_count || 0);
 
       // Buscar contagem de pacientes
       try {
-        const patientsResponse = await LinkPersonProviderService.providerPersonsList();
+        const patientsResponse = await PersonProviderRelationshipsService.providerPersonsList();
         setPatientsCount(patientsResponse.length || 0);
       } catch {
         setPatientsCount(0);
@@ -197,11 +197,6 @@ export default function AcsMainPage() {
                 <div className="relative">
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-2xl">{action.icon}</span>
-                    {action.badge && (
-                      <span className="bg-white/30 text-white text-xs px-2 py-1 rounded-full font-bold">
-                        {action.badge}
-                      </span>
-                    )}
                   </div>
 
                   <h3 className={`${action.textColor} font-semibold text-sm mb-1`}>

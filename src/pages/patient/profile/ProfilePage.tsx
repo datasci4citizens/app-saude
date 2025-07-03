@@ -3,14 +3,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProfileBanner from '@/components/ui/profile-banner';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
-import { AccountService } from '@/api/services/AccountService';
-import { ApiService } from '@/api/services/ApiService';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { ConfirmDialog } from '@/components/ui/confirmDialog';
 import { TextField } from '@/components/forms/text_input';
 import { Switch } from '@/components/ui/switch';
 import { useApp } from '@/contexts/AppContext';
+import { AccountManagementService, UserManagementService } from '@/api';
 
 interface ProfileMenuItem {
   id: string;
@@ -55,7 +54,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onEditProfile }) => {
   useEffect(() => {
     const fetchPersonId = async () => {
       try {
-        const userEntity = await ApiService.apiUserEntityRetrieve();
+        const userEntity = await UserManagementService.apiUserEntityRetrieve();
         setPersonId(userEntity.person_id);
       } catch (error) {
         console.error('Erro ao buscar person_id:', error);
@@ -109,7 +108,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onEditProfile }) => {
     setError(null);
 
     try {
-      await AccountService.accountsDestroy();
+      await AccountManagementService.accountsDestroy();
       setSuccess('Conta excluída com sucesso!');
 
       await removeAccountAfterDelete(currentAccount!!.userId);

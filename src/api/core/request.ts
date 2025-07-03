@@ -350,7 +350,6 @@ export async function refreshToken(config: OpenAPIConfig): Promise<string> {
 async function handleTokenRefresh(config: OpenAPIConfig): Promise<string> {
   // Se já está refreshing, aguarda o resultado
   if (refreshState.isRefreshing && refreshState.promise) {
-    console.log('Refresh já em andamento, aguardando...');
     return await refreshState.promise;
   }
 

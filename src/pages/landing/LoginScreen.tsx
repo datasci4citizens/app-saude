@@ -3,10 +3,9 @@ import { useState } from 'react';
 import GoogleSignin from '@/components/ui/google-signin';
 import landingImage from '@/lib/images/landing.png';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
-import { AuthService } from '@/api/services/AuthService';
 import { Capacitor } from '@capacitor/core';
 import { useGoogleLogin } from '@react-oauth/google';
-import type { AuthTokenResponse } from '@/api';
+import { AuthenticationService, type AuthTokenResponse } from '@/api';
 import type { Auth } from '@/api/models/Auth';
 import './loginScreen.css';
 import type { Account } from '../../contexts/AppContext';
@@ -37,7 +36,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
       const tokenRequest = {
         token: idToken,
       };
-      const loginResponse = await AuthService.authLoginGoogleCreate(tokenRequest);
+      const loginResponse = await AuthenticationService.authLoginGoogleCreate(tokenRequest);
 
       handleLoginSuccess(loginResponse);
     } catch (err: unknown) {
@@ -57,7 +56,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({
         const codeRequest: Auth = {
           code: code,
         };
-        const loginResponse = await AuthService.authLoginGoogleCreate(codeRequest);
+        const loginResponse = await AuthenticationService.authLoginGoogleCreate(codeRequest);
 
         handleLoginSuccess(loginResponse);
       } catch (err) {

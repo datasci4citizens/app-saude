@@ -1,5 +1,3 @@
-import { ProviderService } from '@/api/services/ProviderService';
-import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
 import { Button } from '@/components/forms/button';
 import { TextField } from '@/components/forms/text_input';
 import { ErrorMessage } from '@/components/ui/error-message';
@@ -9,12 +7,19 @@ import BottomNavigationBar from '@/components/ui/navigator-bar';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ApiService } from '@/api/services/ApiService';
+import {
+  PersonProviderLinkingService,
+  PersonProviderRelationshipsService,
+  ProviderDiaryAccessService,
+  UserManagementService,
+  type ProviderPersonSummary,
+} from '@/api';
 
 interface Patient {
   id: string | number;
   name: string;
   age: number;
+  profile_picture?: string;
   lastDiary?: string;
   lastHelp?: string;
   urgent?: boolean;
@@ -83,7 +88,7 @@ export default function PatientsPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const userEntity = await ApiService.apiUserEntityRetrieve();
+      const userEntity = await UserManagementService.apiUserEntityRetrieve();
       setProviderId(userEntity.provider_id);
       fetchPatients();
     };
@@ -94,21 +99,11 @@ export default function PatientsPage() {
     try {
       setLoading(true);
       setError(null);
-      const apiPatients = await LinkPersonProviderService.providerPersonsList();
-
-      interface ApiPatient {
-        person_id: number;
-        name: string;
-        age: number | null;
-        last_visit_date: string | null;
-        last_help_date: string | null;
-        email?: string;
-        phone?: string;
-      }
+      const apiPatients = await PersonProviderRelationshipsService.providerPersonsList();
 
       // Fetch diary data for all patients in parallel
       const formattedPatients: Patient[] = await Promise.all(
-        apiPatients.map(async (patient: ApiPatient) => {
+        apiPatients.map(async (patient: ProviderPersonSummary) => {
           // Check if last_help_date is valid
           let isUrgent = false;
           if (patient.last_help_date) {
@@ -125,10 +120,9 @@ export default function PatientsPage() {
             id: patient.person_id,
             name: patient.name,
             age: patient.age || 0,
+            profile_picture: patient.profile_picture || undefined,
             lastDiary: formatDisplayDate(lastDiaryDate),
             lastHelp: formatDisplayDate(patient.last_help_date),
-            email: patient.email,
-            phone: patient.phone,
             urgent: isUrgent,
           };
         }),
@@ -148,7 +142,7 @@ export default function PatientsPage() {
     setError(null);
 
     try {
-      const response = await LinkPersonProviderService.providerLinkCodeCreate();
+      const response = await PersonProviderLinkingService.providerLinkCodeCreate();
       setLinkCode(response.code);
       setSuccess('Código gerado com sucesso! Compartilhe com o paciente.');
     } catch (error) {
@@ -184,7 +178,7 @@ export default function PatientsPage() {
     setShowUnlinkDialog(false);
 
     try {
-      await LinkPersonProviderService.personProviderUnlinkCreate(
+      await PersonProviderLinkingService.personProviderUnlinkCreate(
         patientToUnlink.id as number,
         provider_id as number,
       );
@@ -236,9 +230,19 @@ export default function PatientsPage() {
 
   const urgentCount = patients.filter((p) => p.urgent).length;
 
+  const getPatientInitials = (patient: Patient): string => {
+    const name = patient.name || '';
+    return name
+      .split(' ')
+      .map((word) => word.charAt(0))
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
+  };
+
   const getLastDiaryDate = async (patientId: number): Promise<string | null> => {
     try {
-      const diaries = await ProviderService.providerPatientsDiariesList(patientId);
+      const diaries = await ProviderDiaryAccessService.providerPatientsDiariesList(patientId);
       if (diaries && diaries.length > 0) {
         // Sort diaries by date and get the most recent one
         const sortedDiaries = diaries.sort((a, b) => {
@@ -463,14 +467,18 @@ export default function PatientsPage() {
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-4">
-                        <div
-                          className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold ${
-                            patient.urgent
-                              ? 'bg-destructive/20 text-destructive'
-                              : 'bg-selection/20 text-selection'
-                          }`}
-                        >
-                          {patient.name.charAt(0).toUpperCase()}
+                        <div className="rounded-full overflow-hidden bg-white flex items-center justify-center">
+                          {patient.profile_picture ? (
+                            <img
+                              src={patient.profile_picture}
+                              alt={patient.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-selection font-bold text-lg">
+                              {getPatientInitials(patient)}
+                            </span>
+                          )}
                         </div>
 
                         <div>
