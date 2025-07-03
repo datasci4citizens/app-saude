@@ -267,36 +267,42 @@ export default function ViewDiary() {
                           return (
                             <div
                               key={interest.name}
-                              className="bg-card border border-card-border rounded-xl shadow-sm"
+                              className="bg-card border border-card-border rounded-xl shadow-sm relative"
                             >
+                              <div className="flex items-center justify-between px-5 pt-3 pb-1">
+                                {Boolean(interest.marked_by?.length) ? (
+                                  <span className="text-destructive text-sm flex items-center gap-1">
+                                    <span className="text-destructive">⚠️</span>
+                                  </span>
+                                ) : (
+                                  <span></span>
+                                )}
+
+                                <span className="text-success text-sm font-medium">
+                                  ✓ Compartilhado
+                                </span>
+                              </div>
+
                               <div
-                                className="p-5 cursor-pointer"
+                                className="px-5 pb-4 pt-1 cursor-pointer"
                                 onClick={() => toggleInterest(interest.name)}
                               >
-                                {' '}
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-3 flex-1">
                                     <span className="w-2 h-2 bg-gradient-interest-indicator rounded-full flex-shrink-0" />
                                     <h4 className="font-bold text-lg text-card-foreground">
                                       {interest.name}
                                     </h4>
-                                    {Boolean(interest.marked_by?.length) && (
-                                      <span className="text-destructive text-lg">⚠️</span>
-                                    )}
                                   </div>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-success text-sm font-medium">
-                                      ✓ Compartilhado
-                                    </span>
-                                    <span
-                                      className={`transform transition-transform duration-200 ${
-                                        isExpanded ? 'rotate-180' : ''
-                                      }`}
-                                    >
-                                      ▼
-                                    </span>
-                                  </div>
+                                  <span
+                                    className={`transform transition-transform duration-200 ${
+                                      isExpanded ? 'rotate-180' : ''
+                                    }`}
+                                  >
+                                    ▼
+                                  </span>
                                 </div>
+
                                 {Boolean(interest.marked_by?.length) && (
                                   <div className="mt-2">
                                     <span className="text-xs text-destructive italic">

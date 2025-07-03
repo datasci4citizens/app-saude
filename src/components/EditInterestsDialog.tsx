@@ -402,7 +402,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogOverlay className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9998]" />
-      <DialogContent className=" text-typography z-[9999] w-[min(90vw,600px)] rounded-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="text-typography z-[9999] w-[min(90vw,600px)] rounded-xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
             {initialData ? 'Editar interesse' : 'Novo interesse'}
@@ -412,7 +412,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 flex-1 min-h-0">
+        <div className="space-y-6 flex-1 overflow-y-auto pb-6">
           {/* Template Selection Card */}
           {!initialData && (
             <div className="space-y-4">
@@ -519,7 +519,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
           />
 
           {/* Questions Section */}
-          <div>
+          <div className="px-1">
             <div className="flex items-center justify-between mb-3">
               <label className="block text-base font-semibold text-typography">
                 Perguntas ({formData.triggers.length})
@@ -527,14 +527,14 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
               <Button
                 onClick={handleAddQuestion}
                 variant="gradientNew"
-                className="bg-selection text-white text-sm px-3 py-1 flex items-center gap-1"
+                className="bg-selection text-white text-sm px-3 py-1 flex items-center gap-1 mr-1"
               >
                 <Plus size={14} />
                 Adicionar
               </Button>
             </div>
 
-            <div className="space-y-3 max-h-80 overflow-y-auto">
+            <div className="space-y-3 max-h-[40vh] overflow-y-auto pr-3">
               {formData.triggers.map((trigger, index) => (
                 <QuestionItem
                   key={trigger._id}
@@ -554,7 +554,7 @@ const EditInterestDialog: React.FC<EditInterestDialogProps> = ({
           </div>
         </div>
 
-        <DialogFooter className="mt-6 flex justify-end gap-4">
+        <DialogFooter className="mt-4 pt-4 border-t border-border flex justify-end gap-4">
           <Button variant="outlineGray" onClick={handleClose}>
             Cancelar
           </Button>

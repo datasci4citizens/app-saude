@@ -104,7 +104,7 @@ const AccountSelectionScreen: React.FC<AccountSelectionScreenProps> = ({
                 }`}
               >
                 {/* Avatar */}
-                <div className="relative">
+                <div className="relative flex-shrink-0">
                   {account.profilePicture ? (
                     <img
                       src={account.profilePicture}
@@ -121,43 +121,44 @@ const AccountSelectionScreen: React.FC<AccountSelectionScreenProps> = ({
                     </div>
                   )}
 
-                  {/* Indicador de role */}
+                  {/* Indicador de role - Ajustado para não esmagar o avatar */}
                   <div
-                    className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-card transition-all duration-200 ${
+                    className={`absolute bottom-0 right-0 w-5 h-5 rounded-full border-2 border-card transform translate-x-1 translate-y-1 transition-all duration-200 ${
                       account.role === 'provider' ? 'bg-accent1' : 'bg-selection'
                     } ${isAccountLoading ? 'animate-pulse' : ''}`}
                   />
                 </div>
-
                 {/* Informações da conta */}
-                <div className="flex-1 ml-4">
-                  <h3
-                    className={`text-topicos2 font-work-sans text-typography transition-colors duration-200 ${
-                      isAccountLoading ? 'text-selection' : ''
-                    }`}
-                  >
-                    {account.name}
-                  </h3>
-                  <p className="text-campos-preenchimento2 text-gray2">{account.email}</p>
+                <div className="flex-1 ml-4 min-w-0">
+                  {' '}
+                  <div className="flex items-center flex-wrap gap-2 mb-1">
+                    <h3
+                      className={`text-topicos2 font-work-sans text-typography transition-colors duration-200 ${
+                        isAccountLoading ? 'text-selection' : ''
+                      }`}
+                    >
+                      {account.name}
+                    </h3>
+                    {/* Badge ao lado do nome */}
+                    <div
+                      className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium transition-all duration-200 ${
+                        account.role === 'provider'
+                          ? 'bg-accent1/20 text-accent1'
+                          : 'bg-selection/20 text-selection'
+                      } ${isAccountLoading ? 'animate-pulse' : ''}`}
+                    >
+                      {account.role === 'provider' ? 'Profissional' : 'Paciente'}
+                    </div>
+                  </div>
+                  {/* Email com truncamento */}
+                  <p className="text-campos-preenchimento2 text-gray2 truncate">{account.email}</p>
                   <p className="text-desc-campos text-gray2 mt-1">
                     {isAccountLoading ? 'Acessando...' : `Último acesso: ${account.lastLogin}`}
                   </p>
                 </div>
-
-                {/* Badge do tipo de conta */}
-                <div
-                  className={`px-3 py-1 rounded-full text-desc-campos font-medium mr-2 transition-all duration-200 ${
-                    account.role === 'provider'
-                      ? 'bg-accent1/20 text-accent1'
-                      : 'bg-selection/20 text-selection'
-                  } ${isAccountLoading ? 'animate-pulse' : ''}`}
-                >
-                  {account.role === 'provider' ? 'Profissional' : 'Paciente'}
-                </div>
-
                 {/* Loading indicator */}
                 {isAccountLoading && (
-                  <div className="mr-2">
+                  <div className="mr-2 flex-shrink-0">
                     <div className="animate-spin rounded-full h-5 w-5 border-2 border-selection border-t-transparent" />
                   </div>
                 )}
