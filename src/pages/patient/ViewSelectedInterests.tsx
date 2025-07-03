@@ -6,7 +6,7 @@ import { InterestAreasService } from '@/api/services/InterestAreasService';
 import { Button } from '@/components/forms/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { InterestAreaTrigger } from '@/api/models/InterestAreaTrigger';
-import { AccountService } from '@/api';
+import { UserManagementService } from '@/api';
 
 // Extended interface for API response that includes the ID
 interface InterestAreaResponse {
@@ -30,7 +30,7 @@ export default function ViewSelectedInterests() {
       setError(null);
 
       try {
-        const userEntity = await AccountService.accountsRetrieve();
+        const userEntity = await UserManagementService.apiUserEntityRetrieve();
         const interests = (await InterestAreasService.apiInterestAreaList(
           userEntity.person_id,
         )) as InterestAreaResponse[];
@@ -51,7 +51,7 @@ export default function ViewSelectedInterests() {
   const handleUnlinkInterest = async (interestId: number) => {
     try {
       // For both custom and default interests, we call the same delete endpoint
-      const userEntity = await AccountService.accountsRetrieve();
+      const userEntity = await UserManagementService.apiUserEntityRetrieve();
       await InterestAreasService.apiInterestAreaDestroy(String(interestId), userEntity.person_id);
 
       // Remove from local state after successful delete

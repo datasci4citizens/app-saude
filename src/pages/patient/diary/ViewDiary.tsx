@@ -1,39 +1,35 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Header from '@/components/ui/header';
-import { DiaryService } from '@/api/services/DiaryService';
 import { ErrorMessage } from '@/components/ui/error-message';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
 import type { TypeEnum } from '@/api/models/TypeEnum';
 import { Clock } from 'lucide-react';
+import { PersonalDiaryService } from '@/api';
 
-// Updated interfaces to match new server response structure
-interface DiaryTrigger {
+interface TriggerDetail {
   name: string;
   type?: TypeEnum;
   response: string;
+  shared_with_provider?: boolean;
 }
 
-interface DiaryInterestArea {
+interface InterestAreaDetail {
   name: string;
-  shared: boolean;
-  triggers: DiaryTrigger[];
+  shared_with_provider: boolean;
+  triggers: TriggerDetail[];
+  provider_name?: string | null;
+  observation_id?: number;
   marked_by?: string[];
-  is_attention_point?: boolean;
 }
 
-interface DiaryEntry {
-  text: string;
-  text_shared: boolean;
-  created_at: string;
-}
-
-interface DiaryData {
+interface DiaryDetail {
   diary_id: number;
   date: string;
-  scope: string; // 'today' or 'since_last'
-  entries: DiaryEntry[];
-  interest_areas: DiaryInterestArea[];
+  text: string;
+  text_shared: boolean;
+  date_range_type: 'today' | 'since_last';
+  interest_areas: InterestAreaDetail[];
 }
 
 export default function ImprovedViewDiaryEntry() {
@@ -41,7 +37,7 @@ export default function ImprovedViewDiaryEntry() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(true);
-  const [diary, setDiary] = useState<DiaryData | null>(null);
+  const [diary, setDiary] = useState<DiaryDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [expandedInterests, setExpandedInterests] = useState<Set<string>>(new Set());
 
@@ -53,42 +49,33 @@ export default function ImprovedViewDiaryEntry() {
         setIsLoading(true);
         setError(null);
 
-        const response = await DiaryService.diariesRetrieve2(diaryId);
-        console.log('Diary API response:', response);
+        const diaryData = await PersonalDiaryService.diariesRetrieve(diaryId);
+        console.log('Diary API response:', diaryData);
 
-        if (response?.diary_id) {
+        if (diaryData?.diary_id) {
           const parsedInterestAreas =
-            typeof response.interest_areas === 'string'
-              ? JSON.parse(response.interest_areas)
-              : response.interest_areas;
-
-          // Set is_attention_point and provider_name if they are not present
-          for (const area of parsedInterestAreas) {
-            if (area.marked_by && area.marked_by.length > 0) {
-              area.is_attention_point = true;
-            }
-          }
-
+            typeof diaryData.interest_areas === 'string'
+              ? (JSON.parse(diaryData.interest_areas) as InterestAreaDetail[])
+              : (diaryData.interest_areas as InterestAreaDetail[]);
           setDiary({
-            diary_id: response.diary_id,
-            date: response.date,
-            scope: 'today', // Provide a default since 'scope' is missing in response
-            entries:
-              typeof response.entries === 'string'
-                ? JSON.parse(response.entries)
-                : response.entries,
+            diary_id: diaryData.diary_id,
+            date: diaryData.date,
+            text: diaryData.text,
+            text_shared: diaryData.text_shared === 'true',
+            date_range_type: diaryData.date_range_type as 'today' | 'since_last',
             interest_areas: parsedInterestAreas,
           });
+
           // Auto-expand interests that have responses
           const interestsWithResponses =
             parsedInterestAreas
-              ?.filter((area: DiaryInterestArea) =>
+              ?.filter((area: InterestAreaDetail) =>
                 area.triggers?.some((t) => t.response && t.response.trim() !== ''),
               )
-              .map((area: DiaryInterestArea) => area.name) || [];
+              .map((area: InterestAreaDetail) => area.name) || [];
           setExpandedInterests(new Set(interestsWithResponses));
         } else {
-          console.error('Diary not found or invalid response format:', response);
+          console.error('Diary not found or invalid response format:', diaryData);
           setError('Diário não encontrado ou formato inválido.');
         }
       } catch (error) {
@@ -135,19 +122,14 @@ export default function ImprovedViewDiaryEntry() {
     text: string;
     shared: boolean;
   } | null => {
-    if (!diary || !diary.entries || diary.entries.length === 0) {
+    if (!diary || diary.text.trim() === '') {
       return null;
     }
 
-    for (const entry of diary.entries) {
-      if (entry.text && typeof entry.text === 'string' && entry.text.trim() !== '') {
-        return {
-          text: entry.text,
-          shared: entry.text_shared || false,
-        };
-      }
-    }
-    return null;
+    return {
+      text: diary.text,
+      shared: diary.text_shared || false,
+    };
   };
 
   // Toggle interest expansion
@@ -248,9 +230,7 @@ export default function ImprovedViewDiaryEntry() {
               <h3 className="font-semibold text-lg text-typography mb-1">Período de tempo</h3>
               <div className="bg-card p-4 rounded-lg border border-card-border flex items-center justify-between">
                 <span className="text-typography">
-                  {diary.scope === 'today'
-                    ? 'Registros do dia de hoje'
-                    : 'Registros desde a última entrada'}
+                  {diary.date_range_type === 'today' ? 'Dia do registro' : 'Desde o último diário'}
                 </span>
                 {time && (
                   <div className="flex items-center gap-2 text-muted-foreground">
@@ -278,7 +258,7 @@ export default function ImprovedViewDiaryEntry() {
                       <div
                         key={interest.name}
                         className={`border rounded-xl shadow-sm ${
-                          interest.is_attention_point
+                          (interest.marked_by?.length ?? 0) > 0
                             ? 'bg-gradient-to-r from-destructive to-accent1 border-accent1'
                             : 'bg-card border-card-border'
                         }`}
@@ -291,7 +271,7 @@ export default function ImprovedViewDiaryEntry() {
                             <div className="flex items-center gap-3 flex-1">
                               <span
                                 className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                                  interest.is_attention_point
+                                  (interest.marked_by?.length ?? 0) > 0
                                     ? 'bg-gradient-to-r from-destructive to-accent1'
                                     : 'bg-[var(--gradient-interest-indicator)]'
                                 }`}
@@ -299,12 +279,12 @@ export default function ImprovedViewDiaryEntry() {
                               <h4 className="font-bold text-lg text-card-foreground">
                                 {interest.name}
                               </h4>
-                              {interest.is_attention_point && (
+                              {(interest.marked_by?.length ?? 0) > 0 && (
                                 <span className="text-accent1 text-lg">⚠️</span>
                               )}
                             </div>
                             <div className="flex items-center gap-2">
-                              {interest.shared && (
+                              {interest.shared_with_provider && (
                                 <span className="text-success text-sm font-medium">
                                   ✓ Compartilhado
                                 </span>
@@ -319,10 +299,10 @@ export default function ImprovedViewDiaryEntry() {
                             </div>
                           </div>
 
-                          {interest.is_attention_point && interest.marked_by && (
+                          {(interest.marked_by?.length ?? 0) > 0 && (
                             <div className="mt-2">
                               <span className="text-xs text-accent1 italic">
-                                Marcado como ponto de atenção por {interest.marked_by.join(', ')}
+                                Marcado como ponto de atenção por {interest.marked_by?.join(', ')}
                               </span>
                             </div>
                           )}

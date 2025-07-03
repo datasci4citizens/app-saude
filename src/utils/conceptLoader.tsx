@@ -1,5 +1,5 @@
+import { DataVocabularyService } from '@/api';
 import { useState, useEffect } from 'react';
-import { ConceptService } from '@/api/services/ConceptService';
 
 // Shared interfaces to represent a select option
 export interface SelectOption {
@@ -92,7 +92,7 @@ export function useHealthConcepts(): HealthConceptsResult {
         const SUBSTANCE_CLASS = 'Substance';
 
         // Get concepts from the server
-        const concepts = await ConceptService.apiConceptList(
+        const concepts = await DataVocabularyService.apiConceptList(
           `${FREQUENCY_CLASS}, ${QUALITY_CLASS}, ${COMORBIDITY_CLASS}, ${MEDICATION_CLASS}, ${SUBSTANCE_CLASS}`,
           undefined,
           'pt',
@@ -219,7 +219,11 @@ export function useDemographicConcepts(): DemographicConceptsResult {
 
       try {
         // Fetch gender and race concepts
-        const concepts = await ConceptService.apiConceptList('Gender,Race', undefined, '297504001');
+        const concepts = await DataVocabularyService.apiConceptList(
+          'Gender,Race',
+          undefined,
+          '297504001',
+        );
 
         // Process gender options
         setGenderOptions(
@@ -295,7 +299,11 @@ export function useLocationConcepts(): LocationConceptsResult {
 
       try {
         // Fetch location concepts
-        const concepts = await ConceptService.apiConceptList('Brazil States', undefined, 'pt');
+        const concepts = await DataVocabularyService.apiConceptList(
+          'Brazil States',
+          undefined,
+          'pt',
+        );
 
         // Process state options
         setStateOptions(
@@ -348,7 +356,7 @@ export function useInterestAreasConcepts(): InterestAreasConceptsResult {
 
       try {
         // Fetch interest areas concepts
-        const concepts = await ConceptService.apiConceptList('Interest', undefined, 'pt');
+        const concepts = await DataVocabularyService.apiConceptList('Interest', undefined, 'pt');
 
         // Process interest areas options
         setInterestAreasOptions(

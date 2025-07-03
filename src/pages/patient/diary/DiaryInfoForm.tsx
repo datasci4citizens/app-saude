@@ -3,26 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { Switch } from '@/components/ui/switch';
 import { TextField } from '@/components/forms/text_input';
 import { Button } from '@/components/forms/button';
-import { DiaryService } from '@/api/services/DiaryService';
 import { DateRangeTypeEnum } from '@/api/models/DateRangeTypeEnum';
 import { InterestAreasService } from '@/api/services/InterestAreasService';
 import type { InterestArea } from '@/api/models/InterestArea';
 import type { InterestAreaTrigger } from '@/api/models/InterestAreaTrigger';
 import { TypeEnum } from '@/api/models/TypeEnum';
-import { ApiService } from '@/api/services/ApiService';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { ErrorMessage } from '@/components/ui/error-message';
-import {
-  ChevronDown,
-  Share2,
-  Plus,
-  Minus,
-  Check,
-  X,
-  Calendar,
-  Sparkles,
-  AlertTriangle,
-} from 'lucide-react';
+import { ChevronDown, Share2, Plus, Minus, Check, X, Calendar, AlertTriangle } from 'lucide-react';
+import { PersonalDiaryService, UserManagementService } from '@/api';
 
 interface UserInterest {
   observation_id: number;
@@ -512,7 +501,7 @@ export default function DiaryInfoForm() {
       setIsLoadingInterests(true);
 
       try {
-        const userEntity = await ApiService.apiUserEntityRetrieve();
+        const userEntity = await UserManagementService.apiUserEntityRetrieve();
         const interests = await InterestAreasService.apiInterestAreaList(userEntity.person_id);
         console.log('Interesses recebidos:', interests);
 
@@ -662,7 +651,7 @@ export default function DiaryInfoForm() {
 
       console.log('Enviando diário:', diary);
 
-      await DiaryService.diariesCreate(diary);
+      await PersonalDiaryService.diariesCreate(diary);
       setSubmitSuccess(true);
 
       setTimeout(() => {

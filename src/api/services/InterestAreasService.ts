@@ -4,14 +4,27 @@
 /* eslint-disable */
 import type { InterestAreaCreate } from '../models/InterestAreaCreate';
 import type { InterestAreaUpdate } from '../models/InterestAreaUpdate';
-import type { PatchedInterestArea } from '../models/PatchedInterestArea';
-import type { PatchedMarkAttentionPoint } from '../models/PatchedMarkAttentionPoint';
+import type { PatchedInterestAreaUpdate } from '../models/PatchedInterestAreaUpdate';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class InterestAreasService {
   /**
-   * @param personId Filter interest areas by person ID
+   * Interest Area Management
+   *
+   * Personal interest area management with strict access control.
+   *
+   * **Security Requirements:**
+   * - User must have valid Person profile to manage interest areas
+   * - Users can only access their own interest areas
+   * - Filtering by person_id restricts to authenticated user's data
+   *
+   * **Access Control:**
+   * - Person profile validation required
+   * - Interest areas filtered by authenticated user
+   * - Cannot access other users' interest areas
+   *
+   * @param personId Filter interest areas by person ID (restricted to your own)
    * @returns any No response body
    * @throws ApiError
    */
@@ -25,8 +38,17 @@ export class InterestAreasService {
     });
   }
   /**
+   * Create New Personal Interest Area
+   *
+   * Creates a new interest area for the authenticated user only.
+   *
+   * **Security Features:**
+   * - Automatically associates with authenticated user's Person profile
+   * - Cannot create interest areas for other users
+   * - Person profile validation required
+   *
    * @param requestBody
-   * @param personId Filter interest areas by person ID
+   * @param personId Filter interest areas by person ID (restricted to your own)
    * @returns any No response body
    * @throws ApiError
    */
@@ -45,8 +67,22 @@ export class InterestAreasService {
     });
   }
   /**
+   * Interest Area Management
+   *
+   * Personal interest area management with strict access control.
+   *
+   * **Security Requirements:**
+   * - User must have valid Person profile to manage interest areas
+   * - Users can only access their own interest areas
+   * - Filtering by person_id restricts to authenticated user's data
+   *
+   * **Access Control:**
+   * - Person profile validation required
+   * - Interest areas filtered by authenticated user
+   * - Cannot access other users' interest areas
+   *
    * @param id
-   * @param personId Filter interest areas by person ID
+   * @param personId Filter interest areas by person ID (restricted to your own)
    * @returns any No response body
    * @throws ApiError
    */
@@ -63,9 +99,18 @@ export class InterestAreasService {
     });
   }
   /**
+   * Update Personal Interest Area
+   *
+   * Updates an existing interest area with ownership validation.
+   *
+   * **Security Features:**
+   * - Validates interest area belongs to authenticated user
+   * - Cannot update other users' interest areas
+   * - Ownership verification required
+   *
    * @param id
    * @param requestBody
-   * @param personId Filter interest areas by person ID
+   * @param personId Filter interest areas by person ID (restricted to your own)
    * @returns any No response body
    * @throws ApiError
    */
@@ -88,17 +133,31 @@ export class InterestAreasService {
     });
   }
   /**
+   * Interest Area Management
+   *
+   * Personal interest area management with strict access control.
+   *
+   * **Security Requirements:**
+   * - User must have valid Person profile to manage interest areas
+   * - Users can only access their own interest areas
+   * - Filtering by person_id restricts to authenticated user's data
+   *
+   * **Access Control:**
+   * - Person profile validation required
+   * - Interest areas filtered by authenticated user
+   * - Cannot access other users' interest areas
+   *
    * @param id
-   * @param personId Filter interest areas by person ID
+   * @param personId Filter interest areas by person ID (restricted to your own)
    * @param requestBody
-   * @returns any No response body
+   * @returns InterestAreaUpdate
    * @throws ApiError
    */
   public static apiInterestAreaPartialUpdate(
     id: string,
     personId?: number,
-    requestBody?: PatchedInterestArea,
-  ): CancelablePromise<any> {
+    requestBody?: PatchedInterestAreaUpdate,
+  ): CancelablePromise<InterestAreaUpdate> {
     return __request(OpenAPI, {
       method: 'PATCH',
       url: '/api/interest-area/{id}/',
@@ -113,12 +172,26 @@ export class InterestAreasService {
     });
   }
   /**
+   * Interest Area Management
+   *
+   * Personal interest area management with strict access control.
+   *
+   * **Security Requirements:**
+   * - User must have valid Person profile to manage interest areas
+   * - Users can only access their own interest areas
+   * - Filtering by person_id restricts to authenticated user's data
+   *
+   * **Access Control:**
+   * - Person profile validation required
+   * - Interest areas filtered by authenticated user
+   * - Cannot access other users' interest areas
+   *
    * @param id
-   * @param personId Filter interest areas by person ID
-   * @returns any No response body
+   * @param personId Filter interest areas by person ID (restricted to your own)
+   * @returns void
    * @throws ApiError
    */
-  public static apiInterestAreaDestroy(id: string, personId?: number): CancelablePromise<any> {
+  public static apiInterestAreaDestroy(id: string, personId?: number): CancelablePromise<void> {
     return __request(OpenAPI, {
       method: 'DELETE',
       url: '/api/interest-area/{id}/',
@@ -128,22 +201,6 @@ export class InterestAreasService {
       query: {
         person_id: personId,
       },
-    });
-  }
-  /**
-   * Marcar área como ponto de atenção
-   * @param requestBody
-   * @returns void
-   * @throws ApiError
-   */
-  public static markObservationAsAttentionPoint(
-    requestBody?: PatchedMarkAttentionPoint,
-  ): CancelablePromise<void> {
-    return __request(OpenAPI, {
-      method: 'PATCH',
-      url: '/person/interest-areas/mark-attention-point/',
-      body: requestBody,
-      mediaType: 'application/json',
     });
   }
 }

@@ -1,35 +1,22 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import { Button } from '@/components/forms/button';
 import { TextField } from '@/components/forms/text_input';
-import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
-import { ApiService } from '@/api/services/ApiService';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { ConfirmDialog } from '@/components/ui/confirmDialog';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
 import type { PersonLinkProviderRequest } from '@/api/models/PersonLinkProviderRequest';
 import type { ProviderRetrieve } from '@/api/models/ProviderRetrieve';
-
-interface Provider {
-  provider_id: number;
-  social_name?: string;
-  first_name?: string;
-  last_name?: string;
-  full_name?: string;
-  name?: string;
-  professional_registration?: string;
-  profile_picture?: string;
-  specialty?: string;
-  created_at?: string;
-}
+import {
+  PersonProviderLinkingService,
+  PersonProviderRelationshipsService,
+  UserManagementService,
+} from '@/api';
 
 export default function ManageProfessionalsPage() {
-  const navigate = useNavigate();
-
   // Data states
-  const [providers, setProviders] = useState<Provider[]>([]);
+  const [providers, setProviders] = useState<ProviderRetrieve[]>([]);
   const [personId, setPersonId] = useState<number | null>(null);
 
   // UI states
@@ -49,7 +36,7 @@ export default function ManageProfessionalsPage() {
 
   // Unlink Confirmation Dialog states
   const [showUnlinkDialog, setShowUnlinkDialog] = useState(false);
-  const [providerToUnlink, setProviderToUnlink] = useState<Provider | null>(null);
+  const [providerToUnlink, setProviderToUnlink] = useState<ProviderRetrieve | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -61,11 +48,11 @@ export default function ManageProfessionalsPage() {
       setError(null);
 
       // Fetch user info
-      const userEntity = await ApiService.apiUserEntityRetrieve();
+      const userEntity = await UserManagementService.apiUserEntityRetrieve();
       setPersonId(userEntity.person_id);
 
       // Fetch linked providers
-      const result = await LinkPersonProviderService.personProvidersList();
+      const result = await PersonProviderRelationshipsService.personProvidersList();
       setProviders(result || []);
     } catch (err) {
       console.error('Error fetching data:', err);
@@ -105,7 +92,7 @@ export default function ManageProfessionalsPage() {
 
     try {
       const request: PersonLinkProviderRequest = { code: providerCode };
-      const providerData = await LinkPersonProviderService.providerByLinkCodeCreate(request);
+      const providerData = await PersonProviderLinkingService.providerByLinkCodeCreate(request);
 
       // Format provider name
       const fullname = `${providerData.first_name} ${providerData.last_name}`;
@@ -133,7 +120,7 @@ export default function ManageProfessionalsPage() {
       const linkRequest: PersonLinkProviderRequest = {
         code: providerCode,
       };
-      await LinkPersonProviderService.personLinkCodeCreate(linkRequest);
+      await PersonProviderLinkingService.personLinkCodeCreate(linkRequest);
 
       setDialogStep('success');
 
@@ -151,7 +138,7 @@ export default function ManageProfessionalsPage() {
     }
   };
 
-  const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const value = e.target.value.replace(/[^A-Fa-f0-9]/g, '').slice(0, 6);
     setProviderCode(value);
     setAddError(null);
@@ -160,7 +147,7 @@ export default function ManageProfessionalsPage() {
   };
 
   // Updated unlink functions
-  const handleUnlink = (provider: Provider) => {
+  const handleUnlink = (provider: ProviderRetrieve) => {
     if (!personId) {
       setError('ID do usuário não encontrado. Tente recarregar a página.');
       return;
@@ -180,7 +167,7 @@ export default function ManageProfessionalsPage() {
     const providerName = getProviderName(providerToUnlink);
 
     try {
-      await LinkPersonProviderService.personProviderUnlinkCreate(
+      await PersonProviderLinkingService.personProviderUnlinkCreate(
         personId,
         providerToUnlink.provider_id,
       );
@@ -201,17 +188,17 @@ export default function ManageProfessionalsPage() {
     setProviderToUnlink(null);
   };
 
-  const getProviderName = (provider: Provider): string => {
+  const getProviderName = (provider: ProviderRetrieve): string => {
     return (
       provider.social_name ||
-      provider.full_name ||
-      provider.name ||
+      provider.first_name ||
+      provider.last_name ||
       `${provider.first_name || ''} ${provider.last_name || ''}`.trim() ||
       'Profissional sem nome'
     );
   };
 
-  const getProviderInitials = (provider: Provider): string => {
+  const getProviderInitials = (provider: ProviderRetrieve): string => {
     const name = getProviderName(provider);
     return name
       .split(' ')
@@ -363,10 +350,12 @@ export default function ManageProfessionalsPage() {
                         </div>
                       )}
 
-                      {provider.specialty && (
+                      {provider.specialty_concept && (
                         <div className="flex items-center gap-1 mb-1">
                           <span className="text-xs text-gray2">Especialidade:</span>
-                          <span className="text-xs text-card-foreground">{provider.specialty}</span>
+                          <span className="text-xs text-card-foreground">
+                            {provider.specialty_concept}
+                          </span>
                         </div>
                       )}
 
@@ -526,7 +515,6 @@ export default function ManageProfessionalsPage() {
                       onChange={handleCodeChange}
                       placeholder="000000"
                       type="text"
-                      inputMode="text"
                       pattern="[A-Fa-f0-9]{6}"
                       maxLength={6}
                       className="text-center text-xl font-mono tracking-widest"

@@ -4,7 +4,9 @@
 /* eslint-disable */
 /**
  * * `linked` - linked
+ * * `unlinked` - unlinked
  */
-export enum PersonLinkProviderResponseStatusEnum {
+export enum StatusEnum {
   LINKED = 'linked',
+  UNLINKED = 'unlinked',
 }
