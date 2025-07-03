@@ -2,7 +2,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { DiaryRetrieve } from '../models/DiaryRetrieve';
 import type { PatchedProviderUpdate } from '../models/PatchedProviderUpdate';
 import type { ProviderCreate } from '../models/ProviderCreate';
 import type { ProviderRetrieve } from '../models/ProviderRetrieve';
@@ -10,8 +9,18 @@ import type { ProviderUpdate } from '../models/ProviderUpdate';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class ProviderService {
+export class ProviderManagementService {
   /**
+   * Provider Profile Management
+   *
+   * Manages Provider profiles in the system. Providers are service providers
+   * who offer services to Persons in the platform.
+   *
+   * **Key Features:**
+   * - Professional profile creation and management
+   * - Search by social name and professional details
+   * - Professional registration validation
+   * - Service offering capabilities
    * @param birthDatetime
    * @param careSite
    * @param createdAt
@@ -61,13 +70,45 @@ export class ProviderService {
     });
   }
   /**
+   * Create Provider Profile
+   *
+   * Creates a new Provider profile for the authenticated user.
+   *
+   * **Business Rules:**
+   * - Each user can only have ONE Provider profile
+   * - User cannot have both Person and Provider profiles simultaneously
+   * - Professional registration number must be unique (if provided)
+   * - All required professional information must be provided
+   *
+   * **Provider Registration Process:**
+   * 1. Validates user doesn't already have a Provider profile
+   * 2. Validates professional credentials (if applicable)
+   * 3. Creates Provider record with professional information
+   * 4. Generates unique provider_id for the profile
+   * 5. Sets up initial service offering capabilities
+   *
+   * **Use Cases:**
+   * - Healthcare professional registration
+   * - Service provider onboarding
+   * - Professional practice setup
+   * - Marketplace seller registration
+   *
+   * **Professional Information:**
+   * - Professional registration number (for regulated professions)
+   * - Specialty/area of expertise
+   * - Professional certifications
+   * - Service categories
+   *
+   * **Post-Creation:**
+   * - Provider can start offering services
+   * - Profile appears in provider searches
+   * - Can receive service requests from Persons
+   *
    * @param requestBody
-   * @returns ProviderRetrieve
+   * @returns any
    * @throws ApiError
    */
-  public static apiProviderCreate(
-    requestBody?: ProviderCreate,
-  ): CancelablePromise<ProviderRetrieve> {
+  public static apiProviderCreate(requestBody?: ProviderCreate): CancelablePromise<any> {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/provider/',
@@ -76,6 +117,16 @@ export class ProviderService {
     });
   }
   /**
+   * Provider Profile Management
+   *
+   * Manages Provider profiles in the system. Providers are service providers
+   * who offer services to Persons in the platform.
+   *
+   * **Key Features:**
+   * - Professional profile creation and management
+   * - Search by social name and professional details
+   * - Professional registration validation
+   * - Service offering capabilities
    * @param providerId A unique integer value identifying this provider.
    * @returns ProviderRetrieve
    * @throws ApiError
@@ -90,6 +141,16 @@ export class ProviderService {
     });
   }
   /**
+   * Provider Profile Management
+   *
+   * Manages Provider profiles in the system. Providers are service providers
+   * who offer services to Persons in the platform.
+   *
+   * **Key Features:**
+   * - Professional profile creation and management
+   * - Search by social name and professional details
+   * - Professional registration validation
+   * - Service offering capabilities
    * @param providerId A unique integer value identifying this provider.
    * @param requestBody
    * @returns ProviderUpdate
@@ -110,6 +171,16 @@ export class ProviderService {
     });
   }
   /**
+   * Provider Profile Management
+   *
+   * Manages Provider profiles in the system. Providers are service providers
+   * who offer services to Persons in the platform.
+   *
+   * **Key Features:**
+   * - Professional profile creation and management
+   * - Search by social name and professional details
+   * - Professional registration validation
+   * - Service offering capabilities
    * @param providerId A unique integer value identifying this provider.
    * @param requestBody
    * @returns ProviderUpdate
@@ -130,6 +201,16 @@ export class ProviderService {
     });
   }
   /**
+   * Provider Profile Management
+   *
+   * Manages Provider profiles in the system. Providers are service providers
+   * who offer services to Persons in the platform.
+   *
+   * **Key Features:**
+   * - Professional profile creation and management
+   * - Search by social name and professional details
+   * - Professional registration validation
+   * - Service offering capabilities
    * @param providerId A unique integer value identifying this provider.
    * @returns void
    * @throws ApiError
@@ -140,41 +221,6 @@ export class ProviderService {
       url: '/api/provider/{provider_id}/',
       path: {
         provider_id: providerId,
-      },
-    });
-  }
-  /**
-   * @param personId
-   * @returns DiaryRetrieve
-   * @throws ApiError
-   */
-  public static providerPatientsDiariesList(
-    personId: number,
-  ): CancelablePromise<Array<DiaryRetrieve>> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/provider/patients/{person_id}/diaries/',
-      path: {
-        person_id: personId,
-      },
-    });
-  }
-  /**
-   * @param diaryId
-   * @param personId
-   * @returns any No response body
-   * @throws ApiError
-   */
-  public static providerPatientsDiariesRetrieve(
-    diaryId: string,
-    personId: number,
-  ): CancelablePromise<any> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/provider/patients/{person_id}/diaries/{diary_id}/',
-      path: {
-        diary_id: diaryId,
-        person_id: personId,
       },
     });
   }

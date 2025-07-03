@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { AuthenticationService } from '@/api/services/AuthenticationService';
 import { AuthService } from '@/api/services/AuthService';
-import { LogoutService, type Logout } from '@/api';
+import { type Logout } from '@/api';
 
 export interface Account {
   userId: string;
@@ -50,7 +51,6 @@ const CURRENT_USER_ID_KEY = 'current_user_id';
 const ACCOUNTS_STORAGE_KEY = 'saved_accounts';
 const THEME_STORAGE_KEY = 'app_theme';
 
-// Função utilitária para usar fora de componentes (getCurrentAccount exportada)
 export function getCurrentAccount(): Account | null {
   const userId = localStorage.getItem(CURRENT_USER_ID_KEY);
   if (!userId) return null;
@@ -60,6 +60,7 @@ export function getCurrentAccount(): Account | null {
 
   try {
     const accounts: Account[] = JSON.parse(accountsJson);
+    console.log('Obtendo conta atual para o usuário:', userId);
     return accounts.find((acc) => acc.userId === userId) || null;
   } catch {
     return null;
@@ -111,7 +112,7 @@ interface AppProviderProps {
 }
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
-  const [currentScreen, setCurrentScreen] = useState<ScreenType>('onboarding');
+  const [currentScreen, setCurrentScreen] = useState<ScreenType>('account-selection');
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [accountToRemove, setAccountToRemove] = useState<Account | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -196,7 +197,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
     console.log('Verificando estado APÓS carregamento:');
     console.log('- Accounts:', accounts.length);
-    console.log('- Current User ID:', !!currentUserId);
+    console.log('- Current User ID:', currentUserId);
     console.log('- Current Screen:', currentScreen);
 
     if (accounts.length === 0) {
@@ -316,6 +317,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       console.log('Selecionando conta:', account.name);
+      localStorage.setItem(CURRENT_USER_ID_KEY, account.userId);
 
       const response = await AuthService.authTokenRefreshCreate({
         access: '',
@@ -339,7 +341,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       console.log('Aplicando tema da conta selecionada:', accountTheme);
       setThemeState(accountTheme);
       applyThemeToDOM(accountTheme);
-      localStorage.setItem(CURRENT_USER_ID_KEY, updatedAccount.userId);
     } catch (error) {
       console.error('Erro ao atualizar token da conta:', error);
       localStorage.removeItem(CURRENT_USER_ID_KEY);
@@ -396,7 +397,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
           refresh: refreshToken,
         };
 
-        await LogoutService.authLogoutCreate(logoutBody);
+        await AuthenticationService.authLogoutCreate(logoutBody);
         console.log('Logout realizado com sucesso para a conta:', account.name);
       }
     } catch (error) {

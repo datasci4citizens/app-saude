@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import useSWRMutation from 'swr/mutation';
 import type { FullProviderCreate } from '@/api/models/FullProviderCreate';
-import { ApiService, type ProviderCreate } from '@/api';
-import { FullProviderService } from '@/api/services/FullProviderService';
+import { UserManagementService, type ProviderCreate } from '@/api';
+import { CompleteOnboardingService } from '@/api/services/CompleteOnboardingService';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { useApp } from '@/contexts/AppContext';
@@ -35,7 +35,7 @@ export default function ProfessionalOnboarding() {
         provider: arg,
       };
       console.log('Submitting full provider data:', fullData);
-      return FullProviderService.apiFullProviderCreate(fullData);
+      return CompleteOnboardingService.apiFullProviderCreate(fullData);
     },
   );
 
@@ -55,7 +55,7 @@ export default function ProfessionalOnboarding() {
     // Function to fetch user entity and show success
     const fetchUserEntity = async () => {
       try {
-        const result = await ApiService.apiUserEntityRetrieve();
+        const result = await UserManagementService.apiUserEntityRetrieve();
         console.log('User entity result:', result);
 
         if (result.provider_id) {

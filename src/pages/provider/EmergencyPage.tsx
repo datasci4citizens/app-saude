@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { TextField } from '@/components/forms/text_input';
 import PatientButton from '@/components/ui/patient-button';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
-import { ProviderService } from '@/api/services/ProviderService';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
+import { PersonProviderRelationshipsService } from '@/api/services/PersonProviderRelationshipsService';
 import useSWR from 'swr';
 import Header from '@/components/ui/header';
 
@@ -72,7 +71,7 @@ export default function EmergencyPage() {
     async () => {
       try {
         // Buscando dados dos pacientes vinculados ao provider
-        const patientData = await LinkPersonProviderService.providerPersonsList();
+        const patientData = await PersonProviderRelationshipsService.providerPersonsList();
 
         // Convertendo e formatando os dados da API para o formato esperado pelo componente
         const formattedPatients: FormattedEmergencyPatient[] = patientData

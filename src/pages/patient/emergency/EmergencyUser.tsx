@@ -1,8 +1,8 @@
+import { UserManagementService } from '@/api';
 import type { ObservationCreate } from '@/api/models/ObservationCreate';
 import type { ProviderRetrieve } from '@/api/models/ProviderRetrieve';
-import { ApiService } from '@/api/services/ApiService';
-import { HelpService } from '@/api/services/HelpService';
-import { LinkPersonProviderService } from '@/api/services/LinkPersonProviderService';
+import { HelpSystemService } from '@/api/services/HelpSystemService';
+import { PersonProviderRelationshipsService } from '@/api/services/PersonProviderRelationshipsService';
 import { Button } from '@/components/forms/button';
 import { RadioCheckbox } from '@/components/forms/radio-checkbox';
 import { TextField } from '@/components/forms/text_input';
@@ -17,10 +17,10 @@ import useSWR from 'swr';
 // Fetcher function for SWR
 const fetcher = async (url: string) => {
   if (url === 'providers') {
-    return await LinkPersonProviderService.personProvidersList();
+    return await PersonProviderRelationshipsService.personProvidersList();
   }
   if (url === 'user') {
-    return await ApiService.apiUserEntityRetrieve();
+    return await UserManagementService.apiUserEntityRetrieve();
   }
   throw new Error('Unknown fetcher URL');
 };
@@ -77,7 +77,7 @@ export default function EmergencyScreen() {
         shared_with_provider: true,
       }));
 
-      await HelpService.helpSendCreate(emergencyRequests);
+      await HelpSystemService.helpSendCreate(emergencyRequests);
 
       const providerCount = selectedProviders.length;
       const providerText = providerCount === 1 ? 'profissional' : 'profissionais';
@@ -172,7 +172,7 @@ export default function EmergencyScreen() {
   if (isUserLoading || isProvidersLoading) {
     return (
       <div className="flex flex-col h-screen bg-background">
-        <Header title="Pedido de Ajuda" variant="transparent" />
+        <Header title="Pedido de Ajuda" />
         <div className="flex-1 flex items-center justify-center px-4">
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="relative">
@@ -285,7 +285,7 @@ export default function EmergencyScreen() {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <Header title="Pedido de Ajuda" variant="transparent" />
+      <Header title="Pedido de Ajuda" />
 
       <div className="flex-1 overflow-y-auto pb-24">
         <div className="px-4 py-6 space-y-6">

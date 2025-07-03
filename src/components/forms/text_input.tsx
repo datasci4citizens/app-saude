@@ -16,6 +16,8 @@ interface TextFieldProps {
   rows?: number;
   className?: string;
   onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
+  pattern?: string;
+  autoComplete?: string;
 }
 
 export function TextField({
@@ -32,6 +34,8 @@ export function TextField({
   multiline = false,
   rows = 3,
   className = '',
+  pattern,
+  autoComplete = 'off',
 }: TextFieldProps) {
   // Common styling for both input and textarea
   const baseClasses = `
@@ -79,6 +83,8 @@ export function TextField({
             caretColor: 'var(--typography)',
             color: 'var(--typography)',
           }}
+          pattern={pattern}
+          autoComplete={autoComplete}
           onAnimationStart={(e) => {
             // Chrome/Safari trigger this animation when autofilling
             if (e.animationName.includes('onAutoFillStart')) {

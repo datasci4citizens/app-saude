@@ -2,14 +2,13 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import { Button } from '@/components/forms/button';
-import { PersonService } from '@/api/services/PersonService';
-import { HelpService } from '@/api/services/HelpService';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { ErrorMessage } from '@/components/ui/error-message';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
 import type { PersonRetrieve } from '@/api/models/PersonRetrieve';
 import type { ObservationRetrieve } from '@/api/models/ObservationRetrieve';
 import { ConfirmDialog } from '@/components/ui/confirmDialog';
+import { HelpSystemService, PersonManagementService } from '@/api';
 
 export default function ViewHelp() {
   const { personId, helpId } = useParams<{
@@ -47,11 +46,11 @@ export default function ViewHelp() {
       setError(null);
 
       // Buscar dados do paciente
-      const patientData = await PersonService.apiPersonRetrieve(Number(personId));
+      const patientData = await PersonManagementService.apiPersonRetrieve(Number(personId));
       setPatient(patientData);
 
       // Buscar todos os pedidos de ajuda do provider
-      const allHelpRequests = await HelpService.providerHelpList();
+      const allHelpRequests = await HelpSystemService.providerHelpList();
 
       // Encontrar o pedido específico
       const specificHelpRequest = allHelpRequests.find(
@@ -115,7 +114,7 @@ export default function ViewHelp() {
 
     try {
       setIsResolving(true);
-      await HelpService.providerHelpResolveCreate(Number(helpId));
+      await HelpSystemService.providerHelpResolveCreate(Number(helpId));
       setSuccess('Pedido marcado como resolvido!');
       setConfirmResolveOpen(false);
       setTimeout(() => {

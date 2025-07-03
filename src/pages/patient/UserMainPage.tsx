@@ -11,7 +11,7 @@ import SuccessMessage from '@/components/ui/success-message';
 import ErrorMessage from '@/components/ui/error-message';
 import EditInterestDialog from '../../components/EditInterestsDialog';
 import { ConfirmDialog } from '@/components/ui/confirmDialog';
-import { ApiService } from '@/api';
+import { UserManagementService } from '@/api';
 import { TypeEnum } from '@/api/models/TypeEnum';
 import { cn } from '@/lib/utils';
 
@@ -58,7 +58,7 @@ export default function UserMainPage() {
   useEffect(() => {
     const loadExistingInterests = async () => {
       try {
-        const userEntity = await ApiService.apiUserEntityRetrieve();
+        const userEntity = await UserManagementService.apiUserEntityRetrieve();
         const userInterests = await InterestAreasService.apiInterestAreaList(userEntity.person_id);
 
         console.log('Dados da API:', userInterests);

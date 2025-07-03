@@ -1,21 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Header from '@/components/ui/header';
-import { PersonService } from '@/api/services/PersonService';
 import type { PersonRetrieve } from '@/api/models/PersonRetrieve';
-import { ProviderService } from '@/api/services/ProviderService';
 import { ErrorMessage } from '@/components/ui/error-message';
-import { InterestAreasService } from '@/api/services/InterestAreasService';
 import type { PatchedMarkAttentionPoint } from '@/api/models/PatchedMarkAttentionPoint';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
 import type { TypeEnum } from '@/api/models/TypeEnum';
-
-// Updated interfaces to match new server response structure
-interface DiaryEntryDetail {
-  text: string;
-  shared: boolean;
-  created_at: string;
-}
+import {
+  PersonManagementService,
+  ProviderDiaryAccessService,
+  ProviderInterestManagementService,
+} from '@/api';
 
 interface TriggerDetail {
   name: string;
@@ -36,8 +31,9 @@ interface InterestAreaDetail {
 interface DiaryDetail {
   diary_id: number;
   date: string;
-  scope: string;
-  entries: DiaryEntryDetail[];
+  text: string;
+  text_shared: boolean;
+  date_range_type: 'today' | 'since_last';
   interest_areas: InterestAreaDetail[];
 }
 
@@ -61,18 +57,28 @@ export default function ViewDiary() {
           setError(null);
 
           // Buscar dados do paciente
-          const patientData = await PersonService.apiPersonRetrieve(Number(personId));
+          const patientData = await PersonManagementService.apiPersonRetrieve(Number(personId));
           setPatient(patientData);
 
           // Buscar o diário específico diretamente
-          const diaryData = await ProviderService.providerPatientsDiariesRetrieve(
+          const diaryData = await ProviderDiaryAccessService.providerPatientsDiariesRetrieve(
             diaryId,
             Number(personId),
           );
 
           console.log('Diary Data:', diaryData);
           if (diaryData) {
-            setDiary(diaryData);
+            setDiary({
+              diary_id: diaryData.diary_id,
+              date: diaryData.date,
+              text: diaryData.text,
+              text_shared: diaryData.text_shared === 'true',
+              date_range_type: diaryData.date_range_type as 'today' | 'since_last',
+              interest_areas:
+                typeof diaryData.interest_areas === 'string'
+                  ? (JSON.parse(diaryData.interest_areas) as InterestAreaDetail[])
+                  : diaryData.interest_areas,
+            });
           } else {
             setError('Diário não encontrado.');
           }
@@ -125,17 +131,15 @@ export default function ViewDiary() {
     text: string;
     shared: boolean;
   } | null => {
-    if (!diary || !diary.entries || diary.entries.length === 0) {
+    if (!diary || !diary.text) {
       return null;
     }
 
-    for (const entry of diary.entries) {
-      if (entry.text && entry.text.trim() !== '') {
-        return {
-          text: entry.text,
-          shared: entry.shared, // Provider only sees shared entries
-        };
-      }
+    if (diary.text && diary.text.trim() !== '') {
+      return {
+        text: diary.text,
+        shared: diary.text_shared, // Provider only sees shared entries
+      };
     }
 
     return null;
@@ -148,16 +152,25 @@ export default function ViewDiary() {
         is_attention_point: !isCurrentlyFlagged,
       };
       console.log(request);
-      await InterestAreasService.markObservationAsAttentionPoint(request);
+      await ProviderInterestManagementService.personInterestAreasMarkAttentionPointPartialUpdate(
+        request,
+      );
 
       // Refresh diary data after toggling
       if (diaryId && personId) {
-        const diaryData = await ProviderService.providerPatientsDiariesRetrieve(
+        const diaryData = await ProviderDiaryAccessService.providerPatientsDiariesRetrieve(
           diaryId,
           Number(personId),
         );
         console.log('Updated Diary Data:', diaryData);
-        setDiary(diaryData);
+        setDiary({
+          diary_id: diaryData.diary_id,
+          date: diaryData.date,
+          text: diaryData.text,
+          text_shared: diaryData.text_shared === 'true',
+          date_range_type: diaryData.date_range_type as 'today' | 'since_last',
+          interest_areas: JSON.parse(diaryData.interest_areas) as InterestAreaDetail[],
+        });
       }
     } catch (error) {
       console.error('Erro ao marcar ponto de atenção:', error);
@@ -242,9 +255,9 @@ export default function ViewDiary() {
                   <h3 className="font-semibold text-lg text-typography mb-1">Período de tempo</h3>
                   <div className="bg-card p-4 rounded-lg border border-card-border">
                     <span className="text-sm text-typography">
-                      {diary.scope === 'today'
-                        ? 'Registros do dia de hoje'
-                        : 'Registros desde a última entrada'}
+                      {diary.date_range_type === 'today'
+                        ? 'Dia do registro'
+                        : 'Desde o último diário'}
                     </span>
                   </div>
                 </div>
@@ -267,36 +280,42 @@ export default function ViewDiary() {
                           return (
                             <div
                               key={interest.name}
-                              className="bg-card border border-card-border rounded-xl shadow-sm"
+                              className="bg-card border border-card-border rounded-xl shadow-sm relative"
                             >
+                              <div className="flex items-center justify-between px-5 pt-3 pb-1">
+                                {Boolean(interest.marked_by?.length) ? (
+                                  <span className="text-destructive text-sm flex items-center gap-1">
+                                    <span className="text-destructive">⚠️</span>
+                                  </span>
+                                ) : (
+                                  <span></span>
+                                )}
+
+                                <span className="text-success text-sm font-medium">
+                                  ✓ Compartilhado
+                                </span>
+                              </div>
+
                               <div
-                                className="p-5 cursor-pointer"
+                                className="px-5 pb-4 pt-1 cursor-pointer"
                                 onClick={() => toggleInterest(interest.name)}
                               >
-                                {' '}
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-3 flex-1">
                                     <span className="w-2 h-2 bg-gradient-interest-indicator rounded-full flex-shrink-0" />
                                     <h4 className="font-bold text-lg text-card-foreground">
                                       {interest.name}
                                     </h4>
-                                    {Boolean(interest.marked_by?.length) && (
-                                      <span className="text-destructive text-lg">⚠️</span>
-                                    )}
                                   </div>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-success text-sm font-medium">
-                                      ✓ Compartilhado
-                                    </span>
-                                    <span
-                                      className={`transform transition-transform duration-200 ${
-                                        isExpanded ? 'rotate-180' : ''
-                                      }`}
-                                    >
-                                      ▼
-                                    </span>
-                                  </div>
+                                  <span
+                                    className={`transform transition-transform duration-200 ${
+                                      isExpanded ? 'rotate-180' : ''
+                                    }`}
+                                  >
+                                    ▼
+                                  </span>
                                 </div>
+
                                 {Boolean(interest.marked_by?.length) && (
                                   <div className="mt-2">
                                     <span className="text-xs text-destructive italic">

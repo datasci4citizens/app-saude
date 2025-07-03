@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ProviderRetrieve } from './ProviderRetrieve';
-export type FullProviderRetrieve = {
-  provider: ProviderRetrieve;
+import type { InterestArea } from './InterestArea';
+export type PatchedInterestAreaUpdate = {
+  interest_area?: InterestArea;
 };

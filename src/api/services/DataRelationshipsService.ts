@@ -9,8 +9,12 @@ import type { PatchedFactRelationshipUpdate } from '../models/PatchedFactRelatio
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class FactRelationshipService {
+export class DataRelationshipsService {
   /**
+   * Fact Relationship Management
+   *
+   * Manages relationships between different clinical/service facts.
+   * Enables complex data modeling and relationship tracking across entities.
    * @returns FactRelationshipRetrieve
    * @throws ApiError
    */
@@ -21,6 +25,10 @@ export class FactRelationshipService {
     });
   }
   /**
+   * Fact Relationship Management
+   *
+   * Manages relationships between different clinical/service facts.
+   * Enables complex data modeling and relationship tracking across entities.
    * @param requestBody
    * @returns FactRelationshipCreate
    * @throws ApiError
@@ -36,6 +44,10 @@ export class FactRelationshipService {
     });
   }
   /**
+   * Fact Relationship Management
+   *
+   * Manages relationships between different clinical/service facts.
+   * Enables complex data modeling and relationship tracking across entities.
    * @param id A unique integer value identifying this fact relationship.
    * @returns FactRelationshipRetrieve
    * @throws ApiError
@@ -52,6 +64,10 @@ export class FactRelationshipService {
     });
   }
   /**
+   * Fact Relationship Management
+   *
+   * Manages relationships between different clinical/service facts.
+   * Enables complex data modeling and relationship tracking across entities.
    * @param id A unique integer value identifying this fact relationship.
    * @param requestBody
    * @returns FactRelationshipUpdate
@@ -72,6 +88,10 @@ export class FactRelationshipService {
     });
   }
   /**
+   * Fact Relationship Management
+   *
+   * Manages relationships between different clinical/service facts.
+   * Enables complex data modeling and relationship tracking across entities.
    * @param id A unique integer value identifying this fact relationship.
    * @param requestBody
    * @returns FactRelationshipUpdate
@@ -92,6 +112,10 @@ export class FactRelationshipService {
     });
   }
   /**
+   * Fact Relationship Management
+   *
+   * Manages relationships between different clinical/service facts.
+   * Enables complex data modeling and relationship tracking across entities.
    * @param id A unique integer value identifying this fact relationship.
    * @returns void
    * @throws ApiError

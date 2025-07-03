@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import type { PersonCreate } from '@/api/models/PersonCreate';
 import { ProgressIndicator } from '@/components/forms/progress_indicator';
-import { FullPersonService } from '@/api/services/FullPersonService';
+import { CompleteOnboardingService } from '@/api/services/CompleteOnboardingService';
 import type { FullPersonCreate } from '@/api/models/FullPersonCreate';
 import type { AddressFormData } from '@/pages/patient/onboarding/UserInfoForm2';
 import { SuccessMessage } from '@/components/ui/success-message';
@@ -66,7 +66,7 @@ export default function UserOnboarding() {
         drug_exposures: [],
       };
 
-      const result = await FullPersonService.apiFullPersonCreate(fullData);
+      const result = await CompleteOnboardingService.apiFullPersonCreate(fullData);
       console.log('Submission result:', result);
 
       setSuccess(true);

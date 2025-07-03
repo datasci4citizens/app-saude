@@ -2,40 +2,41 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Header from '@/components/ui/header';
 import { TextField } from '@/components/forms/text_input';
-import { PersonService } from '@/api/services/PersonService';
-import { HelpService } from '@/api/services/HelpService';
-import { ProviderService } from '@/api/services/ProviderService';
-import { ConceptService } from '@/api/services/ConceptService';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { ErrorMessage } from '@/components/ui/error-message';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
 import type { PersonRetrieve } from '@/api/models/PersonRetrieve';
+import { TypeEnum } from '@/api';
+import {
+  DataVocabularyService,
+  HelpSystemService,
+  PersonManagementService,
+  ProviderDiaryAccessService,
+} from '@/api';
 
-interface DiaryEntryItem {
-  question: string;
-  answer: string;
-}
-
-interface DiaryTrigger {
+interface TriggerDetail {
   name: string;
-  type: string;
+  type?: TypeEnum;
   response: string;
+  shared_with_provider?: boolean;
 }
 
-interface DiaryInterestArea {
+interface InterestAreaDetail {
   name: string;
   shared_with_provider: boolean;
-  observation_id: number;
-  triggers: DiaryTrigger[];
-  marked_by: any[];
+  triggers: TriggerDetail[];
+  provider_name?: string | null;
+  observation_id?: number;
+  marked_by?: string[];
 }
 
-interface DiaryEntry {
+interface DiaryDetail {
   diary_id: number;
   date: string;
-  scope: string;
-  entries: DiaryEntryItem[];
-  interest_areas?: DiaryInterestArea[];
+  text: string;
+  text_shared: boolean;
+  date_range_type: 'today' | 'since_last';
+  interest_areas: InterestAreaDetail[];
 }
 
 interface HelpRequest {
@@ -56,7 +57,7 @@ export default function ViewPatient() {
   const [loading, setLoading] = useState(true);
 
   // Diaries states
-  const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
+  const [diaries, setDiaries] = useState<DiaryDetail[]>([]);
   const [diariesLoading, setDiariesLoading] = useState(true);
 
   // Help requests states
@@ -82,7 +83,7 @@ export default function ViewPatient() {
 
     try {
       // Fetch patient data
-      const patientData = await PersonService.apiPersonRetrieve(Number(id));
+      const patientData = await PersonManagementService.apiPersonRetrieve(Number(id));
       setPatient(patientData);
 
       // Fetch diaries
@@ -101,16 +102,20 @@ export default function ViewPatient() {
   const fetchDiaries = async (personId: number) => {
     try {
       setDiariesLoading(true);
-      const diariesData = await ProviderService.providerPatientsDiariesList(personId);
+      const diariesData = await ProviderDiaryAccessService.providerPatientsDiariesList(personId);
       console.log('Diaries Data:', diariesData);
 
       const sortedDiaries = diariesData
         .map((d) => ({
           diary_id: d.diary_id,
           date: d.date,
-          scope: d.scope,
-          entries: typeof d.entries === 'string' ? JSON.parse(d.entries) : (d.entries ?? []),
-          interest_areas: d.interest_areas || [],
+          text: d.text,
+          text_shared: d.text_shared === 'true',
+          date_range_type: d.date_range_type as 'today' | 'since_last',
+          interest_areas:
+            typeof d.interest_areas === 'string'
+              ? (JSON.parse(d.interest_areas) as InterestAreaDetail[])
+              : d.interest_areas,
         }))
         .sort((a, b) => {
           const dateA = new Date(a.date).getTime();
@@ -131,8 +136,8 @@ export default function ViewPatient() {
 
     try {
       setHelpRequestsLoading(true);
-      const allHelpRequests = await HelpService.providerHelpList();
-      const resolvedConcept = await ConceptService.apiConceptList(undefined, 'RESOLVED');
+      const allHelpRequests = await HelpSystemService.providerHelpList();
+      const resolvedConcept = await DataVocabularyService.apiConceptList(undefined, 'RESOLVED');
 
       const patientHelpRequests = allHelpRequests
         .filter((help) => help.person === Number(id))
@@ -224,7 +229,7 @@ export default function ViewPatient() {
   // Filter data based on search
   const filteredDiaries = diaries.filter(
     (diary) =>
-      diary.scope?.toLowerCase().includes(searchValue.toLowerCase()) ||
+      diary.text?.toLowerCase().includes(searchValue.toLowerCase()) ||
       formatDate(diary.date).includes(searchValue),
   );
 
@@ -267,6 +272,24 @@ export default function ViewPatient() {
     const diffInDays = Math.floor((now.getTime() - helpDate.getTime()) / (1000 * 60 * 60 * 24));
     return diffInDays <= 3;
   });
+
+  const getPatientName = (patient: PersonRetrieve): string => {
+    return (
+      patient.social_name ||
+      `${patient.first_name || ''} ${patient.last_name || ''}`.trim() ||
+      'Paciente'
+    );
+  };
+
+  const getPatientInitials = (patient: PersonRetrieve): string => {
+    const name = getPatientName(patient);
+    return name
+      .split(' ')
+      .map((word) => word.charAt(0))
+      .join('')
+      .substring(0, 2)
+      .toUpperCase();
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-homebg">
@@ -312,10 +335,18 @@ export default function ViewPatient() {
             {/* Patient Info Card */}
             <div className="bg-card rounded-2xl p-5 border border-card-border mb-6">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-gradient-to-r from-selection to-accent1 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">
-                    {patientName.charAt(0).toUpperCase()}
-                  </span>
+                <div className="rounded-full overflow-hidden bg-white flex items-center justify-center">
+                  {patient.profile_picture ? (
+                    <img
+                      src={patient.profile_picture}
+                      alt={getPatientName(patient)}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-selection font-bold text-lg">
+                      {getPatientInitials(patient)}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex-1">
@@ -434,10 +465,7 @@ export default function ViewPatient() {
                       totalTriggers > 0 ? (answeredTriggers / totalTriggers) * 100 : 0;
 
                     const hasAttentionPoints =
-                      interestAreas.some((area) => area.name?.toLowerCase().includes('atenção')) ||
-                      diary.scope?.toLowerCase().includes('atenção') ||
-                      false;
-
+                      interestAreas.some((area) => (area.marked_by?.length ?? 0) > 0) || false;
                     return (
                       <div
                         key={diary.diary_id}
@@ -485,11 +513,13 @@ export default function ViewPatient() {
                         {/* Category and entry count - bottom line */}
                         <div className="flex items-center justify-between">
                           <span className="bg-selection/10 text-selection text-xs px-2 py-1 rounded-full font-medium">
-                            {diary.scope || 'Geral'}
+                            {diary.date_range_type === 'since_last'
+                              ? 'Desde o último'
+                              : 'Dia do registro'}
                           </span>
                           <p className="text-gray2 text-xs">
-                            {diary.entries?.length || 0}{' '}
-                            {diary.entries?.length === 1 ? 'entrada' : 'entradas'}
+                            {diary.interest_areas?.length || 0}{' '}
+                            {diary.interest_areas?.length === 1 ? 'interesse' : 'interesses'}
                           </p>
                         </div>
                       </div>

@@ -1,5 +1,7 @@
 import type React from 'react';
 import header from '@/lib/images/header.png';
+import darkHeader from '@/lib/images/header-dark.png';
+import { useTheme } from '@/contexts/AppContext';
 
 interface HomeBannerProps {
   title?: string;
@@ -14,6 +16,7 @@ const HomeBanner: React.FC<HomeBannerProps> = ({
   onClick,
   onIconClick,
 }) => {
+  const { theme } = useTheme();
   return (
     <div
       className="relative bg-homebg p-6 text-primary-foreground overflow-hidden h-40 w-full cursor-pointer shadow-md"
@@ -21,7 +24,7 @@ const HomeBanner: React.FC<HomeBannerProps> = ({
     >
       {/* Shapes decorativos */}
       <img
-        src={header}
+        src={theme == 'light' ? header : darkHeader}
         alt="Decorative Shape"
         className="absolute top-0 right-0 left-0 w-full h-auto z-1 pointer-events-none select-none"
       />

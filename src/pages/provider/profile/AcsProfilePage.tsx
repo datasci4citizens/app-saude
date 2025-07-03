@@ -3,14 +3,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ProfileBanner from '@/components/ui/profile-banner';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
-import { AccountService } from '@/api/services/AccountService';
 import { SuccessMessage } from '@/components/ui/success-message';
 import { ErrorMessage } from '@/components/ui/error-message';
 import { ConfirmDialog } from '@/components/ui/confirmDialog';
 import { TextField } from '@/components/forms/text_input';
-import { ApiService } from '@/api/services/ApiService';
 import { Switch } from '@/components/ui/switch';
 import { useApp } from '@/contexts/AppContext';
+import { AccountManagementService, UserManagementService } from '@/api';
 
 interface AcsProfileMenuItem {
   id: string;
@@ -58,7 +57,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({ onEditProfile }) => {
   useEffect(() => {
     const fetchProviderId = async () => {
       try {
-        const userEntity = await ApiService.apiUserEntityRetrieve();
+        const userEntity = await UserManagementService.apiUserEntityRetrieve();
         setProviderId(userEntity.provider_id);
       } catch (error) {
         console.error('Erro ao buscar provider_id:', error);
@@ -113,7 +112,7 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({ onEditProfile }) => {
     setError(null);
 
     try {
-      await AccountService.accountsDestroy();
+      await AccountManagementService.accountsDestroy();
       setSuccess('Conta excluída com sucesso!');
 
       await removeAccountAfterDelete(currentAccount!!.userId);

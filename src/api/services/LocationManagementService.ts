@@ -9,8 +9,12 @@ import type { PatchedLocationUpdate } from '../models/PatchedLocationUpdate';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class LocationService {
+export class LocationManagementService {
   /**
+   * Location Management
+   *
+   * Manages geographic locations including addresses, facilities, and service areas.
+   * Used for location-based services and geographic data organization.
    * @returns LocationRetrieve
    * @throws ApiError
    */
@@ -21,6 +25,10 @@ export class LocationService {
     });
   }
   /**
+   * Location Management
+   *
+   * Manages geographic locations including addresses, facilities, and service areas.
+   * Used for location-based services and geographic data organization.
    * @param requestBody
    * @returns LocationCreate
    * @throws ApiError
@@ -34,6 +42,10 @@ export class LocationService {
     });
   }
   /**
+   * Location Management
+   *
+   * Manages geographic locations including addresses, facilities, and service areas.
+   * Used for location-based services and geographic data organization.
    * @param locationId A unique integer value identifying this location.
    * @returns LocationRetrieve
    * @throws ApiError
@@ -48,6 +60,10 @@ export class LocationService {
     });
   }
   /**
+   * Location Management
+   *
+   * Manages geographic locations including addresses, facilities, and service areas.
+   * Used for location-based services and geographic data organization.
    * @param locationId A unique integer value identifying this location.
    * @param requestBody
    * @returns LocationUpdate
@@ -68,6 +84,10 @@ export class LocationService {
     });
   }
   /**
+   * Location Management
+   *
+   * Manages geographic locations including addresses, facilities, and service areas.
+   * Used for location-based services and geographic data organization.
    * @param locationId A unique integer value identifying this location.
    * @param requestBody
    * @returns LocationUpdate
@@ -88,6 +108,10 @@ export class LocationService {
     });
   }
   /**
+   * Location Management
+   *
+   * Manages geographic locations including addresses, facilities, and service areas.
+   * Used for location-based services and geographic data organization.
    * @param locationId A unique integer value identifying this location.
    * @returns void
    * @throws ApiError

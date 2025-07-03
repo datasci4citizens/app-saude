@@ -10,44 +10,39 @@ import {
   Share2,
   Clock,
 } from 'lucide-react';
-import { DiaryService } from '@/api';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
 import Header from '@/components/ui/header';
 import { Button } from '@/components/forms/button';
 import { TypeEnum } from '@/api/models/TypeEnum';
+import { PersonalDiaryService, type DiaryRetrieve } from '@/api';
 
-// Interfaces atualizadas para a nova estrutura
-interface DiaryEntry {
-  text: string;
-  text_shared: boolean;
-}
-
-interface DiaryTrigger {
-  trigger_id: number;
+interface TriggerDetail {
   name: string;
-  type: TypeEnum;
+  type?: TypeEnum;
   response: string;
+  shared_with_provider?: boolean;
 }
 
-interface DiaryInterestArea {
-  interest_area_id: number;
+interface InterestAreaDetail {
   name: string;
-  is_attention_point: boolean;
   shared_with_provider: boolean;
-  triggers: DiaryTrigger[];
-  provider_name: string | null;
+  triggers: TriggerDetail[];
+  provider_name?: string | null;
+  observation_id?: number;
+  marked_by?: string[];
 }
 
-interface LocalDiaryRetrieve {
+interface DiaryDetail {
   diary_id: number;
   date: string;
-  entries: DiaryEntry[];
-  interest_areas: DiaryInterestArea[];
-  diary_shared: boolean;
+  text: string;
+  text_shared: boolean;
+  date_range_type: 'today' | 'since_last';
+  interest_areas: InterestAreaDetail[];
 }
 
 export default function ImprovedDiaryListPage() {
-  const [diaries, setDiaries] = useState<LocalDiaryRetrieve[]>([]);
+  const [diaries, setDiaries] = useState<DiaryDetail[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,88 +55,24 @@ export default function ImprovedDiaryListPage() {
         setIsLoading(true);
         setError(null);
 
-        const response = await DiaryService.personDiariesList();
+        const response = await PersonalDiaryService.diariesList();
         console.log('API response:', response);
 
         if (Array.isArray(response)) {
-          // Transform API response to match new structure
-          const mapped = response.map((item: unknown) => {
-            const typedItem = item as Record<string, unknown>;
-            // Handle case where response might be ApiDiaryRetrieve or already processed
-            if (
-              typeof typedItem.entries === 'string' ||
-              typeof typedItem.interest_areas === 'string'
-            ) {
-              // This is an ApiDiaryRetrieve - parse the JSON strings
-              const entries =
-                typeof typedItem.entries === 'string'
-                  ? typedItem.entries.trim()
-                    ? JSON.parse(typedItem.entries)
-                    : []
-                  : Array.isArray(typedItem.entries)
-                    ? typedItem.entries
-                    : [];
-
-              const interest_areas =
-                typeof typedItem.interest_areas === 'string'
-                  ? typedItem.interest_areas.trim()
-                    ? JSON.parse(typedItem.interest_areas)
-                    : []
-                  : Array.isArray(typedItem.interest_areas)
-                    ? typedItem.interest_areas
-                    : [];
-
-              return {
-                diary_id: (typedItem.diary_id as number) || 0,
-                date: (typedItem.date as string) || new Date().toISOString(),
-                diary_shared: (typedItem.diary_shared as boolean) || false,
-                entries: Array.isArray(entries) ? entries : [],
-                interest_areas: Array.isArray(interest_areas) ? interest_areas : [],
-              };
-            }
-
-            // This is already in the expected format or ApiDiaryItemResponse
+          const mapped = response.map((diaryData: DiaryRetrieve) => {
+            const parsedInterestAreas =
+              typeof diaryData.interest_areas === 'string'
+                ? (JSON.parse(diaryData.interest_areas) as InterestAreaDetail[])
+                : (diaryData.interest_areas as InterestAreaDetail[]);
             return {
-              diary_id: (typedItem.diary_id as number) || 0,
-              date: (typedItem.date as string) || new Date().toISOString(),
-              diary_shared: (typedItem.diary_shared as boolean) || false,
-              entries: Array.isArray(typedItem.entries)
-                ? typedItem.entries
-                : typeof typedItem.entries === 'string' && typedItem.entries.trim() !== ''
-                  ? [
-                      {
-                        text: typedItem.entries,
-                        text_shared: false,
-                      },
-                    ]
-                  : [],
-              interest_areas: Array.isArray(typedItem.interest_areas)
-                ? (typedItem.interest_areas as Record<string, unknown>[]).map(
-                    (area: Record<string, unknown>) => ({
-                      interest_area_id: (area.interest_area_id as number) || 0,
-                      name: (area.interest_name as string) || (area.name as string) || 'Interesse',
-                      is_attention_point: (area.is_attention_point as boolean) || false,
-                      shared_with_provider: (area.shared_with_provider as boolean) || false,
-                      provider_name: (area.provider_name as string) || null,
-                      triggers: Array.isArray(area.triggers)
-                        ? (area.triggers as Record<string, unknown>[]).map(
-                            (trigger: Record<string, unknown>) => ({
-                              trigger_id: (trigger.trigger_id as number) || 0,
-                              name:
-                                (trigger.trigger_name as string) || (trigger.name as string) || '',
-                              type: (trigger.type as TypeEnum) || TypeEnum.TEXT,
-                              response:
-                                (trigger.value_as_string as string) ||
-                                (trigger.response as string) ||
-                                '',
-                            }),
-                          )
-                        : [],
-                    }),
-                  )
-                : [],
+              diary_id: diaryData.diary_id,
+              date: diaryData.date,
+              text: diaryData.text,
+              text_shared: diaryData.text_shared === 'true',
+              date_range_type: diaryData.date_range_type as 'today' | 'since_last',
+              interest_areas: parsedInterestAreas,
             };
-          }) as LocalDiaryRetrieve[];
+          }) as DiaryDetail[];
           setDiaries(mapped);
         } else {
           console.error('Unexpected API response format:', response);
@@ -182,9 +113,9 @@ export default function ImprovedDiaryListPage() {
   };
 
   // Get comprehensive diary statistics
-  const getDiaryStats = (diary: LocalDiaryRetrieve) => {
-    const hasTextEntry = diary.entries?.some((e) => e.text && e.text.trim() !== '');
-    const sharedTextEntry = diary.entries?.some((e) => e.text_shared);
+  const getDiaryStats = (diary: DiaryDetail) => {
+    const hasTextEntry = diary.text && diary.text.trim() !== '';
+    const sharedTextEntry = diary.text_shared;
 
     const interestStats = diary.interest_areas?.reduce(
       (acc, area) => {
@@ -195,7 +126,8 @@ export default function ImprovedDiaryListPage() {
           totalInterests: acc.totalInterests + 1,
           answeredTriggers: acc.answeredTriggers + answeredTriggers.length,
           totalTriggers: acc.totalTriggers + (area.triggers?.length || 0),
-          attentionPoints: acc.attentionPoints + (area.is_attention_point ? 1 : 0),
+          attentionPoints:
+            acc.attentionPoints + (area.marked_by && area.marked_by.length > 0 ? 1 : 0),
           sharedInterests: acc.sharedInterests + (area.shared_with_provider ? 1 : 0),
         };
       },
@@ -228,15 +160,9 @@ export default function ImprovedDiaryListPage() {
   };
 
   // Get diary summary with improved logic
-  const getDiarySummary = (diary: LocalDiaryRetrieve): string => {
-    // First, try to get text from entries
-    if (diary.entries && Array.isArray(diary.entries) && diary.entries.length > 0) {
-      const textEntry = diary.entries.find((e) => e.text && e.text.trim() !== '');
-      if (textEntry?.text) {
-        return textEntry.text.length > 100
-          ? `${textEntry.text.substring(0, 100)}...`
-          : textEntry.text;
-      }
+  const getDiarySummary = (diary: DiaryDetail): string => {
+    if (diary.text && diary.text.trim() !== '') {
+      return diary.text.length > 100 ? `${diary.text.substring(0, 100)}...` : diary.text;
     }
 
     // If no text entry, get first trigger response
@@ -272,11 +198,10 @@ export default function ImprovedDiaryListPage() {
     }
   };
 
-  // Filter diaries based on selected filter - REMOVIDO (sempre mostra todos)
   const filteredDiaries = diaries;
 
   // Group diaries by date
-  const groupedDiaries: Record<string, LocalDiaryRetrieve[]> = {};
+  const groupedDiaries: Record<string, DiaryDetail[]> = {};
   for (const diary of filteredDiaries) {
     const dateKey = formatDate(diary.date);
     if (!groupedDiaries[dateKey]) {
@@ -299,7 +224,7 @@ export default function ImprovedDiaryListPage() {
 
   if (error) {
     return (
-      <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-4 min-h-screen pb-24">
+      <div className="flex flex-col h-screen bg-homebg">
         <Header title="Diário" onBackClick={() => navigate('/user-main-page')} />
 
         <div className="flex flex-col items-center justify-center h-64">
@@ -408,7 +333,7 @@ export default function ImprovedDiaryListPage() {
                                     </span>
                                   </div>
 
-                                  {diary.diary_shared && (
+                                  {diary.text_shared && (
                                     <div className="flex items-center gap-1 px-2 py-1 bg-success/10 text-success rounded-full border border-success/20">
                                       <Share2 size={12} />
                                       <span className="text-xs font-medium">Compartilhado</span>
@@ -463,14 +388,16 @@ export default function ImprovedDiaryListPage() {
                                 <div className="mb-4 space-y-2">
                                   {diary.interest_areas.map((area, index) => (
                                     <div
-                                      key={`${area.interest_area_id}-${index}`}
+                                      key={`${area.observation_id}-${index}`}
                                       className={`flex items-center gap-2 text-sm p-2 rounded-lg ${
-                                        area.is_attention_point
+                                        area.marked_by && area.marked_by.length > 0
                                           ? 'bg-accent1/10 text-accent1 border border-accent1/20'
                                           : 'border border-card-border text-gray2'
                                       }`}
                                     >
-                                      {area.is_attention_point && <AlertTriangle size={14} />}
+                                      {area.marked_by && area.marked_by.length > 0 && (
+                                        <AlertTriangle size={14} />
+                                      )}
                                       <span className="font-medium">{area.name}</span>
                                     </div>
                                   ))}
