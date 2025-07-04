@@ -131,27 +131,27 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({ onEditProfile }) => {
   };
 
   const menuSections: AcsProfileMenuSection[] = [
-    {
-      title: 'Meus Dados',
-      items: [
-        //{
-        //  id: "edit-profile",
-        //  title: "Editar perfil",
-        //  subtitle: "Alterar informações pessoais",
-        //  icon: "✏️",
-        //  onClick: () => onEditProfile?.(),
-        //  hasArrow: true,
-        //},
-        //  {
-        //   id: "professional-info",
-        //   title: "Informações profissionais",
-        //   subtitle: "Registro, especialidade e dados",
-        //   icon: "👨‍⚕️",
-        //   onClick: () => navigate("/professional-info"),
-        //   hasArrow: true,
-        // },
-      ],
-    },
+    // {
+    //   title: 'Meus Dados',
+    //   items: [
+    //     //{
+    //     //  id: "edit-profile",
+    //     //  title: "Editar perfil",
+    //     //  subtitle: "Alterar informações pessoais",
+    //     //  icon: "✏️",
+    //     //  onClick: () => onEditProfile?.(),
+    //     //  hasArrow: true,
+    //     //},
+    //     //  {
+    //     //   id: "professional-info",
+    //     //   title: "Informações profissionais",
+    //     //   subtitle: "Registro, especialidade e dados",
+    //     //   icon: "👨‍⚕️",
+    //     //   onClick: () => navigate("/professional-info"),
+    //     //   hasArrow: true,
+    //     // },
+    //   ],
+    // },
     {
       title: 'Gerenciar Pacientes',
       items: [
@@ -205,14 +205,14 @@ const AcsProfilePage: React.FC<AcsProfilePageProps> = ({ onEditProfile }) => {
           onClick: () => navigate('/terms?from=profile'),
           hasArrow: true,
         },
-        {
-          id: 'help',
-          title: 'Central de ajuda',
-          subtitle: 'Dúvidas e suporte',
-          icon: '❓',
-          onClick: () => navigate('/help'),
-          hasArrow: true,
-        },
+        // {
+        //   id: 'help',
+        //   title: 'Central de ajuda',
+        //   subtitle: 'Dúvidas e suporte',
+        //   icon: '❓',
+        //   onClick: () => navigate('/help'),
+        //   hasArrow: true,
+        // },
       ],
     },
     {

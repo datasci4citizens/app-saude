@@ -10,20 +10,9 @@ import { ErrorMessage } from '@/components/ui/error-message';
 import Header from '@/components/ui/header';
 import BottomNavigationBar from '@/components/ui/navigator-bar';
 import { SuccessMessage } from '@/components/ui/success-message';
-import React, { useState } from 'react';
+import { useApp } from '@/contexts/AppContext';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useSWR from 'swr';
-
-// Fetcher function for SWR
-const fetcher = async (url: string) => {
-  if (url === 'providers') {
-    return await PersonProviderRelationshipsService.personProvidersList();
-  }
-  if (url === 'user') {
-    return await UserManagementService.apiUserEntityRetrieve();
-  }
-  throw new Error('Unknown fetcher URL');
-};
 
 export default function EmergencyScreen() {
   const navigate = useNavigate();
@@ -33,28 +22,38 @@ export default function EmergencyScreen() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // Fetch user data
-  const { data: user, isLoading: isUserLoading } = useSWR('user', fetcher, {
-    revalidateOnFocus: false,
-  });
+  const [providers, setProviders] = useState<ProviderRetrieve[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch linked providers
-  const {
-    data: providers,
-    error: providersError,
-    isLoading: isProvidersLoading,
-  } = useSWR(user ? 'providers' : null, fetcher, {
-    revalidateOnFocus: false,
-    dedupingInterval: 60000,
-  });
+  const { currentAccount } = useApp();
 
   const clearError = () => setError(null);
   const clearSuccess = () => setSuccess(null);
 
+  const loadData = async () => {
+    setIsLoading(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      const providers = await PersonProviderRelationshipsService.personProvidersList();
+      setProviders(providers);
+    } catch (error) {
+      console.error('Erro ao carregar profissionais:', error);
+      setError('Erro ao carregar profissionais. Tente novamente mais tarde.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, [currentAccount]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!user?.person_id) {
+    const userEntity = await UserManagementService.apiUserEntityRetrieve();
+    if (!userEntity?.person_id) {
       setError('ID do usuário não encontrado. Tente recarregar a página.');
       return;
     }
@@ -70,7 +69,7 @@ export default function EmergencyScreen() {
 
     try {
       const emergencyRequests: ObservationCreate[] = selectedProviders.map((providerId) => ({
-        person: user.person_id,
+        person: userEntity.person_id,
         provider: providerId,
         value_as_string: freeText || 'Pedido de Ajuda',
         observation_date: new Date().toISOString(),
@@ -169,7 +168,7 @@ export default function EmergencyScreen() {
   }, []);
 
   // Loading state
-  if (isUserLoading || isProvidersLoading) {
+  if (isLoading) {
     return (
       <div className="flex flex-col h-screen bg-background">
         <Header title="Pedido de Ajuda" />
@@ -197,7 +196,7 @@ export default function EmergencyScreen() {
   }
 
   // Error state
-  if (providersError) {
+  if (error) {
     return (
       <div className="flex flex-col h-screen bg-background">
         <Header title="Pedido de Ajuda" />
@@ -369,7 +368,6 @@ export default function EmergencyScreen() {
                       }
                     `}
                   >
-                    {/* CORRIGIDO: Removido onClick duplicado e deixado apenas o onCheckedChange */}
                     <RadioCheckbox
                       id={`provider-${provider.provider_id}`}
                       label={

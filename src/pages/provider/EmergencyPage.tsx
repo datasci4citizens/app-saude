@@ -93,7 +93,7 @@ export default function EmergencyPage() {
       }
     },
     {
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
       dedupingInterval: 60000, // Cache por 1 minuto
     },
   );

@@ -127,27 +127,27 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onEditProfile }) => {
   };
 
   const menuSections: ProfileMenuSection[] = [
-    {
-      title: 'Meus Dados',
-      items: [
-        {
-          id: 'diary-history',
-          title: 'Histórico de diários',
-          subtitle: 'Visualizar entradas anteriores',
-          icon: '📖',
-          onClick: () => navigate('/my-diaries'),
-          hasArrow: true,
-        },
-        {
-          id: 'edit-profile',
-          title: 'Editar perfil',
-          subtitle: 'Alterar informações pessoais',
-          icon: '✏️',
-          onClick: () => onEditProfile?.(),
-          hasArrow: true,
-        },
-      ],
-    },
+    // {
+    //   title: 'Meus Dados',
+    //   items: [
+    //     {
+    //       id: 'diary-history',
+    //       title: 'Histórico de diários',
+    //       subtitle: 'Visualizar entradas anteriores',
+    //       icon: '📖',
+    //       onClick: () => navigate('/my-diaries'),
+    //       hasArrow: true,
+    //     },
+    //     {
+    //       id: 'edit-profile',
+    //       title: 'Editar perfil',
+    //       subtitle: 'Alterar informações pessoais',
+    //       icon: '✏️',
+    //       onClick: () => onEditProfile?.(),
+    //       hasArrow: true,
+    //     },
+    //   ],
+    // },
     {
       title: 'Profissionais de Saúde',
       items: [
@@ -172,14 +172,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onEditProfile }) => {
           onClick: () => navigate('/terms?from=profile'),
           hasArrow: true,
         },
-        {
-          id: 'help',
-          title: 'Central de ajuda',
-          subtitle: 'Dúvidas e suporte',
-          icon: '❓',
-          onClick: () => navigate('/help'),
-          hasArrow: true,
-        },
+        // {
+        //   id: 'help',
+        //   title: 'Central de ajuda',
+        //   subtitle: 'Dúvidas e suporte',
+        //   icon: '❓',
+        //   onClick: () => navigate('/help'),
+        //   hasArrow: true,
+        // },
       ],
     },
     {

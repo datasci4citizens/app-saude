@@ -157,19 +157,36 @@ export default function ViewDiary() {
       );
 
       // Refresh diary data after toggling
-      if (diaryId && personId) {
+      if (diary && diaryId && personId) {
         const diaryData = await ProviderDiaryAccessService.providerPatientsDiariesRetrieve(
           diaryId,
           Number(personId),
         );
         console.log('Updated Diary Data:', diaryData);
+
+        const parsedInterestAreas =
+          typeof diaryData.interest_areas === 'string'
+            ? (JSON.parse(diaryData.interest_areas) as InterestAreaDetail[])
+            : diaryData.interest_areas;
+
         setDiary({
-          diary_id: diaryData.diary_id,
-          date: diaryData.date,
-          text: diaryData.text,
-          text_shared: diaryData.text_shared === 'true',
-          date_range_type: diaryData.date_range_type as 'today' | 'since_last',
-          interest_areas: JSON.parse(diaryData.interest_areas) as InterestAreaDetail[],
+          diary_id: diary.diary_id,
+          date: diary.date,
+          text: diary.text,
+          text_shared: diary.text_shared,
+          date_range_type: diary.date_range_type as 'today' | 'since_last',
+          interest_areas: diary.interest_areas.map((interest) => {
+            if (interest.observation_id === areaId) {
+              return {
+                ...interest,
+                marked_by: (() => {
+                  const matched = parsedInterestAreas.filter((i) => i.observation_id === areaId)[0];
+                  return matched?.marked_by || [];
+                })(),
+              };
+            }
+            return interest;
+          }),
         });
       }
     } catch (error) {

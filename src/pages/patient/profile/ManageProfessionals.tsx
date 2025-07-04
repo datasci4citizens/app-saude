@@ -125,8 +125,8 @@ export default function ManageProfessionalsPage() {
       setDialogStep('success');
 
       // Refresh the providers list
-      setTimeout(() => {
-        fetchData();
+      setTimeout(async () => {
+        await fetchData();
         closeAddDialog();
         setSuccess(`${getProviderName(foundProvider)} foi vinculado com sucesso!`);
       }, 1500);
@@ -191,8 +191,6 @@ export default function ManageProfessionalsPage() {
   const getProviderName = (provider: ProviderRetrieve): string => {
     return (
       provider.social_name ||
-      provider.first_name ||
-      provider.last_name ||
       `${provider.first_name || ''} ${provider.last_name || ''}`.trim() ||
       'Profissional sem nome'
     );

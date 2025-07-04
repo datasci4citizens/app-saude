@@ -187,14 +187,18 @@ export default function ViewHelp() {
             {/* Patient Info */}
             <div className="bg-card rounded-2xl p-5 border border-card-border">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-selection to-accent1 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">
-                    {patientName.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <div>
-                  <h2 className="text-card-foreground font-semibold text-base">{patientName}</h2>
-                  <p className="text-gray2 text-sm">ID: {patient.person_id}</p>
+                <div className="rounded-full overflow-hidden bg-white flex items-center justify-center">
+                  {patient.profile_picture ? (
+                    <img
+                      src={patient.profile_picture}
+                      alt={patientName}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-selection font-bold text-lg">
+                      {patientName.charAt(0).toUpperCase()}
+                    </span>
+                  )}
                 </div>
               </div>
 
