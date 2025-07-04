@@ -20,7 +20,7 @@
 
 [👉 Full Documentation on Notion](https://www.notion.so/Guia-de-Continuidade-do-Projeto-SA-DE-2233d3fd29de80a1823acf44acaeb9f2?source=copy_link)
 
-**✨ Explore nosso Design no Figma:** https://www.figma.com/design/GNpltZCrw4r6nZ74BG1a0D/SAUDE-TELAS?node-id=1056-1697&t=vrMe0t1Md8JG4Ahh-1
+**✨ Explore our Design in Figma:** [Most recent version in V3](https://www.figma.com/design/GNpltZCrw4r6nZ74BG1a0D/SAUDE-TELAS?node-id=1056-1697&t=vrMe0t1Md8JG4Ahh-1)
 
 ---
 
